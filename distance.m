@@ -260,6 +260,9 @@ estimate_summary
 sortmat = sortrows(agg_mat_yr_sales,[2 3 1]); 
 sortmat(:,1) = floor(sortmat(:,1)./mm.pd_per_yr);
 % agg_mat_yr_sales: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, w/in yr. match age, firm age] 
+
+shouldMatchMoments(mmm,W_D,"test");
+
 catch err
         % report error
 %         getReport(err, 'extended')

@@ -367,6 +367,12 @@ end        % end of prod_ndx loop
 % save ('match_count.mat','s_match_count','pi_tilda_f_new','pt_type','NN')
 % active_client_value
 
+    simMoms = struct; %container for all simulated moments
+        
+        % Some numbers from above
+        simMoms.agg_nexptr = agg_nexptr;
+        simMoms.agg_nfirm = agg_nfirm;
+
         % match-level autoregression
         if rank(agg_moms_xx) == size(agg_moms_xx,2)
             inv_agg_moms_xx = inv(agg_moms_xx);
@@ -378,30 +384,30 @@ end        % end of prod_ndx loop
             fprintf('\r Warning: singular matrix for match-level AR1. Rank: %.1f\n', rank_xx); 
             inv_agg_moms_xx = [inv(agg_moms_xx(1:2,1:2)), zeros(2,2); zeros(2,4)];
         end         
-        beta_match = inv_agg_moms_xx*agg_moms_xy;
-        ybar_match = agg_ysum/agg_nobs;
+        simMoms.beta_match = inv_agg_moms_xx*agg_moms_xy;
+        simMoms.ybar_match = agg_ysum/agg_nobs;
         
-        mse_match_ar1 = (agg_mat_ar1_y - agg_mat_ar1_x*beta_match)'*...
-           (agg_mat_ar1_y - agg_mat_ar1_x*beta_match)/size(agg_mat_ar1_x,1);
+        simMoms.mse_match_ar1 = (agg_mat_ar1_y - agg_mat_ar1_x*simMoms.beta_match)'*...
+           (agg_mat_ar1_y - agg_mat_ar1_x*simMoms.beta_match)/size(agg_mat_ar1_x,1);
           
         
         % firm-level autoregression
         beta_fsales = inv(agg_fmoms_xx)*agg_fmoms_xy;
         ybar_fsales = agg_fysum/agg_fnobs;
         
-        beta_fsales_h = inv(agg_fmoms_h_xx)*agg_fmoms_h_xy;
-        mse_h         = (agg_y_fsales_h - agg_x_fsales_h*beta_fsales_h)'*...
-                        (agg_y_fsales_h - agg_x_fsales_h*beta_fsales_h)/size(agg_y_fsales_h,1);
-        ybar_fsales_h = agg_fysum_h/agg_fnobs_h ;  
+        simMoms.beta_fsales_h = inv(agg_fmoms_h_xx)*agg_fmoms_h_xy;
+        simMoms.mse_h         = (agg_y_fsales_h - agg_x_fsales_h*simMoms.beta_fsales_h)'*...
+                        (agg_y_fsales_h - agg_x_fsales_h*simMoms.beta_fsales_h)/size(agg_y_fsales_h,1);
+        simMoms.ybar_fsales_h = agg_fysum_h/agg_fnobs_h ;  
         
         % home-foreign regression and export rates
-        beta_hfsales = inv(agg_hfmoms_xx)*agg_hfmoms_xy;
-        mse_hf       = (agg_y_hf - agg_x_hf*beta_hfsales)'*...
-                       (agg_y_hf - agg_x_hf*beta_hfsales)/size(agg_x_hf,1);
-        ybar_hfsales  = agg_hfysum/agg_hf_nobs;
+        simMoms.beta_hfsales = inv(agg_hfmoms_xx)*agg_hfmoms_xy;
+        simMoms.mse_hf       = (agg_y_hf - agg_x_hf*simMoms.beta_hfsales)'*...
+                       (agg_y_hf - agg_x_hf*simMoms.beta_hfsales)/size(agg_x_hf,1);
+        simMoms.ybar_hfsales  = agg_hfysum/agg_hf_nobs;
 
-        avg_expt_rate = mean(agg_expt_rate);
-        share_exptr   = agg_nexptr/agg_nfirm;
+        simMoms.avg_expt_rate = mean(agg_expt_rate);
+        simMoms.share_exptr   = agg_nexptr/agg_nfirm;
         
         % market exit regression        
      if rank(agg_exit_xx) == size(agg_exit_xx,2)
@@ -411,31 +417,31 @@ end        % end of prod_ndx loop
         fprintf('\r Warning: singular matrix for market exit. Rank: %.1f\n', rank_xx); 
         inv_agg_exit_xx = [inv(agg_exit_xx(1:3,1:3)), zeros(3,3); zeros(3,6)];
      end  
-        beta_mkt_exit   = inv_agg_exit_xx*agg_exit_xy;
-        mkt_exit_rate   = agg_sum_exits/agg_exit_obs;
+        simMoms.beta_mkt_exit   = inv_agg_exit_xx*agg_exit_xy;
+        simMoms.mkt_exit_rate   = agg_sum_exits/agg_exit_obs;
         match_succ_rate = agg_sum_succ_rate/agg_exit_obs;
         
         % match exit regression       
-        beta_match_exit = inv(agg_mat_exit_moms_xx)*agg_mat_exit_moms_xy;
-        match_exit_rate = agg_nmat_exit/agg_mat_obs;
-        mse_match_exit  = (agg_mat_exit_y - agg_mat_exit_x*beta_match_exit)'*...
-             (agg_mat_exit_y - agg_mat_exit_x*beta_match_exit)/size(agg_mat_exit_y,1);
+        simMoms.beta_match_exit = inv(agg_mat_exit_moms_xx)*agg_mat_exit_moms_xy;
+        simMoms.match_exit_rate = agg_nmat_exit/agg_mat_obs;
+        mse_match_exit  = (agg_mat_exit_y - agg_mat_exit_x*simMoms.beta_match_exit)'*...
+             (agg_mat_exit_y - agg_mat_exit_x*simMoms.beta_match_exit)/size(agg_mat_exit_y,1);
         
  
 % average log #shipments
-        avg_ln_ships = agg_ln_ships/agg_ship_obs;
+        simMoms.avg_ln_ships = agg_ln_ships/agg_ship_obs;
         
 %       % create variables for analysis of degree distribution
 %    
-        ff_sim_max      = find(cumsum(agg_match_count)./sum(agg_match_count)<1);
-        log_compCDF     = log(1 - cumsum(agg_match_count(ff_sim_max))./sum(agg_match_count));
-        log_matches     = log(1:1:size(ff_sim_max,1))';
-        xmat            = [ones(size(ff_sim_max)),log_matches,log_matches.^2];
+        simMoms.ff_sim_max      = find(cumsum(agg_match_count)./sum(agg_match_count)<1);
+        log_compCDF     = log(1 - cumsum(agg_match_count(simMoms.ff_sim_max))./sum(agg_match_count));
+        log_matches     = log(1:1:size(simMoms.ff_sim_max,1))';
+        xmat            = [ones(size(simMoms.ff_sim_max)),log_matches,log_matches.^2];
         
        % quadratic regression approximating degree distribution
-        b_degree        = regress(log_compCDF,xmat);
+        simMoms.b_degree        = regress(log_compCDF,xmat);
        % linear regression approximating degree distribution 
-        xmat_linear     = [ones(size(ff_sim_max)),log_matches];
+        xmat_linear     = [ones(size(simMoms.ff_sim_max)),log_matches];
         b_degree_linear = regress(log_compCDF,xmat_linear);
        % nonparametric plot of degree distribution 
 %       scatter(log_matches,log_compCDF)
@@ -457,27 +463,22 @@ end        % end of prod_ndx loop
         
        % success rate regression 
         succ_rate = agg_time_gaps(:,7)./agg_time_gaps(:,6);
-        [b_succ_rate,~,uu] = regress(succ_rate,[const, ln_meet]);
+        [simMoms.b_succ_rate,~,uu] = regress(succ_rate,[const, ln_meet]);
         usq_succ = uu.^2;
-        b_usq_succ = regress(usq_succ,[const, ln_meet]);
+        simMoms.b_usq_succ = regress(usq_succ,[const, ln_meet]);
         
       % translog meeting hazard regression 
         X_haz = [const, ln_csucc, ln_csucc.^2, ln_succ_rate, ln_succ_rate.^2, ln_succ_rate.*ln_csucc];
-        b_haz = regress(ln_haz,X_haz);
+        simMoms.b_haz = regress(ln_haz,X_haz);
       % regression explaining squared residuals of meeting hazard equation  
-        usq_haz = (ln_haz - X_haz*b_haz).^2;
+        usq_haz = (ln_haz - X_haz*simMoms.b_haz).^2;
         b_haz_usq = regress(usq_haz,[const ln_meet]);
       % means of log hazard rate, success rate, and squared residuals from succ rate and hazard regression 
         means_vec = mean([ln_haz,succ_rate,usq_succ,usq_haz]);
-        mean_ln_haz    = means_vec(1);
-        mean_succ_rate = means_vec(2);
-        mean_usq_succ  = means_vec(3);
+        simMoms.mean_ln_haz    = means_vec(1);
+        simMoms.mean_succ_rate = means_vec(2);
+        simMoms.mean_usq_succ  = means_vec(3);
         mean_usq_haz   = means_vec(4);
-        
-% toc;
-
-% check that positive export sales correspond to positive shipments, all obs.
-% assert(sum(((agg_mat_yr_sales(:,4)>0)-(agg_mat_yr_sales(:,5)>0)).^2)==0)
 
 
 

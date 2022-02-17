@@ -1,9 +1,3 @@
-%% 
-%  This file takes an X vector passed by the optimizaiton program
-%  and turns it into parameters used in our simulation
-
-%read in parameter names from the X vector
-
 
 %% current mapping 
 
@@ -23,14 +17,7 @@ F_f      =  exp(X(10));    % foreign match fixed cost
 cs_f     =  exp(X(11));    % cost function scalar, foreign market
 scale_f  =  X(12);         % log of foreign profit function scalar 
 
-% delta    =  X(2);       % exogenous match death hazard (per year)   
-% scale_f  =  X(3)+X(4);  % log of foreign profit function scalar 
-% beta     =  1/(X(5)-1); % cost function convexity parameter 
-% L_z      =  X(8);       % buyer shock jump hazard    
-  
-
 %% parameters no longer used that still require values
-
 ag         =  .5;
 bg         =  .5;
 L_p        =  0;

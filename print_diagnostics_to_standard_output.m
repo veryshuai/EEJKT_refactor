@@ -1,10 +1,6 @@
-function print_diagnostics_to_standard_output(W_D, Old_D, X, mmm, err_comp,simMoms,mm)
-% Create Diagnostics
-    fprintf('\r\n weighted metric:   %.15f\n', W_D); 
-        
-    %Simple unweighted loss
+function print_diagnostics_to_standard_output(D, X, mmm, err_comp,simMoms,mm)
 
-    fprintf(' unweighted metric: %.15f\n', Old_D); 
+fprintf('\r\n weighted metric:   %.15f\n', D); 
     
    fprintf('\r\n params = ');
    fprintf('\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',X(1:6));
@@ -37,17 +33,15 @@ function print_diagnostics_to_standard_output(W_D, Old_D, X, mmm, err_comp,simMo
     fprintf(' number of firms per yr     = %.3f\n',simMoms.agg_nfirm/(mm.tot_yrs - mm.burn));
     fprintf( '\r\n  '); 
     
-%%   write results to text files
-      fitvec = [W_D Old_D];
       fileID2 = fopen('results/ga_fitlog.txt','a');
       fprintf(fileID2,'\r\n fit metric = ');
-      dlmwrite('results/ga_fitlog.txt',fitvec,'-append','precision',12);
+      dlmwrite('results/ga_fitlog.txt',D,'-append','precision',12);
       fclose(fileID2);
  
 
       fileID1 = fopen('results/ga_running_output.txt','a');
       fprintf(fileID1,'\r\n fit metrics (weighted and unweighted): ');
-      dlmwrite('results/ga_running_output.txt',fitvec,'-append','precision',12);
+      dlmwrite('results/ga_running_output.txt',D,'-append','precision',12);
     
       fprintf(fileID1, '\r\n parameters: ');
       fprintf(fileID1, '\r\n%9.5f %9.5f %9.5f %9.5f %9.5f %9.5f',X(1:6));

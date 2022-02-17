@@ -19,7 +19,7 @@ tic2 = tic;
 discrete_sim_parfor3;
 time2 = toc(tic2);
 
-fprintf('\r\n inten_sim run time:    %.2f\n', time1); 
+fprintf('\r\n inten_sim run time: %.2f\n', time1); 
 fprintf(' discrete_sim run time: %.2f\n', time2);
 
 
@@ -64,27 +64,8 @@ end
 
 %%  data/model comparison  
 mmm = cat(2,Data',Model);  
-    
-max_clients = size(ff_sim_max,1);
-nfirm_per_yr = agg_nfirm/(mm.tot_yrs - mm.burn);
-nexpr_per_yr = agg_nexptr/(mm.tot_yrs - mm.burn);
 
-        % Create Diagnostics
-    inv_W = W^-1;
-    err_comp = @(sta,fin) error(sta:fin)' * inv_W(sta:fin,sta:fin) * error(sta:fin);
-    match_death_coefs_err = err_comp(1,5);
-    match_ar1_coefs_err   = err_comp(6,10);
-    log_log_coefs_err     = err_comp(11,13);
-    mavg_ship_coef_err    = err_comp(14,14);
-    exp_dom_err           = err_comp(15,17);
-    dom_ar1_err           = err_comp(18,20);
-    match_lag_coef_err    = err_comp(21,26);
-    last_match_coef_err   = err_comp(27,32);
-    succ_rate_coef_err    = err_comp(33,34);
-    sr_var_coef_err       = err_comp(35,36);
-    for_sales_shr_err     = err_comp(37,37);
-    exp_frac_err          = err_comp(38,38);
-                   
+    % Create Diagnostics
     fprintf('\r\n weighted metric:   %.15f\n', W_D); 
         
     %Simple unweighted loss
@@ -96,31 +77,31 @@ nexpr_per_yr = agg_nexptr/(mm.tot_yrs - mm.burn);
    fprintf('\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',X(7:12));
    fprintf( '\r\n  ');   
     
-        
-
-    
     format shortG
     fprintf('\r\n moments: ');
     cat(2,mmm(1:10,:),mmm(11:20,:),mmm(21:30,:),[mmm(31:38,:);zeros(2,2)])
     format long
-      
-    fprintf('\r\n Fit diagnostics: ');  
-    fprintf('\r\n match_death_coefs  = %.3f\n',match_death_coefs_err);
-    fprintf(' match_ar1_coefs    = %.3f\n',match_ar1_coefs_err);
-    fprintf(' log_log_coefs      = %.3f\n',log_log_coefs_err);
-    fprintf(' av_shipments       = %.3f\n',mavg_ship_coef_err);
-    fprintf(' exp_dom            = %.3f\n',exp_dom_err);
-    fprintf(' dom_ar1            = %.3f\n',dom_ar1_err);
-    fprintf(' match_lag_coef     = %.3f\n',match_lag_coef_err);
-    fprintf(' last_match_coef    = %.3f\n',last_match_coef_err);   
-    fprintf(' succ_rate_coef     = %.3f\n',succ_rate_coef_err);
-    fprintf(' sr_var_coef        = %.3f\n',sr_var_coef_err);
-    fprintf(' for_sales_shr_coef = %.3f\n',for_sales_shr_err);
-    fprintf(' exp_frac_coef      = %.3f\n',exp_frac_err);
     
-    fprintf('\r\n number of exporters per yr = %.3f\n',nexpr_per_yr);
-    fprintf(' maximum number of clients  = %.3f\n',max_clients);
-    fprintf(' number of firms per yr     = %.3f\n',nfirm_per_yr);
+
+    fprintf('\r\n Fit diagnostics: ');  
+    inv_W = W^-1;
+    err_comp = @(sta,fin) error(sta:fin)' * inv_W(sta:fin,sta:fin) * error(sta:fin);    
+    fprintf('\r\n match_death_coefs  = %.3f\n',err_comp(1,5));
+    fprintf(' match_ar1_coefs    = %.3f\n',err_comp(6,10));
+    fprintf(' log_log_coefs      = %.3f\n',err_comp(11,13));
+    fprintf(' av_shipments       = %.3f\n',err_comp(14,14));
+    fprintf(' exp_dom            = %.3f\n',err_comp(15,17));
+    fprintf(' dom_ar1            = %.3f\n',err_comp(18,20));
+    fprintf(' match_lag_coef     = %.3f\n',err_comp(21,26));
+    fprintf(' last_match_coef    = %.3f\n',err_comp(27,32));   
+    fprintf(' succ_rate_coef     = %.3f\n',err_comp(33,34));
+    fprintf(' sr_var_coef        = %.3f\n',err_comp(35,36));
+    fprintf(' for_sales_shr_coef = %.3f\n',err_comp(37,37));
+    fprintf(' exp_frac_coef      = %.3f\n',err_comp(38,38));
+    
+    fprintf('\r\n number of exporters per yr = %.3f\n',agg_nexptr/(mm.tot_yrs - mm.burn));
+    fprintf(' maximum number of clients  = %.3f\n',size(ff_sim_max,1));
+    fprintf(' number of firms per yr     = %.3f\n',agg_nfirm/(mm.tot_yrs - mm.burn));
     fprintf( '\r\n  '); 
     
 %%   write results to text files

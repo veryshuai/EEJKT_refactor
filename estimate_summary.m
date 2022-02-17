@@ -14,7 +14,7 @@ V_new =...
 
 Var_params = diag(V_new);
 std_error = sqrt(Var_params);
-X2params;
+%X2params;
 
 % X2params;
 % param_vec = [scale_h,F_h,F_f,scale_f,ah,bh,D_z,L_b,gam,cs_h,cs_f,sig_p];
@@ -26,23 +26,23 @@ Coef_name = {'scale_h','F_h','F_f','scale_f','ah','bh','D_z','L_b','gam','cs_h',
 parameter   = zeros(12,1);
 fixed_par   = zeros(3,1);
 
-parameter(1)  = scale_h ;  % log of home profit function scalar   
-parameter(2)  = F_h     ;  % home match fixed cost
-parameter(3)  = F_f     ;  % foreign match fixed cost  
-parameter(4)  = scale_f ;  % log of foreign profit function scalar 
-parameter(5)  = ah      ;  % X(3) is mean of beta dist ah / (ah + bh)
-parameter(6)  = bh      ;  % X(4) is (ah + bh)        
-parameter(7)  = D_z     ;  % buyer shock jump size            
-parameter(8)  = L_b     ;  % shipment hazard            
-parameter(9)  = gam     ;  % network effect
-parameter(10) = cs_h    ;  % cost function scalar, home market  
-parameter(11) = cs_f    ;  % cost function scalar, foreign market
-parameter(12) = sig_p   ;  % std. dev. of log productivity shock 
+parameter(1)  = mm.scale_h ;  % log of home profit function scalar   
+parameter(2)  = mm.F_h     ;  % home match fixed cost
+parameter(3)  = mm.F_f     ;  % foreign match fixed cost  
+parameter(4)  = mm.scale_f ;  % log of foreign profit function scalar 
+parameter(5)  = mm.ah      ;  % X(3) is mean of beta dist ah / (ah + bh)
+parameter(6)  = mm.bh      ;  % X(4) is (ah + bh)        
+parameter(7)  = mm.D_z     ;  % buyer shock jump size            
+parameter(8)  = mm.L_b     ;  % shipment hazard            
+parameter(9)  = mm.gam     ;  % network effect
+parameter(10) = mm.cs_h    ;  % cost function scalar, home market  
+parameter(11) = mm.cs_f    ;  % cost function scalar, foreign market
+parameter(12) = mm.sig_p   ;  % std. dev. of log productivity shock 
 
 Fixed_coef_name = {'kappa_1','delta','lambda_z'};
-fixed_par(1) = 1+1/beta ;  % cost function convexity (kappa_1)             
-fixed_par(2) = delta    ;  % exogenous match death hazard (per year)                                 
-fixed_par(3) = L_z      ;  % buyer shock jump hazard (per year)           
+fixed_par(1) = 1+1/mm.b ;  % cost function convexity (kappa_1)             
+fixed_par(2) = mm.delta    ;  % exogenous match death hazard (per year)                                 
+fixed_par(3) = mm.L_z      ;  % buyer shock jump hazard (per year)           
 
 
 t_ratio  = parameter./std_error;

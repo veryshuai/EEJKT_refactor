@@ -2,14 +2,6 @@ function mm = setModelParameters(X)
 
 mm = struct();
 
-%% parameters no longer used that still require values
-ag         =  .5;
-bg         =  .5;
-L_p        =  0;
-D_p        =  0;
-alp        =  0;
-
-
 %% technology parameters
 mm.pd_per_yr = 12;        % number of periods per year
 mm.r         = 0.05/mm.pd_per_yr;   % Rate of time preference per period
@@ -22,6 +14,7 @@ mm.eta       = 5;         % Demand elasticity
 mm.gam       = X(7);       % Network effect parameter
 mm.cs_h      = exp(X(8));      % Cost scaling parameter, home market
 mm.cs_f      = exp(X(11));      % Cost scaling parameter, foreign market
+mm.sig_p     = X(9);         %standard deviation of productivity distribution
 
 %% Theta distributions
 
@@ -29,11 +22,11 @@ mm.ah        = X(4)*X(3); % Beta function, home (theta1) success parameter
 mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
 mm.af        = mm.ah;     % Beta function, foreign (theta2) success parameter (assume same as home)
 mm.bf        = mm.bh;     % Beta function, foreign (theta2) success parameter (assume same as home)
-mm.ag        = ag;        % Beta function, theta0 success parameter (unused)
-mm.bg        = bg;        % Beta function, theta0 failure parameter (unused)
+mm.ag        = 0.5;        % Beta function, theta0 success parameter (unused)
+mm.bg        = 0.5;        % Beta function, theta0 failure parameter (unused)
 mm.F_f       = exp(X(10));       % cost of maintaining a client- foreign
 mm.F_h       = exp(X(1)); % cost of maintaining a client- home 
-mm.alpha     = alp;       % weight of "common" theta in determining match probabilities (set to 0)
+mm.alpha     = 0;       % weight of "common" theta in determining match probabilities (set to 0)
 
 %% Discretization of state-space
 mm.grid_length   = 2.5;   % number of standard deviations from mean used for discretization
@@ -66,22 +59,8 @@ mm.pi_tolerance  = 1e-4;    % convergence tolerance, profit function (WAS .001)
 mm.T             = 50;      % horizon for calculating profit function
 mm.tot_yrs       = 45;     % years to simulate, including burn-in (mm.burn)
 
-if strcmp(case_str,'est')==1
-    mm.S         = 25000;    % number of potential exporting firms to simulate 
-    mm.burn      = 5;       %number of burn-in years
-elseif strcmp(case_str,'non')==1    %not a counterfactual
-    mm.S         = 10000;    % number of potential exporting firms to simulate 
-    mm.burn      = 5;       %number of burn-in years
-elseif strcmp(case_str,'val')==1    %not a counterfactual
-    mm.S         = 10000;    % number of potential exporting firms to simulate 
-    mm.burn      = 5;       %number of burn-in years
-elseif strcmp(case_str,'boo') == 1
-    mm.S         = 10000;   % number of potential exporting firms to simulate 
-    mm.burn      = 5;      %number of burn-in years
-else
-    mm.S         = 10000;   % number of potential exporting firms to simulate
-    mm.burn      = 5;      %number of burn-in years
-end
+mm.S         = 25000;    % number of potential exporting firms to simulate 
+mm.burn      = 5;       %number of burn-in years
 
 %% Simulation restrictions (these are irrelevant for discrete_sim version of code)
 mm.maxc            = 50000; %maximum number of current clients (follows old program) 
@@ -97,15 +76,10 @@ mm.cost_h = @(x,net) (mm.cs_h * ((1+x).^mm.kappa1-(1+mm.kappa1*x))) /(mm.kappa1*
 mm.cost_f = @(x,net) (mm.cs_f * ((1+x).^mm.kappa1-(1+mm.kappa1*x))) /(mm.kappa1*(1 + log(net))^mm.gam);
 
 mm.l_opt_func_h = @(a,net,pi,V_succ,V_fail,V_orig)... 
-    max(max(((1+log(net))^gam*(a*(pi+V_succ) + (1-a)*V_fail - V_orig)/mm.cs_h)+1,0).^(1/(mm.kappa1-1))-1,0);            
+    max(max(((1+log(net))^mm.gam*(a*(pi+V_succ) + (1-a)*V_fail - V_orig)/mm.cs_h)+1,0).^(1/(mm.kappa1-1))-1,0);            
 mm.l_opt_func_f = @(a,net,pi,V_succ,V_fail,V_orig)... 
-    max(max(((1+log(net))^gam*(a*(pi+V_succ) + (1-a)*V_fail - V_orig)/mm.cs_f)+1,0).^(1/(mm.kappa1-1))-1,0);            
+    max(max(((1+log(net))^mm.gam*(a*(pi+V_succ) + (1-a)*V_fail - V_orig)/mm.cs_f)+1,0).^(1/(mm.kappa1-1))-1,0);            
     
-
-% mm.cost = @(x,n) (mm.cs * (1+x).^(1+1/mm.b)-1)/((1+1/mm.b)*n^mm.gam);
-%     c = @(x,n) ((1+x).^(1+1/bet)-1)/((1+1/bet)*n^gam*scl/cscale); 
-% The above line is copied from sim_solve_h.
-% JT: note that multiplying by cscale/scl doesn't get one back to the true cost function
 %% Exogenous Jump Process Parameters
 
 % Uncomment commands below to reestimate exogenous variables
@@ -161,7 +135,7 @@ for k = 1:2 * mm.phi_size + 1
     erg_pp(k) = normpdf(-3 + 3/mm.phi_size * (k-1));
 end
 erg_pp = erg_pp./sum(erg_pp);
-Phi = (-3:3/mm.phi_size:3)' * X(9);
+Phi = (-3:3/mm.phi_size:3)' * mm.sig_p;
 Q_p = zeros(2 * mm.phi_size + 1); % impose that phi is constant over time
 
 % get the home and foreign aggregate intensity matrices 
@@ -193,8 +167,8 @@ mm.L_f          = L_f;      %arrival rate for jumps in foreign macro shock
 mm.D_f          = D_f;      %size of jump in foreign macro shock
 mm.Q_f          = Q_f;      %intensity matrix for foreign macro shock
 
-mm.L_p          = L_p;      %arrival rate for jumps in own productivity
-mm.D_p          = D_p;      %size of jump in own productivity
+mm.L_p          = 0;      %arrival rate for jumps in own productivity
+mm.D_p          = 0;      %size of jump in own productivity
 mm.Q_p          = Q_p;      %intensity matrix for own productivity
 mm.erg_pp       = erg_pp;   %ergodic distribution of seller productivities
 
@@ -209,7 +183,4 @@ mm.Q0_f         = Q0_f;     %intensity matrix for foreign state
 mm.Q0_h_d       = Q0_h_d;   %home with zeros on diagonal
 mm.Q0_f_d       = Q0_f_d;   %foreign with zeros on diagonal
 
-if case_str == 'pol'
-    % This script switches all home specific variables to foreign to calculate full information foreign search behavior
-    make_foreign_home;
-end
+

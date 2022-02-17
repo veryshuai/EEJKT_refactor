@@ -62,6 +62,12 @@ if nanflag>0
         D = D * 10; 
 end
 
+%%  data/model comparison  
+mmm = cat(2,Data',Model);  
+    
+max_clients = size(ff_sim_max,1);
+nfirm_per_yr = agg_nfirm/(mm.tot_yrs - mm.burn);
+nexpr_per_yr = agg_nexptr/(mm.tot_yrs - mm.burn);
 
         % Create Diagnostics
     inv_W = W^-1;
@@ -91,12 +97,7 @@ end
    fprintf( '\r\n  ');   
     
         
-%%  data/model comparison  
-    mmm = cat(2,Data',Model);  
-    
-    max_clients = size(ff_sim_max,1);
-    nfirm_per_yr = agg_nfirm/(mm.tot_yrs - mm.burn);
-    nexpr_per_yr = agg_nexptr/(mm.tot_yrs - mm.burn);
+
     
     format shortG
     fprintf('\r\n moments: ');
@@ -154,9 +155,6 @@ end
 plots
 summary_tables_v2 
 estimate_summary
- 
-sortmat = sortrows(agg_mat_yr_sales,[2 3 1]); 
-sortmat(:,1) = floor(sortmat(:,1)./mm.pd_per_yr);
 
 shouldMatchMoments(mmm,W_D,"test");
 

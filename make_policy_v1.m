@@ -1,7 +1,6 @@
 % Executed by inten_sim_v1, this script calls solve_v1 to generate policy
 % functions for both markets.
 
-
 % First half policy 
 
 case_str = 'non';

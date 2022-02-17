@@ -1,33 +1,38 @@
-% script SetParams
-%This script is a handy way to deal with all the parameters of the model.
-%The settings here are passed into the main program.
-
-case_str = 'est';
+function mm = setModelParameters(X)
 
 mm = struct();
+
+%% parameters no longer used that still require values
+ag         =  .5;
+bg         =  .5;
+L_p        =  0;
+D_p        =  0;
+alp        =  0;
+
+
 %% technology parameters
 mm.pd_per_yr = 12;        % number of periods per year
 mm.r         = 0.05/mm.pd_per_yr;   % Rate of time preference per period
 mm.d         = 0.03/mm.pd_per_yr;   % Component of time preference due to exogenous death
-mm.delta     = delta/mm.pd_per_yr;  % Exogenous match separation rate 
-mm.b         = beta;      % Cost function parameter
-mm.scale_f   = scale_f;   % Export profit function scale parameter
-mm.scale_h   = scale_h;   % Domestic profit function scale parameter
+mm.delta     = 0.326/mm.pd_per_yr;  % Exogenous match separation rate 
+mm.b         = 1;      % Cost function parameter
+mm.scale_f   = X(12);   % Export profit function scale parameter
+mm.scale_h   = X(2);   % Domestic profit function scale parameter
 mm.eta       = 5;         % Demand elasticity 
-mm.gam       = gam;       % Network effect parameter
-mm.cs_h      = cs_h;      % Cost scaling parameter, home market
-mm.cs_f      = cs_f;      % Cost scaling parameter, foreign market
+mm.gam       = X(7);       % Network effect parameter
+mm.cs_h      = exp(X(8));      % Cost scaling parameter, home market
+mm.cs_f      = exp(X(11));      % Cost scaling parameter, foreign market
 
 %% Theta distributions
 
-mm.ah        = ah;        % Beta function, home (theta1) success parameter
-mm.bh        = bh;        % Beta function, home (theta1) failure parameter
+mm.ah        = X(4)*X(3); % Beta function, home (theta1) success parameter
+mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
 mm.af        = mm.ah;     % Beta function, foreign (theta2) success parameter (assume same as home)
 mm.bf        = mm.bh;     % Beta function, foreign (theta2) success parameter (assume same as home)
 mm.ag        = ag;        % Beta function, theta0 success parameter (unused)
 mm.bg        = bg;        % Beta function, theta0 failure parameter (unused)
-mm.F_f       = F_f;       % cost of maintaining a client- foreign
-mm.F_h       = F_h;       % cost of maintaining a client- home 
+mm.F_f       = exp(X(10));       % cost of maintaining a client- foreign
+mm.F_h       = exp(X(1)); % cost of maintaining a client- home 
 mm.alpha     = alp;       % weight of "common" theta in determining match probabilities (set to 0)
 
 %% Discretization of state-space
@@ -141,12 +146,12 @@ mm.l_opt_func_f = @(a,net,pi,V_succ,V_fail,V_orig)...
 %%
 load exog_est/exog.mat  % see comment above for contents of exog.mat
 
-L_b = L_b/mm.pd_per_yr;
+L_b = X(6)/mm.pd_per_yr;
 L_h = L_h/mm.pd_per_yr;
 L_f = L_f/mm.pd_per_yr;
 
-L_z = L_z/mm.pd_per_yr;
-D_z = D_z/mm.pd_per_yr;
+L_z = 4/mm.pd_per_yr;
+D_z = X(5)/mm.pd_per_yr;
 [Q_z,Z] = makeq(L_z,D_z,mm.z_size);
 erg_pz = make_erg(L_z,D_z,Z); 
 
@@ -156,7 +161,7 @@ for k = 1:2 * mm.phi_size + 1
     erg_pp(k) = normpdf(-3 + 3/mm.phi_size * (k-1));
 end
 erg_pp = erg_pp./sum(erg_pp);
-Phi = (-3:3/mm.phi_size:3)' * sig_p;
+Phi = (-3:3/mm.phi_size:3)' * X(9);
 Q_p = zeros(2 * mm.phi_size + 1); % impose that phi is constant over time
 
 % get the home and foreign aggregate intensity matrices 

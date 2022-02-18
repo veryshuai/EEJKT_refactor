@@ -1,4 +1,4 @@
-function [lambda_f,lambda_h,pi_h,pi_f,c_val_h,c_val_f,my_flag,value_h,value_f] = solve_v1(mm)
+function policy = solve_v1(mm)
 
     policy = struct();
         
@@ -8,6 +8,6 @@ function [lambda_f,lambda_h,pi_h,pi_f,c_val_h,c_val_f,my_flag,value_h,value_f] =
     policy.postSuccessProb_f = makeForeignSuccessPosteriors(mm); %[trials,successes]
     
     [policy.value_h,policy.lambda_h] = solvePolicyHome(policy,mm);  
-%   [~,lf,flag_f] = val_loop_f(Q0_f,Q0_f_d,a_f,pi_f,mm); 
+    [policy.value_f,policy.lambda_f] = solvePolicyForeign(policy,mm); 
 
 end

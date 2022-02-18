@@ -14,8 +14,6 @@ function [new_v,nostop,differ] = val_func_iter(init,bet,a,pi,net,Q0,rh,diag_Q,Q0
          
          iter = iter + 1;
          if iter == max_iter
-             %display('WARNING: maximum iterations reached in value function iteration.  Results unreliable.  Value function difference stuck at:')
-             %differ
              nostop = 1;
          end
          
@@ -25,11 +23,8 @@ function [new_v,nostop,differ] = val_func_iter(init,bet,a,pi,net,Q0,rh,diag_Q,Q0
             new_v = sim_solve(old_v,bet,a,pi,N+1-m,j,size(Q0,1),rh,diag_Q,Q0_d,V_fail,V_succ,gam,scl,cscale,c,l_opt_func) + old_v;
          end
          
-         %differ = max(abs(new_v - old_v));
-         differ = sum(sum((new_v - old_v).*(new_v - old_v))); %this is the fsolve definition
+         differ = sum(sum((new_v - old_v).*(new_v - old_v))); 
          differ_rel = differ / max_pi;
-         %differ = max(abs(new_v - old_v)./old_v)
-         %damp = rand * damp;
          damp = min(max_damp,1 - 1/iter);
          old_v = damp * old_v + (1 - damp) * new_v;
      end

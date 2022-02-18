@@ -25,7 +25,6 @@ for j=1:size(mm.Phi)
         display('WARNING: makepie.m did not converge!');
     end
 
-    %new value function
     c_val_gross_new = (Q0_d * c_val + c_val * mm.Q_z_d' + mm.L_b * pi_z) / event_hazard ;          
     c_val_new = max(-F + c_val_gross_new,0);
     pi_z_new = squeeze(shipment_payoff(j,:,:)) + c_val_new;

@@ -1,61 +1,18 @@
 function [lambda_f,lambda_h,pi_h,pi_f,c_val_h,c_val_f,my_flag,value_h,value_f] = solve_v1(mm)
-% called from make_policy_v1. This function akes current parameters and 
-% calculates value and policy functions
 
-    % Read in parameters
-    scale_f     = mm.scale_f;       % log of export profit function scale parameter
-    scale_h     = mm.scale_h;       % log of domestic profit function scale parameter
-    net_size    = mm.net_size;      % max number of network effects
-    n_size      = mm.n_size;        % Maximum number of informative signals per firm
-    n_phi       = 2*mm.phi_size+1;  % number of different discretized seller productivities
-    n_x         = 2*mm.x_size+1;    % Number of different discretized macro shocks; same for home and foreign
-    n_z         = 2*mm.z_size+1;    % Number of discretized buyer states
-    dim0        = mm.dim0;          % Number of possible theta0 values (common to both markets)
-    dim1        = mm.dim1;          % Number of possible theta1 values (specific to home market);
-    th_g        = mm.theta0;        % common theta grid
-    th_h        = mm.theta1;        % home theta grid
-    th_f        = mm.theta2;        % foreign theta grid
-    af          = mm.af;            % beta function parameter for foreign theta draws
-    bf          = mm.bf;            % beta function parameter for foreign theta draws
-    alp         = mm.alpha;         % weight of "common" theta in determining match probabilities (zeroed out) 
-    Z           = mm.Z;        %buyer productivities 
-    st_h        = mm.st_h;     %home state, incl. macro and Phi (for use with intensity matrix)
-    st_f        = mm.st_f;     %foreign state, incl. macro and Phi (for use with intensity matrix)
-    Q_z         = mm.Q_z;      %intensity matrix for buyer shocks 
-    Q_z_d       = mm.Q_z_d;    %buyer shock intensity matrix with zeros on the diagonal
-    erg_pz      = mm.erg_pz;   %ergodic distribution of buyer productivities 
-    Q0_h        = mm.Q0_h;     %intensity matrix for home state
-    Q0_f        = mm.Q0_f;     %intensity matrix for foreign state
-    Q0_h_d      = mm.Q0_h_d;   %home with zeros on diagonal
-    Q0_f_d      = mm.Q0_f_d;   %foreign with zeros on diagonal
-    Phi         = mm.Phi;      %vector of seller productivites
+    policy = struct();
         
-    F_f         = mm.F_f;      %fixed costs of maintaining a relationship foreign
-    F_h         = mm.F_h;      %fixed costs of maintaining a relationship home
+    [policy.pi_f,policy.c_val_f] = solveExpectedMatchProfit(mm.scale_f,mm.X_f,mm.Q_f,mm.Q_f_d,mm.F_f,mm); %pi[prod,macro]
+    [policy.pi_h,policy.c_val_h] = solveExpectedMatchProfit(mm.scale_h,mm.X_h,mm.Q_h,mm.Q_h_d,mm.F_h,mm); %c_val[prod,macro,demand shk]
 
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%=====Solution=====%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
-    %% CALCULATE VALUE OF PROFIT STREAM FOR SUCCESSFUL MATCH
-    
-    [pi_f,~,c_val_f] = makepie(scale_f,st_f,Z,Q0_f,Q0_f_d,Q_z,Q_z_d,erg_pz,F_f,mm);
-    [pi_h,~,c_val_h] = makepie(scale_h,st_h,Z,Q0_h,Q0_h_d,Q_z,Q_z_d,erg_pz,F_h,mm);
     
     %% CALCULATE POSTERIOR MATCH PROBABILITIES
     
-    % foreign posterior distribution for theta
-    a_f = makepost(n_size,th_g,af,bf,alp); %[trials,successes,th_g]
-
-    % home posterior distribution for theta
-    a_h = ones(size(th_g,2),size(th_h,2));
-    for m = 1:size(th_g,2)
-        for j = 1:size(th_h,2)
-            a_h(m,j) = th_g(m) * alp + th_h(j)*(1-alp);
-        end
-    end
+    postSuccessProb_f = makeForeignSuccessPosteriors(mm); %[trials,successes]
     
     %% SOLVE FOR SEARCH EFFORTS AT HOME AND IN FOREIGN MARKET
     
-%     [~,lh,flag_h] = val_loop_h(Q0_h,Q0_h_d,a_h,pi_h,mm); 
+     [valh,lh,flag_h] = solvePolicyHome(policy,mm);  
 %     [~,lf,flag_f] = val_loop_f(Q0_f,Q0_f_d,a_f,pi_f,mm); 
  
 % parallelize the foreign and domestic policy function calculations
@@ -65,10 +22,10 @@ function [lambda_f,lambda_h,pi_h,pi_f,c_val_h,c_val_f,my_flag,value_h,value_f] =
 %  for nnn=1:2
     parfor nnn=1:2
         if nnn==1
-    [val{nnn},ll{nnn},flag_test(nnn)] = val_loop_h(Q0_h,Q0_h_d,a_h,pi_h,mm); 
+    [val{nnn},ll{nnn},flag_test(nnn)] = solvePolicyHome(policy,mm); 
     % args of ll(1): [home macro & prod state, general type (not used),theta_h, network effect]
         elseif nnn==2
-    [val{nnn},ll{nnn},flag_test(nnn)] = val_loop_f(Q0_f,Q0_f_d,a_f,pi_f,mm); 
+    [val{nnn},ll{nnn},flag_test(nnn)] = val_loop_f(Q0_f,Q0_f_d,postSuccessProb_f,pi_f,mm); 
      % args of ll(2): [foreign macro & prod state,trials,successes,general type(not used), network effect]
         end
     end

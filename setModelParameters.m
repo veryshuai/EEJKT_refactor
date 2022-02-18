@@ -136,12 +136,6 @@ for k = 1:2 * mm.phi_size + 1
 end
 erg_pp = erg_pp./sum(erg_pp);
 Phi = (-3:3/mm.phi_size:3)' * mm.sig_p;
-Q_p = zeros(2 * mm.phi_size + 1); % impose that phi is constant over time
-
-% get the home and foreign aggregate intensity matrices 
-
-[Q0_h,Q0_h_d,st_h] = makebigq(Q_p,Q_h,mm.phi_size,mm.x_size,Phi,X_h);
-[Q0_f,Q0_f_d,st_f] = makebigq(Q_p,Q_f,mm.phi_size,mm.x_size,Phi,X_f);
 
 %create Q_z with zeros on the diagonal (will use this later)
 Q_z_d = Q_z;
@@ -156,20 +150,22 @@ mm.Z            = Z;        %buyer productivities
 mm.Phi          = Phi;      %seller productivies
 mm.X_f          = X_f;      %foreign macro shocks
 mm.X_h          = X_h;      %home macro shocks
-mm.st_h         = st_h;     %home state (for use with intensity matrix)
-mm.st_f         = st_f;     %foreign state (for use with intensity matrix)
 
 mm.L_h          = L_h;      %arrival rate for jumps in home macro shock
 mm.D_h          = D_h;      %size of jump in home macro shock
 mm.Q_h          = Q_h;      %intensity matrix for home macro shock
+mm.Q_h_d = Q_h;
+j = size(Q_h,1);
+mm.Q_h_d(1:(j+1):end) = 0;
 
 mm.L_f          = L_f;      %arrival rate for jumps in foreign macro shock
 mm.D_f          = D_f;      %size of jump in foreign macro shock
 mm.Q_f          = Q_f;      %intensity matrix for foreign macro shock
+mm.Q_f_d = Q_f;
+j = size(Q_f,1);
+mm.Q_f_d(1:(j+1):end) = 0;
 
-mm.L_p          = 0;      %arrival rate for jumps in own productivity
-mm.D_p          = 0;      %size of jump in own productivity
-mm.Q_p          = Q_p;      %intensity matrix for own productivity
+
 mm.erg_pp       = erg_pp;   %ergodic distribution of seller productivities
 
 mm.L_z          = L_z;      %arrival rate for jumps in other firms productivity
@@ -177,10 +173,4 @@ mm.D_z          = D_z;      %size of jump in other firms productivity
 mm.Q_z          = Q_z;      %intensity matrix for demand shocks 
 mm.Q_z_d        = Q_z_d;    %with zeros on the diagonal
 mm.erg_pz       = erg_pz;   %ergodic distribution of demand shocks
-
-mm.Q0_h         = Q0_h;     %intensity matrix for home state
-mm.Q0_f         = Q0_f;     %intensity matrix for foreign state
-mm.Q0_h_d       = Q0_h_d;   %home with zeros on diagonal
-mm.Q0_f_d       = Q0_f_d;   %foreign with zeros on diagonal
-
 

@@ -19,7 +19,7 @@ for j = 1:size(mm.Phi)
             init = squeeze(V(1,k,mm.net_size-N+2,j,:));
             new_v = val_func_iter(init,mm.b,mm.theta1(k),policy.pi_h(j,:)',mm.net_size+1-N,mm.Q_h,mm.r,abs(diag(mm.Q_h)),mm.Q_h_d,squeeze(V(1,k,mm.net_size-N+2,j,:)),1,mm.gam,1,mm.cs_h,mm.v_tolerance,mm.v_rel_tolerance,1,[],[],[],mm.cost_h,mm.l_opt_func_h,policy.pi_h(j,:)');
             V(1,k,mm.net_size-N+1,j,:) = new_v;
-            [~,~,l_opt(1,k,mm.net_size+1-N,j,:)] = sim_solve_h(squeeze(V(1,k,mm.net_size+1-N,j,:)),mm.b,mm.theta1(k),policy.pi_h(j,:)',mm.net_size+1-N,size(mm.Q_h,1),mm.r,abs(diag(mm.Q_h)),mm.Q_h_d,squeeze(V(1,k,mm.net_size-N+2,j,:)),mm.gam,1,mm.cs_h,mm.cost_h,mm.l_opt_func_h);
+            [~,~,l_opt(1,k,mm.net_size+1-N,j,:)] = iterateValueFunction_h(squeeze(V(1,k,mm.net_size+1-N,j,:)),mm.theta1(k),policy.pi_h(j,:)',mm.net_size+1-N,mm.r,abs(diag(mm.Q_h)),mm.Q_h_d,squeeze(V(1,k,mm.net_size-N+2,j,:)),mm.cost_h,mm.l_opt_func_h);
 
         end
     end

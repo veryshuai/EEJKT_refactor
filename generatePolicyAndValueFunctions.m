@@ -7,7 +7,7 @@
 
  % Get policy functions
   
-    [lambda_f_orig,lambda_h_orig,pi_tilda_h_orig,pi_tilda_f_orig,c_val_h_orig,c_val_f_orig,flag_orig,value_h,value_f] = solve_v1(mm);    
+    policy = solve_v1(mm);    
 
         % Get policy and value functions
         lambda_f_new   =  lambda_f_orig;

@@ -212,7 +212,7 @@ trans_count    = zeros(N_Z+1,N_Z+1,N_firms); % counts transitions across buyer t
 %% Deal with endogenous and exogenous drops
 
 % identify z values at which exporters keep current matches from t-1 to t
-  keep_cli = c_val_f_orig(:,prod_ndx,macro_state_f(t-1))' > 0; % = 1 if want to keep type for t 
+  keep_cli = squeeze(c_val_f_orig(prod_ndx,macro_state_f(t-1),:))' > 0; % = 1 if want to keep type for t 
   drop_Zcut = N_Z - sum(keep_cli); % cutoff: matches dropped at z value <= drop_Zcut
   
 % count endogenous drops for all exporter hotel rooms (exporters): z too low to continue

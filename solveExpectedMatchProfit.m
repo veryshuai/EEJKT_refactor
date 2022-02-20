@@ -1,4 +1,4 @@
-function [expected_match_profit,c_val] = solveExpectedMatchProfit(pie_scale,X,Q0,Q0_d,F,mm)
+function [expected_match_profit,continuation_value] = solveExpectedMatchProfit(pie_scale,X,Q0,Q0_d,F,mm)
                                      
 event_hazard = mm.r + mm.delta + mm.L_b + abs(Q0(1,1)) + abs(mm.Q_z(1,1)); 
 

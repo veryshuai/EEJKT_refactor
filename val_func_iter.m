@@ -3,7 +3,6 @@ function [new_v] = val_func_iter(init,bet,a,pi,net,Q0,rh,diag_Q,Q0_d,V_succ,V_fa
      differ = 2;
      differ_rel = 2;
      old_v = init;
-     max_damp = 0;
      iter = 0;
      max_iter = 5e4;
      max_pi = max(pi_orig);
@@ -22,8 +21,7 @@ function [new_v] = val_func_iter(init,bet,a,pi,net,Q0,rh,diag_Q,Q0_d,V_succ,V_fa
 
          differ = sum(sum((new_v - old_v).*(new_v - old_v))); 
          differ_rel = differ / max_pi;
-         damp = min(max_damp,1 - 1/iter);
-         old_v = damp * old_v + (1 - damp) * new_v;
+         old_v = new_v;
          iter = iter + 1;
 
          if isnan(old_v)

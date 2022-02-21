@@ -12,8 +12,8 @@ function policy = solve_v1(mm)
 
     shouldMatchMoments(policy.pi_f,policy.c_val_f,"test","results/shouldMatchProfitsForeignData");
     shouldMatchMoments(policy.pi_h,policy.c_val_h,"test","results/shouldMatchProfitsHomeData");
-    shouldMatchMoments(val_f,lf,"test","results/shouldMatchPolicyForeignData");
-    shouldMatchMoments(val_h,lh,"test","results/shouldMatchPolicyHomeData");
+    shouldMatchMoments(policy.value_f,policy.lambda_f,"test","results/shouldMatchPolicyForeignData");
+    shouldMatchMoments(policy.value_h,policy.lambda_h,"test","results/shouldMatchPolicyHomeData");
 
     %pi[prod,macro]
     %c_val[demand shk, prod,macro]

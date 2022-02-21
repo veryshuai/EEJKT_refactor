@@ -155,16 +155,11 @@ mm.L_h          = L_h;      %arrival rate for jumps in home macro shock
 mm.D_h          = D_h;      %size of jump in home macro shock
 mm.Q_h          = Q_h;      %intensity matrix for home macro shock
 mm.Q_h_d = Q_h;
-j = size(Q_h,1);
-mm.Q_h_d(1:(j+1):end) = 0;
 
 mm.L_f          = L_f;      %arrival rate for jumps in foreign macro shock
 mm.D_f          = D_f;      %size of jump in foreign macro shock
 mm.Q_f          = Q_f;      %intensity matrix for foreign macro shock
 mm.Q_f_d = Q_f;
-j = size(Q_f,1);
-mm.Q_f_d(1:(j+1):end) = 0;
-
 
 mm.erg_pp       = erg_pp;   %ergodic distribution of seller productivities
 

@@ -108,7 +108,3 @@ pmat_cum_msh = cumsum(pmat_msh')';
 pmat_z = expm(mm.Q_z); 
 pmat_z = pmat_z./sum(pmat_z,2);
 pmat_cum_z = cumsum(pmat_z')';    
-
-
-
->>>>>>> solve_update

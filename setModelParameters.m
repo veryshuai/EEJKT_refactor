@@ -135,7 +135,7 @@ for k = 1:2 * mm.phi_size + 1
     erg_pp(k) = normpdf(-3 + 3/mm.phi_size * (k-1));
 end
 erg_pp = erg_pp./sum(erg_pp);
-Phi = (-3:3/mm.phi_size:3)' * sig_p;
+Phi = (-3:3/mm.phi_size:3)' * mm.sig_p;
 Q_p = zeros(2 * mm.phi_size + 1); % impose that phi is constant over time
 
 % Joint intensity matrix for productivity and aggregate shocks

@@ -196,7 +196,7 @@ for t = 2:1:periods
 %% Deal with endogenous and exogenous drops (not in pmat_cum_h)
 
 % identify z values at which exporters keep current matches from t-1 to t
-  keep_cli = squeeze(c_val_f_orig(prod_ndx,macro_state_h(t-1),:))' > 0; % = 1 if want to keep type for t
+  keep_cli = c_val_f_orig(:,prod_ndx,macro_state_h(t-1))' > 0; % = 1 if want to keep type for t
   drop_Zcut = N_Z - sum(keep_cli); % matches dropped at z value <= drop_Zcut
 % count endogenous drops (z too low to continue) 
   drop_cnt = sum(lag_cli_zst.*(1-keep_cli),2);

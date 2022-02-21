@@ -133,7 +133,7 @@ end
   prod_lvl  = mm.Phi(prod_ndx);
   succ_prob = mm.theta2(theta_ndx);
   
-  % number of firms to simulate of this particular typec_val_f_origc_val_f_origc_val_f_origc_val_f_origc_val_f_orig
+  % number of firms to simulate of this particular type
   N_firms = round(mm.erg_pp(prod_ndx)*th2_pdf(theta_ndx)*tot_sims);
   NN(pt_ndx) = N_firms;
     

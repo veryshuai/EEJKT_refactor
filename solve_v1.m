@@ -10,11 +10,6 @@ function policy = solve_v1(mm)
     [policy.value_h,policy.lambda_h] = solvePolicyHome(policy,mm);  
     [policy.value_f,policy.lambda_f] = solvePolicyForeign(policy,mm); 
 
-    shouldMatchMoments(policy.pi_f,policy.c_val_f,"test","results/shouldMatchProfitsForeignData");
-    shouldMatchMoments(policy.pi_h,policy.c_val_h,"test","results/shouldMatchProfitsHomeData");
-    shouldMatchMoments(policy.value_f,policy.lambda_f,"test","results/shouldMatchPolicyForeignData");
-    shouldMatchMoments(policy.value_h,policy.lambda_h,"test","results/shouldMatchPolicyHomeData");
+    policy = reshapePolicy(policy, mm);
 
-    %pi[prod,macro]
-    %c_val[demand shk, prod,macro]
 end

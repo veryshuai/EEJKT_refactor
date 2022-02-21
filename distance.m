@@ -29,6 +29,6 @@ plots;
 summary_tables_v2; 
 estimate_summary;
 
-shouldMatchMoments(dat_mod_moms,D,"test");
+shouldMatchMoments(dat_mod_moms,D,"test","results/shouldMatchMomentsData");
    
 end

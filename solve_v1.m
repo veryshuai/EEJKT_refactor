@@ -39,6 +39,9 @@ function [lambda_f,lambda_h,pi_h,pi_f,c_val_h,c_val_f,my_flag,value_h,value_f] =
     
     [pi_f,~,c_val_f] = makepie(scale_f,st_f,Z,Q0_f,Q0_f_d,Q_z,Q_z_d,erg_pz,F_f,mm);
     [pi_h,~,c_val_h] = makepie(scale_h,st_h,Z,Q0_h,Q0_h_d,Q_z,Q_z_d,erg_pz,F_h,mm);
+
+    shouldMatchMoments(pi_f,c_val_f,"test","results/shouldMatchProfitsForeignData");
+    shouldMatchMoments(pi_h,c_val_h,"test","results/shouldMatchProfitsHomeData");
     
     %% CALCULATE POSTERIOR MATCH PROBABILITIES
     
@@ -78,7 +81,9 @@ function [lambda_f,lambda_h,pi_h,pi_f,c_val_h,c_val_f,my_flag,value_h,value_f] =
     flag_f = flag_test(2);
     val_h = val{1};
     val_f = val{2};
-     
+
+    shouldMatchMoments(val_f,lf,"test","results/shouldMatchPolicyForeignData");
+    shouldMatchMoments(val_h,lh,"test","results/shouldMatchPolicyHomeData");
     
     my_flag = max(flag_h,flag_f); %flag = 1 means value function optimization did not end normally, flag = 0 means the loop ended normally.
 

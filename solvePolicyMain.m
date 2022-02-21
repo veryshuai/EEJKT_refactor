@@ -1,4 +1,4 @@
-function policy = solve_v1(mm)
+function policy = solvePolicyMain(mm)
 
     policy = struct();
 

@@ -7,7 +7,7 @@
 
  % Get policy functions
   
-    policy = solve_v1(mm);    
+    policy = solvePolicyMain(mm);    
 
     lambda_h = policy.lambda_h;
     lambda_f = policy.lambda_f;

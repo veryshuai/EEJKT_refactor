@@ -7,22 +7,14 @@
 
  % Get policy functions
   
-    [lambda_f_orig,lambda_h_orig,pi_tilda_h_orig,pi_tilda_f_orig,c_val_h_orig,c_val_f_orig,flag_orig,value_h,value_f] = solve_v1(mm);    
+    policy = solve_v1(mm);    
 
-        % Get policy and value functions
-        lambda_f_new   =  lambda_f_orig;
-        lambda_h_new   =  lambda_h_orig;
-        pi_tilda_h_new =  pi_tilda_h_orig;
-        pi_tilda_f_new =  pi_tilda_f_orig;
-        c_val_h_new    =  c_val_h_orig;
-        c_val_f_new    =  c_val_f_orig;
-        flag_new =  flag_orig;
-
-    %% 
-    
-    [lambda_f, lambda_h, c_val_f_orig, c_val_h_orig,value_f, value_h]  = ...
-        moms_decell(lambda_f_orig, lambda_h_orig, c_val_f_orig, c_val_h_orig,value_f,value_h);
-    
+    lambda_h = policy.lambda_h;
+    lambda_f = policy.lambda_f;
+    c_val_h_orig = policy.c_val_h;
+    c_val_f_orig = policy.c_val_f;
+    value_f = policy.value_f;
+    value_h = policy.value_h;
     % lambda_f (succ, trial, common succ rate (defunct), network size, prod of firm, F macro shock) 
     % lambda_h (common succ rate (defunct), known succ rate, network size, prod of firm, H macro shock)
     % c_val* (demand shock, prod of firm, macro shock)
@@ -118,3 +110,5 @@ pmat_z = pmat_z./sum(pmat_z,2);
 pmat_cum_z = cumsum(pmat_z')';    
 
 
+
+>>>>>>> solve_update

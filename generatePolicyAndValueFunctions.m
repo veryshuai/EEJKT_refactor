@@ -18,14 +18,7 @@
     % lambda_f (succ, trial, common succ rate (defunct), network size, prod of firm, F macro shock) 
     % lambda_h (common succ rate (defunct), known succ rate, network size, prod of firm, H macro shock)
     % c_val* (demand shock, prod of firm, macro shock)
-    
-    test_policy_funcs; %function to test that policy functions are monotonic in expected directions
-    
-%     test_val_f = squeeze(c_val_f_orig(15,:,:));
-%     test_lam_f1 = squeeze(lambda_f(7,10,1,7,:,:));
-%     test_lam_f2 = squeeze(lambda_f(5,10,1,5,:,:));
-%     diff_lam = test_lam_f1 - test_lam_f2;
-    
+        
     [nn1,nn2,nn3,nn4,N_prod,N_Xf] = size(lambda_f); 
     Q_size_f  = nn2*(nn2+1)/2;    % was nn1 instead of nn2--both have same value, but need to check arguments of lambda_f
     Q_index_f = zeros(Q_size_f,3); % [index,trials,successes]

@@ -4,6 +4,20 @@
         rng(80085,'twister');
     end
 
+    lambda_h = policy.lambda_h;
+    lambda_f = policy.lambda_f;
+    c_val_h_orig = policy.c_val_h;
+    c_val_f_orig = policy.c_val_f;
+    value_f = policy.value_f;
+    value_h = policy.value_h;
+    nn_h = 70; %apparently this was the total possible number of clients at home, set deep in the code
+    typemat = policy.firm_type_prod_succ_macro;
+    pmat_cum_f = policy.pmat_cum_f;
+    pmat_cum_h = policy.pmat_cum_h;
+    pmat_cum_msf = policy.pmat_cum_msf;
+    pmat_cum_msh = policy.pmat_cum_msh;
+    pmat_cum_z = policy.pmat_cum_z;
+
 % control size of simulated dataset
 tot_sims  = mm.S; % total number of firms to simulate
 tot_yrs   = mm.tot_yrs; % total number of years to simulate
@@ -44,8 +58,8 @@ for t = 2:periods
 end
 
 %% Create objects that will store firm-type specific simulated data
-% pt_type = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')];
-N_pt    = N_Phi*N_theta2;
+% pt_type = [kron((1:size(mm.Phi,1))',ones(size(mm.theta2,2),1)),kron(ones(size(mm.Phi,1),1),(1:size(mm.theta2,2))')];
+N_pt    = size(mm.Phi,1)*size(mm.theta2,2);
 
 s_mat_yr_sales    = cell(N_pt,1); % for analysis of match dynamics
 s_mat_yr_sales_adj= cell(N_pt,1); % for analysis of match exits
@@ -59,7 +73,7 @@ s_x_fsales_h      = cell(N_pt,1); % for home sales AR1 residuals
 s_y_fsales_h      = cell(N_pt,1); % for home sales AR1 residuals
 s_time_gaps       = cell(N_pt,1); % for match hazard analysis
 
-firm_cntr = zeros(N_Phi,N_theta2);  % simulated firm counter, by type
+firm_cntr = zeros(size(mm.Phi,1),size(mm.theta2,2));  % simulated firm counter, by type
 
 % match level moment aggregators
 s_moms_xx   = zeros(N_pt,4,4);
@@ -113,14 +127,14 @@ th1_cdf  = betacdf(mm.theta1,mm.ah,mm.bh); % cdf for home theta draws
 th1_cdf(N_theta1) = 1; % to deal with rounding problem
 
 %seed_cntr = 1:1:N_pt;
-seeds = randi(1e6,N_Phi,2);
+seeds = randi(1e6,size(mm.Phi,1),2);
 tic3 = tic;
 too_slow = zeros(N_pt,1); % flags when jumped out of matdat_gen loops
 
-pt_type = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')];
+pt_type = [kron((1:size(mm.Phi,1))',ones(size(mm.theta2,2),1)),kron(ones(size(mm.Phi,1),1),(1:size(mm.theta2,2))')];
 
-parfor pt_ndx = 1:1:N_pt
-%   for pt_ndx = 1:1:N_pt % use this for loop for debugging only
+%parfor pt_ndx = 1:1:N_pt
+   for pt_ndx = 1:1:N_pt % use this for loop for debugging only
 
 prod_ndx  = pt_type(pt_ndx,1);
 theta_ndx = pt_type(pt_ndx,2);
@@ -134,7 +148,7 @@ end
   succ_prob = mm.theta2(theta_ndx);
   
   % number of firms to simulate of this particular type
-  N_firms = round(mm.erg_pp(prod_ndx)*th2_pdf(theta_ndx)*tot_sims);
+  N_firms = round(mm.erg_pp(prod_ndx)*policy.th2_pdf(theta_ndx)*tot_sims);
   NN(pt_ndx) = N_firms;
     
    if N_firms>0
@@ -150,7 +164,7 @@ end
    s_sum_exits(pt_ndx),s_mat_exit_moms_xx(pt_ndx,:,:),mat_exit_moms_xy,...
      s_mat_exit_x{pt_ndx} ,s_mat_exit_y{pt_ndx},s_mat_obs(pt_ndx),s_nmat_exit(pt_ndx),...
     s_ship_obs(pt_ndx),s_ln_ships(pt_ndx), s_match_count(pt_ndx,:),abort_flag_f]...
-      = matchdat_gen_f(N_firms,N_types,N_Z,N_Phi,N_mic_state,pd_per_yr,frac_of_year,periods,max_ships,typemat,macro_state_f,...
+      = matchdat_gen_f(N_firms,N_types,size(mm.Z,1),size(mm.Phi,1),N_mic_state,pd_per_yr,frac_of_year,periods,max_ships,typemat,macro_state_f,...
               theta_ndx,prod_ndx,mm,pmat_cum_f,c_val_f_orig,succ_prob,prod_lvl,cum_pz,poisCDF,...
               prob_mdeath,prob_fdeath,haz_ship,pmat_cum_z,mm.n_size+1,mm.net_size+1,lambda_f,max_match);
           
@@ -165,7 +179,7 @@ end
  
    [firm_h_yr_sales,s_x_fsales_h{pt_ndx},s_y_fsales_h{pt_ndx},theta_h_firm,s_fmoms_h_xx(pt_ndx,:,:),...
       fmoms_h_xy,s_fysum_h(pt_ndx), s_fnobs_h(pt_ndx),abort_flag_h]...
-      = matchdat_gen_h(N_firms,N_Z,N_Phi,nn_h,pd_per_yr,frac_of_year,periods,max_ships,typemat,macro_state_h,...
+      = matchdat_gen_h(N_firms,size(mm.Z,1),size(mm.Phi,1),nn_h,pd_per_yr,frac_of_year,periods,max_ships,typemat,macro_state_h,...
               theta_ndx,prod_ndx,mm,pmat_cum_h,c_val_h_orig,cum_pz,poisCDF,...
               prob_mdeath,prob_fdeath,haz_ship,pmat_cum_z,N_theta1,th1_cdf);
  %%         

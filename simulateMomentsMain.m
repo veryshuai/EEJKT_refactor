@@ -17,30 +17,13 @@ pmat_cum_msf = policy.pmat_cum_msf;
 pmat_cum_msh = policy.pmat_cum_msh;
 pmat_cum_z = policy.pmat_cum_z;
 
-% control size of simulated dataset
+
+
 periods   = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
+max_ships = 3*round(mm.L_b); % maximum within-period shipments is triple expected number
+poisCDF_shipments   = poisscdf(1:1:max_ships,mm.L_b);
 
-% convert hazards to per-period probabilities
-prob_mdeath = 1-exp(-mm.delta);  % per period probability of match death
-prob_fdeath = 1-exp(-mm.firm_death_haz);      % per period probability of firm death
-
-% construct CDF for within-period shipments of active matches
-haz_ship  =  mm.L_b;           % shipment hazard
-max_ships = 3*round(haz_ship); % maximum within-period shipments is triple expected number
-poisCDF   = poisscdf(1:1:max_ships,haz_ship);
-
-% create CDF for match shocks (for later use inside loop)
-cum_pz    = cumsum(mm.erg_pz);
-
-% create macro trajectory
-macro_state_f    = zeros(periods,1);
-macro_state_f(1) = 8; %  start macro trajectory at midpoint of distribution
-macro_state_h    = zeros(periods,1);
-macro_state_h(1) = 8; %  start macro trajectory at midpoint of distribution
-for t = 2:periods
-    macro_state_f(t) = find(pmat_cum_msf(macro_state_f(t-1),:)>rand(1,1),1,'first'); % update macro state
-    macro_state_h(t) = find(pmat_cum_msh(macro_state_h(t-1),:)>rand(1,1),1,'first'); % update macro state
-end
+[macro_state_f, macro_state_h] = simulateMacroTrajectories(periods, policy);
 
 %% Create objects that will store firm-type specific simulated data
 N_pt    = size(mm.Phi,1)*size(mm.theta2,2);
@@ -148,8 +131,8 @@ parfor pt_ndx = 1:1:N_pt
             s_mat_exit_x{pt_ndx} ,s_mat_exit_y{pt_ndx},s_mat_obs(pt_ndx),s_nmat_exit(pt_ndx),...
             s_ship_obs(pt_ndx),s_ln_ships(pt_ndx), s_match_count(pt_ndx,:),abort_flag_f]...
             = matchdat_gen_f(N_firms,policy.firm_type_prod_succ_macro,size(mm.Z,1),size(mm.Phi,1),size(pmat_cum_f{1},2),mm.pd_per_yr,1/mm.pd_per_yr,periods,max_ships,typemat,macro_state_f,...
-            theta_ndx,prod_ndx,mm,pmat_cum_f,c_val_f_orig,succ_prob,prod_lvl,cum_pz,poisCDF,...
-            prob_mdeath,prob_fdeath,haz_ship,pmat_cum_z,mm.n_size+1,mm.net_size+1,lambda_f,max_match);
+            theta_ndx,prod_ndx,mm,pmat_cum_f,c_val_f_orig,succ_prob,prod_lvl,cumsum(mm.erg_pz),poisCDF_shipments,...
+            1-exp(-mm.delta),1-exp(-mm.firm_death_haz),mm.L_b,pmat_cum_z,mm.n_size+1,mm.net_size+1,lambda_f,max_match);
 
         s_fmoms_xy(pt_ndx,:) = fmoms_xy';
         s_exit_xy(pt_ndx,:,:) = exit_xy';
@@ -159,8 +142,8 @@ parfor pt_ndx = 1:1:N_pt
         [firm_h_yr_sales,s_x_fsales_h{pt_ndx},s_y_fsales_h{pt_ndx},theta_h_firm,s_fmoms_h_xx(pt_ndx,:,:),...
             fmoms_h_xy,s_fysum_h(pt_ndx), s_fnobs_h(pt_ndx),abort_flag_h]...
             = matchdat_gen_h(N_firms,size(mm.Z,1),size(mm.Phi,1),nn_h,mm.pd_per_yr,1/mm.pd_per_yr,periods,max_ships,typemat,macro_state_h,...
-            theta_ndx,prod_ndx,mm,pmat_cum_h,c_val_h_orig,cum_pz,poisCDF,...
-            prob_mdeath,prob_fdeath,haz_ship,pmat_cum_z,N_theta1,th1_cdf);
+            theta_ndx,prod_ndx,mm,pmat_cum_h,c_val_h_orig,cumsum(mm.erg_pz),poisCDF_shipments,...
+            1-exp(-mm.delta),1-exp(-mm.firm_death_haz),mm.L_b,pmat_cum_z,N_theta1,th1_cdf);
 
         s_fmoms_h_xy(pt_ndx,:) = fmoms_h_xy';
 

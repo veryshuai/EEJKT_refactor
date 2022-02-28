@@ -270,73 +270,10 @@ trans_count    = zeros(N_Z+1,N_Z+1,N_firms); % counts transitions across buyer t
     end
     
     
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
-    % The following block is solely for de-bugging, and can be commented out
 
-%    if i == N_firms  % matrices must fully loaded before tests
-%     adds = cat(2,sum(new_cli_zst,2),add_cli_cnt(:,t))' ;
-%     dies = cat(2,sum(die_cli_zst,2),exog_deaths(:,t-1))'; 
-%     surv = cat(2,sum(surviv_zst,2),sum(trans_zst,2))' ;
-%     zst_test = cat(2,cur_cli_cnt(:,t-1),reshape(sum(sum(trans_count(2:N_Z+1,:,:),2),1),N_firms,1))';
-%    %     [type,prod_ndx,theta_ndx,t,season]
-%       try     
-%        assert(sum((adds(1,:)-adds(2,:)).^2)==0)
-%       catch
-%         [t,season,year,prod_ndx,theta_ndx,macro_state(t)]
-%         warning('new client figures inconsistent: new_cli_zst versus add_cli_cnt')
-%         adds
-%       end
-%       try
-%          assert(sum((dies(1,:)-dies(2,:)).^2)==0)
-%       catch
-%          [t,season,year,prod_ndx,theta_ndx,macro_state(t)]
-%          warning('dying client figures inconsistent: die_cli_zst versus exog_deaths')
-%          dies
-%       end
-%       try
-%          assert(sum((surv(1,:)-surv(2,:)).^2)==0)
-%       catch
-%          [t,season,year,prod_ndx,theta_ndx,macro_state(t)]
-%          warning('survivor counts inconsistent: surviv_zst versus trans_zst')
-%          surv
-%       end
-%       try
-%         assert(sum((zst_test(1,:)-zst_test(2,:)).^2)==0)
-%       catch
-%          [t,season,year,prod_ndx,theta_ndx,macro_state(t)]
-%          warning('transition counts inconsistent: cur_cli_cnt versus trans_count')
-%          zst_test
-%       end
-%     end 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    end
  cur_cli_zst = new_cli_zst + trans_zst; 
  
-%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-% Some more debugging stuff at this point has been moved to "debug_scraps_discrete_sim.m
-%
-% 
-% try
-%   assert(min(min(cur_cli_zst))>=0)
-% %  [cur_cli_cnt(:,t),reshape(sum(sum(trans_mat(:,2:N_Z+1,:,type),2),1),N_firms,1)]'
-% catch
-%   fprintf('\r Warning: minimum cur_cli_zst < 0 %.1f\n', min(min(cur_cli_zst))); 
-% %  'pause here'
-% end
-% try
-%   assert(max(abs(cur_cli_cnt(:,t) - reshape(sum(sum(trans_count(:,2:N_Z+1,:),2),1),N_firms,1)))==0) 
-% %  [incumb.*add_cli_cnt(:,t),incumb.*reshape(sum(sum(trans_mat(1,2:N_Z+1,:,type),2),1),N_firms,1)]'
-% catch
-%     fprintf('\r Warning: current client counts messed up'); 
-% end
-% try
-%   assert(max(abs(incumb.*add_cli_cnt(:,t) -...
-%       incumb.*reshape(sum(sum(trans_count(1,2:N_Z+1,:),2),1),N_firms,1)))==0) ;
-% catch
-%     fprintf('\r Warning: client addition counts messed up');  
-% end
- 
-%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
 %% Deal with dormant firms: if a firm has no clients for more than one year,   
 %  kick it out of its slot and start a new firm
@@ -358,12 +295,6 @@ end
   age       = t*ones(N_firms,1) - flr;     % age in periods. age=0 all year for firms with no shipment previous year
   flrlag    = flr ; % carry floor forward for continuing matches
   cumage    = cat(2,cumage,age);
-
-  % Calculate time (in years) in export market 
-%   yr_age    = floor(age.*frac_of_year);
-%   yr_flr    = max(yr_flrlag, year*new_firm(:,t));
-%   yr_age    = year*ones(N_firms,1) - yr_flr;
-%   yr_flrlag = yr_flr;
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       
 %% Construct period-specific variables

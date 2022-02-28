@@ -9,8 +9,7 @@ X = [-3.60529  -3.87941  0.23156  2.46487  1.88176  15.42634 0.38246  11.72211  
     
 mm = setModelParameters(X);
 policy = generatePolicyAndValueFunctions(mm);
-%TBA = generatePolicyAndValueFunctions(mm);
-discrete_sim_parfor3;
+simulateMomentsMain;
 
 [Data, W, Model] = read_in_and_organize_moments(simMoms);
 

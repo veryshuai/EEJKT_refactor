@@ -1,12 +1,6 @@
 function policy = makeExporterTransitionProbabilities(mm,policy)
 
 
-
-% (1) micro state (2) # matches (3) # successes
-% structure chosen to be symmetric with Q_index_f. Only one column
-% really needed: we only keep track of successes in home market
-
-
 %% calculate probabilities of generic firm types (theta draw by Z draw)
 
 th2_cdf = betacdf(mm.theta2,mm.af,mm.bf); % cdf for foreign theta draws

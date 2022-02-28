@@ -1,8 +1,5 @@
 function policy = makeExporterTransitionProbabilities(mm,policy)
 
-
-%% calculate probabilities of generic firm types (theta draw by Z draw)
-
 th2_cdf = betacdf(mm.theta2,mm.af,mm.bf); % cdf for foreign theta draws
 policy.th2_pdf = [th2_cdf(1),th2_cdf(2:mm.dim1)-th2_cdf(1:mm.dim1-1)]; 
 

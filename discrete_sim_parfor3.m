@@ -37,7 +37,7 @@ N_mic_state   = size(pmat_cum_f{1},2); % number of micro states for any given ty
 
 % convert hazards to per-period probabilities
 prob_mdeath = 1-exp(-mm.delta);  % per period probability of match death 
-prob_fdeath = 1-exp(-mm.d);      % per period probability of firm death 
+prob_fdeath = 1-exp(-mm.firm_death_haz);      % per period probability of firm death 
 
 % construct CDF for within-period shipments of active matches
 haz_ship  =  mm.L_b;           % shipment hazard

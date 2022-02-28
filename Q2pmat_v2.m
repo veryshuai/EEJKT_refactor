@@ -1,4 +1,4 @@
-function [pmat_type,pmat_cum,Q_size] = Q2pmat_v2(mm,nn2,typemat,lambda,Q_size,Q_index,f_dummy)
+function [pmat_type,pmat_cum,Q_size] = intensityToProbability(mm,nn2,typemat,lambda,Q_size,Q_index,f_dummy)
 
 % Called from inten_sim_v1, this function uses intensity matricies to 
 % calculates the discrete time period-to-period state transition probabilities 

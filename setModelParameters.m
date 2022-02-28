@@ -5,7 +5,7 @@ mm = struct();
 %% technology parameters
 mm.pd_per_yr = 12;        % number of periods per year
 mm.r         = 0.05/mm.pd_per_yr;   % Rate of time preference per period
-mm.d         = 0.03/mm.pd_per_yr;   % Component of time preference due to exogenous death
+mm.firm_death_haz = 0.03/mm.pd_per_yr;   % Component of time preference due to exogenous death
 mm.delta     = 0.326/mm.pd_per_yr;  % Exogenous match separation rate 
 mm.b         = 1;      % Cost function parameter
 mm.scale_f   = X(12);   % Export profit function scale parameter

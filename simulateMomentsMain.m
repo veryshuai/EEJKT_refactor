@@ -17,13 +17,7 @@ pmat_cum_msf = policy.pmat_cum_msf;
 pmat_cum_msh = policy.pmat_cum_msh;
 pmat_cum_z = policy.pmat_cum_z;
 
-
-
-periods   = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
-max_ships = 3*round(mm.L_b); % maximum within-period shipments is triple expected number
-poisCDF_shipments   = poisscdf(1:1:max_ships,mm.L_b);
-
-[macro_state_f, macro_state_h] = simulateMacroTrajectories(periods, policy);
+[macro_state_f, macro_state_h] = simulateMacroTrajectories(mm, policy);
 
 %% Create objects that will store firm-type specific simulated data
 N_pt    = size(mm.Phi,1)*size(mm.theta2,2);
@@ -39,8 +33,6 @@ s_y_hf            = cell(N_pt,1); % for home-foreign sales regression residuals
 s_x_fsales_h      = cell(N_pt,1); % for home sales AR1 residuals
 s_y_fsales_h      = cell(N_pt,1); % for home sales AR1 residuals
 s_time_gaps       = cell(N_pt,1); % for match hazard analysis
-
-firm_cntr = zeros(size(mm.Phi,1),size(mm.theta2,2));  % simulated firm counter, by type
 
 % match level moment aggregators
 s_moms_xx   = zeros(N_pt,4,4);
@@ -130,8 +122,8 @@ parfor pt_ndx = 1:1:N_pt
             s_sum_exits(pt_ndx),s_mat_exit_moms_xx(pt_ndx,:,:),mat_exit_moms_xy,...
             s_mat_exit_x{pt_ndx} ,s_mat_exit_y{pt_ndx},s_mat_obs(pt_ndx),s_nmat_exit(pt_ndx),...
             s_ship_obs(pt_ndx),s_ln_ships(pt_ndx), s_match_count(pt_ndx,:),abort_flag_f]...
-            = matchdat_gen_f(N_firms,policy.firm_type_prod_succ_macro,size(mm.Z,1),size(mm.Phi,1),size(pmat_cum_f{1},2),mm.pd_per_yr,1/mm.pd_per_yr,periods,max_ships,typemat,macro_state_f,...
-            theta_ndx,prod_ndx,mm,pmat_cum_f,c_val_f_orig,succ_prob,prod_lvl,cumsum(mm.erg_pz),poisCDF_shipments,...
+            = matchdat_gen_f(N_firms,policy.firm_type_prod_succ_macro,size(mm.Z,1),size(mm.Phi,1),size(pmat_cum_f{1},2),mm.pd_per_yr,1/mm.pd_per_yr,mm.periods,mm.max_ships,typemat,macro_state_f,...
+            theta_ndx,prod_ndx,mm,pmat_cum_f,c_val_f_orig,succ_prob,prod_lvl,cumsum(mm.erg_pz),mm.poisCDF_shipments,...
             1-exp(-mm.delta),1-exp(-mm.firm_death_haz),mm.L_b,pmat_cum_z,mm.n_size+1,mm.net_size+1,lambda_f,max_match);
 
         s_fmoms_xy(pt_ndx,:) = fmoms_xy';
@@ -141,8 +133,8 @@ parfor pt_ndx = 1:1:N_pt
 
         [firm_h_yr_sales,s_x_fsales_h{pt_ndx},s_y_fsales_h{pt_ndx},theta_h_firm,s_fmoms_h_xx(pt_ndx,:,:),...
             fmoms_h_xy,s_fysum_h(pt_ndx), s_fnobs_h(pt_ndx),abort_flag_h]...
-            = matchdat_gen_h(N_firms,size(mm.Z,1),size(mm.Phi,1),nn_h,mm.pd_per_yr,1/mm.pd_per_yr,periods,max_ships,typemat,macro_state_h,...
-            theta_ndx,prod_ndx,mm,pmat_cum_h,c_val_h_orig,cumsum(mm.erg_pz),poisCDF_shipments,...
+            = matchdat_gen_h(N_firms,size(mm.Z,1),size(mm.Phi,1),nn_h,mm.pd_per_yr,1/mm.pd_per_yr,mm.periods,mm.max_ships,typemat,macro_state_h,...
+            theta_ndx,prod_ndx,mm,pmat_cum_h,c_val_h_orig,cumsum(mm.erg_pz),mm.poisCDF_shipments,...
             1-exp(-mm.delta),1-exp(-mm.firm_death_haz),mm.L_b,pmat_cum_z,N_theta1,th1_cdf);
 
         s_fmoms_h_xy(pt_ndx,:) = fmoms_h_xy';
@@ -152,7 +144,7 @@ parfor pt_ndx = 1:1:N_pt
         [s_x_hf{pt_ndx}, s_y_hf{pt_ndx},s_expt_rate{pt_ndx},s_nfirm(pt_ndx),...
             s_nexptr(pt_ndx),nhfirms,hfmoms_xy,s_hfmoms_xx(pt_ndx,:,:),...
             s_hfysum(pt_ndx),s_hf_nobs(pt_ndx)]...
-            = splice_hf(firm_h_yr_sales,firm_f_yr_sales,typemat,theta_h_firm,periods);
+            = splice_hf(firm_h_yr_sales,firm_f_yr_sales,typemat,theta_h_firm,mm.periods);
 
         s_hfmoms_xy(pt_ndx,:) = hfmoms_xy';
 
@@ -178,10 +170,6 @@ agg_y_hf            = zeros(0,1); % for home-foreign sales regression residuals
 agg_x_fsales_h      = zeros(0,2); % for home sales AR1 residuals
 agg_y_fsales_h      = zeros(0,1); % for home sales AR1 residuals
 agg_time_gaps       = zeros(0,7); % for match hazard analysis
-
-% firm_cntr = 0;  % simulated firm counter, all types combined
-chk1 = 0;
-chk2 = 0;
 
 % match level moment aggregators
 agg_moms_xx   = zeros(4,4);

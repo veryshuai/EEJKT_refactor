@@ -16,6 +16,7 @@ mm.cs_h      = exp(X(8));      % Cost scaling parameter, home market
 mm.cs_f      = exp(X(11));      % Cost scaling parameter, foreign market
 mm.sig_p     = X(9);         %standard deviation of productivity distribution
 
+
 %% Theta distributions
 
 mm.ah        = X(4)*X(3); % Beta function, home (theta1) success parameter
@@ -58,6 +59,7 @@ mm.v_rel_tolerance   = 1e-6;    % relative convergence tolerance, value function
 mm.pi_tolerance  = 1e-4;    % convergence tolerance, profit function (WAS .001)
 mm.T             = 50;      % horizon for calculating profit function
 mm.tot_yrs       = 45;     % years to simulate, including burn-in (mm.burn)
+mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
 mm.S         = 25000;    % number of potential exporting firms to simulate 
 mm.burn      = 5;       %number of burn-in years
@@ -120,9 +122,12 @@ mm.l_opt_func_f = @(a,net,pi,V_succ,V_fail,V_orig)...
 %%
 load exog_est/exog.mat  % see comment above for contents of exog.mat
 
-L_b = X(6)/mm.pd_per_yr;
-L_h = L_h/mm.pd_per_yr;
-L_f = L_f/mm.pd_per_yr;
+mm.L_b = X(6)/mm.pd_per_yr;
+mm.L_h = L_h/mm.pd_per_yr;
+mm.L_f = L_f/mm.pd_per_yr;
+
+mm.max_ships = 3*round(mm.L_b); % maximum within-period shipments is triple expected number
+mm.poisCDF_shipments   = poisscdf(1:1:mm.max_ships,mm.L_b);
 
 L_z = 4/mm.pd_per_yr;
 D_z = X(5)/mm.pd_per_yr;
@@ -149,18 +154,15 @@ Q_z_d(1:(j+1):end) = 0;
 
 mm.actual_h     = actual_h; %actual indexes of home macro shocks for available years
 mm.actual_f     = actual_f; %actual indexes of foreign macro shocks for available years    
-mm.L_b          = L_b;      %shipment hazard   
 
 mm.Z            = Z;        %buyer productivities
 mm.Phi          = Phi;      %seller productivies
 mm.X_f          = X_f;      %foreign macro shocks
 mm.X_h          = X_h;      %home macro shocks
 
-mm.L_h          = L_h;      %arrival rate for jumps in home macro shock
 mm.D_h          = D_h;      %size of jump in home macro shock
 mm.Q_h          = Q_h;      %intensity matrix for home macro shock
 
-mm.L_f          = L_f;      %arrival rate for jumps in foreign macro shock
 mm.D_f          = D_f;      %size of jump in foreign macro shock
 mm.Q_f          = Q_f;      %intensity matrix for foreign macro shock
 

@@ -4,19 +4,13 @@
 % particular type. It also generates type-specific moments to be aggregated
 % in discrete_sim_parfor3.m. Type is determined by productivity and foreign theta.
 
-function [singletons, agg_time_gaps,agg_mat_yr_sales,agg_mat_yr_sales_adj,agg_firm_yr_sales,...
-          agg_mat_ar1_x,agg_mat_ar1_y,... 
-          agg_moms_xx,agg_moms_xy,agg_ysum,agg_nobs,agg_fmoms_xx,agg_fmoms_xy,... 
-          agg_fysum,agg_fnobs,agg_exit_moms_xx,agg_exit_moms_xy,agg_sum_succ_rate,... 
-          agg_exit_obs,agg_sum_exits,agg_mat_exit_moms_xx,agg_mat_exit_moms_xy,...
-          agg_mat_exit_x,agg_mat_exit_y,...
-          agg_mat_obs,agg_nmat_exit,agg_ship_obs,agg_ln_ships,agg_match_count,my_flag]...
-    = matchdat_gen_f(N_firms,N_types,N_Z,N_Phi,N_mic_state,pd_per_yr,frac_of_year,periods,...
+function iter_out = matchdat_gen_f(N_firms,N_types,N_Z,N_Phi,N_mic_state,pd_per_yr,frac_of_year,periods,...
            max_ships,typemat,macro_state_f,theta_ndx,prod_ndx,mm,pmat_cum_f,...
            c_val_f_orig,succ_prob,prod_lvl,cum_pz,poisCDF,prob_mdeath,prob_fdeath,...
            haz_ship,pmat_cum_z,nn2,nn4,lambda_f,max_match)  
 
-    
+    iter_out = struct;
+
 %% Initialize matrices
 
     Q_size = nn2*(nn2+1)/2;    % was nn1 instead of nn2--both have same value, but need to check arguments of lambda_f
@@ -58,15 +52,15 @@ function [singletons, agg_time_gaps,agg_mat_yr_sales,agg_mat_yr_sales_adj,agg_fi
   
 % create first observation on firm-year level aggregates (will concatenate below)
 % max_match         = 50; % upper bound on number of matches to be counted 
-agg_match_count      = zeros(max_match,1);
-agg_mat_yr_sales     = zeros(0,9);
-agg_mat_yr_sales_adj = zeros(0,9);
+iter_out.match_count      = zeros(max_match,1);
+iter_out.mat_yr_sales     = zeros(0,9);
+iter_out.mat_yr_sales_adj = zeros(0,9);
 agg_mat_matur        = zeros(0,7);
 mat_matur_dat        = zeros(0,7);
-agg_firm_yr_sales    = zeros(0,6);
-agg_time_gaps        = zeros(0,7);
-agg_mat_ar1_x        = zeros(0,4);
-agg_mat_ar1_y        = zeros(0,1);
+iter_out.firm_f_yr_sales    = zeros(0,6);
+iter_out.time_gaps        = zeros(0,7);
+iter_out.mat_ar1_x        = zeros(0,4);
+iter_out.mat_ar1_y        = zeros(0,1);
 mkt_exit             = zeros(1,3);
 mat_yr_sales_adj     = zeros(0,9);
 
@@ -76,31 +70,32 @@ chk1 = 0;
 chk2 = 0;
 
 % match level moment aggregators
-agg_moms_xx   = zeros(4,4);
-agg_moms_xy   = zeros(4,1);
-agg_ysum      = 0;
-agg_nobs      = 0;
-agg_ship_obs  = 0;
-agg_ln_ships = 0;
+iter_out.moms_xx   = zeros(4,4);
+iter_out.moms_xy   = zeros(4,1);
+iter_out.ysum      = 0;
+iter_out.nobs      = 0;
+iter_out.ship_obs  = 0;
+iter_out.ln_ships = 0;
 
 % firm level moment aggregators
-agg_fmoms_xx = zeros(4,4);
-agg_fmoms_xy = zeros(4,1);
-agg_fysum    = 0;
-agg_fnobs    = 0; 
+iter_out.fmoms_xx = zeros(4,4);
+iter_out.fmoms_xy = zeros(4,1);
+iter_out.fysum    = 0;
+iter_out.fnobs    = 0; 
 
-agg_exit_moms_xx = zeros(6,6);
-agg_exit_moms_xy = zeros(6,1);
-agg_sum_succ_rate = 0;
-agg_exit_obs = 0;
-agg_sum_exits = 0;
+iter_out.exit_xx = zeros(6,6);
+iter_out.exit_xy = zeros(1,6);
+iter_out.sum_succ_rate = 0;
+iter_out.exit_obs = 0;
+iter_out.sum_exits = 0;
 
-agg_mat_exit_moms_xx  = zeros(5,5);
-agg_mat_exit_moms_xy  = zeros(5,1);
-agg_mat_obs       = 0;
-agg_nmat_exit     = 0;
-agg_mat_exit_x   = zeros(0,5);
-agg_mat_exit_y   = zeros(0,1);
+iter_out.mat_exit_moms_xx  = zeros(5,5);
+iter_out.mat_exit_moms_xy  = zeros(5,1);
+iter_out.mat_obs       = 0;
+iter_out.nmat_exit     = 0;
+iter_out.mat_exit_x   = zeros(0,5);
+iter_out.mat_exit_y   = zeros(0,1);
+iter_out.mat_matur = zeros(0,7);
 
 trans_count    = zeros(N_Z+1,N_Z+1,N_firms); % counts transitions across buyer types, 
 % for each seller type. New buyer types are considered type 0 at beginning of period, hence the +1. 
@@ -385,7 +380,7 @@ end
            curr_duds = max(curr_duds,zeros(size(curr_duds)));
         end
         
-        singletons = sum(sum(curr_duds));
+        iter_out.singletons = sum(sum(curr_duds));
         
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  %%  Generate observations on intervals between meetings, cumulative meetings, and cumulative succcesses
@@ -395,7 +390,7 @@ end
 %           time_gap: (1) firm_ID, (2) periods into interval, (3) time gap, 
 %           (4) # new meetings, (5) t, (6) cum. meetings, (7) cum succeses
 
-          agg_time_gaps = [agg_time_gaps;time_gap];
+          iter_out.time_gaps = [iter_out.time_gaps;time_gap];
         end
              
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       
@@ -447,32 +442,32 @@ end
   if year > mm.burn  % don't start building simulated data set until burn-in finished              
       
        tt =  ones(size(mat_yr_sales,1),1).*[t,mic_type]; % add cols 1 and 2: t, firm type
-       agg_mat_yr_sales  = [agg_mat_yr_sales;[tt,mat_yr_sales]];
+       iter_out.mat_yr_sales  = [iter_out.mat_yr_sales;[tt,mat_yr_sales]];
        % agg_mat_yr_sales: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, w/in yr. match age, firm age] 
 
    if year_lag == year % check that mat_yr_splice_v2 ran & updated mat_yr_sales_adj 
        tt2 =  ones(size(mat_yr_sales_adj,1),1).*[t-pd_per_yr,mic_type];
-          agg_mat_yr_sales_adj = [agg_mat_yr_sales_adj;[tt2,mat_yr_sales_adj]]; % add cols 1 and 2: t, firm type 
+          iter_out.mat_yr_sales_adj = [iter_out.mat_yr_sales_adj;[tt2,mat_yr_sales_adj]]; % add cols 1 and 2: t, firm type 
        % agg_mat_yr_sales_adj: [t,type,firm ID, match sales, shipments, boy Z, adj_eoy Z, w/in yr. match age, firm age] 
           ttt = ones(size(firm_yr_sales,1),1).*[t,mic_type]; 
-          agg_firm_yr_sales = [agg_firm_yr_sales;[ttt,firm_yr_sales]]; % add cols 1 and 2: t, firm type
+          iter_out.firm_f_yr_sales = [iter_out.firm_f_yr_sales;[ttt,firm_yr_sales]]; % add cols 1 and 2: t, firm type
        % agg_firm_yr_sales: [t,type,firm ID, total exports,total shipments,firm age]
    end
    
-   agg_mat_matur =  [agg_mat_matur; mat_matur_dat]; 
+   iter_out.mat_matur =  [iter_out.mat_matur; mat_matur_dat]; 
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    %  match regression moments
 
       [mat_ar1_x,mat_ar1_y,moms_xx,moms_xy,ysum,n_obs] = match_reg_moms(mat_cont_2yr,ncols);
           
-         agg_moms_xx = agg_moms_xx + moms_xx; % cumulate moments for match regression
-         agg_moms_xy = agg_moms_xy + moms_xy; % cumulate moments for match regression
-         agg_ysum    = agg_ysum + ysum;
-         agg_nobs    = agg_nobs + n_obs;  
+         iter_out.moms_xx = iter_out.moms_xx + moms_xx; % cumulate moments for match regression
+         iter_out.moms_xy = iter_out.moms_xy + moms_xy; % cumulate moments for match regression
+         iter_out.ysum    = iter_out.ysum + ysum;
+         iter_out.nobs    = iter_out.nobs + n_obs;  
          
-         agg_mat_ar1_x = [agg_mat_ar1_x;mat_ar1_x];
-         agg_mat_ar1_y = [agg_mat_ar1_y;mat_ar1_y];
+         iter_out.mat_ar1_x = [iter_out.mat_ar1_x;mat_ar1_x];
+         iter_out.mat_ar1_y = [iter_out.mat_ar1_y;mat_ar1_y];
   end 
   
   end       
@@ -483,10 +478,10 @@ end
           
       [fmoms_xx,fmoms_xy,fysum,fn_obs] = firm_reg_moms(firm_yr_sales,firm_yr_sales_lag,N_firms);
          
-         agg_fmoms_xx = agg_fmoms_xx + fmoms_xx; % cumulate moments for firm regression
-         agg_fmoms_xy = agg_fmoms_xy + fmoms_xy; % cumulate moments for firm regression
-         agg_fysum    = agg_fysum + fysum;
-         agg_fnobs    = agg_fnobs + fn_obs ; 
+         iter_out.fmoms_xx = iter_out.fmoms_xx + fmoms_xx; % cumulate moments for firm regression
+         iter_out.fmoms_xy = iter_out.fmoms_xy + fmoms_xy; % cumulate moments for firm regression
+         iter_out.fysum    = iter_out.fysum + fysum;
+         iter_out.fnobs    = iter_out.fnobs + fn_obs ; 
          
     % foreign market exit regression moments
     
@@ -494,11 +489,11 @@ end
       if sum(ff_exit,1)>0
       [exit_moms_xx,exit_moms_xy,sum_succ_rate,sum_exits,exit_obs] = mkt_exit_moms(mkt_exit);
       
-         agg_exit_moms_xx = agg_exit_moms_xx + exit_moms_xx;
-         agg_exit_moms_xy = agg_exit_moms_xy + exit_moms_xy;
-         agg_sum_succ_rate = agg_sum_succ_rate + sum_succ_rate;
-         agg_exit_obs = agg_exit_obs + exit_obs;
-         agg_sum_exits = agg_sum_exits + sum_exits;
+         iter_out.exit_xx = iter_out.exit_xx + exit_moms_xx;
+         iter_out.exit_xy = iter_out.exit_xy + exit_moms_xy';
+         iter_out.sum_succ_rate = iter_out.sum_succ_rate + sum_succ_rate;
+         iter_out.exit_obs = iter_out.exit_obs + exit_obs;
+         iter_out.sum_exits = iter_out.sum_exits + sum_exits;
       end
     % match exit regression moments
       if year_lag == year
@@ -517,23 +512,23 @@ end
 %           x3 = log(1+matches(ff,6)./pd_per_yr); % age of match
 %           x4 = log(1+matches(ff,7));            % age of exporter
 
-            agg_mat_exit_moms_xx = agg_mat_exit_moms_xx + mat_exit_moms_xx;
-            agg_mat_exit_moms_xy = agg_mat_exit_moms_xy + mat_exit_moms_xy;
-            agg_mat_obs      = agg_mat_obs + mat_obs;
-            agg_nmat_exit    = agg_nmat_exit + nmat_exit;
-            agg_mat_exit_x   = [agg_mat_exit_x;mat_exit_x];
-            agg_mat_exit_y   = [agg_mat_exit_y;mat_exit_y];
+            iter_out.mat_exit_moms_xx = iter_out.mat_exit_moms_xx + mat_exit_moms_xx;
+            iter_out.mat_exit_moms_xy = iter_out.mat_exit_moms_xy + mat_exit_moms_xy;
+            iter_out.mat_obs      = iter_out.mat_obs + mat_obs;
+            iter_out.nmat_exit    = iter_out.nmat_exit + nmat_exit;
+            iter_out.mat_exit_x   = [iter_out.mat_exit_x;mat_exit_x];
+            iter_out.mat_exit_y   = [iter_out.mat_exit_y;mat_exit_y];
         end
       end      
     % shipment and match counter
     
       [nship_obs,ln_ships,match_count] = match_shpt_cntr(mat_yr_sales_adj,max_match);
     
-        agg_ship_obs    = agg_ship_obs + nship_obs ;
-        agg_ln_ships    = agg_ln_ships + ln_ships ;
-        agg_match_count = agg_match_count + match_count ;
+        iter_out.ship_obs    = iter_out.ship_obs + nship_obs ;
+        iter_out.ln_ships    = iter_out.ln_ships + ln_ships ;
+        iter_out.match_count = iter_out.match_count + match_count ;
         % include all the matches that generated a single sample shipment:
-        agg_match_count(1) = agg_match_count(1) + singletons;
+        iter_out.match_count(1) = iter_out.match_count(1) + iter_out.singletons;
          
   end   % year > mm.burn  if statement    
    end

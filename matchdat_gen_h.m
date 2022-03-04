@@ -1,14 +1,14 @@
 % This function simulates panel data on domestic sales for all N_firms firms of a
 % particular type. Type is determined by productivity and foreign theta.
 
-function [agg_firm_yr_sales,agg_x_fsales_h,agg_y_fsales_h,agg_theta_h_firm,...
-          agg_fmoms_h_xx,agg_fmoms_h_xy,agg_fysum_h,agg_fnobs_h,my_flag]...
-    = matchdat_gen_h(N_firms,N_Z,N_Phi,N_mic_state,pd_per_yr,frac_of_year,periods,...
+function iter_out = matchdat_gen_h(N_firms,N_Z,N_Phi,N_mic_state,pd_per_yr,frac_of_year,periods,...
            max_ships,typemat,macro_state_h,theta_ndx,prod_ndx,mm,pmat_cum_h,...
            c_val_f_orig,cum_pz,poisCDF,prob_mdeath,prob_fdeath,...
            haz_ship,pmat_cum_z,N_theta1,th1_cdf)  
 
-    %% create home theta draws  
+iter_out = struct;
+
+%% create home theta draws  
     
     theta_df = (N_theta1+1)*ones(N_firms,1) - ...
     sum(ones(N_firms,1)*th1_cdf > rand(N_firms,1)*ones(1,N_theta1),2);
@@ -60,14 +60,15 @@ function [agg_firm_yr_sales,agg_x_fsales_h,agg_y_fsales_h,agg_theta_h_firm,...
 % create first observation on firm-year level aggregates (will concatenate below)
 % max_match         = 50; % upper bound on number of matches to be counted 
 % agg_match_count   = zeros(max_match,1);
+agg_theta_h_firm = double.empty(0,1);
 agg_mat_yr_sales  = double.empty(0,9);
-agg_firm_yr_sales = double.empty(0,6);
-agg_theta_h_firm  = double.empty(0,1);
+iter_out.firm_h_yr_sales = double.empty(0,6);
+iter_out.theta_h_firm  = double.empty(0,1);
 % agg_time_gaps     = double.empty(0,7);
 % mkt_exit          = zeros(1,3);
 
-agg_x_fsales_h    = zeros(0,2); % will contain rows of x matrix for regression
-agg_y_fsales_h    = zeros(0,1); % will contain rows of y matrix for regression
+iter_out.x_fsales_h    = zeros(0,2); % will contain rows of x matrix for regression
+iter_out.y_fsales_h    = zeros(0,1); % will contain rows of y matrix for regression
 
 tic
 firm_cntr = 0;  % simulated firm counter, all types combined
@@ -83,10 +84,10 @@ agg_ship_obs  = 0;
 agg_ln_ships = 0;
 
 % firm level moment aggregators
-agg_fmoms_h_xx = zeros(2,2);
-agg_fmoms_h_xy = zeros(2,1);
-agg_fysum_h    = 0;
-agg_fnobs_h    = 0; 
+iter_out.fmoms_h_xx = zeros(2,2);
+iter_out.fmoms_h_xy = zeros(2,1);
+iter_out.fysum_h    = 0;
+iter_out.fnobs_h    = 0; 
 
 agg_exit_moms_xx = zeros(6,6);
 agg_exit_moms_xy = zeros(6,1);
@@ -110,7 +111,7 @@ agg_nmat_exit     = 0;
 
 % keep_cli will be used to select matches that are endogenously dropped.
   keep_cli      = ones(1,N_Z); % applies to clients existing in period 1
-  keep_cli(1:5) =  zeros(1,5); % implying worst 5 client types from period 1 are dropped.
+  keep_cli(1:5) =  zeros(1,5); % implying worst 5 client types from period 1 are dropped
 
 % load relevant transition probabilites for current micro type & macro
 % state. pmat_cum_t holds cumulative transition probs across #success/#meeting pairs.
@@ -126,7 +127,7 @@ agg_nmat_exit     = 0;
   % firm_yr_sales_lag will contain: [firmID,sales,#shipments,firm age]
 
   tic
-  my_flag = 0;
+  iter_out.abort_flag_h = 0;
 for t = 2:1:periods
 
 % update year, type and pmat_cum_t
@@ -421,9 +422,9 @@ end
        % agg_mat_yr_sales: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, match age, firm age] 
           theta_h_firm = theta_h(firm_yr_sales(:,1));
           ttt = ones(size(firm_yr_sales,1),1).*[t,type]; 
-          agg_firm_yr_sales = [agg_firm_yr_sales;[ttt,firm_yr_sales]]; 
-          agg_theta_h_firm  = [agg_theta_h_firm;theta_h_firm]; % keep track of domestic thetas for each firm
-       % agg_firm_yr_sales: [t,type,firm ID, total sales, total shipments,firm age]
+          iter_out.firm_h_yr_sales = [iter_out.firm_h_yr_sales;[ttt,firm_yr_sales]]; 
+          iter_out.theta_h_firm  = [iter_out.theta_h_firm;theta_h_firm]; % keep track of domestic thetas for each firm
+       % iter_out.firm_h_yr_sales: [t,type,firm ID, total sales, total shipments,firm age]
        
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       
 % update lagged variables for next year's loop         
@@ -439,12 +440,12 @@ end
           
       [x,y,fmoms_xx,fmoms_xy,fysum,fn_obs] = firm_reg_h_moms(firm_yr_sales,firm_yr_sales_lag,N_firms);
          
-         agg_x_fsales_h   = [agg_x_fsales_h;x];
-         agg_y_fsales_h   = [agg_y_fsales_h;y];
-         agg_fmoms_h_xx = agg_fmoms_h_xx + fmoms_xx; % cumulate moments for home sales AR1
-         agg_fmoms_h_xy = agg_fmoms_h_xy + fmoms_xy; % cumulate moments for home sales AR1
-         agg_fysum_h    = agg_fysum_h + fysum;
-         agg_fnobs_h    = agg_fnobs_h + fn_obs ;          
+         iter_out.x_fsales_h   = [iter_out.x_fsales_h;x];
+         iter_out.y_fsales_h   = [iter_out.y_fsales_h;y];
+         iter_out.fmoms_h_xx = iter_out.fmoms_h_xx + fmoms_xx; % cumulate moments for home sales AR1
+         iter_out.fmoms_h_xy = iter_out.fmoms_h_xy + fmoms_xy; % cumulate moments for home sales AR1
+         iter_out.fysum_h    = iter_out.fysum_h + fysum;
+         iter_out.fnobs_h    = iter_out.fnobs_h + fn_obs ;          
          
   end   % year > mm.burn if statement    
          mat_yr_sales_lag = mat_yr_sales;   % stack data for match regression
@@ -467,7 +468,7 @@ end
 
   if toc > 50
      disp("ERROR: simulations taking too long in matchdat_gen_h")
-     my_flag = 1;
+     iter_out.abort_flag_h = 1;
      return
   end
   

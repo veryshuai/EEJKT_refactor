@@ -61,8 +61,10 @@ mm.T             = 50;      % horizon for calculating profit function
 mm.tot_yrs       = 45;     % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
+
 mm.S         = 25000;    % number of potential exporting firms to simulate 
 mm.burn      = 5;       %number of burn-in years
+mm.max_match = 50; % upper bound on number of matches to be counted
 
 %% Simulation restrictions (these are irrelevant for discrete_sim version of code)
 mm.maxc            = 50000; %maximum number of current clients (follows old program) 
@@ -173,3 +175,6 @@ mm.D_z          = D_z;      %size of jump in other firms productivity
 mm.Q_z          = Q_z;      %intensity matrix for demand shocks 
 mm.Q_z_d        = Q_z_d;    %with zeros on the diagonal
 mm.erg_pz       = erg_pz;   %ergodic distribution of demand shocks
+
+mm.N_pt          = size(mm.Phi,1)*size(mm.theta2,2);
+

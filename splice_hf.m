@@ -1,28 +1,27 @@
-function [x,y,export_rate,nobs,nobs_f,nobs_h,moms_xy,moms_xx,ysum,nobs_hf] =...
-    splice_hf(firm_h_yr_sales,firm_f_yr_sales,typemat,theta_h_firm,periods)
+function iter_out = splice_hf(sim_out_h,sim_out_f,policy,mm)
 
 % This function takes panel of realizations on domestic and foreign sales
 % for a particular type (theta_f and phi), and splices them together to 
 % create synthetic firms
 
-% firm_f_yr_sales: [t,type,firm ID, total exports,total # foreign shipments,firm age in export mkt.]
-% firm_h_yr_sales: [t,type,firm ID, total dom. sales, total # dom. shipments,firm age in dom. mkt.]
-% typemat: [type, macro state index, theta index, productivity index]
+% sim_out_f.firm_f_yr_sales: [t,type,firm ID, total exports,total # foreign shipments,firm age in export mkt.]
+% sim_out_h.firm_h_yr_sales: [t,type,firm ID, total dom. sales, total # dom. shipments,firm age in dom. mkt.]
+% policy.firm_type_prod_succ_macro: [type, macro state index, theta index, productivity index]
 
 % some firms with active export relationships have zero exports. Weed them out:
-exporter = firm_f_yr_sales(:,4)>0;
-firm_f_yr_sales = firm_f_yr_sales(exporter,:); % stacks all firm-yr combs. with exports, given micro type
+exporter = sim_out_f.firm_f_yr_sales(:,4)>0;
+sim_out_f.firm_f_yr_sales = sim_out_f.firm_f_yr_sales(exporter,:); % stacks all firm-yr combs. with exports, given micro type
 % same deal for domestic market shipments
-dom_shipper = firm_h_yr_sales(:,4)>0;  % stacks all firm-yr combs. with dom .sales, given micro type
-firm_h_yr_sales = firm_h_yr_sales(dom_shipper,:);
+dom_shipper = sim_out_h.firm_h_yr_sales(:,4)>0;  % stacks all firm-yr combs. with dom .sales, given micro type
+sim_out_h.firm_h_yr_sales = sim_out_h.firm_h_yr_sales(dom_shipper,:);
 
-nobs_f = sum(exporter>0);
-nobs_h = sum(dom_shipper>0);
+iter_out.nexptr = sum(exporter>0);
+iter_out.nhfirms = sum(dom_shipper>0);
 
-type_h = firm_h_yr_sales(:,2);
-type_f = firm_f_yr_sales(:,2);
-prod_h  = typemat(type_h,4);
-prod_f  = typemat(type_f,4);
+type_h = sim_out_h.firm_h_yr_sales(:,2);
+type_f = sim_out_f.firm_f_yr_sales(:,2);
+prod_h  = policy.firm_type_prod_succ_macro(type_h,4);
+prod_f  = policy.firm_type_prod_succ_macro(type_f,4);
 
 try % confirm domestic and foreign records are for the same firm productivity type
     minobs = min(size(type_h,1),size(type_f,1));
@@ -34,8 +33,8 @@ end
 %% Extract observations on home and foreign sales with same firm_ID and date
 
 % create unique identifiers for each period/firm_ID pair
-obs_id_h = firm_h_yr_sales(:,3) + (1/(periods+1))*firm_h_yr_sales(:,1); % micro type and period
-obs_id_f = firm_f_yr_sales(:,3) + (1/(periods+1))*firm_f_yr_sales(:,1); % micro type and period
+obs_id_h = sim_out_h.firm_h_yr_sales(:,3) + (1/(mm.periods+1))*sim_out_h.firm_h_yr_sales(:,1); % micro type and period
+obs_id_f = sim_out_f.firm_f_yr_sales(:,3) + (1/(mm.periods+1))*sim_out_f.firm_f_yr_sales(:,1); % micro type and period
 % find home market obs. with identifiers that appear in export mkt. obs.
 aa = ismember(obs_id_h,obs_id_f);
 temp1 = obs_id_h(aa);
@@ -46,21 +45,21 @@ try
 catch
   fprintf('\r Warning: home-foreign merge discrepancy in spice_hf');
 end
-nobs_hf  = sum(aa);
-nobs = nobs_h + nobs_f - nobs_hf; % number of firms with sales in at least one market
+iter_out.hf_nobs  = sum(aa);
+iter_out.nfirm = iter_out.nhfirms + iter_out.nexptr - iter_out.hf_nobs; % number of firms with sales in at least one market
 
 % dom_only = ones(nobs_h,1) - aa > 0; % firms with dom. sales only
- ex_only  = ones(nobs_f,1) - bb > 0; % firms with exports only
+ ex_only  = ones(iter_out.nexptr,1) - bb > 0; % firms with exports only
 
-theta_f = typemat(type_f,3); % Each element of this vector is common to all firms
-theta_h = theta_h_firm;      % This is a vector of random draws--one per firm
+theta_f = policy.firm_type_prod_succ_macro(type_f,3); % Each element of this vector is common to all firms
+theta_h = sim_out_h.theta_h_firm;      % This is a vector of random draws--one per firm
 if sum(bb) == 0
   temp3 = zeros(0,15);
 else
-  temp3 = [theta_f(bb),theta_h(aa),prod_h(aa),firm_h_yr_sales(aa,:),firm_f_yr_sales(bb,:)];
+  temp3 = [theta_f(bb),theta_h(aa),prod_h(aa),sim_out_h.firm_h_yr_sales(aa,:),sim_out_f.firm_f_yr_sales(bb,:)];
 end
-% firm_h_yr_sales: [t,type,firm ID,total dom. sales, total # dom. shipments,firm age in dom. mkt.]
-% firm_f_yr_sales: [t,type,firm ID,total exports,total # foreign shipments,firm age in export mkt.]
+% sim_out_h.firm_h_yr_sales: [t,type,firm ID,total dom. sales, total # dom. shipments,firm age in dom. mkt.]
+% sim_out_f.firm_f_yr_sales: [t,type,firm ID,total exports,total # foreign shipments,firm age in export mkt.]
 
 try % comfirm home and foreign records are for same period and firm ID
 assert(sum((temp3(:,4) - temp3(:,10)).^2)==0); % periods match?
@@ -86,27 +85,27 @@ sales_hf    = sales_splice(same_firm,1:7);
 % export_rate = [sales_hf(:,7)./(sales_hf(:,6)+sales_hf(:,7));ones(sum(ex_only,1),1)];
 % the vector of ones in export_rate accounts for firms that exclusively
 
-export_rate = sales_hf(:,7)./(sales_hf(:,6)+sales_hf(:,7));
+iter_out.expt_rate = sales_hf(:,7)./(sales_hf(:,6)+sales_hf(:,7));
 % this alternative version excludes firms active solely in the export market
 
 % serve foreign markets
 
 %% moments for regression of log foreign sales on log domestic sales
 
-   nobs_hf = size(sales_hf,1);
-   if nobs_hf > 0
-    y = log(sales_hf(:,7));
-    x = [ones(nobs_hf,1),log(sales_hf(:,6))];
-    moms_xx = x'*x;
-    moms_xy = x'*y;
-    ysum = sum(y);    
+   iter_out.hf_nobs = size(sales_hf,1);
+   if iter_out.hf_nobs > 0
+    iter_out.y_hf = log(sales_hf(:,7));
+    iter_out.x_hf = [ones(iter_out.hf_nobs,1),log(sales_hf(:,6))];
+    iter_out.hfmoms_xx = iter_out.x_hf'*iter_out.x_hf;
+    iter_out.hfmoms_xy = iter_out.x_hf'*iter_out.y_hf;
+    iter_out.hfysum = sum(iter_out.y_hf);    
    else
-        x = zeros(0,2);
-        y = zeros(0,1);
-        moms_xx = zeros(2,2);
-        moms_xy = zeros(2,1);
-        ysum    = 0;
-        nobs_hf = 0;
+        iter_out.x_hf = zeros(0,2);
+        iter_out.y_hf = zeros(0,1);
+        iter_out.hfmoms_xx = zeros(2,2);
+        iter_out.hfmoms_xy = zeros(2,1);
+        iter_out.hfysum    = 0;
+        iter_out.hf_nobs = 0;
     end
 
 end

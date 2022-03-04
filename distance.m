@@ -24,9 +24,9 @@ inv_W = W^-1;
 err_comp = @(sta,fin) error(sta:fin)' * inv_W(sta:fin,sta:fin) * error(sta:fin); 
 
 print_diagnostics_to_standard_output(D, X, dat_mod_moms, err_comp, simMoms,mm);
-plots; 
-summary_tables_v2; 
-estimate_summary;
+%plots; 
+%summary_tables_v2; 
+%estimate_summary;
 
 shouldMatchMoments(dat_mod_moms,D,"test","results/shouldMatchMomentsData");
    

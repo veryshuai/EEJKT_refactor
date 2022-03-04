@@ -4,8 +4,8 @@
 
 % plot histogram of frequencies for meeting hazards
         figure(2)
-        agg_time_gaps = agg_time_gaps(2:size(agg_time_gaps,1),:);
-        histogram(agg_time_gaps(:,3))
+        %agg_time_gaps = agg_time_gaps(2:size(agg_time_gaps,1),:);
+        %histogram(agg_time_gaps(:,3))
         
 % plot the meeting hazard and mkt. exit hazard as a functions of # clients and success rate    
 

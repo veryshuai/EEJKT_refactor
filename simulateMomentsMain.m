@@ -26,7 +26,7 @@ sim_out_h = cell(mm.N_pt,1);
 sim_out_hf = cell(mm.N_pt,1);
 sim_out = cell(mm.N_pt,1);
 
-NN            = zeros(mm.N_pt,1);
+sim_firm_num_by_prod_succ_type = zeros(mm.N_pt,1);
 
 %% Load storage objects by looping over firm types
 
@@ -49,15 +49,15 @@ parfor pt_ndx = 1:1:mm.N_pt
     prod_lvl  = mm.Phi(prod_ndx);
     succ_prob = mm.theta2(theta_ndx);
 
-    % number of firms to simulate of this particular type
-    N_firms = round(mm.erg_pp(prod_ndx)*policy.th2_pdf(theta_ndx)*mm.S);
-    NN(pt_ndx) = N_firms;
+    % number of firms to simulate of this particular type (should be in
+    % setParams?)
+    sim_firm_num_by_prod_succ_type(pt_ndx) = round(mm.erg_pp(prod_ndx)*policy.th2_pdf(theta_ndx)*mm.S);
+    
+    if sim_firm_num_by_prod_succ_type(pt_ndx)>0
 
-    if N_firms>0
+        sim_out_f{pt_ndx} = matchdat_gen_f(sim_firm_num_by_prod_succ_type(pt_ndx), macro_state_f, theta_ndx, prod_ndx, mm, policy);
 
-        sim_out_f{pt_ndx} = matchdat_gen_f(N_firms, macro_state_f, theta_ndx, prod_ndx, mm, policy);
-
-        sim_out_h{pt_ndx} = matchdat_gen_h(N_firms,size(mm.Z,1),size(mm.Phi,1),nn_h,mm.pd_per_yr,1/mm.pd_per_yr,mm.periods,mm.max_ships,typemat,macro_state_h,...
+        sim_out_h{pt_ndx} = matchdat_gen_h(sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1),size(mm.Phi,1),nn_h,mm.pd_per_yr,1/mm.pd_per_yr,mm.periods,mm.max_ships,typemat,macro_state_h,...
             theta_ndx,prod_ndx,mm,pmat_cum_h,c_val_h_orig,cumsum(mm.erg_pz),mm.poisCDF_shipments,...
             1-exp(-mm.delta),1-exp(-mm.firm_death_haz),mm.L_b,pmat_cum_z,N_theta1,th1_cdf);
 
@@ -70,108 +70,9 @@ parfor pt_ndx = 1:1:mm.N_pt
 
 end
 
-rand
-
 %% Initialize objects that will hold cumulated values
 
-sim_cum = struct;
-
-sim_cum.agg_mat_yr_sales    = zeros(0,9); % for analysis of match dynamics
-sim_cum.agg_mat_yr_sales_adj= zeros(0,9); % for analysis of match exit
-sim_cum.agg_mat_ar1_x       = zeros(0,4); % for match ar1 regression residuals
-sim_cum.agg_mat_ar1_y       = zeros(0,1); % for match ar1 regression residuals
-sim_cum.agg_mat_exit_x      = zeros(0,5); % for match exit regression residuals
-sim_cum.agg_mat_exit_y      = zeros(0,1); % for match exit regression residuals
-sim_cum.agg_mat_matur       = zeros(0,8); % for match maturation analysis
-sim_cum.agg_x_hf            = zeros(0,2); % for home-foreign sales regression residuals
-sim_cum.agg_y_hf            = zeros(0,1); % for home-foreign sales regression residuals
-sim_cum.agg_x_fsales_h      = zeros(0,2); % for home sales AR1 residuals
-sim_cum.agg_y_fsales_h      = zeros(0,1); % for home sales AR1 residuals
-sim_cum.agg_time_gaps       = zeros(0,7); % for match hazard analysis
-sim_cum.agg_moms_xx   = zeros(4,4);
-sim_cum.agg_moms_xy   = zeros(4,1);
-sim_cum.agg_ysum      = 0;
-sim_cum.agg_nobs      = 0;
-sim_cum.agg_ship_obs  = 0;
-sim_cum.agg_fmoms_xx = zeros(4,4);
-sim_cum.agg_fmoms_xy = zeros(4,1);
-sim_cum.agg_fmoms_h_xx = zeros(2,2);
-sim_cum.agg_fmoms_h_xy = zeros(2,1);
-sim_cum.agg_fysum    = 0;
-sim_cum.agg_fnobs    = 0;
-sim_cum.agg_fysum_h  = 0;
-sim_cum.agg_fnobs_h  = 0;
-sim_cum.agg_exit_xx = zeros(6,6);
-sim_cum.agg_exit_xy = zeros(6,1);
-sim_cum.agg_sum_succ_rate = 0;
-sim_cum.agg_exit_obs = 0;
-sim_cum.agg_sum_exits = 0;
-sim_cum.agg_hfmoms_xx = zeros(2,2);
-sim_cum.agg_hfmoms_xy = zeros(2,1);
-sim_cum.agg_hfysum    = 0;
-sim_cum.agg_hf_nobs    = 0;
-sim_cum.agg_nfirm     = 0;
-sim_cum.agg_nexptr    = 0;
-sim_cum.agg_expt_rate = zeros(0,1);
-sim_cum.agg_mat_exit_moms_xx  = zeros(5,5);
-sim_cum.agg_mat_exit_moms_xy  = zeros(5,1);
-sim_cum.agg_mat_obs       = 0;
-sim_cum.agg_nmat_exit     = 0;
-sim_cum.agg_match_count  = zeros(mm.max_match,1);
-sim_cum.singletons = 0;
-sim_cum.agg_ln_ships = 0;
-
-%% Cumulate over firm types
-
-for pt_ndx = 1:1:mm.N_pt
-
-    if NN(pt_ndx) > 0
-        sim_cum.agg_time_gaps = [sim_cum.agg_time_gaps;sim_out{pt_ndx}.time_gaps];
-        sim_cum.agg_mat_yr_sales  = [sim_cum.agg_mat_yr_sales;sim_out{pt_ndx}.mat_yr_sales];
-        sim_cum.agg_mat_yr_sales_adj  = [sim_cum.agg_mat_yr_sales_adj;sim_out{pt_ndx}.mat_yr_sales_adj];
-        sim_cum.agg_x_hf = [sim_cum.agg_x_hf;sim_out{pt_ndx}.x_hf];
-        sim_cum.agg_y_hf = [sim_cum.agg_y_hf;sim_out{pt_ndx}.y_hf];
-        sim_cum.agg_x_fsales_h = [sim_cum.agg_x_fsales_h;sim_out{pt_ndx}.x_fsales_h];
-        sim_cum.agg_y_fsales_h = [sim_cum.agg_y_fsales_h;sim_out{pt_ndx}.y_fsales_h];
-        sim_cum.agg_moms_xx = sim_cum.agg_moms_xx + squeeze(sim_out{pt_ndx}.moms_xx); 
-        sim_cum.agg_moms_xy = sim_cum.agg_moms_xy + sim_out{pt_ndx}.moms_xy; %check direction
-        sim_cum.agg_ysum    = sim_cum.agg_ysum    + sim_out{pt_ndx}.ysum;
-        sim_cum.agg_nobs    = sim_cum.agg_nobs    + sim_out{pt_ndx}.nobs;
-        sim_cum.agg_mat_ar1_x = [sim_cum.agg_mat_ar1_x;sim_out{pt_ndx}.mat_ar1_x];
-        sim_cum.agg_mat_ar1_y = [sim_cum.agg_mat_ar1_y;sim_out{pt_ndx}.mat_ar1_y];
-        sim_cum.agg_fmoms_xx = sim_cum.agg_fmoms_xx + squeeze(sim_out{pt_ndx}.fmoms_xx); 
-        sim_cum.agg_fmoms_xy = sim_cum.agg_fmoms_xy + squeeze(sim_out{pt_ndx}.fmoms_xy);  %check direction
-        sim_cum.agg_fysum    = sim_cum.agg_fysum + sim_out{pt_ndx}.fysum;
-        sim_cum.agg_fnobs    = sim_cum.agg_fnobs + sim_out{pt_ndx}.fnobs;
-        sim_cum.agg_fmoms_h_xx = sim_cum.agg_fmoms_h_xx + squeeze(sim_out{pt_ndx}.fmoms_h_xx); 
-        sim_cum.agg_fmoms_h_xy = sim_cum.agg_fmoms_h_xy + squeeze(sim_out{pt_ndx}.fmoms_h_xy); %check direction
-        sim_cum.agg_fysum_h    = sim_cum.agg_fysum_h + sim_out{pt_ndx}.fysum_h;
-        sim_cum.agg_fnobs_h    = sim_cum.agg_fnobs_h + sim_out{pt_ndx}.fnobs_h;
-        sim_cum.agg_hfmoms_xx = sim_cum.agg_hfmoms_xx + squeeze(sim_out{pt_ndx}.hfmoms_xx);
-        sim_cum.agg_hfmoms_xy = sim_cum.agg_hfmoms_xy + squeeze(sim_out{pt_ndx}.hfmoms_xy); %check direction
-        sim_cum.agg_hfysum    = sim_cum.agg_hfysum    + sim_out{pt_ndx}.hfysum;
-        sim_cum.agg_hf_nobs   = sim_cum.agg_hf_nobs   + sim_out{pt_ndx}.hf_nobs;
-        sim_cum.agg_nfirm     = sim_cum.agg_nfirm + sim_out{pt_ndx}.nfirm;
-        sim_cum.agg_nexptr    = sim_cum.agg_nexptr + sim_out{pt_ndx}.nexptr;
-        sim_cum.agg_expt_rate = [sim_cum.agg_expt_rate;sim_out{pt_ndx}.expt_rate];
-        sim_cum.agg_exit_xx = sim_cum.agg_exit_xx + squeeze(sim_out{pt_ndx}.exit_xx);
-        sim_cum.agg_exit_xy = sim_cum.agg_exit_xy + squeeze(sim_out{pt_ndx}.exit_xy)'; %chekc direction
-        sim_cum.agg_sum_succ_rate = sim_cum.agg_sum_succ_rate + sim_out{pt_ndx}.sum_succ_rate;
-        sim_cum.agg_exit_obs = sim_cum.agg_exit_obs + sim_out{pt_ndx}.exit_obs;
-        sim_cum.agg_sum_exits = sim_cum.agg_sum_exits + sim_out{pt_ndx}.sum_exits;
-        sim_cum.agg_mat_exit_moms_xx = sim_cum.agg_mat_exit_moms_xx + squeeze(sim_out{pt_ndx}.mat_exit_moms_xx);
-        sim_cum.agg_mat_exit_moms_xy = sim_cum.agg_mat_exit_moms_xy + squeeze(sim_out{pt_ndx}.mat_exit_moms_xy);
-        sim_cum.agg_mat_obs          = sim_cum.agg_mat_obs + sim_out{pt_ndx}.mat_obs;
-        sim_cum.agg_nmat_exit        = sim_cum.agg_nmat_exit + sim_out{pt_ndx}.nmat_exit;
-        sim_cum.agg_mat_exit_x       = [sim_cum.agg_mat_exit_x;sim_out{pt_ndx}.mat_exit_x];
-        sim_cum.agg_mat_exit_y       = [sim_cum.agg_mat_exit_y;sim_out{pt_ndx}.mat_exit_y];
-        sim_cum.agg_ship_obs    = sim_cum.agg_ship_obs    + sim_out{pt_ndx}.ship_obs;
-        sim_cum.agg_ln_ships    = sim_cum.agg_ln_ships    + sim_out{pt_ndx}.ln_ships;
-        sim_cum.agg_match_count = sim_cum.agg_match_count + squeeze(sim_out{pt_ndx}.match_count); %potential flip
-        sim_cum.singletons      = sim_cum.singletons + sim_out{pt_ndx}.singletons;
-    end
-
-end        % end of prod_ndx loop
+sim_cum = aggregateSimulatedData(sim_firm_num_by_prod_succ_type, sim_out,mm);
 
 %% Construct simulated statistics
 

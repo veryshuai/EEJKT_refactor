@@ -105,3 +105,5 @@
  fit metric = 10.810278237
 
  fit metric = 10.799537675
+
+ fit metric = 10.799537675

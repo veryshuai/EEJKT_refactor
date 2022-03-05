@@ -46,7 +46,6 @@ parfor pt_ndx = 1:1:mm.N_pt
     rng(seeds(prod_ndx,1),'twister');
     seed_crand(seeds(prod_ndx,2));
 
-
     prod_lvl  = mm.Phi(prod_ndx);
     succ_prob = mm.theta2(theta_ndx);
 
@@ -56,9 +55,7 @@ parfor pt_ndx = 1:1:mm.N_pt
 
     if N_firms>0
 
-        sim_out_f{pt_ndx} = matchdat_gen_f(N_firms,policy.firm_type_prod_succ_macro,size(mm.Z,1),size(mm.Phi,1),size(pmat_cum_f{1},2),mm.pd_per_yr,1/mm.pd_per_yr,mm.periods,mm.max_ships,typemat,macro_state_f,...
-            theta_ndx,prod_ndx,mm,pmat_cum_f,c_val_f_orig,succ_prob,prod_lvl,cumsum(mm.erg_pz),mm.poisCDF_shipments,...
-            1-exp(-mm.delta),1-exp(-mm.firm_death_haz),mm.L_b,pmat_cum_z,mm.n_size+1,mm.net_size+1,lambda_f,mm.max_match);
+        sim_out_f{pt_ndx} = matchdat_gen_f(N_firms, macro_state_f, theta_ndx, prod_ndx, mm, policy);
 
         sim_out_h{pt_ndx} = matchdat_gen_h(N_firms,size(mm.Z,1),size(mm.Phi,1),nn_h,mm.pd_per_yr,1/mm.pd_per_yr,mm.periods,mm.max_ships,typemat,macro_state_h,...
             theta_ndx,prod_ndx,mm,pmat_cum_h,c_val_h_orig,cumsum(mm.erg_pz),mm.poisCDF_shipments,...

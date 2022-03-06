@@ -1,4 +1,4 @@
-function sim_cum = aggregateSimulatedData(sim_firm_num_by_prod_succ_type, sim_out,mm)
+function sim_cum = aggregateSimulatedData(sim_out,mm)
 
 sim_cum = struct;
 
@@ -51,7 +51,7 @@ sim_cum.agg_ln_ships = 0;
 
 for pt_ndx = 1:1:mm.N_pt
 
-    if sim_firm_num_by_prod_succ_type(pt_ndx) > 0
+    if mm.sim_firm_num_by_prod_succ_type(pt_ndx) > 0
         sim_cum.agg_time_gaps = [sim_cum.agg_time_gaps;sim_out{pt_ndx}.time_gaps];
         sim_cum.agg_mat_yr_sales  = [sim_cum.agg_mat_yr_sales;sim_out{pt_ndx}.mat_yr_sales];
         sim_cum.agg_mat_yr_sales_adj  = [sim_cum.agg_mat_yr_sales_adj;sim_out{pt_ndx}.mat_yr_sales_adj];

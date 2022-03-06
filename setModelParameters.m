@@ -17,17 +17,7 @@ mm.cs_f      = exp(X(11));      % Cost scaling parameter, foreign market
 mm.sig_p     = X(9);         %standard deviation of productivity distribution
 
 
-%% Theta distributions
 
-mm.ah        = X(4)*X(3); % Beta function, home (theta1) success parameter
-mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
-mm.af        = mm.ah;     % Beta function, foreign (theta2) success parameter (assume same as home)
-mm.bf        = mm.bh;     % Beta function, foreign (theta2) success parameter (assume same as home)
-mm.ag        = 0.5;        % Beta function, theta0 success parameter (unused)
-mm.bg        = 0.5;        % Beta function, theta0 failure parameter (unused)
-mm.F_f       = exp(X(10));       % cost of maintaining a client- foreign
-mm.F_h       = exp(X(1)); % cost of maintaining a client- home 
-mm.alpha     = 0;       % weight of "common" theta in determining match probabilities (set to 0)
 
 %% Discretization of state-space
 mm.grid_length   = 2.5;   % number of standard deviations from mean used for discretization
@@ -43,6 +33,19 @@ mm.dim1          = 7;     % Number of possible theta1 values (specific to home m
 mm.dim2          = 7;     % Number pf possible theta2 values (specific to foreign market);
 mm.mo_increm     = 1;     % months per unit time interval
 
+
+%% Theta distributions
+
+mm.ah        = X(4)*X(3); % Beta function, home (theta1) success parameter
+mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
+mm.af        = mm.ah;     % Beta function, foreign (theta2) success parameter (assume same as home)
+mm.bf        = mm.bh;     % Beta function, foreign (theta2) success parameter (assume same as home)
+mm.ag        = 0.5;        % Beta function, theta0 success parameter (unused)
+mm.bg        = 0.5;        % Beta function, theta0 failure parameter (unused)
+mm.F_f       = exp(X(10));       % cost of maintaining a client- foreign
+mm.F_h       = exp(X(1)); % cost of maintaining a client- home 
+mm.alpha     = 0;       % weight of "common" theta in determining match probabilities (set to 0)
+
 mm.theta0           = 1/mm.dim0:1/mm.dim0:1;
 mm.theta1           = 1/mm.dim1:1/mm.dim1:1;
 mm.theta2           = 1/mm.dim2:1/mm.dim2:1;
@@ -50,6 +53,10 @@ mm.theta0(mm.dim0)  =  mm.theta0(mm.dim0) - 0.0001;
 mm.theta1(mm.dim1)  =  mm.theta1(mm.dim1) - 0.0001;
 mm.theta2(mm.dim2)  =  mm.theta2(mm.dim2) - 0.0001;
 
+mm.th1_cdf  = betacdf(mm.theta1,mm.ah,mm.bh); % cdf for home theta draws
+mm.th1_cdf(size(mm.theta1,2)) = 1; % to deal with rounding problem
+mm.th2_cdf = betacdf(mm.theta2,mm.af,mm.bf); % cdf for foreign theta draws
+mm.th2_pdf = [mm.th2_cdf(1),mm.th2_cdf(2:mm.dim1)-mm.th2_cdf(1:mm.dim1-1)]; 
 
 
 %% Solution parameters
@@ -64,13 +71,15 @@ mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simula
 
 mm.S         = 25000;    % number of potential exporting firms to simulate 
 mm.burn      = 5;       %number of burn-in years
-mm.max_match = 50; % upper bound on number of matches to be counted
+mm.max_match = 50;    % upper bound on number of matches to be counted for foreign market
+mm.nn_h      = 70;    % Number of possible matches for domestic market
 
-%% Simulation restrictions (these are irrelevant for discrete_sim version of code)
+%% Simulation restrictions 
 mm.maxc            = 50000; %maximum number of current clients (follows old program) 
 mm.max_client_prod = 7000; %maximum changes in demand shock over relationship % was as 7000
 mm.mult_match_max  = 12000; %maximum number of matches per exogenous state change interval % was 7000
 mm.mms             = 100000; %max event number (max matrix size) % was previously 60000
+
 
 %% Cost function
 
@@ -177,4 +186,6 @@ mm.Q_z_d        = Q_z_d;    %with zeros on the diagonal
 mm.erg_pz       = erg_pz;   %ergodic distribution of demand shocks
 
 mm.N_pt          = size(mm.Phi,1)*size(mm.theta2,2);
+mm.pt_type = [kron((1:size(mm.Phi,1))',ones(size(mm.theta2,2),1)),kron(ones(size(mm.Phi,1),1),(1:size(mm.theta2,2))')];
+mm.sim_firm_num_by_prod_succ_type = round(mm.erg_pp(mm.pt_type(:,1)).*mm.th2_pdf(mm.pt_type(:,2))'*mm.S);
 

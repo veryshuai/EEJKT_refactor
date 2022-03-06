@@ -2,7 +2,6 @@
 
 rng(80085,'twister');
 
-%seed = 1;
 lambda_h = policy.lambda_h;
 lambda_f = policy.lambda_f;
 c_val_h_orig = policy.c_val_h;
@@ -26,40 +25,22 @@ sim_out_h = cell(mm.N_pt,1);
 sim_out_hf = cell(mm.N_pt,1);
 sim_out = cell(mm.N_pt,1);
 
-sim_firm_num_by_prod_succ_type = zeros(mm.N_pt,1);
 
 %% Load storage objects by looping over firm types
 
-N_theta1 = size(mm.theta1,2);    % number of thetas in home market
-th1_cdf  = betacdf(mm.theta1,mm.ah,mm.bh); % cdf for home theta draws
-th1_cdf(N_theta1) = 1; % to deal with rounding problem
-
 seeds = randi(1e6,size(mm.Phi,1),2);
-pt_type = [kron((1:size(mm.Phi,1))',ones(size(mm.theta2,2),1)),kron(ones(size(mm.Phi,1),1),(1:size(mm.theta2,2))')];
 
-parfor pt_ndx = 1:1:mm.N_pt
-%for pt_ndx = 1:1:mm.N_pt % use this for loop for debugging only
-
-    prod_ndx  = pt_type(pt_ndx,1);
-    theta_ndx = pt_type(pt_ndx,2);
-
-    rng(seeds(prod_ndx,1),'twister');
-    seed_crand(seeds(prod_ndx,2));
-
-    prod_lvl  = mm.Phi(prod_ndx);
-    succ_prob = mm.theta2(theta_ndx);
-
-    % number of firms to simulate of this particular type (should be in
-    % setParams?)
-    sim_firm_num_by_prod_succ_type(pt_ndx) = round(mm.erg_pp(prod_ndx)*policy.th2_pdf(theta_ndx)*mm.S);
+%parfor pt_ndx = 1:1:mm.N_pt
+for pt_ndx = 1:1:mm.N_pt % use this for loop for debugging only
     
-    if sim_firm_num_by_prod_succ_type(pt_ndx)>0
+    rng(seeds(mm.pt_type(pt_ndx,1),1),'twister');
+    seed_crand(seeds(mm.pt_type(pt_ndx,1),2));
 
-        sim_out_f{pt_ndx} = matchdat_gen_f(sim_firm_num_by_prod_succ_type(pt_ndx), macro_state_f, theta_ndx, prod_ndx, mm, policy);
+    if mm.sim_firm_num_by_prod_succ_type(pt_ndx)>0
 
-        sim_out_h{pt_ndx} = matchdat_gen_h(sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1),size(mm.Phi,1),nn_h,mm.pd_per_yr,1/mm.pd_per_yr,mm.periods,mm.max_ships,typemat,macro_state_h,...
-            theta_ndx,prod_ndx,mm,pmat_cum_h,c_val_h_orig,cumsum(mm.erg_pz),mm.poisCDF_shipments,...
-            1-exp(-mm.delta),1-exp(-mm.firm_death_haz),mm.L_b,pmat_cum_z,N_theta1,th1_cdf);
+        sim_out_f{pt_ndx} = matchdat_gen_f(pt_ndx,macro_state_f, mm, policy);
+
+        sim_out_h{pt_ndx} = matchdat_gen_h(pt_ndx,macro_state_h, mm, policy);
 
         sim_out_hf{pt_ndx} = splice_hf(sim_out_h{pt_ndx},sim_out_f{pt_ndx},policy,mm);
 
@@ -72,7 +53,7 @@ end
 
 %% Initialize objects that will hold cumulated values
 
-sim_cum = aggregateSimulatedData(sim_firm_num_by_prod_succ_type, sim_out,mm);
+sim_cum = aggregateSimulatedData(sim_out,mm);
 
 %% Construct simulated statistics
 

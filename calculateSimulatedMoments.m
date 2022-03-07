@@ -3,7 +3,6 @@ function simMoms = calculateSimulatedMoments(sim_cum)
 %% Construct simulated statistics
 simMoms = struct; %container for all simulated moments
 
-% Some numbers from above
 simMoms.agg_nexptr = sim_cum.agg_nexptr;
 simMoms.agg_nfirm = sim_cum.agg_nfirm;
 
@@ -17,15 +16,11 @@ else
 end
 simMoms.beta_match = inv_agg_moms_xx*sim_cum.agg_moms_xy;
 simMoms.ybar_match = sim_cum.agg_ysum/sim_cum.agg_nobs;
-
 simMoms.mse_match_ar1 = (sim_cum.agg_mat_ar1_y - sim_cum.agg_mat_ar1_x*simMoms.beta_match)'*...
     (sim_cum.agg_mat_ar1_y - sim_cum.agg_mat_ar1_x*simMoms.beta_match)/size(sim_cum.agg_mat_ar1_x,1);
 
 
 % firm-level autoregression
-beta_fsales = inv(sim_cum.agg_fmoms_xx)*sim_cum.agg_fmoms_xy;
-ybar_fsales = sim_cum.agg_fysum/sim_cum.agg_fnobs;
-
 simMoms.beta_fsales_h = inv(sim_cum.agg_fmoms_h_xx)*sim_cum.agg_fmoms_h_xy;
 simMoms.mse_h         = (sim_cum.agg_y_fsales_h - sim_cum.agg_x_fsales_h*simMoms.beta_fsales_h)'*...
     (sim_cum.agg_y_fsales_h - sim_cum.agg_x_fsales_h*simMoms.beta_fsales_h)/size(sim_cum.agg_y_fsales_h,1);
@@ -36,7 +31,6 @@ simMoms.beta_hfsales = inv(sim_cum.agg_hfmoms_xx)*sim_cum.agg_hfmoms_xy;
 simMoms.mse_hf       = (sim_cum.agg_y_hf - sim_cum.agg_x_hf*simMoms.beta_hfsales)'*...
     (sim_cum.agg_y_hf - sim_cum.agg_x_hf*simMoms.beta_hfsales)/size(sim_cum.agg_x_hf,1);
 simMoms.ybar_hfsales  = sim_cum.agg_hfysum/sim_cum.agg_hf_nobs;
-
 simMoms.avg_expt_rate = mean(sim_cum.agg_expt_rate);
 simMoms.share_exptr   = sim_cum.agg_nexptr/sim_cum.agg_nfirm;
 
@@ -50,33 +44,22 @@ else
 end
 simMoms.beta_mkt_exit   = inv_agg_exit_xx*sim_cum.agg_exit_xy;
 simMoms.mkt_exit_rate   = sim_cum.agg_sum_exits/sim_cum.agg_exit_obs;
-match_succ_rate = sim_cum.agg_sum_succ_rate/sim_cum.agg_exit_obs;
 
 % match exit regression
 simMoms.beta_match_exit = inv(sim_cum.agg_mat_exit_moms_xx)*sim_cum.agg_mat_exit_moms_xy; 
 simMoms.match_exit_rate = sim_cum.agg_nmat_exit/sim_cum.agg_mat_obs;
-mse_match_exit  = (sim_cum.agg_mat_exit_y - sim_cum.agg_mat_exit_x*simMoms.beta_match_exit)'*...
-    (sim_cum.agg_mat_exit_y - sim_cum.agg_mat_exit_x*simMoms.beta_match_exit)/size(sim_cum.agg_mat_exit_y,1);
-
 
 % average log #shipments
 simMoms.avg_ln_ships = sim_cum.agg_ln_ships/sim_cum.agg_ship_obs;
 
-%       % create variables for analysis of degree distribution
-%
+% create variables for analysis of degree distribution
 simMoms.ff_sim_max      = find(cumsum(sim_cum.agg_match_count)./sum(sim_cum.agg_match_count)<1);
 log_compCDF     = log(1 - cumsum(sim_cum.agg_match_count(simMoms.ff_sim_max))./sum(sim_cum.agg_match_count));
 log_matches     = log(1:1:size(simMoms.ff_sim_max,1))';
 xmat            = [ones(size(simMoms.ff_sim_max)),log_matches,log_matches.^2];
-
 % quadratic regression approximating degree distribution
 simMoms.b_degree        = regress(log_compCDF,xmat);
 % linear regression approximating degree distribution
-xmat_linear     = [ones(size(simMoms.ff_sim_max)),log_matches];
-b_degree_linear = regress(log_compCDF,xmat_linear);
-% nonparametric plot of degree distribution
-%       scatter(log_matches,log_compCDF)
-
 
 % plot histogram of frequencies for meeting hazards
 sim_cum.agg_time_gaps = sim_cum.agg_time_gaps(2:size(sim_cum.agg_time_gaps,1),:);
@@ -103,4 +86,5 @@ means_vec = mean([ln_haz,succ_rate,usq_succ]);
 simMoms.mean_ln_haz    = means_vec(1);
 simMoms.mean_succ_rate = means_vec(2);
 simMoms.mean_usq_succ  = means_vec(3);
+
 end

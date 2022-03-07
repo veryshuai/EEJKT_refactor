@@ -1,6 +1,7 @@
 %function moms = simulateMomentsMain(mm,policy)
 
 rng(80085,'twister');
+
 [macro_state_f, macro_state_h] = simulateMacroTrajectories(mm, policy);
 
 sim_out_f = cell(mm.N_pt,1);

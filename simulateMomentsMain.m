@@ -1,4 +1,4 @@
-%function moms = simulateMomentsMain(mm,policy)
+function simMoms = simulateMomentsMain(policy,mm)
 
 rng(80085,'twister');
 

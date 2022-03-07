@@ -17,8 +17,6 @@ mm.cs_f      = exp(X(11));      % Cost scaling parameter, foreign market
 mm.sig_p     = X(9);         %standard deviation of productivity distribution
 
 
-
-
 %% Discretization of state-space
 mm.grid_length   = 2.5;   % number of standard deviations from mean used for discretization
 mm.n_size        = 20;    % Maximum number of informative signals per firm (WAS 20)
@@ -28,7 +26,6 @@ mm.phi_size      = 8;     % number of different discretized profit shocks (2*n+1
 mm.x_size        = 7;     % Number of different discretized macro shocks; same for home and foreign (2*n+1)
 mm.lambda_size   = 25;    % Number of possible effort levels (WAS 40)
 mm.theta_size    = 20;    % Number of possible market potential values (WAS 51)
-mm.dim0          = 1;     % Number of possible theta0 values (common to both markets)
 mm.dim1          = 7;     % Number of possible theta1 values (specific to home market);
 mm.dim2          = 7;     % Number pf possible theta2 values (specific to foreign market);
 mm.mo_increm     = 1;     % months per unit time interval
@@ -46,10 +43,8 @@ mm.F_f       = exp(X(10));       % cost of maintaining a client- foreign
 mm.F_h       = exp(X(1)); % cost of maintaining a client- home 
 mm.alpha     = 0;       % weight of "common" theta in determining match probabilities (set to 0)
 
-mm.theta0           = 1/mm.dim0:1/mm.dim0:1;
 mm.theta1           = 1/mm.dim1:1/mm.dim1:1;
 mm.theta2           = 1/mm.dim2:1/mm.dim2:1;
-mm.theta0(mm.dim0)  =  mm.theta0(mm.dim0) - 0.0001;
 mm.theta1(mm.dim1)  =  mm.theta1(mm.dim1) - 0.0001;
 mm.theta2(mm.dim2)  =  mm.theta2(mm.dim2) - 0.0001;
 
@@ -73,13 +68,6 @@ mm.S         = 25000;    % number of potential exporting firms to simulate
 mm.burn      = 5;       %number of burn-in years
 mm.max_match = 50;    % upper bound on number of matches to be counted for foreign market
 mm.nn_h      = 70;    % Number of possible matches for domestic market
-
-%% Simulation restrictions 
-mm.maxc            = 50000; %maximum number of current clients (follows old program) 
-mm.max_client_prod = 7000; %maximum changes in demand shock over relationship % was as 7000
-mm.mult_match_max  = 12000; %maximum number of matches per exogenous state change interval % was 7000
-mm.mms             = 100000; %max event number (max matrix size) % was previously 60000
-
 
 %% Cost function
 

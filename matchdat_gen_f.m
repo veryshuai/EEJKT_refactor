@@ -15,15 +15,16 @@ function iter_out = matchdat_gen_f(pt_ndx,macro_state_f,mm,policy)
     
     counter = 1;
     for i=1:1:(mm.n_size+1)    % number of meetings, plus 1
-        for ss=1:1:i % number of successes, plus 1
+        for ss=1:1:i           % number of successes, plus 1
             Q_index(counter,:) = [counter,i,ss];
             counter = counter + 1;
         end
     end 
     
-  seas_tran = cell(1,mm.pd_per_yr); % cells will hold one year's worth of season- and match-specific outcomes for all firms w/in type
-  seas_Zcut = zeros(1,mm.pd_per_yr);    % elements will hold season-specifics Z cut-offs for endog. drops
-% Each firm begins with zero trials zero successes, macro state at median position
+  seas_tran = cell(1,mm.pd_per_yr);  % cells will hold one year's worth of season- and match-specific outcomes for all firms w/in type
+  seas_Zcut = zeros(1,mm.pd_per_yr); % elements will hold season-specifics Z cut-offs for endog. drops
+
+  % Each firm begins with zero trials zero successes, macro state at median position
   lag_row = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);
 
   cur_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % clients active in the current period
@@ -32,7 +33,6 @@ function iter_out = matchdat_gen_f(pt_ndx,macro_state_f,mm,policy)
   cum_succ     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % cumulative number of successes
   new_firm     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods);   % will mark new firms that haven't made a match
   exit_firm    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods);   % will mark last period of exiting firm 
-%  tot_ships    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % total number of shipments
   exog_deaths  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % number of exogenous match deaths
   micro_state  = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1);  % scalar indices for #success/#meetings 
   cur_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down current client counts by z state
@@ -45,21 +45,20 @@ function iter_out = matchdat_gen_f(pt_ndx,macro_state_f,mm,policy)
   flrlag       = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);     % initializing vector for age debugging
   yr_flrlag    = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);     % initializing vector for age debugging
   cumage       = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);    % initializing vector for age debugging 
-%  cont_expr    = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);    % continuing exporter indicator
   
 % create first observation on firm-year level aggregates (will concatenate below)
 % mm.max_match         = 50; % upper bound on number of matches to be counted 
 iter_out.match_count      = zeros(mm.max_match,1);
 iter_out.mat_yr_sales     = zeros(0,9);
 iter_out.mat_yr_sales_adj = zeros(0,9);
-agg_mat_matur        = zeros(0,7);
-mat_matur_dat        = zeros(0,7);
-iter_out.firm_f_yr_sales    = zeros(0,6);
+agg_mat_matur             = zeros(0,7);
+mat_matur_dat             = zeros(0,7);
+iter_out.firm_f_yr_sales  = zeros(0,6);
 iter_out.time_gaps        = zeros(0,7);
 iter_out.mat_ar1_x        = zeros(0,4);
 iter_out.mat_ar1_y        = zeros(0,1);
-mkt_exit             = zeros(1,3);
-mat_yr_sales_adj     = zeros(0,9);
+mkt_exit                  = zeros(1,3);
+mat_yr_sales_adj          = zeros(0,9);
 
 tic
 firm_cntr = 0;  % simulated firm counter, all types combined
@@ -80,19 +79,19 @@ iter_out.fmoms_xy = zeros(4,1);
 iter_out.fysum    = 0;
 iter_out.fnobs    = 0; 
 
-iter_out.exit_xx = zeros(6,6);
-iter_out.exit_xy = zeros(1,6);
+iter_out.exit_xx       = zeros(6,6);
+iter_out.exit_xy       = zeros(1,6);
 iter_out.sum_succ_rate = 0;
-iter_out.exit_obs = 0;
-iter_out.sum_exits = 0;
+iter_out.exit_obs      = 0;
+iter_out.sum_exits     = 0;
 
-iter_out.mat_exit_moms_xx  = zeros(5,5);
-iter_out.mat_exit_moms_xy  = zeros(5,1);
-iter_out.mat_obs       = 0;
-iter_out.nmat_exit     = 0;
-iter_out.mat_exit_x   = zeros(0,5);
-iter_out.mat_exit_y   = zeros(0,1);
-iter_out.mat_matur = zeros(0,7);
+iter_out.mat_exit_moms_xx = zeros(5,5);
+iter_out.mat_exit_moms_xy = zeros(5,1);
+iter_out.mat_obs          = 0;
+iter_out.nmat_exit        = 0;
+iter_out.mat_exit_x       = zeros(0,5);
+iter_out.mat_exit_y       = zeros(0,1);
+iter_out.mat_matur        = zeros(0,7);
 
 trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx)); % counts transitions across buyer types, 
 % for each seller type. New buyer types are considered type 0 at beginning of period, hence the +1. 
@@ -168,7 +167,9 @@ trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_suc
     N_no_learn  = sum(no_learn);
     if N_no_learn >0        
     % no exog. death, and shipments prev. year
-    stay(no_learn) = (rand(N_no_learn,1) > 1-exp(-mm.firm_death_haz));        
+    stay(no_learn) = (rand(N_no_learn,1) > 1-exp(-mm.firm_death_haz));   
+    
+  % CHECK THIS LINE: arguments of policy.lambda_f right?
     cum_meets(no_learn,t) = (cum_meets(no_learn,t-1) + poissinv(rand(N_no_learn,1),mm.theta2(mm.pt_type(pt_ndx,2)) ...
         * reshape(policy.lambda_f(floor(mm.theta2(mm.pt_type(pt_ndx,2))*(mm.n_size+1)),(mm.n_size+1),1,min((mm.net_size+1),cum_succ(no_learn,t-1)+1),...
           mm.pt_type(pt_ndx,1),macro_state_f(t-1)),N_no_learn,1))).*stay(no_learn); % resets to 0 if stay==0 or new firm this period               
@@ -298,9 +299,14 @@ mat_tran_all_zeros = ~any(trans_count(:));
 if mat_tran_all_zeros
     mat_tran = zeros(0,4);ship_cur = zeros(0,1); age_vec = zeros(0,1);
 else
-[mat_tran,ship_cur,age_vec] =...
-    match_sales(mm.scale_f,mm.eta,trans_count(:,:,:),age,mm.X_f(macro_state_f(t)),t,mm.poisCDF_shipments,...
-    mm.max_ships,size(mm.Z,1),mm.Z,mm.Phi(mm.pt_type(pt_ndx,1)));
+% [mat_tran,ship_cur,age_vec] =...
+%     match_sales(mm.scale_f,mm.eta,trans_count(:,:,:),age,mm.X_f(macro_state_f(t)),t,mm.poisCDF_shipments,...
+%     mm.max_ships,size(mm.Z,1),mm.Z,mm.Phi(mm.pt_type(pt_ndx,1)));
+
+mkt =1; % for foreign market
+[mat_tran,ship_cur,age_vec] = match_sales(mkt,mm,trans_count,age,pt_ndx,macro_state_f(t));
+
+
 % mat_tran:  [initial state, exporter id, ending state, match revenue]
 % ship_cur:   match's number of shipments within the current period
 % age_vec:    firm age (# periods)

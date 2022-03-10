@@ -19,7 +19,7 @@ mm.sig_p     = X(9);         %standard deviation of productivity distribution
 
 %% Discretization of state-space
 mm.grid_length   = 2.5;   % number of standard deviations from mean used for discretization
-mm.n_size        = 20;    % Maximum number of informative signals per firm (WAS 20)
+mm.n_size        = 20;    % Maximum number of informative signals per firm 
 mm.net_size      = 40;    % maximum number of network effects
 mm.z_size        = 7;     % Number of discretized demand shock states (2*n+1) 
 mm.phi_size      = 8;     % number of different discretized profit shocks (2*n+1)

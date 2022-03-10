@@ -1,11 +1,18 @@
-function [mat_tran,ship_cur,age_vec] =...
-    match_sales(scale,eta,trans,age,macro_shk,t,poisCDF,max_ships,N_Z,Z,phi)
-  
+function [mat_tran,ship_cur,age_vec] = match_sales(mkt,mm,trans,age,pt_ndx,macro_state)
+
+if     mkt==1 % foreign market
+  scale     = mm.scale_f;
+  macro_shk = mm.X_f(macro_state);
+elseif mkt==2 % home market
+  scale     = mm.scale_h;
+  macro_shk = mm.X_h(macro_state);
+end
+
 % This function constucts match transition counts, shipment counts and shipment 
 % sales for a specific type of exporter and a time period, t
 
 % mat_tran contains col 1: initial state, col 2: exporter id, 
-%     col 3: dest. state (Z index, or 0 for exit); col 4: match rev.
+%       col 3: dest. state (Z index, or 0 for exit); col 4: match rev.
 % ship_cur contains number of shipments for each match
 % age_vec  contains exporter age for each match
 
@@ -27,7 +34,7 @@ n_cli1      = sum(n_cli2,1)';      % initial client counts, incl. entrants, by e
   tot_cli = sum(sum(n_cli2)); % total # initial (t-1) clients     
   
   %% create 0/1 matrix "new_st" to track transitions of each firm's individual matches.
-  new_st = zeros(tot_cli,N_Z+3); % first 3 cols. give match state, exporter, & exit
+  new_st = zeros(tot_cli,size(mm.Z,1)+3); % first 3 cols. give match state, exporter, & exit
   ss = 1;
 
   for jj=1:1:sz_init_st2 % iterate over populated initial states in tran()
@@ -40,7 +47,7 @@ n_cli1      = sum(n_cli2,1)';      % initial client counts, incl. entrants, by e
     nloc = size(tloc,2);
     % temp will hold dummies indicating destination states for each of 
     % exporter expr2(jj)'s clients that begin from initial state init_st2(jj)
-    temp = zeros(n_match,N_Z+1);
+    temp = zeros(n_match,size(mm.Z,1)+1);
     % # clients transiting from init_st2(jj) to new state(s) tloc, exporter expr(jj):
     bloc = trans(init_st2(jj),tloc,expr2(jj));
     kk = 1;
@@ -61,23 +68,23 @@ n_cli1      = sum(n_cli2,1)';      % initial client counts, incl. entrants, by e
           [ones(n_match,1).*(init_st2(jj)-1),ones(n_match,1).*expr2(jj),temp];
       ss = ss + n_match;
   end
-  assert(sum(sum(new_st(:,4:N_Z+3)))==tot_cont_cli);
+  assert(sum(sum(new_st(:,4:size(mm.Z,1)+3)))==tot_cont_cli);
 %% construct match sales 
 
-   mask = ones(tot_cli,1).*(0:1:N_Z);
-   t_state = sum(new_st(:,3:N_Z+3).*mask,2); % convert Z_state dummies to indices
+   mask = ones(tot_cli,1).*(0:1:size(mm.Z,1));
+   t_state = sum(new_st(:,3:size(mm.Z,1)+3).*mask,2); % convert Z_state dummies to indices
 % mat_tran col 1: initial state, col 2: exporter id, cols 3: dest.
 % state (Z index, or 0 for exit)
    mat_tran = [new_st(:,1:2),t_state];
  
  % pick off new match shocks (Z's) for all matches, including new ones. 
  % 0's are exits
-   new_expZ = sum((ones(tot_cli,1).*exp(Z)').*new_st(:,4:N_Z+3),2);
+   new_expZ = sum((ones(tot_cli,1).*exp(mm.Z)').*new_st(:,4:size(mm.Z,1)+3),2);
 
  % draw random shipment counts for new and continuing matches.
    rr = rand(tot_cli,1);
-   select  = ones(tot_cli,1).*poisCDF > rr; 
-   ship_cur = (max_ships.*ones(tot_cli,1) - sum(select,2)).*(new_expZ>0); % shipments, t   
+   select  = ones(tot_cli,1).*mm.poisCDF_shipments > rr; 
+   ship_cur = (mm.max_ships.*ones(tot_cli,1) - sum(select,2)).*(new_expZ>0); % shipments, t   
    
    %% modeling choice here
    
@@ -92,7 +99,7 @@ n_cli1      = sum(n_cli2,1)';      % initial client counts, incl. entrants, by e
 %  payoff = 1 / de * exp(sf) * exp((de-1)*st(1,:)+st(2,:)); 
 %  Here sf is estimated scalar, st(1,:) is productivity, st(2,:) is macro state  
 
-   mat_rev  = exp(scale + (eta-1)*phi + macro_shk).*new_expZ.*ship_cur; 
+   mat_rev  = exp(scale + (mm.eta-1)*mm.Phi(mm.pt_type(pt_ndx,1)) + macro_shk).*new_expZ.*ship_cur; 
    
 %  [scale,phi,macro_shk,mean(mat_rev),mean(new_expZ)]
    

@@ -10,13 +10,9 @@ sim_out_hf = cell(mm.N_pt,1);
 sim_out = cell(mm.N_pt,1);
 
 seeds = randi(1e6,size(mm.Phi,1),2);
-<<<<<<< Updated upstream
-parfor pt_ndx = 1:1:mm.N_pt
-%for pt_ndx = 1:1:mm.N_pt % use this for loop for debugging only
-=======
+
 %parfor pt_ndx = 1:1:mm.N_pt
   for pt_ndx = 1:1:mm.N_pt % use this for loop for debugging only
->>>>>>> Stashed changes
     
     rng(seeds(mm.pt_type(pt_ndx,1),1),'twister');
     seed_crand(seeds(mm.pt_type(pt_ndx,1),2));
@@ -34,6 +30,9 @@ parfor pt_ndx = 1:1:mm.N_pt
 
     end
 
+    if pt_ndx == 105
+        'pause here'
+    end
 end
 
 sim_cum = aggregateSimulatedData(sim_out,mm);

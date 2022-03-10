@@ -299,13 +299,13 @@ mat_tran_all_zeros = ~any(trans_count(:));
 if mat_tran_all_zeros
     mat_tran = zeros(0,4);ship_cur = zeros(0,1); age_vec = zeros(0,1);
 else
+
+mkt =1; % =1 for foreign market
+[mat_tran,ship_cur,age_vec] = match_sales(mkt,mm,trans_count,age,pt_ndx,macro_state_f(t));
+
 % [mat_tran,ship_cur,age_vec] =...
 %     match_sales(mm.scale_f,mm.eta,trans_count(:,:,:),age,mm.X_f(macro_state_f(t)),t,mm.poisCDF_shipments,...
 %     mm.max_ships,size(mm.Z,1),mm.Z,mm.Phi(mm.pt_type(pt_ndx,1)));
-
-mkt =1; % for foreign market
-[mat_tran,ship_cur,age_vec] = match_sales(mkt,mm,trans_count,age,pt_ndx,macro_state_f(t));
-
 
 % mat_tran:  [initial state, exporter id, ending state, match revenue]
 % ship_cur:   match's number of shipments within the current period

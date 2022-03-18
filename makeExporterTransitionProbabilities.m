@@ -13,6 +13,6 @@ policy.pmat_cum_h = intensityToProbabilityHome(mm,policy);
 
 %% construct transition probabilities for time interval Delta
 
-policy = makeExogenousExogenousToFirmTransitionProbabilities(mm, policy);
+policy = makeExogenousFirmTransitionProbabilities(mm, policy);
 
 end

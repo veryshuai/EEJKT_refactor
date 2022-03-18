@@ -133,3 +133,11 @@
  fit metric = 10.8066555969
 
  fit metric = 10.8066555969
+
+ fit metric = 12.9814085201
+
+ fit metric = 14.2905201041
+
+ fit metric = 10.799537675
+
+ fit metric = 10.799537675

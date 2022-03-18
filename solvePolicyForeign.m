@@ -15,20 +15,21 @@ for succ = 1:mm.n_size+1
     % learning maxed out
     for m = 1:mm.net_size+1-succ
 
-        new_v = val_func_iter(V(:,mm.n_size+1,succ,1,mm.net_size+2-m),mm.b,policy.postSuccessProb_f(mm.n_size+1,succ),policy.pi_f,mm.net_size+1-m,mm.Q_px_f,mm.r,abs(diag(mm.Q_px_f)),mm.Q_px_f_d,V(:,mm.n_size+1,succ,1,mm.net_size+2-m),1,mm.gam,1,mm.cs_f,mm.v_tolerance,mm.v_rel_tolerance,1,[],[],[],mm.cost_f,mm.l_opt_func_f,policy.pi_f);
+        new_v = val_func_iter('no_learning',V(:,mm.n_size+1,succ,1,mm.net_size+2-m),V(:,mm.n_size+1,succ,1,mm.net_size+2-m),[],policy.postSuccessProb_f(mm.n_size+1,succ),mm.net_size+1-m,mm,policy,'foreign');
         V(:,mm.n_size+1,succ,1,mm.net_size+1-m) = new_v;
+        [~,l_opt(:,mm.n_size+1,succ,1,mm.net_size+1-m)] = iterationError_h(V(:,mm.n_size+1,succ,1,mm.net_size+1-m),...
+            policy.postSuccessProb_f(mm.n_size+1,succ),mm.net_size+1-m,V(:,mm.n_size+1,succ,1,mm.net_size+2-m),mm,policy,'foreign');
 
-        [~,~,l_opt(:,mm.n_size+1,succ,1,mm.net_size+1-m)] = iterateValueFunction_h(V(:,mm.n_size+1,succ,1,mm.net_size+1-m),...
-            policy.postSuccessProb_f(mm.n_size+1,succ),policy.pi_f,mm.net_size+1-m,mm.r,abs(diag(mm.Q_px_f)),mm.Q_px_f_d,V(:,mm.n_size+1,succ,1,mm.net_size+2-m),mm.cost_f,mm.l_opt_func_f);
     end
 end
 
 for tri = 1:mm.n_size
     for succ = 1:mm.n_size+1-tri
 
-        new_v = val_func_iter(V(:,mm.n_size+2-tri,succ,1,succ),mm.b,policy.postSuccessProb_f,policy.pi_f,mm.n_size+1-tri,mm.Q_px_f,mm.r,abs(diag(mm.Q_px_f)),mm.Q_px_f_d,V(:,mm.n_size-tri+2,succ+1,1,succ+1),V(:,mm.n_size-tri+2,succ,1,succ),mm.gam,1,mm.cs_f,mm.v_tolerance,mm.v_rel_tolerance,0,mm.n_size,tri,succ,mm.cost_f,mm.l_opt_func_f,policy.pi_f);
+        new_v = val_func_iter('learning',V(:,mm.n_size+2-tri,succ,1,succ),V(:,mm.n_size-tri+2,succ+1,1,succ+1),V(:,mm.n_size-tri+2,succ,1,succ),policy.postSuccessProb_f(mm.n_size+1-tri,succ),succ,mm,policy,'foreign');
         V(:,mm.n_size+1-tri,succ,1,succ) = new_v;
-        [~,~,l_opt(:,mm.n_size+1-tri,succ,1,succ)] = iterateValueFunction_f(V(:,mm.n_size+1-tri,succ,1,succ),policy.postSuccessProb_f,policy.pi_f,mm.n_size+1-tri,succ,mm.r,abs(diag(mm.Q_px_f)),mm.Q_px_f_d,V(:,mm.n_size-tri+2,succ,1,succ),V(:,mm.n_size-tri+2,succ+1,1,succ+1),mm.cost_f,mm.l_opt_func_f);
+        [~,l_opt(:,mm.n_size+1-tri,succ,1,succ)] = iterationError_f(V(:,mm.n_size+1-tri,succ,1,succ),policy.postSuccessProb_f(mm.n_size+1-tri,succ),succ,V(:,mm.n_size-tri+2,succ,1,succ),V(:,mm.n_size-tri+2,succ+1,1,succ+1),mm,policy);
+
     end
 end
 

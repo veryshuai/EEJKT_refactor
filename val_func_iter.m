@@ -1,25 +1,22 @@
-function [new_v] = val_func_iter(init,bet,a,pi,net,Q0,rh,diag_Q,Q0_d,V_succ,V_fail,gam,scl,cscale,tol,rel_tol,no_learning,N,m,j,c,l_opt_func,pi_orig)
+function [new_v] = val_func_iter(learn_state,init,V_succ,V_fail,a,net,mm,policy,country)
 
      differ = 2;
      differ_rel = 2;
      old_v = init;
      iter = 0;
-     max_iter = 5e4;
-     max_pi = max(pi_orig);
+     max_pi = retrieveCountrySpecificParameters(country,mm,policy);    
 
-     while differ > tol/scl && differ_rel > rel_tol/scl && iter < max_iter
+     while differ > mm.v_tolerance && differ_rel > mm.v_rel_tolerance && iter < mm.max_iter
          
-         iter = iter + 1;
-
-         if no_learning == 1
-            new_v = old_v + iterateValueFunction_h(old_v,a,pi,net,rh,diag_Q,Q0_d,V_succ,c,l_opt_func);
-         else
-            new_v = old_v + iterateValueFunction_f(old_v,a,pi,N+1-m,j,rh,diag_Q,Q0_d,V_fail,V_succ,c,l_opt_func);
-         end
-
-         differ = sum(sum((new_v - old_v).*(new_v - old_v))); 
-         differ_rel = differ / max_pi;
-         old_v = new_v;
+        iter = iter + 1;
+        if learn_state == "no_learning"
+            new_v = old_v + iterationError_h(old_v,a,net,V_succ,mm,policy,country);
+        elseif learn_state == "learning"
+            new_v = old_v + iterationError_f(old_v,a,net,V_fail,V_succ,mm,policy);
+        end
+        differ = sum(sum((new_v - old_v).*(new_v - old_v))); 
+        differ_rel = differ / max_pi;
+        old_v = new_v;
          
      end
 

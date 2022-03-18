@@ -15,10 +15,9 @@ for k = 1:mm.dim1
     for N = 1:mm.net_size
 
         val_guess = V(:,1,k,mm.net_size-N+2);
-        new_v = val_func_iter(val_guess,mm.b,mm.theta1(k),policy.pi_h,mm.net_size+1-N,mm.Q_px_h,mm.r,abs(diag(mm.Q_px_h)),mm.Q_px_h_d,V(:,1,k,mm.net_size-N+2),1,mm.gam,1,mm.cs_h,mm.v_tolerance,mm.v_rel_tolerance,1,[],[],[],mm.cost_h,mm.l_opt_func_h,policy.pi_h);
+        new_v = val_func_iter('no_learning',val_guess,V(:,1,k,mm.net_size-N+2),[],mm.theta1(k),mm.net_size+1-N,mm,policy,'home');
         V(:,1,k,mm.net_size-N+1) = new_v;
-        [~,~,l_opt(:,1,k,mm.net_size+1-N)] = iterateValueFunction_h(V(:,1,k,mm.net_size+1-N),mm.theta1(k),policy.pi_h,mm.net_size+1-N,mm.r,abs(diag(mm.Q_px_h)),mm.Q_px_h_d,V(:,1,k,mm.net_size-N+2),mm.cost_h,mm.l_opt_func_h);
-
+        [~,l_opt(:,1,k,mm.net_size+1-N)] = iterationError_h(V(:,1,k,mm.net_size+1-N),mm.theta1(k),mm.net_size+1-N,V(:,1,k,mm.net_size-N+2),mm,policy,'home');
     end
 end
 end

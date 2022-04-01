@@ -1,6 +1,4 @@
-function iter_out = matchdat_gen_h(pt_ndx,macro_state_h,mm,policy)  
-
-iter_out = struct;
+function iter_out = matchdat_gen_h(pt_ndx,macro_state_h,mm,policy,iter_out)  
 
 %% create home theta draws  
     

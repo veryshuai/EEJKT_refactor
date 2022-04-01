@@ -19,14 +19,11 @@ parfor pt_ndx = 1:1:mm.N_pt
 
     if mm.sim_firm_num_by_prod_succ_type(pt_ndx)>0
 
-        sim_out_f{pt_ndx} = matchdat_gen_f(pt_ndx,macro_state_f, mm, policy);
+        sim_out{pt_ndx} = matchdat_gen_f(pt_ndx,macro_state_f, mm, policy);
 
-        sim_out_h{pt_ndx} = matchdat_gen_h(pt_ndx,macro_state_h, mm, policy);
+        sim_out{pt_ndx} = matchdat_gen_h(pt_ndx,macro_state_h, mm, policy,sim_out{pt_ndx});
 
-        sim_out_hf{pt_ndx} = splice_hf(sim_out_h{pt_ndx},sim_out_f{pt_ndx},policy,mm);
-
-        sim_out{pt_ndx} = cell2struct([struct2cell(sim_out_h{pt_ndx});struct2cell(sim_out_f{pt_ndx});struct2cell(sim_out_hf{pt_ndx})],...
-            [fieldnames(sim_out_h{pt_ndx});fieldnames(sim_out_f{pt_ndx});fieldnames(sim_out_hf{pt_ndx})]);
+        sim_out{pt_ndx} = splice_hf(sim_out{pt_ndx},policy,mm);
 
     end
 

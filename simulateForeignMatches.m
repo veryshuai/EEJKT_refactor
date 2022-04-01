@@ -1,10 +1,4 @@
-% This function is called from discrete_sim_parfor3.mmm.pt_type(pt_ndx,1)
-
-% It simulates panel data on foreign sales, matches, and shipments for all firms of a
-% particular type. It also generates type-specific moments to be aggregated
-% in discrete_sim_parfor3.m. Type is determined by productivity and foreign theta.
-
-function iter_out = matchdat_gen_f(pt_ndx,macro_state_f,mm,policy)  
+function iter_out = simulateForeignMatches(pt_ndx,macro_state_f,mm,policy)  
 
     iter_out = struct;
 
@@ -25,8 +19,7 @@ function iter_out = matchdat_gen_f(pt_ndx,macro_state_f,mm,policy)
   seas_Zcut = zeros(1,mm.pd_per_yr); % elements will hold season-specifics Z cut-offs for endog. drops
 
   % Each firm begins with zero trials zero successes, macro state at median position
-  lag_row = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);
-
+  
   cur_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % clients active in the current period
   add_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % gross additions to client count
   cum_meets    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % cumulative number of meetings
@@ -35,15 +28,12 @@ function iter_out = matchdat_gen_f(pt_ndx,macro_state_f,mm,policy)
   exit_firm    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods);   % will mark last period of exiting firm 
   exog_deaths  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % number of exogenous match deaths
   micro_state  = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1);  % scalar indices for #success/#meetings 
-  cur_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down current client counts by z state
   lag_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down lagged clients by z state
   new_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down new client counts by z state
   die_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down client death counts by z state
   surviv_zst   = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down surviving client counts by z state
   trans_zst    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % counts survival types by firm after z innovations
-  drop_cnt     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);    % number of clients endogenously dropped
   flrlag       = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);     % initializing vector for age debugging
-  yr_flrlag    = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);     % initializing vector for age debugging
   cumage       = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);    % initializing vector for age debugging 
   
 % create first observation on firm-year level aggregates (will concatenate below)
@@ -51,8 +41,6 @@ function iter_out = matchdat_gen_f(pt_ndx,macro_state_f,mm,policy)
 iter_out.match_count      = zeros(mm.max_match,1);
 iter_out.mat_yr_sales     = zeros(0,9);
 iter_out.mat_yr_sales_adj = zeros(0,9);
-agg_mat_matur             = zeros(0,7);
-mat_matur_dat             = zeros(0,7);
 iter_out.firm_f_yr_sales  = zeros(0,6);
 iter_out.time_gaps        = zeros(0,7);
 iter_out.mat_ar1_x        = zeros(0,4);
@@ -61,9 +49,6 @@ mkt_exit                  = zeros(1,3);
 mat_yr_sales_adj          = zeros(0,9);
 
 tic
-firm_cntr = 0;  % simulated firm counter, all types combined
-chk1 = 0;
-chk2 = 0;
 
 % match level moment aggregators
 iter_out.moms_xx   = zeros(4,4);

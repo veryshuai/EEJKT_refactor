@@ -1,9 +1,10 @@
-function [iter_in, iter_out] = simulateForeignInnerInitialize(mm, pt_ndx)
+function [iter_in, iter_out] = simulateForeignInnerInitialize(mm, pt_ndx, macro_state_f)
 
 iter_in = struct;
 iter_out = struct;
 
 iter_in.pt_ndx       = pt_ndx;
+iter_in.macro_state_f = macro_state_f;
 iter_in.seas_tran = cell(1,mm.pd_per_yr);  % cells will hold one year's worth of season- and match-specific outcomes for all firms w/in type
 iter_in.seas_Zcut = zeros(1,mm.pd_per_yr); % elements will hold season-specifics Z cut-offs for endog. drops
 iter_in.cur_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % clients active in the current period
@@ -30,6 +31,10 @@ iter_in.trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_
 
 iter_in.keep_cli      = ones(1,size(mm.Z,1)); % applies to clients existing in period 1
 iter_in.keep_cli(1:5) =  zeros(1,5); % implying worst 5 client types from period 1 are dropped.
+iter_in.year = 1;
+iter_in.N_match = 0;
+iter_in.season = 1;
+iter_in.firm_yr_sales_lag = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),4); %firm_yr_sales_lag will contain: [firmID,sales,#shipments,firm age]
 
 % create first observation on firm-year level aggregates (will concatenate below)
 iter_out.match_count      = zeros(mm.max_match,1);

@@ -1,4 +1,4 @@
-function iter_out = simulateHomeMoments(pt_ndx,macro_state_h,mm,policy,iter_out)  
+function iter_out = simulateHomeMatches(pt_ndx,macro_state_h,mm,policy,iter_out)  
 
 %% create home theta draws  
     

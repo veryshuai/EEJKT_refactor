@@ -4,9 +4,6 @@ rng(80085,'twister');
 
 [macro_state_f, macro_state_h] = simulateMacroTrajectories(mm, policy);
 
-sim_out_f = cell(mm.N_pt,1);
-sim_out_h = cell(mm.N_pt,1);
-sim_out_hf = cell(mm.N_pt,1);
 sim_out = cell(mm.N_pt,1);
 
 seeds = randi(1e6,size(mm.Phi,1),2);

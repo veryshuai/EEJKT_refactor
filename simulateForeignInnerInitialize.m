@@ -1,8 +1,11 @@
-function [iter_in, iter_out] = simulateForeignInnerInitialize(iter_in, mm, pt_ndx, iter_out)
-    
+function [iter_in, iter_out] = simulateForeignInnerInitialize(mm, pt_ndx)
+
+iter_in = struct;
+iter_out = struct;
+
+iter_in.pt_ndx       = pt_ndx;
 iter_in.seas_tran = cell(1,mm.pd_per_yr);  % cells will hold one year's worth of season- and match-specific outcomes for all firms w/in type
 iter_in.seas_Zcut = zeros(1,mm.pd_per_yr); % elements will hold season-specifics Z cut-offs for endog. drops
-
 iter_in.cur_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % clients active in the current period
 iter_in.add_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % gross additions to client count
 iter_in.cum_meets    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % cumulative number of meetings

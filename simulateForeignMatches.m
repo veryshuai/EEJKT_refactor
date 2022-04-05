@@ -6,7 +6,7 @@ for t = 2:1:mm.periods
 
     iter_in.t = t;
     %NOTE TO SELF: THIS IS MORE CLEARLY DONE WITH MOD FUNCTION
-    if abs(floor((iter_in.t-1)/mm.pd_per_yr) - (iter_in.t-1)/mm.pd_per_yr) <= 0.0001
+    if mod(iter_in.t-1,mm.pd_per_yr) == 0
         iter_in.season = 1; % reset season when previous period completes a year
     end
 

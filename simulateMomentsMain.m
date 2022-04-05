@@ -21,7 +21,7 @@ parfor pt_ndx = 1:1:mm.N_pt
 
         sim_out{pt_ndx} = simulateForeignMatches(pt_ndx,macro_state_f, mm, policy);
 
-        sim_out{pt_ndx} = matchdat_gen_h(pt_ndx,macro_state_h, mm, policy,sim_out{pt_ndx});
+        sim_out{pt_ndx} = simulateHomeMatches(pt_ndx,macro_state_h, mm, policy,sim_out{pt_ndx});
 
         sim_out{pt_ndx} = splice_hf(sim_out{pt_ndx},policy,mm);
 

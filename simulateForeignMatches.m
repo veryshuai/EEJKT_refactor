@@ -3,22 +3,9 @@ function iter_out = simulateForeignMatches(pt_ndx,macro_state_f,mm,policy)
     iter_out = struct;
 
 %% Initialize matrices
-
-    Q_size = (mm.n_size+1)*((mm.n_size+1)+1)/2;    % was nn1 instead of (mm.n_size+1)--both have same value, but need to check arguments of lambda_f
-    Q_index = zeros(Q_size,3); % [index,trials,successes]
-    
-    counter = 1;
-    for i=1:1:(mm.n_size+1)    % number of meetings, plus 1
-        for ss=1:1:i           % number of successes, plus 1
-            Q_index(counter,:) = [counter,i,ss];
-            counter = counter + 1;
-        end
-    end 
     
   seas_tran = cell(1,mm.pd_per_yr);  % cells will hold one year's worth of season- and match-specific outcomes for all firms w/in type
   seas_Zcut = zeros(1,mm.pd_per_yr); % elements will hold season-specifics Z cut-offs for endog. drops
-
-  % Each firm begins with zero trials zero successes, macro state at median position
   
   cur_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % clients active in the current period
   add_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % gross additions to client count
@@ -83,8 +70,6 @@ trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_suc
 % Exiting firms are considered to move to type 0 at the the end of the period.
 % Dimensions: (1) initial z-state (2) new z-state (3) firm index, given type    
 
-%  trans_tot    = zeros(N_Z+1,N_Z+1,periods,N_types); % transition counts through time, aggregeted across firms
-
 %% Initialize stuff
 
 % Set period 1 values for keep_cli. It will be used to select matches thar are endogenously dropped.
@@ -138,8 +123,8 @@ trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_suc
    if  N_learn > 0
      trans_rands = pmat_cum_t(micro_state(learn,t-1),:)> rand(N_learn,1)*ones(1,size(policy.pmat_cum_f{1},2));
      micro_state(learn,t) = int16(size(policy.pmat_cum_f{1},2) + 1 - sum(trans_rands,2)); % drawn new micro states
-     cum_meets(learn,t)   = Q_index(micro_state(learn ,t),2) - 1; % trials, new state, matrix for all firms (t+1)
-     cum_succ(learn,t)    = Q_index(micro_state(learn ,t),3) - 1; % successes, new state, matrix for all firms starting (t+1)
+     cum_meets(learn,t)   = mm.pmat_to_meets_succs(micro_state(learn ,t),2) - 1; % trials, new state, matrix for all firms (t+1)
+     cum_succ(learn,t)    = mm.pmat_to_meets_succs(micro_state(learn ,t),3) - 1; % successes, new state, matrix for all firms starting (t+1)
    end   
 
    stay(learn)  = micro_state(learn,t-1) - micro_state(learn,1) ~= 0; % wasn't in initial state last period
@@ -265,9 +250,6 @@ if t > mm.pd_per_yr
   cum_succ(dmt,t)     = 0;  % cumulative number of successes
 end
 
- %% End diagnostics
-    
-%% ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 % Calculate time (in periods) in export market  
   flr       = max(flrlag,t*new_firm(:,t)); % floor resets to current year for new exporters. 
   age       = t*ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1) - flr;     % age in periods. age=0 all year for firms with no shipment previous year

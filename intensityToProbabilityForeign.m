@@ -49,24 +49,14 @@ for typ_indx = 1:size(policy.firm_type_prod_succ_macro,1)
 
     %% construct transition probabilities for discrete time intervals
 
-    Q_size_f  = (mm.n_size + 1) *(mm.n_size+2)/2;
-    Q_index_f = zeros(Q_size_f,3); % [index,trials,successes]
-    counter = 1;
-    for i=1:1:mm.n_size+1    % number of meetings, plus 1
-        for ss=1:1:i % number of successes, plus 1
-            Q_index_f(counter,:) = [counter,i,ss];
-            counter = counter + 1;
-        end
-    end
-
-    nonzero_tran = zeros(Q_size_f);%% Create a matrix for taking out rounding errors in matrix exponentiation
-    for i = 1:Q_size_f
-        for j = 1:Q_size_f
-            cond1 = (Q_index_f(j,2) - Q_index_f(i,2)<0)*(Q_index_f(j,1)>1);
-            cond2 = (Q_index_f(j,3) - Q_index_f(i,3)<0)*(Q_index_f(j,1)>1);
+    nonzero_tran = zeros(size(mm.pmat_to_meets_succs,1));%% Create a matrix for taking out rounding errors in matrix exponentiation
+    for i = 1:size(mm.pmat_to_meets_succs,1)
+        for j = 1:size(mm.pmat_to_meets_succs,1)
+            cond1 = (mm.pmat_to_meets_succs(j,2) - mm.pmat_to_meets_succs(i,2)<0)*(mm.pmat_to_meets_succs(j,1)>1);
+            cond2 = (mm.pmat_to_meets_succs(j,3) - mm.pmat_to_meets_succs(i,3)<0)*(mm.pmat_to_meets_succs(j,1)>1);
             imposs_tran = max(cond1,cond2);
             % when cum matches or cum successes fall, they must go all the way to zero
-            cond3 = ((Q_index_f(j,3) - Q_index_f(i,3)) > (Q_index_f(j,2) - Q_index_f(i,2)))*(Q_index_f(j,1)>1);
+            cond3 = ((mm.pmat_to_meets_succs(j,3) - mm.pmat_to_meets_succs(i,3)) > (mm.pmat_to_meets_succs(j,2) - mm.pmat_to_meets_succs(i,2)))*(mm.pmat_to_meets_succs(j,1)>1);
             % # new successes cannot be greater than # new meetings for continuing firms
             imposs_tran = max(imposs_tran,cond3);
             nonzero_tran(i,j) = 1 - imposs_tran;

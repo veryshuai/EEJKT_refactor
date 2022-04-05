@@ -81,7 +81,18 @@ mm.l_opt_func_h = @(a,net,pi,V_succ,V_fail,V_orig)...
     max(max(((1+log(net))^mm.gam*(a*(pi+V_succ) + (1-a)*V_fail - V_orig)/mm.cs_h)+1,0).^(1/(mm.kappa1-1))-1,0);            
 mm.l_opt_func_f = @(a,net,pi,V_succ,V_fail,V_orig)... 
     max(max(((1+log(net))^mm.gam*(a*(pi+V_succ) + (1-a)*V_fail - V_orig)/mm.cs_f)+1,0).^(1/(mm.kappa1-1))-1,0);            
-    
+
+%% Exporter transition matrix across clients conversion
+
+mm.pmat_to_meets_succs = zeros((mm.n_size + 1) *(mm.n_size+2)/2,3); % [index,trials,successes]
+counter = 1;
+for i=1:1:mm.n_size+1    % number of meetings, plus 1
+    for ss=1:1:i % number of successes, plus 1
+        mm.pmat_to_meets_succs(counter,:) = [counter,i,ss];
+        counter = counter + 1;
+    end
+end
+
 %% Exogenous Jump Process Parameters
 
 % Uncomment commands below to reestimate exogenous variables

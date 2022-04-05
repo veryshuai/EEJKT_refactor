@@ -1,4 +1,4 @@
-function pmat_cum = intensityToProbabilityForeign(mm,policy)
+function policy = intensityToProbabilityForeign(mm,policy)
 
 
 %% construct intensity matrix for each firm type
@@ -49,14 +49,24 @@ for typ_indx = 1:size(policy.firm_type_prod_succ_macro,1)
 
     %% construct transition probabilities for discrete time intervals
 
-    nonzero_tran = zeros(size(mm.pmat_to_meets_succs,1));%% Create a matrix for taking out rounding errors in matrix exponentiation
-    for i = 1:size(mm.pmat_to_meets_succs,1)
-        for j = 1:size(mm.pmat_to_meets_succs,1)
-            cond1 = (mm.pmat_to_meets_succs(j,2) - mm.pmat_to_meets_succs(i,2)<0)*(mm.pmat_to_meets_succs(j,1)>1);
-            cond2 = (mm.pmat_to_meets_succs(j,3) - mm.pmat_to_meets_succs(i,3)<0)*(mm.pmat_to_meets_succs(j,1)>1);
+
+    policy.pmat_to_meets_succs = zeros((mm.n_size + 1) *(mm.n_size+2)/2,3); % [index,trials,successes]
+    counter = 1;
+    for i=1:1:mm.n_size+1    % number of meetings, plus 1
+        for ss=1:1:i % number of successes, plus 1
+            policy.pmat_to_meets_succs(counter,:) = [counter,i,ss];
+            counter = counter + 1;
+        end
+    end
+
+    nonzero_tran = zeros(size(policy.pmat_to_meets_succs,1));%% Create a matrix for taking out rounding errors in matrix exponentiation
+    for i = 1:size(policy.pmat_to_meets_succs,1)
+        for j = 1:size(policy.pmat_to_meets_succs,1)
+            cond1 = (policy.pmat_to_meets_succs(j,2) - policy.pmat_to_meets_succs(i,2)<0)*(policy.pmat_to_meets_succs(j,1)>1);
+            cond2 = (policy.pmat_to_meets_succs(j,3) - policy.pmat_to_meets_succs(i,3)<0)*(policy.pmat_to_meets_succs(j,1)>1);
             imposs_tran = max(cond1,cond2);
             % when cum matches or cum successes fall, they must go all the way to zero
-            cond3 = ((mm.pmat_to_meets_succs(j,3) - mm.pmat_to_meets_succs(i,3)) > (mm.pmat_to_meets_succs(j,2) - mm.pmat_to_meets_succs(i,2)))*(mm.pmat_to_meets_succs(j,1)>1);
+            cond3 = ((policy.pmat_to_meets_succs(j,3) - policy.pmat_to_meets_succs(i,3)) > (policy.pmat_to_meets_succs(j,2) - policy.pmat_to_meets_succs(i,2)))*(policy.pmat_to_meets_succs(j,1)>1);
             % # new successes cannot be greater than # new meetings for continuing firms
             imposs_tran = max(imposs_tran,cond3);
             nonzero_tran(i,j) = 1 - imposs_tran;
@@ -68,6 +78,8 @@ for typ_indx = 1:size(policy.firm_type_prod_succ_macro,1)
     pmat_cum{typ_indx}  = cumsum(pmat_type{typ_indx}')';
 
 end
+
+policy.pmat_cum_f = pmat_cum;
 
 end
 

@@ -7,9 +7,9 @@ policy.firm_type_prod_succ_macro = [(1:1:size(mm.Phi,1)*size(mm.theta2,2)*size(m
 
 %% construct intensity matrix for given firm type k
 
-policy.pmat_cum_f = intensityToProbabilityForeign(mm,policy);
+policy = intensityToProbabilityForeign(mm,policy);
 
-policy.pmat_cum_h = intensityToProbabilityHome(mm,policy);
+policy = intensityToProbabilityHome(mm,policy);
 
 %% construct transition probabilities for time interval Delta
 

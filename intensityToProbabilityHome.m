@@ -1,4 +1,4 @@
-function pmat_cum = intensityToProbabilityHome(mm,policy)
+function policy = intensityToProbabilityHome(mm,policy)
 
 Q_size_h = 70; %where is does this come from?
 
@@ -61,6 +61,8 @@ for typ_indx = 1:size(policy.firm_type_prod_succ_macro,1)
     pmat_cum{typ_indx}  = cumsum(pmat_type{typ_indx}')';
 
 end
+
+    policy.pmat_cum_h = pmat_cum;
 
 end
 

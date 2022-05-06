@@ -1,4 +1,4 @@
-function [iter_in,iter_out] = simulateForeignInnerAnnualize(iter_in,iter_out,mm)
+function [iter_in,iter_out] = simulateForeignMatchesInnerAnnualize(iter_in,iter_out,mm)
 
         [mat_yr_sales,firm_yr_sales] =...
             season_merge(iter_in.seas_tran,iter_in.N_match,mm.sim_firm_num_by_prod_succ_type(iter_in.pt_ndx),mm.pd_per_yr);

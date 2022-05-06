@@ -18,7 +18,7 @@ for t = 2:1:mm.periods
     iter_in = simulateForeignMatchesInnerSim(iter_in,mm,policy);
 
     if iter_in.season == mm.pd_per_yr
-        [iter_in,iter_out] = simulateForeignInnerAnnualize(iter_in,iter_out,mm);
+        [iter_in,iter_out] = simulateForeignMatchesInnerAnnualize(iter_in,iter_out,mm);
     end
     iter_in.season = iter_in.season + 1;
 

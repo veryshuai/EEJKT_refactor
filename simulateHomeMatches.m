@@ -220,7 +220,7 @@ for t = 2:1:mm.periods
        
     if exog_deaths(i,t-1) > 0
       % break down exogenous deaths that occur between t-1 and t down by z state: 
-      die_cli_zst(i,:) = die_vec(lag_cli_zst(i,:).*keep_cli,exog_deaths(i,t-1),size(mm.Z,1)); 
+      die_cli_zst(i,:) = createDieVec(lag_cli_zst(i,:).*keep_cli,exog_deaths(i,t-1),size(mm.Z,1)); 
       % record number of endogenous plus exogenous exits by z state in 1st column of trans_count:           
     end   
     trans_count(2:size(mm.Z,1)+1,1,i) = (lag_cli_zst(i,:).*(1-keep_cli))' + die_cli_zst(i,:)'; 

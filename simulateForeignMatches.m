@@ -12,8 +12,8 @@ for t = 2:1:mm.periods
     % update year, productivity type, and transition probability matrix
     iter_in.year = floor((iter_in.t-1)/mm.pd_per_yr);
     iter_in.mic_type = find(policy.firm_type_prod_succ_macro(:,3) == mm.pt_type(pt_ndx,2) & policy.firm_type_prod_succ_macro(:,4) == mm.pt_type(pt_ndx,1),1,'first');
-    type = find(policy.firm_type_prod_succ_macro(:,2) == macro_state_f(iter_in.t) & policy.firm_type_prod_succ_macro(:,3) == mm.pt_type(pt_ndx,2) & policy.firm_type_prod_succ_macro(:,4) == mm.pt_type(pt_ndx,1),1,'first');
-    iter_in.pmat_cum_t = policy.pmat_cum_f{type}; % holds cumulative transition probs across (#success, #meeting) pairs.
+    p_mat_type = find(policy.firm_type_prod_succ_macro(:,2) == macro_state_f(iter_in.t) & policy.firm_type_prod_succ_macro(:,3) == mm.pt_type(pt_ndx,2) & policy.firm_type_prod_succ_macro(:,4) == mm.pt_type(pt_ndx,1),1,'first');
+    iter_in.pmat_cum_t = policy.pmat_cum_f{p_mat_type}; % holds cumulative transition probs across (#success, #meeting) pairs.
 
     iter_in = simulateForeignMatchesInnerSim(iter_in,mm,policy);
 

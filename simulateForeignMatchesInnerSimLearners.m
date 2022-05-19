@@ -1,4 +1,4 @@
-function [iter_in, stay] = simulateForeignMatchesInnerSimLearners(learn, iter_in, policy, stay)
+function [stay, iter_in] = simulateForeignMatchesInnerSimLearners(learn, iter_in, policy, stay)
     
     % Find N_learn randomly selected micro states next period, given
     % macro state (common to all firms), initial micro states, and pmat_cum.

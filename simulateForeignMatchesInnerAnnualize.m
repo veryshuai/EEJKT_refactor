@@ -20,16 +20,6 @@ function [iter_in,iter_out] = simulateForeignMatchesInnerAnnualize(iter_in,iter_
         cum_duds  = iter_in.cum_meets(:,yr_tlag:iter_in.t) - iter_in.cum_succ(:,yr_tlag:iter_in.t); % previous mm.pd_per_yr + 1 cumulative duds
         curr_duds = cum_duds(:,2:mm.pd_per_yr+1)-(iter_in.new_firm(:,yr_tlag+1:iter_in.t)==0).*cum_duds(:,1:mm.pd_per_yr);
 
-        try
-            assert(min(min(curr_duds))>=0)
-        catch
-            warning('firm turnover not handled correctly')
-            [row_temp,~] = find(curr_duds<0);
-            curr_duds(row_temp,:)
-            [iter_in.t, iter_in.mic_type, season, size(curr_duds)]
-            curr_duds = max(curr_duds,zeros(size(curr_duds)));
-        end
-
         iter_out.singletons = sum(sum(curr_duds));
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,22 +50,6 @@ function [iter_in,iter_out] = simulateForeignMatchesInnerAnnualize(iter_in,iter_
                 %  mat_cont_2yr: [mat_yr_sales_lag(ff_cont_lag,:), mat_yr_sales(ff_cont,:)]
                 %  mat_yr_sales: [firm ID, match-specific sales, shipments, boy Z, eoy Z, match age in yrs, firm age in yrs]
                 %  iter_in.mat_yr_sales_adj: same as lagged mat_yr_sales except eoy Z set to zero if no sales next year
-
-                try
-                    assert(sum(abs(mat_cont_2yr(:,5)-mat_cont_2yr(:,ncols+4)))==0) % Z lines up
-                    assert(sum(abs(mat_cont_2yr(:,1)-mat_cont_2yr(:,ncols+1)))==0) % firm ID lines up
-                    %       assert(sum(mat_cont_2yr(:,14)- mat_cont_2yr(:,13)<0)==0) % firm age never less than match age
-                catch
-                    'pause here'
-                    warning('splicing mismatch or firm age < match age')
-                end
-
-                %     if sum(mat_cont_2yr(:,14)- mat_cont_2yr(:,13)<0)>0 % print obs if firm age less than match age
-                %         fff = mat_cont_2yr(:,14)- mat_cont_2yr(:,13)<0;
-                %         'printing from line 526 in matchdat_gen_f'
-                %         [ones(sum(fff),1)*[iter_in.t,macro_state_f(iter_in.t),mm.pt_type(pt_ndx,2),mm.pt_type(pt_ndx,1)], mat_cont_2yr(fff,6:7), mat_cont_2yr(fff,13:14)]
-                %     end
-
 
                 %% the following matrices accumulate annualized values over time and firm types
 

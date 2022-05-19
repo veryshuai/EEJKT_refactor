@@ -11,7 +11,7 @@ function iter_in = simulateForeignMatchesInnerSim(iter_in,mm,policy)
     no_learn = iter_in.cum_meets(:,iter_in.t-1) >= mm.n_size-3; % for picking off seasoned exporters
     learn    = iter_in.cum_meets(:,iter_in.t-1) <  mm.n_size-3; % for picking off learning exporters
 
-    % First deal with firms that have not maxed out learning using pmat_cum, based on Q matrix.
+    % First deal with firms that have not maxed out learning using pmat_cum.
 
     % Find N_learn randomly selected micro states next period, given
     % macro state (common to all firms), initial micro states, and pmat_cum.
@@ -196,11 +196,6 @@ function iter_in = simulateForeignMatchesInnerSim(iter_in,mm,policy)
     if iter_in.season == 1
         iter_in.N_match = size(mat_tran,1);
     end
-
-    %if t==2
-    %    seas_Zcut_lag = iter_in.seas_Zcut;
-    %    seas_tran_lag = iter_in.seas_tran;
-    %end % needed to get started (will be discarded with the burn-in)
 
     % Concatenate time index, season index and year index with match variables
     % and collect results for all seasons in year in seas_tran

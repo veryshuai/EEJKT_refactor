@@ -33,19 +33,3 @@ end
 sim_cum = aggregateSimulatedData(sim_out,mm);
 
 simMoms = calculateSimulatedMoments(sim_cum);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

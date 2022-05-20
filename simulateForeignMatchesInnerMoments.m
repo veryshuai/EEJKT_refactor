@@ -33,8 +33,8 @@ if iter_in.year > mm.burn  % don't start building simulated data set until burn-
 
 end
 
-if iter_in.year >= mm.burn  % don't start building simulated data set until burn-in finished
-
+if iter_in.year >= mm.burn  
+    
     % autoregressions and degree distribution
 
     [fmoms_xx,fmoms_xy,fysum,fn_obs] = firm_reg_moms(iter_in.firm_yr_sales,iter_in.firm_yr_sales_lag,mm.sim_firm_num_by_prod_succ_type(iter_in.pt_ndx));
@@ -91,7 +91,7 @@ if iter_in.year >= mm.burn  % don't start building simulated data set until burn
     % include all the matches that generated a single sample shipment:
     iter_out.match_count(1) = iter_out.match_count(1) + iter_out.singletons;
 
-end   % year > mm.burn  if statement
+end  
 
 iter_in.mat_yr_sales_lag = iter_in.mat_yr_sales;   % update lags
 iter_in.firm_yr_sales_lag = iter_in.firm_yr_sales;

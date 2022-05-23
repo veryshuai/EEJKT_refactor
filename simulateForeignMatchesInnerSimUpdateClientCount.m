@@ -11,7 +11,7 @@ function [iter_in, drop_Zcut] = simulateForeignMatchesInnerSimUpdateClientCount(
     % DAVID QUESTION: Does exit firm pick up no learning firms that exit?
     % If so, why is stay==0 condition needed?
     % JIM ANSWER: stay==0 throws out no-learning firms that get an exogenous exit shock. This isn't necessary for the learning firms
-    % becasue exit shocks are built into the Q matrix
+    % becasue exit shocks are built into the Q matrix 
 
     [iter_in, drop_Zcut, drop_cnt] = simulateForeignMatchesInnerSimDrops(iter_in, policy, mm);
     iter_in.cur_cli_cnt(:,iter_in.t) = iter_in.add_cli_cnt(:,iter_in.t) + iter_in.cur_cli_cnt(:,iter_in.t-1) ...

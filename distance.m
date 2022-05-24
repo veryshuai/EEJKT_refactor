@@ -11,4 +11,4 @@ policy = generatePolicyAndValueFunctions(mm);
 simMoms = simulateMomentsMain(policy,mm);
 calculateDistanceAndPrint(simMoms,mm,X);
 
-end
+end 

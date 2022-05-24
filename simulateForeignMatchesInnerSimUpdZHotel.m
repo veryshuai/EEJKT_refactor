@@ -1,13 +1,7 @@
 function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
     for i=1:mm.sim_firm_num_by_prod_succ_type(iter_in.pt_ndx)
         % break down new clients that occur between t-1 and t into e.o.p. z-types
-        
-%         iter_in.new_cli_zst(i,:) = new_vec_C(iter_in.add_cli_cnt(i,iter_in.t),size(mm.Z,1),cumsum(mm.erg_pz)); % distribute gross additions
-%         if sum(iter_in.new_cli_zst(i,:)) ~= iter_in.add_cli_cnt(i,iter_in.t) % cheap patch--better to clean up C++ code
-%             'C routine for random draws failed in matchdat_gen_f. (Requires cli_cnt>0.)  Trying Matlab version'
-%             iter_in.new_cli_zst(i,:) = new_vec(iter_in.add_cli_cnt(i,iter_in.t),size(mm.Z,1),cumsum(mm.erg_pz));
-%         end
-        
+               
         if iter_in.add_cli_cnt(i,iter_in.t)> 0
            iter_in.new_cli_zst(i,:) = new_vec_C(iter_in.add_cli_cnt(i,iter_in.t),size(mm.Z,1),cumsum(mm.erg_pz)); % distribute gross additions
         else

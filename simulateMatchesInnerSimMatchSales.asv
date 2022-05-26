@@ -1,4 +1,6 @@
-function [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mkt,mm,iter_in,age)
+function [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mkt,mm,iter_in,age,pt_ndx,macro_state)
+
+(mkt,mm,iter_in,age,iter_in.pt_ndx,iter_in.macro_state_f(iter_in.t));
 
 if mkt==1   % foreign market
   scale     = mm.scale_f;
@@ -99,7 +101,7 @@ n_cli1      = sum(n_cli2,1)';      % initial client counts, incl. entrants, by e
 %  payoff = 1 / de * exp(sf) * exp((de-1)*st(1,:)+st(2,:)); 
 %  Here sf is estimated scalar, st(1,:) is productivity, st(2,:) is macro state  
 
-   mat_rev  = exp(scale + (mm.eta-1)*mm.Phi(mm.pt_type(iter_in.pt_ndx,1)) + macro_shk).*new_expZ.*ship_cur; 
+   mat_rev  = exp(scale + (mm.eta-1)*mm.Phi(mm.pt_type(pt_ndx,1)) + macro_shk).*new_expZ.*ship_cur; 
    
 %  [scale,phi,macro_shk,mean(mat_rev),mean(new_expZ)]
    

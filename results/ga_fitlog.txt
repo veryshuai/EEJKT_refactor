@@ -186,4 +186,6 @@
 
  fit metric = 10.799537675
 
- fit metric = 10.8066555969
+ fit metric = 10.799537675
+
+ fit metric = 10.799537675

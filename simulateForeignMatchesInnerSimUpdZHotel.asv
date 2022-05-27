@@ -1,14 +1,11 @@
 function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
     for i=1:mm.sim_firm_num_by_prod_succ_type(iter_in.pt_ndx)
         % break down new clients that occur between t-1 and t into e.o.p. z-types
-               
-        if iter_in.add_cli_cnt(i,iter_in.t)> 0
-           iter_in.new_cli_zst(i,:) = new_vec_C(iter_in.add_cli_cnt(i,iter_in.t),size(mm.Z,1),cumsum(mm.erg_pz)); % distribute gross additions
-        else
-            iter_in.new_cli_zst(i,:)= zeros(1,size(mm.Z,1));
-        end        
-               
-        
+        iter_in.new_cli_zst(i,:) = new_vec_C(iter_in.add_cli_cnt(i,iter_in.t),size(mm.Z,1),cumsum(mm.erg_pz)); % distribute gross additions
+        if sum(iter_in.new_cli_zst(i,:)) ~= iter_in.add_cli_cnt(i,iter_in.t) % cheap patch--better to clean up C++ code
+            'C routine for random draws failed in matchdat_gen_f. (Requires + arg.)  Trying Matlab version'
+            iter_in.new_cli_zst(i,:) = new_vec(iter_in.add_cli_cnt(i,iter_in.t),size(mm.Z,1),cumsum(mm.erg_pz));
+        end
         if iter_in.exog_deaths(i,iter_in.t-1) > 0
             % break down exogenous deaths that occur between t-1 and t down by b.o.p. z state:
             iter_in.die_cli_zst(i,:) = createDieVec(iter_in.lag_cli_zst(i,:).*iter_in.keep_cli,iter_in.exog_deaths(i,iter_in.t-1),size(mm.Z,1));

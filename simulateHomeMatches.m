@@ -15,40 +15,26 @@ theta_h      = sortrows(theta_df);
 
 seas_tran = cell(1,mm.pd_per_yr); % cells will hold one year's worth of season- and match-specific outcomes for all firms w/in type
 seas_Zcut = zeros(1,mm.pd_per_yr);    % elements will hold season-specifics Z cut-offs for endog. drops
-% Each firm begins with zero trials zero successes, macro state at median position
-lag_row = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);
 
 cur_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % clients active in the current period
 add_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % gross additions to client count
-%  cum_meets    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % cumulative number of meetings
 cum_succ     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % cumulative number of successes
 new_firm     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods);   % will mark first period of a new firm
-%  tot_ships    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % total number of shipments
 exog_deaths  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % number of exogenous match deaths
 micro_state  = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % scalar indices for #success/#meetings
-%  cur_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down current client counts by z state
 lag_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down lagged clients by z state
 new_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down new client counts by z state
 die_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down client death counts by z state
 surviv_zst   = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down surviving client counts by z state
 trans_zst    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % counts survival types by firm after z innovations
-%  drop_cnt     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);    % number of clients endogenously dropped
 flrlag       = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);     % initializing vector for age debugging
 cumage       = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);    % initializing vector for age debugging
 
 % create first observation on firm-year level aggregates (will concatenate below)
-% max_match         = 50; % upper bound on number of matches to be counted
-% agg_match_count   = zeros(max_match,1);
-agg_mat_yr_sales  = double.empty(0,9);
 iter_out.firm_h_yr_sales = double.empty(0,6);
 iter_out.theta_h_firm  = double.empty(0,1);
-% agg_time_gaps     = double.empty(0,7);
-% mkt_exit          = zeros(1,3);
-
 iter_out.x_fsales_h    = zeros(0,2); % will contain rows of x matrix for regression
 iter_out.y_fsales_h    = zeros(0,1); % will contain rows of y matrix for regression
-
-tic
 
 % firm level moment aggregators
 iter_out.fmoms_h_xx = zeros(2,2);
@@ -56,23 +42,16 @@ iter_out.fmoms_h_xy = zeros(2,1);
 iter_out.fysum_h    = 0;
 iter_out.fnobs_h    = 0;
 
-
 trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx)); % counts transitions across buyer types,
 % for each seller type. New buyer types are considered type 0 at beginning of period, hence the +1.
 % Exiting firms are considered to move to type 0 at the the end of the period.
 % columns: (1) initial z-state (2) new z-state (3) firm index, given type (4) firm type
 
-%  trans_tot    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.periods,N_types); % transition counts through time, aggregeted across firms
-
 %% Initialize stuff
 
 % keep_cli will be used to select matches that are endogenously dropped.
-keep_cli      = ones(1,size(mm.Z,1)); % applies to clients existing in period 1
-keep_cli(1:5) =  zeros(1,5); % implying worst 5 client types from period 1 are dropped
-
-% load relevant transition probabilites for current micro type & macro
-% state. pmat_cum_t holds cumulative transition probs across #success/#meeting pairs.
-% It's loaded from pmat_cum, which is constructed in inten_sim using the relevant Q matrix.
+%keep_cli      = ones(1,size(mm.Z,1)); % applies to clients existing in period 1
+%keep_cli(1:5) =  zeros(1,5); % implying worst 5 client types from period 1 are dropped
 
 %% TIME LOOP BEGINS HERE
 season = 1;
@@ -255,8 +234,6 @@ for t = 2:1:mm.periods
         %% the following matrices accumulate annualized values over time and firm types
         theta_h_match = theta_h(mat_yr_sales(:,1));
         tt =  ones(size(mat_yr_sales,1),1).*[t,type];
-        agg_mat_yr_sales  = [agg_mat_yr_sales;[tt,mat_yr_sales]];
-        % agg_mat_yr_sales: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, match age, firm age]
         theta_h_firm = theta_h(firm_yr_sales(:,1));
         ttt = ones(size(firm_yr_sales,1),1).*[t,type];
         iter_out.firm_h_yr_sales = [iter_out.firm_h_yr_sales;[ttt,firm_yr_sales]];

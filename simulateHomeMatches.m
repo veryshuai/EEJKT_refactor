@@ -73,15 +73,6 @@ for t = 2:1:mm.periods
 
     %% gross additions to clients, before drops and deaths between t-1 and t
 
-    %  Identify firms that had at least one shipment last year. For others, cont_expr=0.
-    if sum(firm_yr_sales_lag(:,3))>0 % at least one firm had positive shipments
-        temp      = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1).*(1:1:mm.sim_firm_num_by_prod_succ_type(pt_ndx));
-        temp2     = temp(:,firm_yr_sales_lag(firm_yr_sales_lag(:,3)>0,1));
-        cont_expr = sum(((1:mm.sim_firm_num_by_prod_succ_type(pt_ndx))' - temp2 == 0),2);
-    else
-        cont_expr = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);
-    end
-
     if  mm.sim_firm_num_by_prod_succ_type(pt_ndx) > 0
         trans_rands = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.nn_h);
         cntr = 0;
@@ -178,8 +169,6 @@ for t = 2:1:mm.periods
         dmt = sum(cur_cli_cnt(:,t-2*mm.pd_per_yr+1:t),2)==0; % identify dormant firms
         micro_state(dmt,t)  = 1;  % reset initial micro state to 1 (entrant)
         new_firm(dmt,t)     = 1;  % will mark firms that haven't made a match in 2 yrs
-        exit_firm(dmt,t)    = 1;  % will mark last period of exiting firm (same thing)
-        cum_meets(dmt,t)    = 0;  % cumulative number of meetings
         cum_succ(dmt,t)     = 0;  % cumulative number of successes
     end
 
@@ -189,7 +178,6 @@ for t = 2:1:mm.periods
     age       = t*ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1) - flr;    % age=0 all year for firms with no shipment previous year
     flrlag    = flr ;
     cumage    = cat(2,cumage,age);
-    yr_age    = floor(age.*(1/mm.pd_per_yr));
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% Construct period-specific variables
 
@@ -210,11 +198,6 @@ for t = 2:1:mm.periods
         N_match = size(mat_tran,1);
     end
 
-    if t==2
-        seas_Zcut_lag = seas_Zcut;
-        seas_tran_lag = seas_tran;
-    end      % (will want to discard observations from first year)
-
     seas_tran{1,season} = [[t,season,year].*ones(size(mat_tran,1),1),mat_tran,ship_cur,age_vec];
     seas_Zcut(season)   = drop_Zcut;
 
@@ -224,16 +207,13 @@ for t = 2:1:mm.periods
     %% construct annualized variables
     if season == mm.pd_per_yr
 
-        [mat_yr_sales,firm_yr_sales] =...
+        [~,firm_yr_sales] =...
             season_merge(seas_tran,N_match,mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.pd_per_yr);
 
-        % mat_yr_sales: [firm ID, match-specific sales, shipments, boy Z, eoy Z, match age w/in yr, firm age]
         % firm_yr_sales:[firm ID, total dom. sales, total dom. shipments, firm age in domestic market]
 
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% the following matrices accumulate annualized values over time and firm types
-        theta_h_match = theta_h(mat_yr_sales(:,1));
-        tt =  ones(size(mat_yr_sales,1),1).*[t,type];
         theta_h_firm = theta_h(firm_yr_sales(:,1));
         ttt = ones(size(firm_yr_sales,1),1).*[t,type];
         iter_out.firm_h_yr_sales = [iter_out.firm_h_yr_sales;[ttt,firm_yr_sales]];
@@ -241,10 +221,6 @@ for t = 2:1:mm.periods
         % iter_out.firm_h_yr_sales: [t,type,firm ID, total sales, total shipments,firm age]
 
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % update lagged variables for next year's loop
-        seas_tran_lag = seas_tran;
-        seas_Zcut_lag = seas_Zcut;
-        N_match_lag   = N_match;
         seas_Zcut = zeros(1,mm.pd_per_yr);
 
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -262,7 +238,6 @@ for t = 2:1:mm.periods
             iter_out.fnobs_h    = iter_out.fnobs_h + fn_obs ;
 
         end   % year > mm.burn if statement
-        mat_yr_sales_lag = mat_yr_sales;   % stack data for match regression
         firm_yr_sales_lag = firm_yr_sales; % stack data for firm regression
 
     end   % season == mm.pd_per_yr if statement
@@ -276,7 +251,5 @@ for t = 2:1:mm.periods
     die_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));
     trans_zst    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));
     trans_count  = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx));
-
-    tlag = t;
 
 end

@@ -16,7 +16,7 @@ for t = 2:1:mm.periods
     iter_in.pmat_cum_t = policy.pmat_cum_f{p_mat_type}; % holds cumulative transition probs across (#success, #meeting) pairs.
 
     iter_in = simulateForeignMatchesInnerSim(iter_in,mm,policy);
-
+    
     if iter_in.season == mm.pd_per_yr
         [iter_in,iter_out] = simulateForeignMatchesInnerAnnualize(iter_in,iter_out,mm);
         [iter_in,iter_out] = simulateForeignMatchesInnerMoments(iter_in,iter_out,mm);

@@ -1,4 +1,12 @@
-function [mat_tran, ship_cur, age_vec] = simulateMatchesInnerSimMatchRevAssign(tot_cli, mm, new_st, scale, iter_in, macro_shk, age)
+function [mat_tran, ship_cur, age_vec] = simulateMatchesInnerSimMatchRevAssign(tot_cli, mm, new_st, mkt, iter_in, age)
+
+if mkt==1   % foreign market
+  scale     = mm.scale_f;
+  macro_shk = mm.X_f(iter_in.macro_state_f(iter_in.t));
+elseif mkt==2 % home market
+  scale     = mm.scale_h;
+  macro_shk = mm.X_h(iter_in.macro_state_h(iter_in.t));
+end
 
    mask = ones(tot_cli,1).*(0:1:size(mm.Z,1));
    t_state = sum(new_st(:,3:size(mm.Z,1)+3).*mask,2); % convert Z_state dummies to indices

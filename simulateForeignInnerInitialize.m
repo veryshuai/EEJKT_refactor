@@ -3,7 +3,7 @@ function [iter_in, iter_out] = simulateForeignInnerInitialize(mm, pt_ndx, macro_
 iter_in = struct;
 iter_out = struct;
 
-iter_in.pt_ndx       = pt_ndx;
+iter_in.pt_ndx       = pt_ndx;             % index firms by type: productivity and product appeal (theta)
 iter_in.macro_state_f = macro_state_f;
 iter_in.seas_tran = cell(1,mm.pd_per_yr);  % cells will hold one year's worth of season- and match-specific outcomes for all firms w/in type
 iter_in.seas_Zcut = zeros(1,mm.pd_per_yr); % elements will hold season-specifics Z cut-offs for endog. drops

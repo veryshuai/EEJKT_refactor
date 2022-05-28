@@ -21,6 +21,12 @@ for t = 2:1:mm.periods
         [iter_in,iter_out] = simulateForeignMatchesInnerAnnualize(iter_in,iter_out,mm);
         [iter_in,iter_out] = simulateForeignMatchesInnerMoments(iter_in,iter_out,mm);
     end
+    
+% for debugging only       
+     if pt_ndx == 104 && t == mm.periods % 105
+          pause;
+     end
+%     
     iter_in.season = iter_in.season + 1;
 
     iter_in.lag_cli_zst  = iter_in.cur_cli_zst;
@@ -29,5 +35,7 @@ for t = 2:1:mm.periods
     iter_in.trans_zst    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));
     iter_in.trans_count  = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx));
 
+
+    
 end     
 end

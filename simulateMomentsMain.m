@@ -8,6 +8,7 @@ sim_out = cell(mm.N_pt,1);
 
 seeds = randi(1e6,size(mm.Phi,1),2);
 
+
  parfor pt_ndx = 1:1:mm.N_pt
 % for pt_ndx = 1:1:mm.N_pt % use this for loop for debugging only
 %     
@@ -15,7 +16,7 @@ seeds = randi(1e6,size(mm.Phi,1),2);
 %         pause; 
 %         save testdat105
 %    end
-
+=======
     rng(seeds(mm.pt_type(pt_ndx,1),1),'twister');
     seed_crand(seeds(mm.pt_type(pt_ndx,1),2));
 

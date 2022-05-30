@@ -16,7 +16,7 @@ seeds = randi(1e6,size(mm.Phi,1),2);
 %         pause; 
 %         save testdat105
 %    end
-=======
+
     rng(seeds(mm.pt_type(pt_ndx,1),1),'twister');
     seed_crand(seeds(mm.pt_type(pt_ndx,1),2));
 

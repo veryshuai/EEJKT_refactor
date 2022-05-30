@@ -1,10 +1,11 @@
 function iter_out = simulateHomeMatches(pt_ndx,macro_state_h,mm,policy,iter_out)  
 
-iter_in = struct;
+% iter_in = struct;
 
 % create home theta draws
-theta_df = (size(mm.theta1,2)+1)*ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1) - ...
-    sum(ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1)*mm.th1_cdf > rand(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1)*ones(1,size(mm.theta1,2)),2);
+theta_df = (length(mm.theta1)+1)*ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1) - ...
+    sum(ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1)*mm.th1_cdf >...
+    rand(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1)*ones(1,size(mm.theta1,2)),2);
 
 % list the non-zero values and their frequencies
 [uv,~,idx]   = unique(theta_df);
@@ -42,7 +43,7 @@ iter_out.fmoms_h_xy = zeros(2,1);
 iter_out.fysum_h    = 0;
 iter_out.fnobs_h    = 0;
 
-trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx)); % counts transitions across buyer types,
+trans_count    = zeros(length(mm.Z)+1,length(mm.Z)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx)); % counts transitions across buyer types,
 % for each seller type. New buyer types are considered type 0 at beginning of period, hence the +1.
 % Exiting firms are considered to move to type 0 at the the end of the period.
 % columns: (1) initial z-state (2) new z-state (3) firm index, given type (4) firm type
@@ -79,15 +80,17 @@ for t = 2:1:mm.periods
 
         for ii = 1:size(theta1_cntr,1)
             cntr2 = cntr+theta1_cntr(ii,2);
-            type = find(policy.firm_type_prod_succ_macro(:,2) == macro_state_h(t) & policy.firm_type_prod_succ_macro(:,3) == theta1_cntr(ii,1) & policy.firm_type_prod_succ_macro(:,4) == mm.pt_type(pt_ndx,1),1,'first');
+            type = find(policy.firm_type_prod_succ_macro(:,2) == macro_state_h(t)...
+                & policy.firm_type_prod_succ_macro(:,3) == theta1_cntr(ii,1)...
+                & policy.firm_type_prod_succ_macro(:,4) == mm.pt_type(pt_ndx,1),1,'first');
             pmat_cum_ht = policy.pmat_cum_h{type};
             
-            trans_rands(cntr+1:cntr2,:) = pmat_cum_ht(micro_state(cntr+1:cntr+theta1_cntr(ii,2),t-1),:)> rand(theta1_cntr(ii,2),1)*ones(1,mm.nn_h);
+            trans_rands(cntr+1:cntr2,:) = pmat_cum_ht(micro_state(cntr+1:cntr2,t-1),:)...
+                > rand(theta1_cntr(ii,2),1)*ones(1,mm.nn_h);
             cntr = cntr2;
         end  % end of home-theta type loop (alternative to end below)
         micro_state(:,t) = int16(mm.nn_h + 1 - sum(trans_rands,2)); % drawn new micro states
         cum_succ(:,t)    =  micro_state(:,t) - 1; % cumulative successes, new state, matrix for all firms starting (t+1)
-        %      cum_meets(:,t)   = Q_index(micro_state(:,t),2) - 1; % trials, new state, matrix for all firms (t+1)
     end
 
     %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

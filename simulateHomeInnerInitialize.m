@@ -26,6 +26,13 @@ iterH_in.trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by
 % Exiting firms are considered to move to type 0 at the the end of the period.
 % columns: (1) initial z-state (2) new z-state (3) firm index, given type (4) firm type
 
+% initialize keep_cli for first period
+iterH_in.keep_cli = ones(1,size(mm.Z,1)); % applies to clients existing in period 1
+iterH_in.keep_cli(1:5) =  zeros(1,5); % implying worst 5 client types from period 1 are dropped
+iterH_in.year = 1;
+iterH_in.N_match = 0;
+iterH_in.season = 1;
+
 % create first observation on firm-year level aggregates (will concatenate below)
 iter_out.firm_h_yr_sales = double.empty(0,6);
 iter_out.theta_h_firm  = double.empty(0,1);

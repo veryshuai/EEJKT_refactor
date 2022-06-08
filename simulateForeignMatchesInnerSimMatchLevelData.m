@@ -6,7 +6,7 @@ function [iter_in, mat_tran] = simulateForeignMatchesInnerSimMatchLevelData(iter
     else
 %         macro_shk = iter_in.macro_state_f(iter_in.t);
         mkt = 1; % =1 for foreign market
-        [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mkt,mm,iter_in,iter_in.trans_count,age);
+        [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mkt,mm,iter_in,age);
         % mat_tran:  [initial state, exporter id, ending state, match revenue]
         % ship_cur:   match's number of shipments within the current period
         % age_vec:    firm age (# periods)

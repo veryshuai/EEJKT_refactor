@@ -1,4 +1,4 @@
-function [mat_tran,ship_cur,age_vec] = match_sales(mkt,mm,trans,age,pt_ndx,macro_state)
+function [mat_tran,ship_cur,age_vec] = match_sales(mkt,mm,trans_count,age,pt_ndx,macro_state)
 
 if     mkt==1 % foreign market
   scale     = mm.scale_f;
@@ -23,13 +23,13 @@ end
 % for entrants (row 1). States 1 through N_Z correspond to Z indices.
 
 
-n_cli2      = zeros(size(trans,1),size(trans,3)); 
-n_cli2(:,:) = sum(trans(:,:,:),2); % # clients by initial state (rows 1:N_Z+1) and exporting firm (cols 2:N_firms)
+n_cli2      = zeros(size(trans_count,1),size(trans_count,3)); 
+n_cli2(:,:) = sum(trans_count(:,:,:),2); % # clients by initial state (rows 1:N_Z+1) and exporting firm (cols 2:N_firms)
 n_cli1      = sum(n_cli2,1)';      % initial client counts, incl. entrants, by exporting firm
   
   [init_st2,expr2] = find(n_cli2>0); % populated (initial states,exporter) addresses, incl. entering exporters
   sz_init_st2 = size(init_st2,1);    % # populated initial state/exporter cells
-  tot_cont_cli = sum(n_cli1)-sum(sum(sum(trans(:,1,:)))); % total # end-of-period clients. trans(:,1,:) contains exits
+  tot_cont_cli = sum(n_cli1)-sum(sum(sum(trans_count(:,1,:)))); % total # end-of-period clients. trans(:,1,:) contains exits
   %assert(sum(sum(sum(trans(:,2:N_Z+1,:))))==tot_cont_cli) 
   tot_cli = sum(sum(n_cli2)); % total # initial (t-1) clients     
   
@@ -39,22 +39,20 @@ n_cli1      = sum(n_cli2,1)';      % initial client counts, incl. entrants, by e
 
   for jj=1:1:sz_init_st2 % iterate over populated initial states in tran()
     % # clients of exporter expr(jj) beginning from state init_st2(jj): 
-    n_match = sum(trans(init_st2(jj),:,expr2(jj)),2); % sum over dest. states
+    n_match = sum(trans_count(init_st2(jj),:,expr2(jj)),2); % sum over dest. states
     % new state(s) for client(s) of exporter expr(jj) beginning from state init_st2(jj):   
-    tloc = find(trans(init_st2(jj),:,expr2(jj))>0);   
+    tloc = find(trans_count(init_st2(jj),:,expr2(jj))>0);   
     % count destination states for client(s) of exporter expr(jj) beginning 
     % from state init_st2(jj). Will be < n_match if some share same destination:  
     nloc = size(tloc,2);
-   mask = ones(tot_cli,1).*(0:1:size(mm.Z,1));
-   t_state = sum(new_st(:,3:size(mm.Z,1)+3).*mask,2); % convert Z_state dummies to indices
-% mat_tran col 1: initial state, col 2: exporter id, cols 3: dest.
-% state (Z index, or 0 for exit)
-   mat_tran = [new_st(:,1:2),t_state];
-    % temp will hold dummies indicating destination states for each of 
+    
+  
+   
+   % temp will hold dummies indicating destination states for each of 
     % exporter expr2(jj)'s clients that begin from initial state init_st2(jj)
     temp = zeros(n_match,size(mm.Z,1)+1);
     % # clients transiting from init_st2(jj) to new state(s) tloc, exporter expr(jj):
-    bloc = trans(init_st2(jj),tloc,expr2(jj));
+    bloc = trans_count(init_st2(jj),tloc,expr2(jj));
     kk = 1;
     % clients that share initial/destination state pairs treated as separate rows of temp:
     temp(1:bloc(1,1),tloc(1,kk)) = ones(bloc(1,1),1); 

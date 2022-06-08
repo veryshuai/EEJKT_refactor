@@ -10,15 +10,15 @@
         trans_rands = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.nn_h);
         cntr = 0;
 
-        for ii = 1:size(theta1_cntr,1)
-            cntr2 = cntr+theta1_cntr(ii,2);
-            ptm_type = find(policy.firm_type_prod_succ_macro(:,2) == macro_state_h(t)...
-                & policy.firm_type_prod_succ_macro(:,3) == theta1_cntr(ii,1)...
+        for ii = 1:size(iterH_in.theta1_cntr,1)
+            cntr2 = cntr+iterH_in.theta1_cntr(ii,2);
+            ptm_type = find(policy.firm_type_prod_succ_macro(:,2) == iterH_in.macro_state_h(t)...
+                & policy.firm_type_prod_succ_macro(:,3) == iterH_in.theta1_cntr(ii,1)...
                 & policy.firm_type_prod_succ_macro(:,4) == mm.pt_type(pt_ndx,1),1,'first');
             pmat_cum_ht = policy.pmat_cum_h{ptm_type};
             
-            trans_rands(cntr+1:cntr2,:) = pmat_cum_ht(iterH_in.micro_state(cntr+1:cntr+theta1_cntr(ii,2),t-1),:)...
-                > rand(theta1_cntr(ii,2),1)*ones(1,mm.nn_h);
+            trans_rands(cntr+1:cntr2,:) = pmat_cum_ht(iterH_in.micro_state(cntr+1:cntr+iterH_in.theta1_cntr(ii,2),t-1),:)...
+                > rand(iterH_in.theta1_cntr(ii,2),1)*ones(1,mm.nn_h);
             cntr = cntr2;
         end  % end of home-theta type loop 
 
@@ -37,7 +37,7 @@
     %% Deal with endogenous and exogenous drops (not in policy.pmat_cum_h)
 
     % identify z values at which exporters keep current matches from t-1 to t
-    iterH_keep.cli = policy.c_val_h(:,mm.pt_type(pt_ndx,1),macro_state_h(t-1))' > 0; % = 1 if want to keep type for t
+    iterH_keep.cli = policy.c_val_h(:,mm.pt_type(pt_ndx,1),iterH_in.macro_state_h(t-1))' > 0; % = 1 if want to keep type for t
     drop_Zcut = size(mm.Z,1) - sum(iterH_keep.cli); % matches dropped at z value <= drop_Zcut
     % count endogenous drops (z too low to continue)
     drop_cnt = sum(iterH_in.lag_cli_zst.*(1-iterH_keep.cli),2);

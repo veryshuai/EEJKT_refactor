@@ -1,11 +1,11 @@
-function [mat_tran, ship_cur, age_vec] = simulateMatchesInnerSimMatchRevAssign(tot_cli, mm, new_st, mkt, iter_in, age)
+function [mat_tran, ship_cur, age_vec] = simulateMatchesInnerSimMatchRevAssign(tot_cli, mm, new_st, mkt, iterX_in, age)
 
 if mkt==1   % foreign market
   scale     = mm.scale_f;
-  macro_shk = mm.X_f(iter_in.macro_state_f(iter_in.t));
+  macro_shk = mm.X_f(iterX_in.macro_state_f(iterX_in.t));
 elseif mkt==2 % home market
   scale     = mm.scale_h;
-  macro_shk = mm.X_h(iter_in.macro_state_h(iter_in.t));
+  macro_shk = mm.X_h(iterX_in.macro_state_h(iterX_in.t));
 end
 
    mask = ones(tot_cli,1).*(0:1:size(mm.Z,1));
@@ -36,7 +36,7 @@ end
 %  payoff = 1 / de * exp(sf) * exp((de-1)*st(1,:)+st(2,:)); 
 %  Here sf is estimated scalar, st(1,:) is productivity, st(2,:) is macro state  
 
-   mat_rev  = exp(scale + (mm.eta-1)*mm.Phi(mm.pt_type(iter_in.pt_ndx,1)) + macro_shk).*new_expZ.*ship_cur; 
+   mat_rev  = exp(scale + (mm.eta-1)*mm.Phi(mm.pt_type(iterX_in.pt_ndx,1)) + macro_shk).*new_expZ.*ship_cur; 
    
 %  [scale,phi,macro_shk,mean(mat_rev),mean(new_expZ)]
    

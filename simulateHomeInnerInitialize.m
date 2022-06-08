@@ -1,9 +1,11 @@
-function [iterH_in, iter_out] = simulateHomeInnerInitialize(mm, pt_ndx, iter_out)
+function [iterH_in, iter_out] = simulateHomeInnerInitialize(mm, pt_ndx, macro_state_h, iter_out)
 
 %% Initialize matrices
 
 iterH_in = struct;
 
+iterH_in.pt_ndx    = pt_ndx;
+iterH_in.macro_state_h = macro_state_h;
 iterH_in.seas_tran = cell(1,mm.pd_per_yr); % cells will hold one year's worth of season- and match-specific outcomes for all firms w/in type
 iterH_in.seas_Zcut = zeros(1,mm.pd_per_yr);    % elements will hold season-specifics Z cut-offs for endog. drops
 
@@ -26,6 +28,19 @@ iterH_in.trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by
 % Exiting firms are considered to move to type 0 at the the end of the period.
 % columns: (1) initial z-state (2) new z-state (3) firm index, given type (4) firm type
 
+% create home theta draws
+theta_df = (size(mm.theta1,2)+1)*ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1) - ...
+    sum(ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1)*mm.th1_cdf >...
+    rand(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1)*ones(1,size(mm.theta1,2)),2);
+
+% list the non-zero values and their frequencies
+[uv,~,idx]   = unique(theta_df);
+iterH_in.theta1_cntr  = [uv,accumarray(idx(:),1)];
+iterH_in.theta_h      = sortrows(theta_df);
+
+iterH_in.firm_yr_sales_lag = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),4);
+% firm_yr_sales_lag will contain: [firmID,sales,#shipments,firm age]
+
 % initialize keep_cli for first period
 iterH_in.keep_cli = ones(1,size(mm.Z,1)); % applies to clients existing in period 1
 iterH_in.keep_cli(1:5) =  zeros(1,5); % implying worst 5 client types from period 1 are dropped
@@ -45,4 +60,5 @@ iter_out.fmoms_h_xy = zeros(2,1);
 iter_out.fysum_h    = 0;
 iter_out.fnobs_h    = 0;
 
+iter_out.abort_flag_h = 0;
 end

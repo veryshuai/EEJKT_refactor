@@ -45,6 +45,11 @@ n_cli1      = sum(n_cli2,1)';      % initial client counts, incl. entrants, by e
     % count destination states for client(s) of exporter expr(jj) beginning 
     % from state init_st2(jj). Will be < n_match if some share same destination:  
     nloc = size(tloc,2);
+   mask = ones(tot_cli,1).*(0:1:size(mm.Z,1));
+   t_state = sum(new_st(:,3:size(mm.Z,1)+3).*mask,2); % convert Z_state dummies to indices
+% mat_tran col 1: initial state, col 2: exporter id, cols 3: dest.
+% state (Z index, or 0 for exit)
+   mat_tran = [new_st(:,1:2),t_state];
     % temp will hold dummies indicating destination states for each of 
     % exporter expr2(jj)'s clients that begin from initial state init_st2(jj)
     temp = zeros(n_match,size(mm.Z,1)+1);

@@ -1,4 +1,4 @@
-function [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mkt,mm,iter_in,age)
+function [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mkt,mm,iterX_in,trans_count,age)
 
 % This function constucts match transition counts, shipment counts and shipment 
 % sales for a specific type of exporter and a time period, t
@@ -15,11 +15,12 @@ function [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mkt,mm,
 
 % create 0/1 matrix "new_st" to track transitions of each firm's individual matches.
 
-[tot_cli, new_st] = simulateMatchesInnerSimMatchTrans(iter_in, mm);
+[tot_cli, new_st] = simulateMatchesInnerSimMatchTrans(trans_count, mm);
 
 % construct match sales for foreign market (mkt=1) or home market (mkt=2)
-
+  
 [mat_tran, ship_cur, age_vec] =...
-    simulateMatchesInnerSimMatchRevAssign(tot_cli, mm, new_st, mkt, iter_in, age);
-     
+    simulateMatchesInnerSimMatchRevAssign(tot_cli, mm, new_st, mkt, iterX_in, age);
+
+
 end

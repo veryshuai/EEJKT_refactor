@@ -1,5 +1,11 @@
-function iter_out = simulateHomeMatchesInnerSim(iter_out, mm, iterH_in, pt_ndx, theta1_cntr, policy, macro_state_h, theta_h,firm_yr_sales_lag )
+function iter_out = simulateHomeMatchesInnerSim(iter_out, mm, iterH_in, pt_ndx, policy)
+
 tic
+
+theta1_cntr = iterH_in.theta1_cntr;
+macro_state_h = iterH_in.macro_state_h;
+firm_yr_sales_lag = iterH_in.firm_yr_sales_lag;
+
 for t = 2:1:mm.periods
     iterH_in.t = t;
     if mod(iterH_in.t-1,mm.pd_per_yr) == 0
@@ -13,28 +19,29 @@ for t = 2:1:mm.periods
     simulateHomeMatchesInnerSimKickDormant
     simulateHomeMatchesInnerSimFirmAge
 
+    simulateHomeMatchesInnerSimMatchLevelData
 % % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% Construct period-specific variables
 
-    %  First load season to season transitions into mat_tran, which describes
-    %  matches of all mm.sim_firm_num_by_prod_succ_type(pt_ndx) of a particular type for a particular transition (t-1 to t).
-    mat_tran_all_zeros = ~any(iterH_in.trans_count(:));
-    if mat_tran_all_zeros
-        mat_tran = zeros(0,4);ship_cur = zeros(0,1); age_vec = zeros(0,1);
-    else
-
-        mkt = 2; % =2 for domestic market
-        [mat_tran,ship_cur,age_vec] = match_sales(mkt,mm,iterH_in.trans_count,age,pt_ndx,macro_state_h(t));
-
-    end
-    % mat_tran:  [initial state, exporter id, ending state, match revenue]
-
-    if iterH_in.season == 1
-        iterH_in.N_match = size(mat_tran,1);
-    end
-
-    iterH_in.seas_tran{1,iterH_in.season} = [[t,iterH_in.season,iterH_in.year].*ones(size(mat_tran,1),1),mat_tran,ship_cur,age_vec];
-    iterH_in.seas_Zcut(iterH_in.season)   = drop_Zcut;
+%     %  First load season to season transitions into mat_tran, which describes
+%     %  matches of all mm.sim_firm_num_by_prod_succ_type(pt_ndx) of a particular type for a particular transition (t-1 to t).
+%     mat_tran_all_zeros = ~any(iterH_in.trans_count(:));
+%     if mat_tran_all_zeros
+%         mat_tran = zeros(0,4);ship_cur = zeros(0,1); age_vec = zeros(0,1);
+%     else
+%         mkt = 2; % =2 for domestic market
+%         [mat_tran,ship_cur,age_vec] = match_sales(mkt,mm,iterH_in.trans_count,age,pt_ndx,macro_state_h(t));
+%   %     [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mkt,mm,iter_in,trans_count,age);
+% 
+%     end
+%     % mat_tran:  [initial state, exporter id, ending state, match revenue]
+% 
+%     if iterH_in.season == 1
+%         iterH_in.N_match = size(mat_tran,1);
+%     end
+% 
+%     iterH_in.seas_tran{1,iterH_in.season} = [[t,iterH_in.season,iterH_in.year].*ones(size(mat_tran,1),1),mat_tran,ship_cur,age_vec];
+%     iterH_in.seas_Zcut(iterH_in.season)   = drop_Zcut;
 
     iterH_in.N_match = iterH_in.N_match + size(mat_tran,1);
 
@@ -49,7 +56,7 @@ for t = 2:1:mm.periods
 
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% the following matrices accumulate annualized values over time and firm types
-        theta_h_firm = theta_h(firm_yr_sales(:,1));
+        theta_h_firm = iterH_in.theta_h(firm_yr_sales(:,1));
         ttt = ones(size(firm_yr_sales,1),1).*[t,ptm_type];
         iter_out.firm_h_yr_sales = [iter_out.firm_h_yr_sales;[ttt,firm_yr_sales]];
         iter_out.theta_h_firm  = [iter_out.theta_h_firm;theta_h_firm]; % keep track of domestic thetas for each firm
@@ -86,6 +93,10 @@ for t = 2:1:mm.periods
     iterH_in.die_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));
     iterH_in.trans_zst    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));
     iterH_in.trans_count  = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx));
+
+if t==mm.periods
+    'pause here'
+end
 
 end
 end

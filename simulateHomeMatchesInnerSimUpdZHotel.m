@@ -7,15 +7,14 @@
 
     for i=1:mm.sim_firm_num_by_prod_succ_type(pt_ndx)
         % break down new clients that occur between t-1 and t into z-types
-        %      new_cli_zst(i,:) = new_vec(add_cli_cnt(i,t),size(mm.Z,1),cumsum(mm.erg_pz)); % distribute gross additions
 
-        iterH_in.new_cli_zst(i,:) = new_vec_C(iterH_in.add_cli_cnt(i,t),size(mm.Z,1),cumsum(mm.erg_pz)); % distribute gross additions
-        % The following patch was added because occasionally new_vec_C doesn't work right. Need to clean up
-        if sum(iterH_in.new_cli_zst(i,:)) ~= iterH_in.add_cli_cnt(i,t)
-            'C routine for random draws failed in matchdat_gen_h. Trying Matlab version'
-            iterH_in.new_cli_zst(i,:) = new_vec(add_cli_cnt(i,t),size(mm.Z,1),cumsum(mm.erg_pz));
+        % distribute gross additions        
+        if iterH_in.add_cli_cnt(i,t) > 0
+           iterH_in.new_cli_zst(i,:) = new_vec_C(iterH_in.add_cli_cnt(i,t),size(mm.Z,1),cumsum(mm.erg_pz)); 
+        else
+           iterH_in.new_cli_zst(i,:) = zeros(1,size(mm.Z,1));
         end
-
+               
         if iterH_in.exog_deaths(i,t-1) > 0
             % break down exogenous deaths that occur between t-1 and t down by z state:
             iterH_in.die_cli_zst(i,:) = createDieVec(iterH_in.lag_cli_zst(i,:).*iterH_keep.cli,iterH_in.exog_deaths(i,t-1),size(mm.Z,1));

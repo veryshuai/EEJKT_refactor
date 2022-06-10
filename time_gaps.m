@@ -1,19 +1,17 @@
 function [time_gap2,mktexit_data] = time_gaps(t,exit_firm,pd_per_yr,cum_meets,cum_succ)
-%         time_gaps called from matchdat_gen_f.m
 
           yr_lag3   = t-3*pd_per_yr+1; % reach back as far as 3 years looking for last match before first current year match  
           firm_flip = exit_firm(:,yr_lag3:t);
-%           new_meet  = cum_meets(:,yr_lag3:t) - cum_meets(:,yr_lag3-1:t-1).*(firm_flip==0);
           new_meet  = cum_meets(:,yr_lag3:t) - cum_meets(:,yr_lag3-1:t-1); % deal with firm ID changes later
           %%          
           % create variables for firm exit regression
           
           exit         = exit_firm(:,t-pd_per_yr+1:t) == 1;          % flags firm_IDs that flip ownership during year
-          no_exit      = sum(exit_firm(:,t-pd_per_yr+1:t)==0,2)==12; % flags firm IDs that don't flip during year
-          cum_meets_xt = cum_meets(:,t-pd_per_yr:t-1).*exit;
-          cum_succ_xt  = cum_succ(:,t-pd_per_yr:t-1).*exit;
-          cum_meets_ct = cum_meets(:,t-pd_per_yr).*no_exit;   % cum meetings of incumbents entering current yr
-          cum_succ_ct  = cum_succ(:,t-pd_per_yr).*no_exit;    % cum successes of incumbents entering current yr
+          no_exit      = sum(exit_firm(:,t-pd_per_yr+1:t)==0,2) == pd_per_yr; % flags firm IDs that don't flip during year
+          cum_meets_xt = cum_meets(:,t-pd_per_yr:t-1).*exit; % cum meetings of exiting firms entering current yr
+          cum_succ_xt  = cum_succ(:,t-pd_per_yr:t-1).*exit;  % cum successes of exiting firms entering current yr
+          cum_meets_ct = cum_meets(:,t-pd_per_yr).*no_exit;  % cum meetings of incumbents entering current yr
+          cum_succ_ct  = cum_succ(:,t-pd_per_yr).*no_exit;   % cum successes of incumbents entering current yr
           ff_exit      = find(cum_succ_xt > 0);
           ff_cont      = find(cum_succ_ct > 0);  
           Nexit        = size(ff_exit,1)*size(ff_exit,2);
@@ -50,7 +48,7 @@ function [time_gap2,mktexit_data] = time_gaps(t,exit_firm,pd_per_yr,cum_meets,cu
           % (5) firm replacement dummy, (5) cum. meetings as of previous meeting, 
           % (6) cum succeseses as of previous meeting
 
-          [rr2,~] = find(tdiff(:,1)>0);
+          [rr2,~] = find(tdiff(:,1)>0); 
           time_gap = tdiff(rr2,:); % drop rows with differences across firms
           % (1) firm (2) time w/in interval (3) time gap (4) # new meetings, 
           % (5) firm replacement, (6) lagged cum. meetings, (7) lagged cum succeses
@@ -59,8 +57,9 @@ function [time_gap2,mktexit_data] = time_gaps(t,exit_firm,pd_per_yr,cum_meets,cu
           % searching--and only keep matches that happened during current year
           nnnn = size(time_gap,1);
           time_gap(2:nnnn,:) = time_gap(2:nnnn,:).*(time_gap(1:nnnn-1,1) - time_gap(2:nnnn,1)==0); 
-          no_trunc = find(time_gap(:,2) > pd_per_yr*2); 
-          time_gap = time_gap(no_trunc,:);
+%          no_trunc = find(time_gap(:,2) > pd_per_yr*2); 
+          no_trunc = find((time_gap(:,2) > pd_per_yr*2).*(time_gap(:,6)>0)); 
+          time_gap = time_gap(no_trunc,:); % takes only current year obs.
            
            % Now deal with cases of multiple new meetings within a single
            % period. Each of the k matches is treated as spread evenly

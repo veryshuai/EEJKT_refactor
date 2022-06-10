@@ -10,7 +10,7 @@
         trans_rands = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.nn_h);
         cntr = 0;
 
-        for ii = 1:size(iterH_in.theta1_cntr,1)
+        for ii = 1:size(iterH_in.theta1_cntr,1) % looping over firms with different home-thetas
             cntr2 = cntr+iterH_in.theta1_cntr(ii,2);
             ptm_type = find(policy.firm_type_prod_succ_macro(:,2) == iterH_in.macro_state_h(t)...
                 & policy.firm_type_prod_succ_macro(:,3) == iterH_in.theta1_cntr(ii,1)...
@@ -37,10 +37,10 @@
     %% Deal with endogenous and exogenous drops (not in policy.pmat_cum_h)
 
     % identify z values at which exporters keep current matches from t-1 to t
-    iterH_keep.cli = policy.c_val_h(:,mm.pt_type(pt_ndx,1),iterH_in.macro_state_h(t-1))' > 0; % = 1 if want to keep type for t
-    drop_Zcut = size(mm.Z,1) - sum(iterH_keep.cli); % matches dropped at z value <= drop_Zcut
+    iterH_in.keep.cli = policy.c_val_h(:,mm.pt_type(pt_ndx,1),iterH_in.macro_state_h(t-1))' > 0; % = 1 if want to keep type for t
+    iterH_in.drop_Zcut = size(mm.Z,1) - sum(iterH_in.keep.cli); % matches dropped at z value <= drop_Zcut
     % count endogenous drops (z too low to continue)
-    drop_cnt = sum(iterH_in.lag_cli_zst.*(1-iterH_keep.cli),2);
+    drop_cnt = sum(iterH_in.lag_cli_zst.*(1-iterH_in.keep.cli),2);
 
     % draw the number of exogenous deaths of remaining matches between t-1 and t
     ddum = find(iterH_in.cur_cli_cnt(:,t-1)-drop_cnt > 0);

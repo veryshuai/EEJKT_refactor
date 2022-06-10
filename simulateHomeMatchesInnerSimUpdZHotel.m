@@ -17,10 +17,10 @@
                
         if iterH_in.exog_deaths(i,t-1) > 0
             % break down exogenous deaths that occur between t-1 and t down by z state:
-            iterH_in.die_cli_zst(i,:) = createDieVec(iterH_in.lag_cli_zst(i,:).*iterH_keep.cli,iterH_in.exog_deaths(i,t-1),size(mm.Z,1));
+            iterH_in.die_cli_zst(i,:) = createDieVec(iterH_in.lag_cli_zst(i,:).*iterH_in.keep.cli,iterH_in.exog_deaths(i,t-1),size(mm.Z,1));
             % record number of endogenous plus exogenous exits by z state in 1st column of trans_count:
         end
-        iterH_in.trans_count(2:size(mm.Z,1)+1,1,i) = (iterH_in.lag_cli_zst(i,:).*(1-iterH_keep.cli))' + iterH_in.die_cli_zst(i,:)';
+        iterH_in.trans_count(2:size(mm.Z,1)+1,1,i) = (iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep.cli))' + iterH_in.die_cli_zst(i,:)';
         % For each firm (i) of a particular type, column 1 of trans_mat now
         % contains counts of all exiting matches, by buyer type (row).
 
@@ -28,7 +28,7 @@
         % z. Do this for those that don't die for endogenous reasons, minus those
         % that die for exogenous reasons:
 
-        iterH_in.surviv_zst(i,:) = iterH_in.lag_cli_zst(i,:).*iterH_keep.cli - iterH_in.die_cli_zst(i,:);
+        iterH_in.surviv_zst(i,:) = iterH_in.lag_cli_zst(i,:).*iterH_in.keep.cli - iterH_in.die_cli_zst(i,:);
         N_sur = sum(iterH_in.surviv_zst(i,:),2); % number of survivors from t-1, firm i
 
         if N_sur > 0
@@ -49,3 +49,4 @@
         end
     end
     iterH_in.cur_cli_zst = iterH_in.new_cli_zst + iterH_in.trans_zst;
+    

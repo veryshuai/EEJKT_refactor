@@ -20,4 +20,4 @@
     end
 
     iterH_in.seas_tran{1,iterH_in.season} = [[t,iterH_in.season,iterH_in.year].*ones(size(mat_tran,1),1),mat_tran,ship_cur,age_vec];
-    iterH_in.seas_Zcut(iterH_in.season)   = drop_Zcut;
+    iterH_in.seas_Zcut(iterH_in.season)   = iterH_in.drop_Zcut;

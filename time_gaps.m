@@ -57,8 +57,7 @@ function [time_gap2,mktexit_data] = time_gaps(t,exit_firm,pd_per_yr,cum_meets,cu
           % searching--and only keep matches that happened during current year
           nnnn = size(time_gap,1);
           time_gap(2:nnnn,:) = time_gap(2:nnnn,:).*(time_gap(1:nnnn-1,1) - time_gap(2:nnnn,1)==0); 
-%          no_trunc = find(time_gap(:,2) > pd_per_yr*2); 
-          no_trunc = find((time_gap(:,2) > pd_per_yr*2).*(time_gap(:,6)>0)); 
+          no_trunc = find((time_gap(:,2) > pd_per_yr*2).*(time_gap(:,6)>0)); % note: time_gap(:,6)>0 is redundant
           time_gap = time_gap(no_trunc,:); % takes only current year obs.
            
            % Now deal with cases of multiple new meetings within a single

@@ -15,7 +15,7 @@ function [mat_yr_sales,firm_yr_sales] = season_merge(seas_tran,N_match,N_firms,p
   mat_age  = ones(size(seas_tran{1},1),1);      % initial match age within year (season 1)
   
   smat_tran  = [sortrows(seas_tran{1},[5 6]),mat_age]; 
-  % seas_tran: [t, season, year, mat_tran, #shipments, exporter age(#periods)]; where
+  % seas_tran: [t, season, year, mat_tran, #shipments, exporter age(in periods)]; where
   % mat_tran:  [initial state, exporter id, ending state, match revenue]
   
   % smat_tran: 
@@ -46,7 +46,7 @@ for ss=2:pd_per_yr
    lcb = mat_cols*(ss-1)+1;  % lower column bound for horizontal additions to all_seas and some_seas
    ucb = mat_cols*ss;        % upper column bound for horizontal additions to all_seas and some_seas       
 %%     
-   match_count = zeros(1,N_firms); % added 7/23/18 
+   match_count = zeros(1,N_firms);  
    if nrt == 0  % no matches in the current season--move all matches to the 
                 % som_seas matrix and empty the all_seas matrix
 
@@ -57,6 +57,10 @@ for ss=2:pd_per_yr
       all_seas = zeros(N_match,mat_cols*pd_per_yr); 
       all_cntr = 0;
       end
+      
+      % JT: when nrt_lag>0 and nrt = 0, do firm exits get counted? Does it
+      % matter?
+      
    else  % nrt>0 positive number of matches in the current season 
        
 %      Firms that go to zero active matches (exit the market) have no records
@@ -122,7 +126,8 @@ for ss=2:pd_per_yr
      all_seas(all_cntr+1:N_match,:) = empty_mat;   % clear remaining rows
 
    end % end nrt >0 if block 
-    match_count_lag = match_count; % added line 7/23/18
+    match_count_lag = match_count; 
+    nrt_lag = nrt; % JT: line wasn't in previous version of code but didn't matter 
 end
 %%  Package up the match info. for use in regressions
 

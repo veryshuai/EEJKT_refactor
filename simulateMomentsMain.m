@@ -8,8 +8,8 @@ sim_out = cell(mm.N_pt,1);
 
 seeds = randi(1e6,size(mm.Phi,1),2);
 
- parfor pt_ndx = 1:1:mm.N_pt
-%  for pt_ndx = 1:1:mm.N_pt % use this for loop for debugging only
+parfor pt_ndx = 1:1:mm.N_pt
+% for pt_ndx = 1:1:mm.N_pt % use this for loop for debugging only
 % for pt_ndx = 105 % use this for loop for debugging only
     
 %    if pt_ndx == 105
@@ -24,7 +24,7 @@ seeds = randi(1e6,size(mm.Phi,1),2);
 
         sim_out{pt_ndx} = simulateForeignMatches(pt_ndx,macro_state_f, mm, policy);
 
-        sim_out{pt_ndx} = simulateHomeMatches2(pt_ndx,macro_state_h, mm, policy,sim_out{pt_ndx});
+        sim_out{pt_ndx} = simulateHomeMatches(pt_ndx,macro_state_h, mm, policy,sim_out{pt_ndx});
 
         sim_out{pt_ndx} = splice_hf(sim_out{pt_ndx},policy,mm);
 

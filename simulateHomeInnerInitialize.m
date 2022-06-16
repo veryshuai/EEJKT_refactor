@@ -1,5 +1,5 @@
-function [iterH_in, iter_out] = simulateHomeInnerInitialize(pt_ndx, macro_state_h, mm, policy, iter_out)
-                                                            
+function [iterH_in, iter_out] = simulateHomeInnerInitialize(mm, pt_ndx, macro_state_h, iter_out)
+
 %% Initialize matrices
 
 iterH_in = struct;

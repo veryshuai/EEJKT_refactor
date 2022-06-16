@@ -1,5 +1,9 @@
-    %%              simulateHomeMatchesInnerSimKickDormant
+function [iterH_in] = simulateHomeMatchesInnerSimKickDormant(iterH_in, mm)
+
+%%              simulateHomeMatchesInnerSimKickDormant
 %    Deal with dormant firms: after two years with no clients, swap them out
+
+   t = iterH_in.t;
 
    if t > 2*mm.pd_per_yr
         dmt = sum(iterH_in.cur_cli_cnt(:,t-2*mm.pd_per_yr+1:t),2)==0; % identify dormant firms

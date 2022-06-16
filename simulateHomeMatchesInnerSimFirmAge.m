@@ -1,4 +1,9 @@
+function iterH_in = simulateHomeMatchesInnerSimFirmAge(iterH_in,mm)
+
 %%                         simulateHomeMatchesInnerSimFirmAge    
+
+t = iterH_in.t;
+pt_ndx = iterH_in.pt_ndx;
 
 % calculate each firm's time (in periods) in domestic market 
 
@@ -7,3 +12,4 @@
     age = t*ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1) - flr;    
     iterH_in.flrlag = flr ;
     iterH_in.cumage = cat(2,iterH_in.cumage,age);
+    iterH_in.age    = age;

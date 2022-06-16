@@ -3,6 +3,11 @@
 % This script maps Z states onto each active match for each type-pt_ndx
 % buyer in each period t.
 
+function[iterH_in] = simulateHomeMatchesInnerSimUpdZHotel(iterH_in, mm, policy)
+
+t = iterH_in.t;
+pt_ndx = iterH_in.pt_ndx;
+
 % break down by buyer types (z)
 
     for i=1:mm.sim_firm_num_by_prod_succ_type(pt_ndx)

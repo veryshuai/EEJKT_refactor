@@ -57,10 +57,7 @@ for ss=2:pd_per_yr
       all_seas = zeros(N_match,mat_cols*pd_per_yr); 
       all_cntr = 0;
       end
-      
-      % JT: when nrt_lag>0 and nrt = 0, do firm exits get counted? Does it
-      % matter?
-      
+            
    else  % nrt>0 positive number of matches in the current season 
        
 %      Firms that go to zero active matches (exit the market) have no records

@@ -13,16 +13,6 @@ for t = 2:1:mm.periods
 
     iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
 
-%     if t==mm.periods
-%         'pause here'
-%     end
-
-%     simulateHomeMatchesInnerSimClientCounts
-%     simulateHomeMatchesInnerSimUpdZHotel
-%     simulateHomeMatchesInnerSimKickDormant
-%     simulateHomeMatchesInnerSimFirmAge
-%     simulateHomeMatchesInnerSimMatchLevelData
-
 [iterH_in] = simulateHomeMatchesInnerSimClientCounts(iterH_in, mm, policy);
 [iterH_in] = simulateHomeMatchesInnerSimUpdZHotel(iterH_in, mm, policy);
 [iterH_in] = simulateHomeMatchesInnerSimKickDormant(iterH_in, mm);

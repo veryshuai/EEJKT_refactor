@@ -66,6 +66,7 @@ temp0 = sortrows([[firm_a,age_aa];[firm_s,age_ss]],[1 2]); % stack all match obs
   firm_yr_sales = [mat_yr_sales(:,1)'*firmdum./temp2(:,temp3);...
       mat_yr_sales(:,2:3)'*firmdum; mat_yr_sales(:,7)'*(firmdum./sum(firmdum))]';
 % firm_yr_sales: [firmID,sales,#shipments,firm age]
+
 else
   firm_yr_sales = double.empty(0,4);
   mat_yr_sales  = double.empty(0,7);

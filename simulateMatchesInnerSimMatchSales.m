@@ -10,7 +10,6 @@ function [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mkt,mm,
 %    col 4: match revenue 
 
 % ship_cur contains number of shipments for each match
-
 % age_vec  contains exporter age for each match
 
 % create 0/1 matrix "new_st" to track transitions of each firm's individual matches.

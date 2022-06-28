@@ -27,7 +27,7 @@ for t = 2:1:mm.periods
     if iterH_in.season == mm.pd_per_yr
 
         [~,firm_yr_sales] =...
-            season_merge(iterH_in.seas_tran,iterH_in.N_match,mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.pd_per_yr);
+            season_merge(iterH_in,mm);
 
         % firm_yr_sales:[firm ID, total dom. sales, total dom. shipments, firm age in domestic market]
 

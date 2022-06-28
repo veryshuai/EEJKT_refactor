@@ -1,7 +1,7 @@
 function [iter_in,iter_out] = simulateForeignMatchesInnerAnnualize(iter_in,iter_out,mm)
 
 [iter_in.mat_yr_sales,iter_in.firm_yr_sales] =...
-    season_merge(iter_in.seas_tran,iter_in.N_match,mm.sim_firm_num_by_prod_succ_type(iter_in.pt_ndx),mm.pd_per_yr);
+    season_merge(iter_in,mm);
 % mat_yr_sales:  [firm ID, match-specific sales, shipments, boy Z, eoy Z,
 %                 match age in periods (w/in year), firm age in periods]
 % firm_yr_sales: [firmID,sales,#shipments,firm age]

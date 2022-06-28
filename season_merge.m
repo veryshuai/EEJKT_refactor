@@ -1,21 +1,23 @@
-function [mat_yr_sales,firm_yr_sales] = season_merge(seas_tran,N_match,N_firms,pd_per_yr)
+function [mat_yr_sales,firm_yr_sales] = season_merge(iterX_in,mm)
 
 %  This function takes a year's worth of season-specific match
 %  outcomes for a particular type of firm and organizes the information
 %  into annual aggregates at the match and firm level. These are passed
 %  back to discrete_sim.m, where they are used to construct moments.
 
-%  seas_tran: [t,season,year,initial state,firm_ID,new state,rev,shipments,firm age (in periods)];
+%  iterX_in.seas_tran: [t,season,year,initial state,firm_ID,new state,rev,shipments,firm age (in periods)];
 
 %% build within-yr trajectories for all matches--continuing, new, and dying
 
-  mat_cols = size(seas_tran{1},2)+1;            % the +1 makes room for a match age variable
-  all_seas = zeros(N_match,mat_cols*pd_per_yr); % to hold data on matches present at end of year
-  som_seas = zeros(N_match,mat_cols*pd_per_yr); % to hold data on matches that die before end of year
-  mat_age  = ones(size(seas_tran{1},1),1);      % initial match age within year (season 1)
+  N_firms = mm.sim_firm_num_by_prod_succ_type(iterX_in.pt_ndx);
+
+  mat_cols = size(iterX_in.seas_tran{1},2)+1;            % the +1 makes room for a match age variable
+  all_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); % to hold data on matches present at end of year
+  som_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); % to hold data on matches that die before end of year
+  mat_age  = ones(size(iterX_in.seas_tran{1},1),1);      % initial match age within year (season 1)
   
-  smat_tran  = [sortrows(seas_tran{1},[5 6]),mat_age]; 
-  % seas_tran: [t, season, year, mat_tran, #shipments, exporter age(in periods)]; where
+  smat_tran  = [sortrows(iterX_in.seas_tran{1},[5 6]),mat_age]; 
+  % iterX_in.seas_tran: [t, season, year, mat_tran, #shipments, exporter age(in periods)]; where
   % mat_tran:  [initial state, exporter id, ending state, match revenue]
   
   % smat_tran: 
@@ -40,8 +42,8 @@ function [mat_yr_sales,firm_yr_sales] = season_merge(seas_tran,N_match,N_firms,p
 % count the number of b.o.y. matches for each firm (firms are columns):
   match_count_lag = sum(smat_tran(:,5).*ones(1,N_firms) - (1:1:N_firms)==0,1);
            
-for ss=2:pd_per_yr
-   smat_tran = seas_tran{ss};
+for ss=2:mm.pd_per_yr
+   smat_tran = iterX_in.seas_tran{ss};
    nrt = size(smat_tran,1);
    lcb = mat_cols*(ss-1)+1;  % lower column bound for horizontal additions to all_seas and some_seas
    ucb = mat_cols*ss;        % upper column bound for horizontal additions to all_seas and some_seas       
@@ -54,7 +56,7 @@ for ss=2:pd_per_yr
       if size(ff_move,1)>0
       som_seas(som_cntr+1:som_cntr+size(ff_move,1),:) = all_seas(ff_move,:); 
       som_cntr = size(som_seas,1);      
-      all_seas = zeros(N_match,mat_cols*pd_per_yr); 
+      all_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); 
       all_cntr = 0;
       end
             
@@ -81,7 +83,7 @@ for ss=2:pd_per_yr
                  % last period matches with exiting firm_ID. Move these 
                  % matches from all_seas to som_seas and increment som_cntr:
                  som_seas(som_cntr+1:som_cntr+size(ff_matfirm_exit,1),:) = all_seas(ff_matfirm_exit,:); 
-                 all_seas(ff_matfirm_exit,:) = zeros(size(ff_matfirm_exit,1),mat_cols*pd_per_yr);
+                 all_seas(ff_matfirm_exit,:) = zeros(size(ff_matfirm_exit,1),mat_cols*mm.pd_per_yr);
                  som_cntr = som_cntr+size(ff_matfirm_exit,1);
              end
            end
@@ -119,8 +121,8 @@ for ss=2:pd_per_yr
      ff_live = find(all_seas(:,lcb+5)>0); % continuing matches (eop Z>0)
      all_cntr = size(ff_live,1);    
      all_seas(1:all_cntr,:) = all_seas(ff_live,:); % moving survivors to first rows    
-     empty_mat = zeros(N_match-all_cntr,mat_cols*pd_per_yr);
-     all_seas(all_cntr+1:N_match,:) = empty_mat;   % clear remaining rows
+     empty_mat = zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr);
+     all_seas(all_cntr+1:iterX_in.N_match,:) = empty_mat;   % clear remaining rows
 
    end % end nrt >0 if block 
     match_count_lag = match_count; 
@@ -132,17 +134,17 @@ end
  s = find(sum(som_seas,2)>0); % non-zero rows of som_seas
 
  % aggregate match-specific sales and shipments across seasons
- pick_sales     = kron(ones(pd_per_yr,1),[zeros(6,2);eye(2);zeros(2,2)]); % to pick off sales and shipments from all seasons
+ pick_sales     = kron(ones(mm.pd_per_yr,1),[zeros(6,2);eye(2);zeros(2,2)]); % to pick off sales and shipments from all seasons
  mat_yr_sales_a = all_seas(a,:)*pick_sales; % add up within-yr. sales for matches that are active at year's end
  mat_yr_sales_s = som_seas(s,:)*pick_sales; % add up within-yr. sales for matches that die before year's end
  
  % create firm tags for each match
- fndx_a = zeros(size(a,1),pd_per_yr);
- fndx_s = zeros(size(s,1),pd_per_yr);  
- age_a  = zeros(size(a,1),pd_per_yr);
- age_s  = zeros(size(s,1),pd_per_yr);
- match_age_s = zeros(size(s,1),pd_per_yr);
- for ss=1:pd_per_yr % find firm IDs, match age, and firm age for populated rows by season
+ fndx_a = zeros(size(a,1),mm.pd_per_yr);
+ fndx_s = zeros(size(s,1),mm.pd_per_yr);  
+ age_a  = zeros(size(a,1),mm.pd_per_yr);
+ age_s  = zeros(size(s,1),mm.pd_per_yr);
+ match_age_s = zeros(size(s,1),mm.pd_per_yr);
+ for ss=1:mm.pd_per_yr % find firm IDs, match age, and firm age for populated rows by season
    fndx_a(:,ss)       = all_seas(a,ss*mat_cols-5); % each season, firm ID is 6th col. from end, if active
    fndx_s(:,ss)       = som_seas(s,ss*mat_cols-5);
    age_a(:,ss)        = all_seas(a,ss*mat_cols-1); % each season, firm age is next to last column, if active
@@ -173,14 +175,14 @@ temp0 = sortrows([[firm_a,age_aa];[firm_s,age_ss]],[1 2]); % stack all match obs
       age(mask) = mx_age;
   end
       
- % age = age./pd_per_yr
+ % age = age./mm.pd_per_yr
  % added following line to get integer initial years:
- % age = floor(age./pd_per_yr) + 1;
+ % age = floor(age./mm.pd_per_yr) + 1;
  
 % stack match observations in all_seas and in som_seas, then sort by firm
 % and tag firm age on the end (which is already sorted)
- mat_yr_sales = [sortrows([[firm_a,mat_yr_sales_a,all_seas(a,4),all_seas(a,mat_cols*pd_per_yr-4),all_seas(a,mat_cols*pd_per_yr)];...
-                  [firm_s,mat_yr_sales_s,som_seas(s,4),som_seas(s,mat_cols*pd_per_yr-4), match_age_s]],1),age];
+ mat_yr_sales = [sortrows([[firm_a,mat_yr_sales_a,all_seas(a,4),all_seas(a,mat_cols*mm.pd_per_yr-4),all_seas(a,mat_cols*mm.pd_per_yr)];...
+                  [firm_s,mat_yr_sales_s,som_seas(s,4),som_seas(s,mat_cols*mm.pd_per_yr-4), match_age_s]],1),age];
 % mat_yr_sales: [firm ID, match-specific sales, shipments, boy Z, eoy Z, match age in periods (w/in year), firm age in periods] 
  
 % NOTE: sometimes, for firms in their first year (age<=12), match age can

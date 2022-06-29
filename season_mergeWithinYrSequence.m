@@ -118,6 +118,6 @@ for ss=2:mm.pd_per_yr
 
    end % end nrt >0 if block 
     match_count_lag = match_count; 
-    nrt_lag = nrt; % JT: line wasn't in previous version of code but didn't matter 
+    nrt_lag = nrt; 
 end
 end

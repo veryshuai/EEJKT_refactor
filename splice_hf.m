@@ -10,9 +10,11 @@ function sim_out = splice_hf(sim_out,policy,mm)
 
 % some firms with active export relationships have zero exports. Weed them out:
 exporter = sim_out.firm_f_yr_sales(:,4)>0;
-sim_out.firm_f_yr_sales = sim_out.firm_f_yr_sales(exporter,:); % stacks all firm-yr combs. with exports, given micro type
-% same deal for domestic market shipments
-dom_shipper = sim_out.firm_h_yr_sales(:,4)>0;  % stacks all firm-yr combs. with dom .sales, given micro type
+% stack all firm-yr combs. with exports, given micro type:
+sim_out.firm_f_yr_sales = sim_out.firm_f_yr_sales(exporter,:); 
+% same deal for domestic market shipments:
+dom_shipper = sim_out.firm_h_yr_sales(:,4)>0;  
+% stack all firm-yr combs. with dom .sales, given micro type
 sim_out.firm_h_yr_sales = sim_out.firm_h_yr_sales(dom_shipper,:);
 
 sim_out.nexptr = sum(exporter>0);
@@ -46,16 +48,19 @@ catch
   fprintf('\r Warning: home-foreign merge discrepancy in spice_hf');
 end
 sim_out.hf_nobs  = sum(aa);
-sim_out.nfirm = sim_out.nhfirms + sim_out.nexptr - sim_out.hf_nobs; % number of firms with sales in at least one market
-
-% dom_only = ones(nobs_h,1) - aa > 0; % firms with dom. sales only
- ex_only  = ones(sim_out.nexptr,1) - bb > 0; % firms with exports only
+% number of firms with sales in at least one market:
+sim_out.nfirm = sim_out.nhfirms + sim_out.nexptr - sim_out.hf_nobs; 
+% firms with dom. sales only
+% dom_only = ones(nobs_h,1) - aa > 0; 
+% firms with exports only
+% ex_only  = ones(sim_out.nexptr,1) - bb > 0; 
 
 theta_f = policy.firm_type_prod_succ_macro(type_f,3); % Each element of this vector is common to all firms
-theta_h = sim_out.theta_h_firm;      % This is a vector of random draws--one per firm
+theta_h = sim_out.theta_h_firm;  % Random theta_h draws--one per firm
 if sum(bb) == 0
   temp3 = zeros(0,15);
 else
+% collect domestic and foreign information for paired observations:
   temp3 = [theta_f(bb),theta_h(aa),prod_h(aa),sim_out.firm_h_yr_sales(aa,:),sim_out.firm_f_yr_sales(bb,:)];
 end
 % sim_out.firm_h_yr_sales: [t,type,firm ID,total dom. sales, total # dom. shipments,firm age in dom. mkt.]

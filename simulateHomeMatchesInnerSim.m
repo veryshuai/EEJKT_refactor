@@ -68,9 +68,5 @@ for t = 2:1:mm.periods
     iterH_in.trans_zst    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));
     iterH_in.trans_count  = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx));
 
-% if t==mm.periods
-%     'pause here'
-% end
-
 end
 end

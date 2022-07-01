@@ -55,6 +55,13 @@ pt_ndx = iterH_in.pt_ndx;
     end
 
     %% update current count for new matches, drops, and exogenous deaths
-    iterH_in.cur_cli_cnt(:,t) = iterH_in.add_cli_cnt(:,t) + iterH_in.cur_cli_cnt(:,t-1) ...
-        - iterH_in.drop_cnt - iterH_in.exog_deaths(:,t-1) ;
+    iterH_in.cur_cli_cnt(:,t) =  (1 - iterH_in.new_firm(:,iterH_in.t)).* ...
+         ( iterH_in.add_cli_cnt(:,t) + iterH_in.cur_cli_cnt(:,t-1) ...
+        - iterH_in.drop_cnt - iterH_in.exog_deaths(:,t-1) ) ;
+   
+    
+%     iterH_in.cur_cli_cnt(:,t) = iterH_in.add_cli_cnt(:,t) + iterH_in.cur_cli_cnt(:,t-1) ...
+%         - iterH_in.drop_cnt - iterH_in.exog_deaths(:,t-1) ;
+    
+    
     iterH_in.trans_rands = trans_rands;

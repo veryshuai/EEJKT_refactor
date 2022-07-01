@@ -1,4 +1,4 @@
-function real_moms_and_sim_moms = calculateDistanceAndPrint(simMoms,mm,X)
+function [D,real_moms_and_sim_moms] = calculateDistanceAndPrint(simMoms,mm,X)
 
 [Data, W, Model] = read_in_and_organize_moments(simMoms);
 
@@ -17,8 +17,7 @@ print_diagnostics_to_standard_output(D, X, real_moms_and_sim_moms, err_comp, sim
 %summary_tables_v2; 
 %estimate_summary;
 
-% shouldMatchMoments(real_moms_and_sim_moms,D,"overwrite","results/shouldMatchMomentsData");
-shouldMatchMoments(real_moms_and_sim_moms,D,"test","results/shouldMatchMomentsData");
-
+shouldMatchMoments(real_moms_and_sim_moms,D,"overwrite","results/shouldMatchMomentsData");
+% shouldMatchMoments(real_moms_and_sim_moms,D,"test","results/shouldMatchMomentsData");
 
 end

@@ -4,6 +4,9 @@ function iter_out = simulateForeignMatches(pt_ndx,macro_state_f,mm,policy)
 
 for t = 2:1:mm.periods
 
+%     [pt_ndx,t]
+%     [iter_in.cur_cli_cnt(:,t-1),sum(iter_in.lag_cli_zst,2)]
+    
     iter_in.t = t;
     if mod(iter_in.t-1,mm.pd_per_yr) == 0
         iter_in.season = 1; % reset season when previous period completes a year

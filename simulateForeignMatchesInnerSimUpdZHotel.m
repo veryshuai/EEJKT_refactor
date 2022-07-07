@@ -13,16 +13,11 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
             % break down exogenous deaths that occur between t-1 and t down by b.o.p. z state:
             iter_in.die_cli_zst(i,:) = createDieVec(iter_in.lag_cli_zst(i,:).*iter_in.keep_cli,iter_in.exog_deaths(i,iter_in.t-1),size(mm.Z,1));
         end
-        
-        
-        
+              
         if iter_in.new_firm(i,iter_in.t)*(1-iter_in.new_firm(i,iter_in.t-1)) == 1 % get rid of all clients
              iter_in.die_cli_zst(i,:) = iter_in.lag_cli_zst(i,:).*iter_in.keep_cli; 
         end
             
-        
-        
-        
         %trans_count_test = trans_count;
         iter_in.trans_count(2:size(mm.Z,1)+1,1,i) = (iter_in.lag_cli_zst(i,:).*(1-iter_in.keep_cli))' + iter_in.die_cli_zst(i,:)';
         % For each firm (i) of a particular type, column 1 of trans_count(:,:,i)

@@ -19,13 +19,9 @@ function [iter_in, drop_Zcut] = simulateForeignMatchesInnerSimUpdateClientCount(
     iter_in.cur_cli_cnt(:,iter_in.t) = iter_in.add_cli_cnt(:,iter_in.t) + iter_in.cur_cli_cnt(:,iter_in.t-1) ...
         - drop_cnt - iter_in.exog_deaths(:,iter_in.t-1) ;
     
-    
-    
     iter_in.cur_cli_cnt(:,iter_in.t) =...
         (1 - iter_in.new_firm(:,iter_in.t).*(1-iter_in.new_firm(:,iter_in.t-1)))...
-        .*iter_in.cur_cli_cnt(:,iter_in.t) ; % to reset when exits occur
-    
-    
+        .*iter_in.cur_cli_cnt(:,iter_in.t) ; % to reset client counts when exits occur 
     
 end
 

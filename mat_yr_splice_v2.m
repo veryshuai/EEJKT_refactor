@@ -1,4 +1,4 @@
-% Called from matchdat_gen_f.m
+% Called from SimulateForeignMatchesInnerAnnualize
 
 function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_adj,year_lag] =...
     mat_yr_splice_v2(mat_yr_sales,mat_yr_sales_lag,mm,year_lag,year)
@@ -41,6 +41,9 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_adj,year_lag] =...
 
 
 %% convert firm age to years
+
+%% [ THIS SECTION FAILS TO RECOGNIZE CHANGES IN FIRMS ASSOCIATED WITH SAME FIRM ID.]
+%  [ IT NEEDS TO BE REWRITTEN  J.T.]
     
 %  mat_yr_sales: [firm ID, match-specific sales, shipments, boy Z, eoy Z, cum. match age, firm age] 
 

@@ -4,13 +4,13 @@ function iter_out = simulateForeignMatches(pt_ndx,macro_state_f,mm,policy)
 
 for t = 2:1:mm.periods
 
-try
-    assert(sum(abs(iter_in.cur_cli_cnt(:,t-1)-sum(iter_in.lag_cli_zst,2)))==0)
-catch
-    'cur_cli_cnt and lag_cli_zst inconsistent'
-        [pt_ndx,t]
-        [iter_in.cur_cli_cnt(:,t-1),sum(iter_in.lag_cli_zst,2)]
-end   
+% try
+%     assert(sum(abs(iter_in.cur_cli_cnt(:,t-1)-sum(iter_in.lag_cli_zst,2)))==0)
+% catch
+%     'cur_cli_cnt and lag_cli_zst inconsistent'
+%         [pt_ndx,t]
+%         [iter_in.cur_cli_cnt(:,t-1),sum(iter_in.lag_cli_zst,2)]
+% end   
    
     iter_in.t = t;
     if mod(iter_in.t-1,mm.pd_per_yr) == 0

@@ -10,6 +10,6 @@ function policy = solvePolicyMain(mm)
     [policy.value_h,policy.lambda_h] = solvePolicyHome(policy,mm);  
     [policy.value_f,policy.lambda_f] = solvePolicyForeign(policy,mm); 
 
-    policy = reshapePolicy(policy, mm);
+    %policy = reshapePolicy(policy, mm);
 
 end

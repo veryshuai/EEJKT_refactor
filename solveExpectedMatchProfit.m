@@ -4,7 +4,7 @@ event_hazard = mm.r + mm.delta + mm.L_b + abs(Q0(1,1)) + abs(mm.Q_z(1,1));
 
 
 shipment_payoff_except_z = (1/mm.eta) * exp(pie_scale) * exp((mm.eta-1)*mm.Phi) * exp(mm.Z');
-shipment_payoff = permute(repmat(repmat(mm.Z,1,size(shipment_payoff_except_z,2)),1,1,size(shipment_payoff_except_z,1)),[3 2 1])...
+shipment_payoff = permute(repmat(repmat(exp(mm.Z),1,size(shipment_payoff_except_z,2)),1,1,size(shipment_payoff_except_z,1)),[3 2 1])...
     .* repmat(shipment_payoff_except_z,1,1,size(mm.Z,1));
 
 continuation_value = shipment_payoff; 

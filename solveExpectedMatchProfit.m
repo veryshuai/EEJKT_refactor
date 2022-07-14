@@ -6,7 +6,7 @@ shipment_payoff_except_z = (1/mm.eta) * exp(pie_scale) * exp((mm.eta-1)*mm.Phi) 
 shipment_payoff = permute(repmat(repmat(exp(mm.Z),1,size(shipment_payoff_except_z,2)),1,1,size(shipment_payoff_except_z,1)),[3 2 1])...
     .* repmat(shipment_payoff_except_z,1,1,size(mm.Z,1));
 
-continuation_value = shipment_payoff; 
+continuation_value = zeros(size(mm.Z,1),size(mm.Phi,1),size(X,1)); 
 expected_match_profit = zeros(size(shipment_payoff_except_z));
 
 for j=1:size(mm.Phi)
@@ -33,7 +33,7 @@ for j=1:size(mm.Phi)
     c_val = c_val_new; 
     end 
 
-    continuation_value(j,:,:) = max(c_val,0);
+    continuation_value(:,j,:) = max(c_val',0);
     expected_match_profit(j,:) = max(pi_z * mm.erg_pz,0);
 end
 

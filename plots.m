@@ -1,9 +1,11 @@
+function plots(simMoms)
+
 % nonparametric plot of degree distribution 
         figure(1)
-        scatter(log_matches,log_compCDF)      
+        scatter(simMoms.log_matches,simMoms.log_compCDF)      
 
 % plot histogram of frequencies for meeting hazards
-        figure(2)
+        %figure(2)
         %agg_time_gaps = agg_time_gaps(2:size(agg_time_gaps,1),:);
         %histogram(agg_time_gaps(:,3))
         
@@ -14,8 +16,8 @@
 %       b_hazDAT   = [-0.3258+log(12),-0.8181,0.3117,-1.1323,2.4514,-0.7082]; % from match_lag_coefsDAT (and RDC release)
         b_hazDAT   = [-0.3258,-0.8181,0.3117,-1.1323,2.4514,-0.7082]; % from match_lag_coefsDAT (and RDC release)
         
-        succ_grid = (min(ln_succ_rate):((max(ln_succ_rate)-min(ln_succ_rate))/grdsize):max(ln_succ_rate))';
-        csucc_grid = (min(ln_csucc):((max(ln_csucc)-min(ln_csucc))/grdsize):max(ln_csucc))';
+        succ_grid = (min(simMoms.ln_succ_rate):((max(simMoms.ln_succ_rate)-min(simMoms.ln_succ_rate))/grdsize):max(simMoms.ln_succ_rate))';
+        csucc_grid = (min(simMoms.ln_csucc):((max(simMoms.ln_csucc)-min(simMoms.ln_csucc))/grdsize):max(simMoms.ln_csucc))';
         
         dat_mkt_exit = zeros(grdsize+1,grdsize+1);
         dat_haz      = zeros(grdsize+1,grdsize+1);
@@ -47,18 +49,18 @@
 %    surf(x_axis,y_axis, xptr_count)
               
 
-figure(4)
-hist3([ln_succ_rate,ln_csucc],[grdsize+1,grdsize+1]); 
+figure(2)
+hist3([simMoms.ln_succ_rate,simMoms.ln_csucc],[grdsize+1,grdsize+1]); 
         title('frequency of states--simulated data')
         ylabel('log(cum. success)')
         xlabel('log(1+success rate)')
         zlabel('frequency')        
 
 
-figure(5)
+figure(3)
 subplot(2,1,1)
 
-nfreq = hist3([ln_csucc,succ_rate],[grdsize+1,grdsize+1]) > 0; 
+nfreq = hist3([simMoms.ln_csucc,simMoms.succ_rate],[grdsize+1,grdsize+1]) > 0; 
 % note: need to switch order of variables to make compatible with dat_haz &
 % mod_haz
 tdat_haz = dat_haz.*nfreq;
@@ -75,10 +77,10 @@ tmod_haz = mod_haz.*nfreq;
         xlabel('log(1+success rate)')
         zlabel('log match hazard')
         
-figure(6)
+figure(4)
 subplot(2,1,1)
 
-nfreq = hist3([ln_csucc,succ_rate],[grdsize+1,grdsize+1]) > 0; 
+nfreq = hist3([simMoms.ln_csucc,simMoms.succ_rate],[grdsize+1,grdsize+1]) > 0; 
 % note: need to switch order of variables to make compatible with dat_haz &
 % mod_haz
 tdat_haz = dat_haz;

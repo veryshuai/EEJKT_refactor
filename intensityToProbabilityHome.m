@@ -17,7 +17,7 @@ for typ_indx = 1:size(policy.firm_type_prod_succ_macro,1)
 
     q_index_list = zeros(mm.n_size + 1,3);
     for ss=1:1:Q_size_h % number of successes, plus 1
-        if ss <= mm.n_size + 1 %shouldn't this be NETWORK size (mm.net_size) rather than learning size (mm.n_size)?
+        if ss <= mm.net_size + 1 %This was location of an old bug, now replaced with (mm.net_size) rather than learning size (mm.n_size)
             search_inten = policy.lambda_h(1,policy.firm_type_prod_succ_macro(typ_indx,3),ss,prod_lvl,ms);
         else
             search_inten = policy.lambda_h(1,policy.firm_type_prod_succ_macro(typ_indx,3),mm.n_size + 1,prod_lvl,ms); 

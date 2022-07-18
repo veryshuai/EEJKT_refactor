@@ -10,6 +10,11 @@ function [mat_yr_sales,firm_yr_sales] = season_merge(iterX_in,mm)
 
 [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX_in);
 
+ % all_seas and som_seas 
+ %  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
+ %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
+
+
 %%  Package up the match info. for use in regressions
 
 [mat_yr_sales, firm_yr_sales] = season_mergeAnnualizeDat(all_seas, som_seas, mm, mat_cols,iterX_in);

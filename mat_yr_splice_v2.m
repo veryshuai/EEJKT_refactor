@@ -6,7 +6,7 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_adj,year_lag] =...
 % This function splices the current year's records on matches for a given
 % firm type with last year's records for the same firm type. Splicing is
 % done by firm ID and by matching last year's eoy Z with this year's boy Z.
-% Once the two years are spliced match age and firm age variables are
+% Once the two years are spliced match age variables are
 % created. Note that the count of one-year olds does not include singletons
 % that sent sample shipments but did not establish a successful match.
 

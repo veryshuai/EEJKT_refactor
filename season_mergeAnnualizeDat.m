@@ -8,9 +8,12 @@ function [mat_yr_sales, firm_yr_sales] = season_mergeAnnualizeDat(all_seas, som_
  s = find(sum(som_seas,2)>0); % non-zero rows of som_seas
  
  t        = iterX_in.t;
- firm_age = iterX_in.cumage(:,t-mm.pd_per_yr+1:t);
-% exit_yr  = sum(iterX_in.exit_firm(:,t-mm.pd_per_yr+1:t),2);
-
+ firm_age = iterX_in.cumage(:,t-mm.pd_per_yr+1:t);     
+ exit_seas = [zeros(size(firm_age,1),1),...
+              firm_age(:,2:mm.pd_per_yr)-firm_age(:,1)<0];  
+ % Allows each firm slot to turnover up to once per year
+ % (Multiple turnovers extremely rare and a big pain to program.)
+          
  % aggregate match-specific sales and shipments across seasons
  pick_sales     = kron(ones(mm.pd_per_yr,1),[zeros(6,2);eye(2);zeros(2,2)]); % to pick off sales and shipments from all seasons
  mat_yr_sales_a = all_seas(a,:)*pick_sales; % add up within-yr. sales for matches that are active at year's end
@@ -23,6 +26,9 @@ function [mat_yr_sales, firm_yr_sales] = season_mergeAnnualizeDat(all_seas, som_
  age_s  = zeros(size(s,1),mm.pd_per_yr);
  
  match_age_s = zeros(size(s,1),mm.pd_per_yr);
+ 
+ age_old = max(firm_age.*(1-exit_seas),[],2);
+ age_new = max(firm_age.*exit_seas,[],2);
 
  for ss=1:mm.pd_per_yr % find firm IDs, match age, and firm age for populated rows by season
    fndx_a(:,ss) = all_seas(a,ss*mat_cols-5); % each season, firm ID is 6th col. from end, if active
@@ -33,29 +39,36 @@ function [mat_yr_sales, firm_yr_sales] = season_mergeAnnualizeDat(all_seas, som_
    age_a(:,ss) = zeros(length(a),1);
    age_s(:,ss) = zeros(length(s),1);
    for jj=1:size(firm_age,1)
-     age_a(:,ss)  = age_a(:,ss) + (fndx_a(:,ss)==jj)*firm_age(jj,ss);
-     age_s(:,ss)  = age_s(:,ss) + (fndx_s(:,ss)==jj)*firm_age(jj,ss);
-   end 
+%      if sum(sum(exit_seas))==0
+%      age_a(:,ss)  = age_a(:,ss) + (fndx_a(:,ss)==jj)*firm_age(jj,ss);
+%      age_s(:,ss)  = age_s(:,ss) + (fndx_s(:,ss)==jj)*firm_age(jj,ss);
+%    
+%      else
+     firm_age2 = age_old(jj)*(1-exit_seas(jj,ss)) + ...
+                 age_new(jj)*exit_seas(jj,ss);
+     age_a(:,ss)  = age_a(:,ss) + (fndx_a(:,ss)==jj)*firm_age2;
+     age_s(:,ss)  = age_s(:,ss) + (fndx_s(:,ss)==jj)*firm_age2;
+%      end
+   end
    match_age_s(:,ss)  = som_seas(s,ss*mat_cols);   % w/in yr match age is last column, ea. season
    match_age_a(:,ss)  = all_seas(a,ss*mat_cols);
+   
  end
 
  firm_a = max(fndx_a,[],2); % get firm IDs for each row of all_seas
  firm_s = max(fndx_s,[],2); % get firm IDs for each row of som_seas
  age_aa = max(age_a,[],2);  % find max age for each firm during yr., all_seas
- age_ss = max(age_s,[],2);  % find max age for each firm during yr., som_seas
- % eop_age_a = age_a(:,mm.pd_per_yr); % end of period firm age
-
- match_age_s = max(match_age_s,[],2); % find within-period match age for matches 
- match_age_a = max(match_age_a,[],2);
  
- % take care of odd case where matches generate no shipments, thus firm age = 0:
-%   age_aa = max(age_aa,match_age_a);
-%   age_ss = max(age_ss,match_age_s);
 
+     
+ age_ss = max(age_s,[],2);  % find max age for each firm during yr., som_seas
+ 
+ match_age_s = max(match_age_s,[],2); % find within-period match age for matches that fail by eoy
+ match_age_a = max(match_age_a,[],2); % find within-period match age surviving at eoy
+ 
  temp0 = sortrows([[firm_a,age_aa];[firm_s,age_ss]],[1 2]); % stack all match obs. on firm, age and sort
      
- % assign max of firm age for each firm_ID to all matches for that firm
+ % assign max of firm age for each firm_ID to all matches for continuing firms
 if size(temp0,1) > 0
 
  mat_yr_sales =...

@@ -1,45 +1,38 @@
-function  [x,y,moms_xx,moms_xy,ysum,n_obs] = firm_reg_h_moms(sales,sales_lag,N_firms,t,type)
+function  [x,y,moms_xx,moms_xy,ysum,n_obs] = firm_reg_h_moms(iterH_in,mm)
 
 % sales and sales_lag:[firm ID, total domestic sales,total domestic shipments,age]
 
-    nc = size(sales,2);
-  
-%   Load populated firm records into associated rows of temp1 and temp2
-    temp1 = zeros(N_firms,nc);
-    temp2 = zeros(N_firms,nc);
-    temp1(sales(:,1),:)= sales; 
-    temp2(sales_lag(:,1),:)= sales_lag; 
-     
-%  Get rid of rows with zeros sales in one or both years and rows where 
-%  age doesn't increment. The latter reflects firm exit.
-    ff_cont1 = temp1(:,2).*temp2(:,2) > 0;   % positive sales in both years
-    ff_cont2 = temp1(:,4) - temp2(:,4) > 0; % age increased from lagged to current year
-    ff_cont  = ff_cont1.*ff_cont2 > 0;
-
-    if sum(ff_cont)>0
+    mat_h_yr_sales = iterH_in.mat_h_yr_sales; 
+    mat_h_cont_2yr = iterH_in.mat_h_cont_2yr;
+    ln_age         = log(iterH_in.age./mm.pd_per_yr);
+    firm_ID        = sort(unique(floor(mat_h_yr_sales(:,1))));
     
-    try
-      assert(sum(abs(temp1(ff_cont,1)-temp2(ff_cont,1)))==0)
-    catch
-      warning('continuing firm mismatch')
-      temp1(ff_cont,:)
-      temp2(ff_cont,:)
+%   firm_ID = unique(iterH_in.mat_cont_2yr(:,1));
+    sales = zeros(length(firm_ID),1);
+
+    lag_sales = zeros(length(firm_ID),1);
+    firm_age = zeros(length(firm_ID),1);
+    for j=1:length(firm_ID)
+        % all sales except matches in post-flip firm slots, current year
+        sales(j) = sum(mat_h_yr_sales(:,2)...
+            .*(mat_h_yr_sales(:,1)==firm_ID(j)));
+         firm_age(j) = sum(mat_h_yr_sales(:,7)...
+            .*(mat_h_yr_sales(:,1)==firm_ID(j)))./ ...
+            sum(mat_h_yr_sales(:,1)==firm_ID(j)) ;    
+        % all sales of previous yr firms that continue to current year
+        lag_sales(j) = sum(mat_h_cont_2yr(:,2)...
+            .*(mat_h_cont_2yr(:,1)==firm_ID(j)));
     end
-    
-    dat = [temp1(ff_cont,:),temp2(ff_cont,:)];
 
-    n_obs = sum(ff_cont);
-    y = log(dat(:,2));
-    ln_age = log(dat(:,4)+1/4);
- %  x = [ones(n_obs,1),dat(:,8)==0,log(dat(:,6)),ln_age];
-   x = [ones(n_obs,1),log(dat(:,6))];
+    n_obs = length(sales);
+    if n_obs>0
+        
+    y = log(sales);
+   x = [ones(n_obs,1),log(lag_sales)];
     moms_xx = x'*x;
     moms_xy = x'*y;
     ysum = sum(y);
     
-%     if size(x,1) > 40
-%      'pause here'
-%     end
     else
         kk = 2; % columns of x matrix
         x = zeros(0,2);

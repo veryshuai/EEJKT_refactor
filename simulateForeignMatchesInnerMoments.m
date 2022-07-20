@@ -1,6 +1,6 @@
 function [iter_in,iter_out] = simulateForeignMatchesInnerMoments(iter_in,iter_out,mm)
 if iter_in.year > mm.burn  % don't start building simulated data set until burn-in finished
-    if size(iter_in.mat_yr_sales,1)*size(iter_in.mat_yr_sales_lag)>0
+    if size(iter_in.mat_cont_2yr)>0
 
         tt =  ones(size(iter_in.mat_yr_sales,1),1).*[iter_in.t,iter_in.mic_type]; % add cols 1 and 2: t, firm type
         iter_out.mat_yr_sales  = [iter_out.mat_yr_sales;[tt,iter_in.mat_yr_sales]];
@@ -37,7 +37,8 @@ if iter_in.year >= mm.burn
     
     % autoregressions and degree distribution
 
-    [fmoms_xx,fmoms_xy,fysum,fn_obs] = firm_reg_moms(iter_in.firm_yr_sales,iter_in.firm_yr_sales_lag,mm.sim_firm_num_by_prod_succ_type(iter_in.pt_ndx));
+    [fmoms_xx,fmoms_xy,fysum,fn_obs] = firm_reg_moms(iter_in,mm);
+
 
     iter_out.fmoms_xx = iter_out.fmoms_xx + fmoms_xx; % cumulate moments for firm regression
     iter_out.fmoms_xy = iter_out.fmoms_xy + fmoms_xy; % cumulate moments for firm regression

@@ -23,6 +23,8 @@ iter_in.surviv_zst   = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z
 iter_in.trans_zst    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % counts survival types by firm after z innovations
 iter_in.flrlag       = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);     % initializing vector for age debugging
 iter_in.cumage       = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);    % initializing vector for age debugging
+
+iter_in.mat_cont_2yr              = double.empty(0,14);
 iter_in.mkt_exit                  = zeros(1,3);
 iter_in.mat_yr_sales_adj          = zeros(0,9);
 iter_in.mat_yr_sales_lag          = zeros(0,7);

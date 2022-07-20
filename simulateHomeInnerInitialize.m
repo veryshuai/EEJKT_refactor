@@ -38,8 +38,10 @@ theta_df = (size(mm.theta1,2)+1)*ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),
 iterH_in.theta1_cntr  = [uv,accumarray(idx(:),1)];
 iterH_in.theta_h      = sortrows(theta_df);
 
-iterH_in.firm_yr_sales_lag = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),4);
+iterH_in.firm_h_yr_sales_lag = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),4);
 % firm_yr_sales_lag will contain: [firmID,sales,#shipments,firm age]
+iterH_in.mat_h_yr_sales_lag = double.empty(0,4);
+iterH_in.mat_h_yr_sales = double.empty(0,4);
 
 % initialize keep_cli for first period
 iterH_in.keep_cli = ones(1,size(mm.Z,1)); % applies to clients existing in period 1

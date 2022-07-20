@@ -1,4 +1,4 @@
-function [mat_yr_sales, firm_yr_sales,flip_firm] = season_mergeAnnualizeDat(all_seas, som_seas, mm, mat_cols,iterX_in)
+function [mat_yr_sales, firm_yr_sales] = season_mergeAnnualizeDat(all_seas, som_seas, mm, mat_cols,iterX_in)
  
  % all_seas and som_seas: 
  %  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
@@ -73,12 +73,15 @@ if size(temp0,1) > 0
 % mat_yr_sales: [firm ID, w/in yr sales, w/in yr shpmts., boy Z, eoy Z, w/in yr match age, firm age]
 
 % to distinguish matches pertaining to flipped firm slots, add 0.5 to their firm IDs
- 
+try 
 F_active = unique(mat_yr_sales(:,1)); 
 nn = F_active(flip_firm); 
 for j=1:length(nn)
   mat_yr_sales(:,1) = mat_yr_sales(:,1)...
       + 0.5*(mat_yr_sales(:,1)==nn(j)).*(mat_yr_sales(:,7)==age_new(nn(j)));
+end
+catch
+    'problem in mergeAnnualizeDat, line 76-82'
 end
 
 % finally sum over matches for each active firm

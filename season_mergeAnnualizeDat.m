@@ -1,4 +1,4 @@
-function [mat_yr_sales, firm_yr_sales] = season_mergeAnnualizeDat(all_seas, som_seas, mm, mat_cols,iterX_in)
+function [mat_yr_sales, firm_yr_sales,flip_firm] = season_mergeAnnualizeDat(all_seas, som_seas, mm, mat_cols,iterX_in)
  
  % all_seas and som_seas: 
  %  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
@@ -11,8 +11,8 @@ function [mat_yr_sales, firm_yr_sales] = season_mergeAnnualizeDat(all_seas, som_
  firm_age = iterX_in.cumage(:,t-mm.pd_per_yr+1:t);     
  flip_seas = [zeros(size(firm_age,1),1),...
               firm_age(:,2:mm.pd_per_yr)-firm_age(:,1)<0]; 
- flip_firm = sum(flip_seas,2)>0;         
-          
+ flip_firm = sum(flip_seas,2)>0; % equals 1 when age drops during year
+ 
  % Allows each firm slot to turnover up to once per year
  % (Multiple turnovers have same effect on age in years as a single turnover.)
           

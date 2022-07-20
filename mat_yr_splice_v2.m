@@ -1,7 +1,7 @@
 % Called from SimulateForeignMatchesInnerAnnualize
 
 function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_adj,year_lag] =...
-    mat_yr_splice_v2(mat_yr_sales,mat_yr_sales_lag,mm,year_lag,year)
+    mat_yr_splice_v2(mat_yr_sales,mat_yr_sales_lag,mm,~,year)
 
 % This function splices the current year's records on matches for a given
 % firm type with last year's records for the same firm type. Splicing is
@@ -14,13 +14,47 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_adj,year_lag] =...
    
     mat_yr_sales = sortrows(mat_yr_sales,[1,4,6]);
 
-%% find matches to splice
+%% find matches to splice, recognizing firm_ID slots that flip occupants
 
-    ff_cont      = mat_yr_sales(:,4)>0;        % current year, boy Z > 0
-    ff_lag       = mat_yr_sales_lag(:,5)>0;    % lagged year, eoy Z > 0
-    ff_lag_noco  = mat_yr_sales_lag(:,5)==0;   % lagged match not continuing: eoy Z = 0
+% find matches in current year that correspond to boy incumbents
+    active_ID = sortrows(unique(floor(mat_yr_sales(:,1))));
+    ID_occur = sort(floor(unique(mat_yr_sales(:,1))));
+    flipper = zeros(length(active_ID),1);
+    include = ones(size(mat_yr_sales,1),1);
+    for j = 1:length(active_ID)
+        flipper(j) = sum(ID_occur==j)-1;
+        if flipper(j)>0
+        include = include - (mat_yr_sales(:,1)==(active_ID(j)+0.5));
+        end
+    end
+            
+ % find last year's matches corresponding to eoy active firms    
+    active_ID = sortrows(unique(floor(mat_yr_sales_lag(:,1))));
+    ID_occur = sort(floor(unique(mat_yr_sales_lag(:,1))));
+    flipper_lag = zeros(length(active_ID),1);
+    include_lag = ones(size(mat_yr_sales_lag,1),1);
+    for j = 1:length(active_ID)
+        flipper_lag(j) = sum(ID_occur==j)-1;
+        if flipper_lag(j)>0
+        include_lag = include_lag - (mat_yr_sales_lag(:,1)==(active_ID(j)));
+        end
+    end  
+    
+    % further select on whether last year's matches were active eoy and
+    % this year's matches were active boy.
+    
+    ff_cont      = include.*mat_yr_sales(:,4)>0;        % current year, boy Z > 0
+    ff_lag       = include_lag.*mat_yr_sales_lag(:,5)>0;    % lagged year, eoy Z > 0
     tmp_tran     = mat_yr_sales(ff_cont,:);    % continuing matches beginning of this year (boy Z > 0)
     tmp_tran_lag = mat_yr_sales_lag(ff_lag,:); % continuing matches end of last year (eoy Z > 0)
+     
+%     ff_cont      = mat_yr_sales(:,4)>0;        % current year, boy Z > 0
+%     ff_lag       = mat_yr_sales_lag(:,5)>0;    % lagged year, eoy Z > 0
+%     ff_lag_noco  = mat_yr_sales_lag(:,5)==0;   % lagged match not continuing: eoy Z = 0
+%     tmp_tran     = mat_yr_sales(ff_cont,:);    % continuing matches beginning of this year (boy Z > 0)
+%     tmp_tran_lag = mat_yr_sales_lag(ff_lag,:); % continuing matches end of last year (eoy Z > 0)
+  
+    
 %     mat_cont_lag = sortrows(tmp_tran_lag,[1,5]); % sort lagged matches by firm ID and eoy Z
 %     mat_noco_lag = mat_yr_sales_lag(ff_lag_noco,:); % lagged matches with eoy Z == 0
           
@@ -29,9 +63,9 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_adj,year_lag] =...
     
 %  mat_yr_sales: [firm ID, match-specific sales, shipments, boy Z, eoy Z, cum. match age, firm age] 
    
-% if year ==5
-%     'pause here'
-% end
+if year == 6
+    'pause here'
+end
 
   % update match ages for continuing firms
     tmp_tran_lag = sortrows(tmp_tran_lag,[1,5,6]);

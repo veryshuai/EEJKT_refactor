@@ -1,4 +1,4 @@
-function [mat_yr_sales,firm_yr_sales] = season_merge(iterX_in,mm)
+function [mat_yr_sales,firm_yr_sales,iterX_in] = season_merge(iterX_in,mm)
 
 %  This function takes a year's worth of season-specific match
 %  outcomes for a particular type of firm and organizes the information
@@ -17,7 +17,7 @@ function [mat_yr_sales,firm_yr_sales] = season_merge(iterX_in,mm)
 
 %%  Package up the match info. for use in regressions
 
-[mat_yr_sales, firm_yr_sales] = season_mergeAnnualizeDat(all_seas, som_seas, mm, mat_cols,iterX_in);
+[mat_yr_sales, firm_yr_sales,iterX.in] = season_mergeAnnualizeDat(all_seas, som_seas, mm, mat_cols,iterX_in);
 
 % mat_yr_sales: [firm ID, match-specific sales, shipments, boy Z, eoy Z,
 %                match age in periods (w/in year), firm age in periods] 

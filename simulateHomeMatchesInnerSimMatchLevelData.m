@@ -11,9 +11,7 @@ t =iterH_in.t;
         mat_tran = zeros(0,4);ship_cur = zeros(0,1); age_vec = zeros(0,1);
     else
         mkt = 2; % =2 for domestic market
- %      [mat_tran,ship_cur,age_vec] = match_sales(mkt,mm,iterH_in.trans_count,age,pt_ndx,macro_state_h(t));
-       
-%     trans_count = iterH_in.trans_count;
+
         [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mkt,mm,iterH_in,iterH_in.age);
 
    iterH_in.ship_cur = ship_cur;

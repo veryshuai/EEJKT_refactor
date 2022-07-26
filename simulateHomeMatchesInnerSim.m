@@ -1,8 +1,7 @@
 function iter_out = simulateHomeMatchesInnerSim(iter_out, mm, iterH_in, pt_ndx, policy)
 
 tic
-
- iterH_in.pt_ndx = pt_ndx;
+iterH_in.pt_ndx = pt_ndx;
 
 for t = 2:1:mm.periods
     iterH_in.t = t;

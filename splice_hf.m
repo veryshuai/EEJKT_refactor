@@ -8,36 +8,82 @@ function sim_out = splice_hf(sim_out,policy,mm)
 % sim_out.firm_h_yr_sales: [t,type,firm ID, total dom. sales, total # dom. shipments,firm age in dom. mkt.]
 % policy.firm_type_prod_succ_macro: [type, macro state index, theta index, productivity index]
 
-% some firms with active export relationships have zero exports. Weed them out:
-exporter = sim_out.firm_f_yr_sales(:,4)>0;
-sim_out.firm_f_yr_sales = sim_out.firm_f_yr_sales(exporter,:); % stacks all firm-yr combs. with exports, given micro type
-% same deal for domestic market shipments
-dom_shipper = sim_out.firm_h_yr_sales(:,4)>0;  % stacks all firm-yr combs. with dom .sales, given micro type
-sim_out.firm_h_yr_sales = sim_out.firm_h_yr_sales(dom_shipper,:);
+%% Extract observations on home and foreign sales with same firm_ID and date
 
-sim_out.nexptr = sum(exporter>0);
-sim_out.nhfirms = sum(dom_shipper>0);
+% create unique identifiers for each period/firm_ID pair
+% obs_id_h = sim_out.firm_h_yr_sales(:,3) + (1/mm.periods+1)*sim_out.firm_h_yr_sales(:,1); % micro type and period
+% obs_id_f = sim_out.firm_f_yr_sales(:,3) + (1/mm.periods+1)*sim_out.firm_f_yr_sales(:,1); % micro type and period
+
+obs_id_h = sim_out.firm_h_yr_sales(:,3) + 0.001*sim_out.firm_h_yr_sales(:,1); % micro type and period
+obs_id_f = sim_out.firm_f_yr_sales(:,3) + 0.001*sim_out.firm_f_yr_sales(:,1); % micro type and period
+
+%% find double occurances of firm ID/year pairs (due to firm switching)
 
 type_h = sim_out.firm_h_yr_sales(:,2);
 type_f = sim_out.firm_f_yr_sales(:,2);
+theta_f = policy.firm_type_prod_succ_macro(type_f,3); % Each element of this vector is common to all firms
+theta_h = sim_out.theta_h_firm;      % This is a vector of random draws--one per firm
 prod_h  = policy.firm_type_prod_succ_macro(type_h,4);
 prod_f  = policy.firm_type_prod_succ_macro(type_f,4);
+
+sim_out_h_dat =sortrows([obs_id_h,sim_out.firm_h_yr_sales,theta_h,prod_h],1);
+sim_out_f_dat =sortrows([obs_id_f,sim_out.firm_f_yr_sales,theta_f,prod_f],1);
+find_same_h = find([1;sim_out_h_dat(2:end,1)-sim_out_h_dat(1:end-1,1)==0]);
+find_same_f = find([1;sim_out_f_dat(2:end,1)-sim_out_f_dat(1:end-1,1)==0]);
+
+% drop duplicate occurance with larger firm age
+keeper_h = ones(size(sim_out_h_dat(:,1),1),1);
+for jj = find_same_h(2:end)
+   drop = (sim_out_h_dat(jj,6)<=sim_out_h_dat(jj-1,6));
+   keeper_h(jj) = drop;
+   keeper_h(jj-1) = 1-drop;
+end
+
+keeper_f = ones(size(sim_out_f_dat(:,1),1),1);
+for jj = find_same_f(2:end)
+   drop = (sim_out_f_dat(jj,6)<=sim_out_f_dat(jj-1,6));
+   keeper_f(jj) = drop;
+   keeper_f(jj-1) = 1-drop;
+end
+
+ dup_h  = length(find_same_h);
+ ntot_h = length(sim_out_h_dat(:,1)); 
+ if dup_h > 0 && ntot_h >0
+   fprintf('\rWarning: %2.0f of %5.0f records in firm_h_yr_sales have same firm_ID-period \n',[dup_h, ntot_h])  
+ end
+ dup_f  = length(find_same_f);
+ ntot_f = length(sim_out_f_dat(:,1)); 
+ if dup_f > 0 && ntot_f > 0
+   fprintf('Warning: %2.0f of %5.0f records in firm_f_yr_sales have same firm_ID-period \n',[dup_f, ntot_f])  
+ end
+
+% unbundle sim_out_f_dat, now that it's variables are compatibly sorted
+obs_id_f                = sim_out_f_dat(logical(keeper_f),1);
+sim_out.firm_f_yr_sales = sim_out_f_dat(logical(keeper_f),2:7);
+theta_f                 = sim_out_f_dat(logical(keeper_f),8); 
+prod_f                  = sim_out_f_dat(logical(keeper_f),9);
+
+obs_id_h                = sim_out_h_dat(logical(keeper_h),1);
+sim_out.firm_h_yr_sales = sim_out_h_dat(logical(keeper_h),2:7);
+theta_h                 = sim_out_h_dat(logical(keeper_h),8);      
+prod_h                  = sim_out_h_dat(logical(keeper_h),9);
+
+
+assert(length(obs_id_h)==length(unique((obs_id_h))));
+assert(length(obs_id_f)==length(unique((obs_id_f))));
+
+%% Merge home and foreign sales records by firm_ID and period (t)
 
 try % confirm domestic and foreign records are for the same firm productivity type
     minobs = min(size(type_h,1),size(type_f,1));
     assert(sum((prod_h(1:minobs)- prod_f(1:minobs)).^2)==0);
 catch
-     fprintf('Warning: productivity different in different markets');
+     fprintf('Warning: productivity different in different markets \n');
 end
 
-%% Extract observations on home and foreign sales with same firm_ID and date
-
-% create unique identifiers for each period/firm_ID pair
-obs_id_h = sim_out.firm_h_yr_sales(:,3) + (1/(mm.periods+1))*sim_out.firm_h_yr_sales(:,1); % micro type and period
-obs_id_f = sim_out.firm_f_yr_sales(:,3) + (1/(mm.periods+1))*sim_out.firm_f_yr_sales(:,1); % micro type and period
-% find home market obs. with identifiers that appear in export mkt. obs.
 aa = ismember(obs_id_h,obs_id_f);
 temp1 = obs_id_h(aa);
+
 % find foreign market obs. with identifiers that appear in home mkt.
 bb = ismember(obs_id_f,temp1);
 try
@@ -45,18 +91,34 @@ try
 catch
   fprintf('\r Warning: home-foreign merge discrepancy in spice_hf');
 end
+
+% dom_only = ones(nobs_h,1) - aa > 0; % firms with dom. sales only
+% ex_only  = ones(length(bb),1) - bb > 0; % firms with exports only
+
+if sum(bb) == 0
+  temp3 = zeros(0,15);
+  sim_out.nexptr = 0;
+else
+    try
+       
+  temp3 = [theta_f(bb),theta_h(aa),prod_h(aa),sim_out.firm_h_yr_sales(aa,:),...
+           sim_out.firm_f_yr_sales(bb,:)];
+       
+  % temp3: (1) theta_f, (2) theta_h, (3) prod_h , (4-9) firm_h_yr_sales, (10-15) firm_f_yr_sales]
+  % where:
+  % firm_f_yr_sales: [t,type,firm ID, annual for. sales, # expt. shpmts, firm age in export mkt.]
+  % firm_h_yr_sales: [t,type,firm ID, annual dom. sales, # dom. shmts,   firm age in dom. mkt.]
+ 
+    catch
+        'problem in splice_hf line 60'
+    end
+    
+both_mkts = logical((temp3(:,7)>0).*(temp3(:,13)>0));
+sim_out.nhfirms = sum(both_mkts>0);
+sim_out.nexptr = sum(obs_id_f.*sim_out.firm_f_yr_sales(:,5)>0);
 sim_out.hf_nobs  = sum(aa);
 sim_out.nfirm = sim_out.nhfirms + sim_out.nexptr - sim_out.hf_nobs; % number of firms with sales in at least one market
 
-% dom_only = ones(nobs_h,1) - aa > 0; % firms with dom. sales only
- ex_only  = ones(sim_out.nexptr,1) - bb > 0; % firms with exports only
-
-theta_f = policy.firm_type_prod_succ_macro(type_f,3); % Each element of this vector is common to all firms
-theta_h = sim_out.theta_h_firm;      % This is a vector of random draws--one per firm
-if sum(bb) == 0
-  temp3 = zeros(0,15);
-else
-  temp3 = [theta_f(bb),theta_h(aa),prod_h(aa),sim_out.firm_h_yr_sales(aa,:),sim_out.firm_f_yr_sales(bb,:)];
 end
 % sim_out.firm_h_yr_sales: [t,type,firm ID,total dom. sales, total # dom. shipments,firm age in dom. mkt.]
 % sim_out.firm_f_yr_sales: [t,type,firm ID,total exports,total # foreign shipments,firm age in export mkt.]
@@ -82,23 +144,25 @@ end
 same_firm   = sales_splice(:,8) >= sales_splice(:,9);
 sales_hf    = sales_splice(same_firm,1:7);
 
+% uncomment next 3 lines to view obs. used for regressions
+% sales_hf_temp     = sales_splice(same_firm,:);
+% eyeball           = sortrows(sales_hf_temp,[1 2 5 4 8]);
+% eyeball_expt_rate = [eyeball, eyeball(:,7)./(eyeball(:,6)+eyeball(:,7))];
+
 % export_rate = [sales_hf(:,7)./(sales_hf(:,6)+sales_hf(:,7));ones(sum(ex_only,1),1)];
 % the vector of ones in export_rate accounts for firms that exclusively
 
 sim_out.expt_rate = sales_hf(:,7)./(sales_hf(:,6)+sales_hf(:,7));
-% this alternative version excludes firms active solely in the export market
-
-% serve foreign markets
 
 %% moments for regression of log foreign sales on log domestic sales
 
    sim_out.hf_nobs = size(sales_hf,1);
    if sim_out.hf_nobs > 0
-    sim_out.y_hf = log(sales_hf(:,7));
-    sim_out.x_hf = [ones(sim_out.hf_nobs,1),log(sales_hf(:,6))];
-    sim_out.hfmoms_xx = sim_out.x_hf'*sim_out.x_hf;
-    sim_out.hfmoms_xy = sim_out.x_hf'*sim_out.y_hf;
-    sim_out.hfysum = sum(sim_out.y_hf);    
+        sim_out.y_hf = log(sales_hf(:,7));
+        sim_out.x_hf = [ones(sim_out.hf_nobs,1),log(sales_hf(:,6))];
+        sim_out.hfmoms_xx = sim_out.x_hf'*sim_out.x_hf;
+        sim_out.hfmoms_xy = sim_out.x_hf'*sim_out.y_hf;
+        sim_out.hfysum = sum(sim_out.y_hf);    
    else
         sim_out.x_hf = zeros(0,2);
         sim_out.y_hf = zeros(0,1);
@@ -106,6 +170,8 @@ sim_out.expt_rate = sales_hf(:,7)./(sales_hf(:,6)+sales_hf(:,7));
         sim_out.hfmoms_xy = zeros(2,1);
         sim_out.hfysum    = 0;
         sim_out.hf_nobs = 0;
+        sim_out.nfirm = 0;
+     
     end
 
 end

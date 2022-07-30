@@ -97,18 +97,17 @@ entry_month = sortrows([[firm_a,entry_seas_a];[firm_s,entry_seas_s]],1);
 % mat_yr_sales: [firm ID, w/in yr sales, w/in yr shpmts., boy Z, eoy Z, w/in yr match age, firm age]
 
 
-%% Distinguish match of entering firms from matches of exiting firms by 
-%  adding 0.5 to the firm IDs associated with the former matches
+%% Distinguish match of entering firms from matches of exiting firms  
+%  (Add 0.5 to the firm IDs associated with the former matches.)
 try
     
 if sum(flip_firm)>0
   for j=1:length(flip_firm)
-%   mat_yr_sales(:,1) = mat_yr_sales(:,1)...
-%       + 0.5*(mat_yr_sales(:,1)==nn(j)).*(mat_yr_sales(:,7)==age_new(nn(j)));
 
    mat_yr_sales(:,1) = mat_yr_sales(:,1)...
-      + 0.5.*flip_firm(j).*(mat_yr_sales(:,1)==j).*(entry_month(:,2)>iterX_in.flip_ndx(j)) ...
-      .*(mat_yr_sales(:,7)==age_new(j));
+       + 0.5.*flip_firm(j).*(mat_yr_sales(:,1)==j) ...
+            .*(entry_month(:,2)>iterX_in.flip_ndx(j)) ...
+            .*(mat_yr_sales(:,7)==age_new(j));
   end
 end
 
@@ -141,7 +140,7 @@ end
         [F_active(ff),sum(mat_yr_sales(select,2:3),1),max(mat_yr_sales(select,7))] ];
       end
   end
-  firm_yr_sales = [ firm_yr_sales_incb; firm_yr_sales_new];
+  firm_yr_sales = [firm_yr_sales_incb; firm_yr_sales_new];
   
   catch
       'problem in season_mergeAnnualizeDat line 96-112'

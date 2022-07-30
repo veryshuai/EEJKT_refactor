@@ -63,20 +63,12 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_lag,year_lag] =...
   end            
 
 %% calculate match ages and deal with firm turnover
-    
-%  mat_yr_sales: [firm ID, match-specific sales, shipments, boy Z, eoy Z, cum. match age, firm age] 
-   
-% if year == 5
-%     'pause here'
-% end
 
   % update match ages for continuing firms
     tmp_tran_lag = sortrows(tmp_tran_lag,[1,5,6]);
     tmp_tran     = sortrows(tmp_tran,[1,4,6]);
     
-    
-    'now in mat_yr_splice_v2'
-    year
+ fprintf('\rNow in mat_yr_splice_v2. Evaluating year %2.0f\n', year)   
 try
     cont_find = tmp_tran(:,7) - tmp_tran_lag(:,7) >  0;
 catch

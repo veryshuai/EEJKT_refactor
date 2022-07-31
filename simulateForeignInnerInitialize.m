@@ -40,6 +40,12 @@ iter_in.N_match = 0;
 iter_in.season = 1;
 iter_in.firm_yr_sales_lag = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),4); %firm_yr_sales_lag will contain: [firmID,sales,#shipments,firm age]
 
+
+transF = cell(mm.N_pt,6);
+% to hold (1) firm_ID, (2) cur_cli_cnt, (2) cum_succ, (4) age, (5) new_firm
+% (6) cum_meets
+
+
 % create first observation on firm-year level aggregates (will concatenate below)
 iter_out.match_count      = zeros(mm.max_match,1);
 iter_out.mat_yr_sales     = zeros(0,9);

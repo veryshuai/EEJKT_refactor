@@ -50,6 +50,9 @@ iterH_in.year = 1;
 iterH_in.N_match = 0;
 iterH_in.season = 1;
 
+transH = cell(mm.N_pt,5);
+% to hold (1) firm_ID, (2) cur_cli_cnt, (3) cum_succ, (4) age, (5) new_firm 
+
 % create first observation on firm-year level aggregates (will concatenate below)
 iter_out.firm_h_yr_sales = double.empty(0,6);
 iter_out.theta_h_firm  = double.empty(0,1);

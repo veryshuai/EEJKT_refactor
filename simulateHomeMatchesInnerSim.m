@@ -1,4 +1,4 @@
-function iter_out = simulateHomeMatchesInnerSim(iter_out, mm, iterH_in, pt_ndx, policy)
+function [iter_out,transH] = simulateHomeMatchesInnerSim(iter_out, mm, iterH_in, pt_ndx, policy)
 
 tic
 iterH_in.pt_ndx = pt_ndx;
@@ -73,9 +73,17 @@ for t = 2:1:mm.periods
     iterH_in.trans_zst    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));
     iterH_in.trans_count  = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx));
 
-% if t==mm.periods
-%     'pause here'
-% end
+
+if t == mm.periods
+%   'pause here in simulateHomeMatchesInnerSim'
+    find_hcli = find(sum(iterH_in.cur_cli_cnt,2)>0);
+    transH{pt_ndx,1} = find_hcli;
+    transH{pt_ndx,2} = iterH_in.cur_cli_cnt(find_hcli,:);
+    transH{pt_ndx,3} = iterH_in.cum_succ(find_hcli,:);
+    transH{pt_ndx,4}  = iterH_in.cumage(find_hcli,:);  
+    transH{pt_ndx,5}  = iterH_in.new_firm(find_hcli,:);  
+end
+
 
 end
 end

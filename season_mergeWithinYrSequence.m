@@ -1,6 +1,5 @@
 function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX_in)
 
-
   N_firms = mm.sim_firm_num_by_prod_succ_type(iterX_in.pt_ndx);
 
   mat_cols = size(iterX_in.seas_tran{1},2)+1;  % Holds all matches. The +1 makes room for a match age variable

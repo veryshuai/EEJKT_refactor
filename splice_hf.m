@@ -17,10 +17,6 @@ sim_out.firm_f_yr_sales = sim_out.firm_f_yr_sales(some_shpmts_f,:);
 
 %% Count the number of distinct firms in the home and the foreign database
 
-% Count number of firms as number of ID switches and switches associated with a fall in age
-% NOTE: this treats every exporting episode as associated with a distinct
-% firm, and it presumes all exporters have some domestic sales
-
 % temp_h = sortrows(sim_out.firm_h_yr_sales,[3 1]);
 % temp_f = sortrows(sim_out.firm_f_yr_sales,[3 1]);
 % sim_out.nfirm  = sum((temp_h(2:end,3)-temp_h(1:end-1,3)~=0)) + ...
@@ -30,23 +26,26 @@ sim_out.firm_f_yr_sales = sim_out.firm_f_yr_sales(some_shpmts_f,:);
 
 rowsH = size(transH{pt_ndx,5},1);
 new_entryH = [zeros(rowsH,1),((transH{pt_ndx,5}(:,2:end) - transH{pt_ndx,5}(:,1:end-1))==-1)];
-sim_out.nfirm = sum(sum(new_entryH));
+firm_ndxH = cumsum(new_entryH,2);
+% sim_out.nfirm = sum(firm_ndxH(:,end));
 
 rowsF = size(transF{pt_ndx,5},1);
-firm_ndxH = cumsum(new_entryH,2);
 firm_idH  = transH{pt_ndx,1}*ones(1,mm.periods) + 0.001*firm_ndxH;
-N_firms   = 0;
-N_Xfirms  = 0;
+N_firm_yrs  = 0;
+N_Xfirm_yrs  = 0;
+yr_counter = 0;
 ub=12;
-for yr=2:floor(mm.periods/mm.pd_per_yr)
+while ub <= mm.periods - mm.pd_per_yr
     lb=ub+1;
     ub=lb+mm.pd_per_yr-1;
-    N_firms = N_firms + sum(sum(transH{pt_ndx,5}(:,lb:ub) - ...
+    N_firm_yrs = N_firm_yrs + sum(sum(transH{pt_ndx,5}(:,lb:ub) - ...
           (transH{pt_ndx,5}(:,lb-1:ub-1)==-1) )); 
-    N_Xfirms = N_Xfirms+length( unique(firm_idH(1:rowsF,lb:ub) ...
+    N_Xfirm_yrs = N_Xfirm_yrs + length(unique(firm_idH(1:rowsF,lb:ub) ...
             .*(transF{pt_ndx,2}(:,lb:ub)>0) ));
+    yr_counter = yr_counter  + 1;
 end
-sim_out.nfirm = N_firms;
+sim_out.nfirm = N_firm_yrs/yr_counter;
+sim_out.nexptr = N_Xfirm_yrs/yr_counter;
 %% Extract observations on home and foreign sales with same firm_ID and date
 
 % create unique identifiers for each period/firm_ID pair

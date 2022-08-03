@@ -24,12 +24,7 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_lag,year_lag] =...
 
 % Find matches in current year that correspond to boy incumbents, and 
 % drop matches that correspond to post-flip periods.
-
-%   active_ID = sortrows(unique(floor(mat_yr_sales(:,1))));
-    ID_occur = sortrows(unique(mat_yr_sales(:,1)));
-%     flipper  = zeros(length(ID_occur),1);
-%     include  = ones(length(ID_occur),1);
-    
+   
     incumb = mat_yr_sales(:,1)==(floor(mat_yr_sales(:,1))).*(mat_yr_sales(:,4)>0);
     contin = mat_yr_sales_lag(:,5)>0;
     tmp_tran = mat_yr_sales(incumb,:);

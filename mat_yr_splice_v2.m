@@ -28,10 +28,17 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_lag,year_lag] =...
 
 %% calculate match ages and deal with firm turnover
 try
-  % update match ages for continuing firms
-    floorID      = floor(tmp_tran_lag(:,1));
-    tmp_tran_lag = sortrows([tmp_tran_lag,floorID],[8,5,6]);
-    tmp_tran_lag =  tmp_tran_lag(:,1:7);
+  % find matches active at end of last period (isn't this already done above?)
+%     lag_ID = tmp_tran_lag(:,1);
+%     lag_eop_ID = zeros(length(lag_ID),1);
+%     for ii = 1:length(lag_ID)        
+%         ID_slot = find(floor(lag_ID)==floor(lag_ID(ii)));
+%         lag_eop_ID(ii)  = max(tmp_tran_lag(ID_slot,1));          
+%     end
+    
+%    cont_ID = lag_eop_ID == lag_ID;
+%     tmp_tran_lag = sortrows(tmp_tran_lag(cont_ID,:),[1,5,6]);
+    tmp_tran_lag = sortrows(tmp_tran_lag,[1,5,6]);  
     tmp_tran     = sortrows(tmp_tran,[1,4,6]);
     
  fprintf('\rNow at mat_yr_splice_v2, line 37. Evaluating year %2.0f\n', year)   
@@ -60,7 +67,10 @@ last_yr_exit = logical(ones(size(mat_yr_sales_lag,1),1)-contin);
      
 % Check consistency of match records, then spice:
 try
-    assert(sum((tmp_tran_lag(:,5) - tmp_tran(:,4)).^2)==0) % match e.o.y. Z in t-1 sames as b.o.y. Z in t
+    assert(sum((tmp_tran_lag(:,5) - tmp_tran(:,4)).^2)==0) 
+    % match e.o.y. Z in t-1 sames as b.o.y. Z in t
+    no_match = find(tmp_tran_lag(:,5) - tmp_tran(:,4)~=0);
+    mismatch = [tmp_tran_lag(no_match,:),tmp_tran(no_match,:)];
 catch
     'problem at line 63 of mat_yr_splice_v2'
     find_prob = tmp_tran_lag(:,5)-tmp_tran(:,4)~=0;

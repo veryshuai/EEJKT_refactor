@@ -131,9 +131,15 @@ try
   if sum(flip_firm)>0
   for j=1:length(F_active)
      j_type = mat_yr_sales(:,1)==F_active(j); 
+     % adjust firm ID to distinguish post-flip matches
      mat_yr_sales(j_type,1) =...
               mat_yr_sales(j_type,1) + 0.5.*flip_firm(F_active(j))...
            .*(entry_month(j_type,2)>=iterX_in.flip_ndx(F_active(j)));
+     % adjust firm age   
+     mat_yr_sales(j_type,7) = mat_yr_sales(j_type,7)...
+             .*(entry_month(j_type,2)<iterX_in.flip_ndx(F_active(j)))...
+             + (entry_month(j_type,2)>=iterX_in.flip_ndx(F_active(j)))...
+              .*(mm.pd_per_yr - iterX_in.flip_ndx(F_active(j)));
   end
   end
 catch
@@ -161,5 +167,9 @@ else
 end
 
 fprintf('\ryear and pt_ndx =%4.0f %4.0f\n', [iterX_in.year, iterX_in.pt_ndx] )
+
+if t==540
+    'pause at end of season_mergeAnnualizeDat'
+end
 
 end

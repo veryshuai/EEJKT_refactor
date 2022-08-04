@@ -23,6 +23,8 @@ function [mat_yr_sales,firm_yr_sales,iterX_in] = season_merge(iterX_in,mm)
 %                match age in periods (w/in year), firm age in periods] 
 
 % firm_yr_sales: [firmID,sales,#shipments,firm age]
+
+
  
 end
 

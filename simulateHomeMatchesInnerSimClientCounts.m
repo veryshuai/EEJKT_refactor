@@ -68,7 +68,12 @@ pt_ndx = iterH_in.pt_ndx;
 % end    
     
         iterH_in.cur_cli_cnt(:,t) = iterH_in.add_cli_cnt(:,t) + (iterH_in.cur_cli_cnt(:,t-1) ...
-        - iterH_in.drop_cnt - iterH_in.exog_deaths(:,t-1)  ).*(1-iterH_in.new_firm(:,t-1));
+        - iterH_in.drop_cnt - iterH_in.exog_deaths(:,t-1)  );
+    
+       
+       iterH_in.cur_cli_cnt(:,t) =...
+           (1 - iterH_in.new_firm(:,t).*(1-iterH_in.new_firm(:,t-1)))...
+            .*iterH_in.cur_cli_cnt(:,t) ; % to reset client counts when exits occur
      
     
     iterH_in.trans_rands = trans_rands;

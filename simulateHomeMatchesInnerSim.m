@@ -1,5 +1,7 @@
 function [iter_out,transH] = simulateHomeMatchesInnerSim(iter_out, mm, iterH_in, pt_ndx, policy)
 
+% CAUTION: THIS ISN"T THE CORRECT VERSION OF THIS FUNCTION. IT WAS STEPPED ON.
+
 tic
 iterH_in.pt_ndx = pt_ndx;
 

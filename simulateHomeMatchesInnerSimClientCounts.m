@@ -9,6 +9,11 @@ function [iterH_in] = simulateHomeMatchesInnerSimClientCounts(iterH_in,mm,policy
 %% gross additions to clients, before drops and deaths between t-1 and t
 
 t = iterH_in.t;
+
+% if t>=60 && t <= 70
+%     'pause at top of simulateHomeMatchesInnerSimClientCounts'
+% end
+
 pt_ndx = iterH_in.pt_ndx;
 
     if  mm.sim_firm_num_by_prod_succ_type(pt_ndx) > 0
@@ -55,6 +60,15 @@ pt_ndx = iterH_in.pt_ndx;
     end
 
     %% update current count for new matches, drops, and exogenous deaths
-    iterH_in.cur_cli_cnt(:,t) = iterH_in.add_cli_cnt(:,t) + iterH_in.cur_cli_cnt(:,t-1) ...
-        - iterH_in.drop_cnt - iterH_in.exog_deaths(:,t-1) ;
+%     iterH_in.cur_cli_cnt(:,t) = iterH_in.add_cli_cnt(:,t) + iterH_in.cur_cli_cnt(:,t-1) ...
+%         - iterH_in.drop_cnt - iterH_in.exog_deaths(:,t-1);
+    
+% if t>=60 && t <72
+%   'pause in simulateHomeMatchesSimClientCounts'
+% end    
+    
+        iterH_in.cur_cli_cnt(:,t) = iterH_in.add_cli_cnt(:,t) + (iterH_in.cur_cli_cnt(:,t-1) ...
+        - iterH_in.drop_cnt - iterH_in.exog_deaths(:,t-1)  ).*(1-iterH_in.new_firm(:,t-1));
+     
+    
     iterH_in.trans_rands = trans_rands;

@@ -98,7 +98,7 @@ for ss=2:mm.pd_per_yr
       temp1(:,4:5) 
       temp2(:,lcb-6:lcb-5)  
     end
-    
+    try
 %    load current season continuing matches into all_seas, incrementing match age by 1
      all_seas(1:all_cntr,1:ucb) = [temp2(:,1:lcb-1),temp1,temp2(:,lcb-1)+ones(size(temp1,1),1)] ;
 %    add new rows to all_seas for new matches. Match age is one for all new matches.
@@ -114,7 +114,9 @@ for ss=2:mm.pd_per_yr
      all_seas(1:all_cntr,:) = all_seas(ff_live,:); % moving survivors to first rows    
      empty_mat = zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr);
      all_seas(all_cntr+1:iterX_in.N_match,:) = empty_mat;   % clear remaining rows
-
+    catch
+        'problem in mergeWithinYrSequence lines 102-116'
+    end
    end % end nrt >0 if block 
     match_count_lag = match_count; 
     nrt_lag = nrt; 

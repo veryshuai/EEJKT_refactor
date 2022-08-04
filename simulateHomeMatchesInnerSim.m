@@ -84,6 +84,8 @@ if t == mm.periods
     transH{pt_ndx,5}  = iterH_in.new_firm(find_hcli,:);  
 end
 
-
+% if t==mm.periods
+%     'pause here: end of simulatedHomeMatchesInnerSim'
+% end
 end
 end

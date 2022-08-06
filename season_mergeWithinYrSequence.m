@@ -115,7 +115,7 @@ for ss=2:mm.pd_per_yr
      empty_mat = zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr);
      all_seas(all_cntr+1:iterX_in.N_match,:) = empty_mat;   % clear remaining rows
     catch
-        'problem in mergeWithinYrSequence lines 102-116'
+        'problem in mergeWithinYrSequence lines 102-116 of seasonMergeWithinYrSequence'
     end
    end % end nrt >0 if block 
     match_count_lag = match_count; 

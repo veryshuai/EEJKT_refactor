@@ -29,19 +29,11 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_lag,year_lag] =...
 %% calculate match ages and deal with firm turnover
 try
   % find matches active at end of last period (isn't this already done above?)
-%     lag_ID = tmp_tran_lag(:,1);
-%     lag_eop_ID = zeros(length(lag_ID),1);
-%     for ii = 1:length(lag_ID)        
-%         ID_slot = find(floor(lag_ID)==floor(lag_ID(ii)));
-%         lag_eop_ID(ii)  = max(tmp_tran_lag(ID_slot,1));          
-%     end
-    
-%    cont_ID = lag_eop_ID == lag_ID;
-%     tmp_tran_lag = sortrows(tmp_tran_lag(cont_ID,:),[1,5,6]);
+
     tmp_tran_lag = sortrows(tmp_tran_lag,[1,5,6]);  
     tmp_tran     = sortrows(tmp_tran,[1,4,6]);
     
- fprintf('\rNow at mat_yr_splice_v2, line 37. Evaluating year %2.0f\n', year)   
+%  fprintf('\rNow at mat_yr_splice_v2, line 44. Evaluating year %2.0f\n', year)   
 
     cont_find = tmp_tran(:,7) - tmp_tran_lag(:,7) >  0;
 

@@ -14,6 +14,9 @@ for t = 2:1:mm.periods
     iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
 
 [iterH_in] = simulateHomeMatchesInnerSimClientCounts(iterH_in, mm, policy);
+% if t >= 60 && t <= 72
+%      'pause in simulateHomeMatchesInnerSim'
+% end
 [iterH_in] = simulateHomeMatchesInnerSimUpdZHotel(iterH_in, mm, policy);
 [iterH_in] = simulateHomeMatchesInnerSimKickDormant(iterH_in, mm);
 [iterH_in] = simulateHomeMatchesInnerSimFirmAge(iterH_in, mm);
@@ -77,7 +80,7 @@ for t = 2:1:mm.periods
 
 
 if t == mm.periods
-%   'pause here in simulateHomeMatchesInnerSim'
+   'pause here in simulateHomeMatchesInnerSim'
     find_hcli = find(sum(iterH_in.cur_cli_cnt,2)>0);
     transH{pt_ndx,1} = find_hcli;
     transH{pt_ndx,2} = iterH_in.cur_cli_cnt(find_hcli,:);

@@ -13,14 +13,6 @@ pt_ndx = iterH_in.pt_ndx;
     for i=1:mm.sim_firm_num_by_prod_succ_type(pt_ndx)
         % break down new clients that occur between t-1 and t into z-types
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
-% PASTING THE FOLLOWING 3 LINES FROM simulateForeignMatchesUpdateZHotel FOR REFERENCE ONLY!!
-%
-%        if iter_in.new_firm(i,iter_in.t)*(1-iter_in.new_firm(i,iter_in.t-1)) == 1 % get rid of all clients
-%              iter_in.die_cli_zst(i,:) = iter_in.lag_cli_zst(i,:).*iter_in.keep_cli; 
-%         end     
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
         % distribute gross additions        
         if iterH_in.add_cli_cnt(i,t) > 0
            iterH_in.new_cli_zst(i,:) = new_vec_C(iterH_in.add_cli_cnt(i,t),size(mm.Z,1),cumsum(mm.erg_pz)); 
@@ -36,9 +28,15 @@ pt_ndx = iterH_in.pt_ndx;
         
          % get rid of all clients when the firm slot turns over
          if iterH_in.new_firm(i,t)*(1-iterH_in.new_firm(i,t-1)) == 1
-             iterH_in.die_cli_zst(i,:) = iterH_in.lag_cli_zst(i,:).*iterH_in.keep_cli;     
+             iterH_in.die_cli_zst(i,:) = iterH_in.lag_cli_zst(i,:);
+             %.*iterH_in.keep_cli;     
          end
         
+%          if iterH_in.new_firm(i,t) == 1
+%              iterH_in.die_cli_zst(i,:) = iterH_in.lag_cli_zst(i,:);
+%              %.*iterH_in.keep_cli;     
+%          end
+         
         iterH_in.trans_count(2:size(mm.Z,1)+1,1,i) = (iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep.cli))' + iterH_in.die_cli_zst(i,:)';
         % For each firm (i) of a particular type, column 1 of trans_mat now
         % contains counts of all exiting matches, by buyer type (row).

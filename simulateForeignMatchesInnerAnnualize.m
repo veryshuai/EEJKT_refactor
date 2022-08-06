@@ -13,7 +13,7 @@ iter_out = simulateForeignMatchesInnerAnnualizeDuds(iter_in, mm, iter_out);
 [iter_in, iter_out] = simulateForeignMatchesInnerAnnualizeMeetingGaps(iter_in, mm, iter_out);
 
 if iter_in.year > 2
-    if size(iter_in.mat_yr_sales,1)*size(iter_in.mat_yr_sales_lag)>0 % drops types without sales in both current and lagged years
+    if size(iter_in.mat_yr_sales,1)*size(iter_in.mat_yr_sales_lag,1)>0 % drops types without sales in both current and lagged years
 
       iter_in.ncols = size(iter_in.mat_yr_sales,2);
       

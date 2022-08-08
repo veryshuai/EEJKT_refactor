@@ -11,8 +11,9 @@ function sim_out = splice_hf(sim_out,transF,transH,policy,mm,pt_ndx)
 %% Get rid of obs. with 0 shipments, market by market
 
 some_shpmts_h = find(sim_out.firm_h_yr_sales(:,5)>0);
-sim_out.firm_h_yr_sales = sim_out.firm_h_yr_sales(some_shpmts_h,:);
 some_shpmts_f = find(sim_out.firm_f_yr_sales(:,5)>0);
+
+sim_out.firm_h_yr_sales = sim_out.firm_h_yr_sales(some_shpmts_h,:);
 sim_out.firm_f_yr_sales = sim_out.firm_f_yr_sales(some_shpmts_f,:);
 
 %% Count the number of distinct firms in the home and the foreign database
@@ -24,28 +25,38 @@ sim_out.firm_f_yr_sales = sim_out.firm_f_yr_sales(some_shpmts_f,:);
 % sim_out.nexptr = sum((temp_f(2:end,3)-temp_f(1:end-1,3)~=0)) + ...
 %            sum((temp_f(2:end,6)-temp_f(1:end-1,6)~=mm.pd_per_yr).*(temp_f(2:end,3)-temp_f(1:end-1,3)==0)) ;
 
-rowsH = size(transH{pt_ndx,5},1);
-new_entryH = [zeros(rowsH,1),((transH{pt_ndx,5}(:,2:end) - transH{pt_ndx,5}(:,1:end-1))==-1)];
-firm_ndxH = cumsum(new_entryH,2);
+% new_entryH = [zeros(rowsH,1),((transH{pt_ndx,5}(:,2:end) - transH{pt_ndx,5}(:,1:end-1))==-1)];
+% firm_ndxH = cumsum(new_entryH,2);
 % sim_out.nfirm = sum(firm_ndxH(:,end));
 
+Nh_firm_yrs = sum(sum(transH{pt_ndx,5}(:,2:mm.pd_per_yr) - transH{pt_ndx,5}(:,1:mm.pd_per_yr-1)==-1),2);
+Nf_firm_yrs = sum(sum(transF{pt_ndx,5}(:,2:mm.pd_per_yr) - transF{pt_ndx,5}(:,1:mm.pd_per_yr-1)==-1),2);
+sim_out.nfirm = Nh_firm_yrs/(mm.periods/mm.pd_per_yr);
+sim_out.nexptr = Nf_firm_yrs/(mm.periods/mm.pd_per_yr);
+
+
+rowsH = size(transH{pt_ndx,5},1);
 rowsF = size(transF{pt_ndx,5},1);
-firm_idH  = transH{pt_ndx,1}*ones(1,mm.periods) + 0.001*firm_ndxH;
-N_firm_yrs  = 0;
-N_Xfirm_yrs  = 0;
-yr_counter = 0;
-ub=12;
-while ub <= mm.periods - mm.pd_per_yr
-    lb=ub+1;
-    ub=lb+mm.pd_per_yr-1;
-    N_firm_yrs = N_firm_yrs + sum(sum(transH{pt_ndx,5}(:,lb:ub) - ...
-          (transH{pt_ndx,5}(:,lb-1:ub-1)==-1) )); 
-    N_Xfirm_yrs = N_Xfirm_yrs + length(unique(firm_idH(1:rowsF,lb:ub) ...
-            .*(transF{pt_ndx,2}(:,lb:ub)>0) ));
-    yr_counter = yr_counter  + 1;
-end
-sim_out.nfirm = N_firm_yrs/yr_counter;
-sim_out.nexptr = N_Xfirm_yrs/yr_counter;
+if rowsH*rowsF>0
+
+% firm_idH  = transH{pt_ndx,1}*ones(1,mm.periods) + 0.001*firm_ndxH;
+
+% N_firm_yrs  = 0;
+% N_Xfirm_yrs  = 0;
+% yr_counter = 0;
+% ub=12;
+% while ub <= mm.periods - mm.pd_per_yr
+%     lb=ub+1;
+%     ub=lb+mm.pd_per_yr-1;
+%     N_firm_yrs = N_firm_yrs + sum(sum(transH{pt_ndx,5}(:,lb:ub) - ...
+%           (transH{pt_ndx,5}(:,lb-1:ub-1)==-1) )); 
+%     N_Xfirm_yrs = N_Xfirm_yrs + length(unique(firm_idH(1:rowsF,lb:ub) ...
+%             .*(transF{pt_ndx,2}(:,lb:ub)>0) ));
+%     yr_counter = yr_counter  + 1;
+% end
+% sim_out.nfirm = N_firm_yrs/yr_counter;
+% sim_out.nexptr = N_Xfirm_yrs/yr_counter;
+
 %% Extract observations on home and foreign sales with same firm_ID and date
 
 % create unique identifiers for each period/firm_ID pair
@@ -54,19 +65,19 @@ obs_id_f = sim_out.firm_f_yr_sales(:,3) + (1/mm.periods+1)*sim_out.firm_f_yr_sal
 
 % find double occurances of firm ID/year pairs (due to firm switching)
 
-type_h = sim_out.firm_h_yr_sales(:,2);
-type_f = sim_out.firm_f_yr_sales(:,2);
+type_h  = sim_out.firm_h_yr_sales(:,2);
+type_f  = sim_out.firm_f_yr_sales(:,2);
 theta_f = policy.firm_type_prod_succ_macro(type_f,3); % Each element of this vector is common to all firms
 theta_h = sim_out.theta_h_firm(some_shpmts_h);      % This is a vector of random draws--one per firm
 prod_h  = policy.firm_type_prod_succ_macro(type_h,4);
 prod_f  = policy.firm_type_prod_succ_macro(type_f,4);
 
-sim_out_h_dat =sortrows([obs_id_h,sim_out.firm_h_yr_sales,theta_h,prod_h],1);
-sim_out_f_dat =sortrows([obs_id_f,sim_out.firm_f_yr_sales,theta_f,prod_f],1);
-find_same_h = find([1;sim_out_h_dat(2:end,1)-sim_out_h_dat(1:end-1,1)==0]);
-find_same_f = find([1;sim_out_f_dat(2:end,1)-sim_out_f_dat(1:end-1,1)==0]);
+sim_out_h_dat = sortrows([obs_id_h,sim_out.firm_h_yr_sales,theta_h,prod_h],1);
+sim_out_f_dat = sortrows([obs_id_f,sim_out.firm_f_yr_sales,theta_f,prod_f],1);
+find_same_h   = find([1;sim_out_h_dat(2:end,1)-sim_out_h_dat(1:end-1,1)==0]);
+find_same_f   = find([1;sim_out_f_dat(2:end,1)-sim_out_f_dat(1:end-1,1)==0]);
 
-% when duplicate firm_ID/year pairs occur, drop the one with larger firm age
+%% when duplicate firm_ID/year pairs occur, drop the one with larger firm age
 
 keeper_h = ones(size(sim_out_h_dat(:,1),1),1);
 for jj = find_same_h(2:end)
@@ -93,7 +104,7 @@ end
    fprintf('Warning: %2.0f of %5.0f records in firm_f_yr_sales have same firm_ID-period \n',[dup_f, ntot_f])  
  end
 
-% unbundle sim_out_f_dat, now that it's variables are compatibly sorted
+%% unbundle sim_out_f_dat, now that it's variables are compatibly sorted
 obs_id_f                = sim_out_f_dat(logical(keeper_f),1);
 sim_out.firm_f_yr_sales = sim_out_f_dat(logical(keeper_f),2:7);
 theta_f                 = sim_out_f_dat(logical(keeper_f),8); 
@@ -188,22 +199,23 @@ sim_out.expt_rate = sales_hf(:,7)./(sales_hf(:,6)+sales_hf(:,7));
 
 %% moments for regression of log foreign sales on log domestic sales
 
-   sim_out.hf_nobs = size(sales_hf,1);
-   if sim_out.hf_nobs > 0
-        sim_out.y_hf = log(sales_hf(:,7));
-        sim_out.x_hf = [ones(sim_out.hf_nobs,1),log(sales_hf(:,6))];
-        sim_out.hfmoms_xx = sim_out.x_hf'*sim_out.x_hf;
-        sim_out.hfmoms_xy = sim_out.x_hf'*sim_out.y_hf;
-        sim_out.hfysum = sum(sim_out.y_hf);    
-   else
-        sim_out.x_hf = zeros(0,2);
-        sim_out.y_hf = zeros(0,1);
-        sim_out.hfmoms_xx = zeros(2,2);
-        sim_out.hfmoms_xy = zeros(2,1);
-        sim_out.hfysum    = 0;
-        sim_out.hf_nobs = 0;
-     
-    end
+   sim_out.hf_nobs   = size(sales_hf,1);
+   sim_out.y_hf      = log(sales_hf(:,7));
+   sim_out.x_hf      = [ones(sim_out.hf_nobs,1),log(sales_hf(:,6))];
+   sim_out.hfmoms_xx = sim_out.x_hf'*sim_out.x_hf;
+   sim_out.hfmoms_xy = sim_out.x_hf'*sim_out.y_hf;
+   sim_out.hfysum    = sum(sim_out.y_hf);    
+else
+   sim_out.hf_nobs   = 0;
+   sim_out.x_hf      = zeros(0,2);
+   sim_out.y_hf      = zeros(0,1);
+   sim_out.hfmoms_xx = zeros(2,2);
+   sim_out.hfmoms_xy = zeros(2,1);
+   sim_out.hfysum    = 0;
+   sim_out.hf_nobs   = 0; 
+   sim_out.expt_rate = 0;
+end
+
 
 end
 

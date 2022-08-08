@@ -37,7 +37,6 @@ try
 
     cont_find = tmp_tran(:,7) - tmp_tran_lag(:,7) >  0;
 
-
     n_firms = length(cont_find);
     for ss=1:n_firms
         firm_ss = tmp_tran_lag(:,1) == ss;

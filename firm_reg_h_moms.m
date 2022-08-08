@@ -4,7 +4,7 @@ function  [x,y,moms_xx,moms_xy,ysum,n_obs] = firm_reg_h_moms(iterH_in,mm)
 
     mat_h_yr_sales = iterH_in.mat_h_yr_sales; 
     mat_h_cont_2yr = iterH_in.mat_h_cont_2yr;
-    ln_age         = log(iterH_in.age./mm.pd_per_yr);
+    ln_age         = log(1+iterH_in.age./mm.pd_per_yr);
     firm_ID        = sort(unique(floor(mat_h_yr_sales(:,1))));
     
 %   firm_ID = unique(iterH_in.mat_cont_2yr(:,1));
@@ -27,8 +27,8 @@ function  [x,y,moms_xx,moms_xy,ysum,n_obs] = firm_reg_h_moms(iterH_in,mm)
     n_obs = length(sales);
     if n_obs>0
         
-    y = log(sales);
-   x = [ones(n_obs,1),log(lag_sales)];
+    y = log(sales+1);
+   x = [ones(n_obs,1),log(lag_sales+1)];
     moms_xx = x'*x;
     moms_xy = x'*y;
     ysum = sum(y);

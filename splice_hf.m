@@ -1,13 +1,20 @@
 function sim_out = splice_hf(sim_out,transF,transH,policy,mm,pt_ndx)
-
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 % This function takes panel of realizations on domestic and foreign sales
 % for a particular type (theta_f and phi), and splices them together to 
 % create synthetic firms
 
+% transF contains records for populated rows of the following exporter transition variables from iter_in: 
+ %   transF{pt_inx,1:6}: [find_xcli, cur_cli_cnt, cum_succ, cumage, new_firm, cum_meets]
+ 
+% transH contains records for populated rows of the following home mkt. transition variables from iterH_in: 
+ %   transH{pt_inx,1:5}: [find_hcli, cur_cli_cnt, cum_succ, cumage, new_firm]
+
 % sim_out.firm_f_yr_sales: [t,type,firm ID, total exports,total # foreign shipments,firm age in export mkt.]
 % sim_out.firm_h_yr_sales: [t,type,firm ID, total dom. sales, total # dom. shipments,firm age in dom. mkt.]
-% policy.firm_type_prod_succ_macro: [type, macro state index, theta index, productivity index]
 
+% policy.firm_type_prod_succ_macro: [type, macro state index, theta index, productivity index]
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 %% Get rid of obs. with 0 shipments, market by market
 
 some_shpmts_h = find(sim_out.firm_h_yr_sales(:,5)>0);
@@ -31,9 +38,14 @@ sim_out.firm_f_yr_sales = sim_out.firm_f_yr_sales(some_shpmts_f,:);
 
 Nh_firm_yrs = sum(sum(transH{pt_ndx,5}(:,2:mm.pd_per_yr) - transH{pt_ndx,5}(:,1:mm.pd_per_yr-1)==-1),2);
 Nf_firm_yrs = sum(sum(transF{pt_ndx,5}(:,2:mm.pd_per_yr) - transF{pt_ndx,5}(:,1:mm.pd_per_yr-1)==-1),2);
-sim_out.nfirm = Nh_firm_yrs/(mm.periods/mm.pd_per_yr);
-sim_out.nexptr = Nf_firm_yrs/(mm.periods/mm.pd_per_yr);
+sim_out.nfirm = Nh_firm_yrs/(mm.periods/mm.pd_per_yr);  % home mkt. firms per year
+sim_out.nexptr = Nf_firm_yrs/(mm.periods/mm.pd_per_yr); % foreign mkt. firms per year
 
+if Nh_firm_yrs > 0
+  export_rate = Nf_firm_yrs/Nh_firm_yrs;
+  fprintf('pt_ndx =%2.0f, t=%3.0f\n',[pt_ndx, max(sim_out.firm_h_yr_sales(:,1))])  
+  fprintf('%2.0f exporters and %3.0f firms, for export rate of %3.2f\n',[Nf_firm_yrs Nh_firm_yrs export_rate])  
+end
 
 rowsH = size(transH{pt_ndx,5},1);
 rowsF = size(transF{pt_ndx,5},1);
@@ -95,14 +107,14 @@ end
 
  dup_h  = length(find_same_h);
  ntot_h = length(sim_out_h_dat(:,1)); 
- if dup_h > 0 && ntot_h >0
-   fprintf('\rWarning: %2.0f of %5.0f records in firm_h_yr_sales have same firm_ID-period \n',[dup_h, ntot_h])  
- end
- dup_f  = length(find_same_f);
- ntot_f = length(sim_out_f_dat(:,1)); 
- if dup_f > 0 && ntot_f > 0
-   fprintf('Warning: %2.0f of %5.0f records in firm_f_yr_sales have same firm_ID-period \n',[dup_f, ntot_f])  
- end
+%  if dup_h > 0 && ntot_h >0
+%    fprintf('\rWarning: %2.0f of %5.0f records in firm_h_yr_sales have same firm_ID-period \n',[dup_h, ntot_h])  
+%  end
+%  dup_f  = length(find_same_f);
+%  ntot_f = length(sim_out_f_dat(:,1)); 
+%  if dup_f > 0 && ntot_f > 0
+%    fprintf('Warning: %2.0f of %5.0f records in firm_f_yr_sales have same firm_ID-period \n',[dup_f, ntot_f])  
+%  end
 
 %% unbundle sim_out_f_dat, now that it's variables are compatibly sorted
 obs_id_f                = sim_out_f_dat(logical(keeper_f),1);
@@ -160,7 +172,8 @@ else
 both_mkts       = logical((temp3(:,7)>0).*(temp3(:,13)>0));
 sim_out.nhfirms = sum(both_mkts>0);
 sim_out.hf_nobs = sum(aa);
-% sim_out.nfirm = sim_out.nhfirms + sim_out.nexptr - sim_out.hf_nobs; % number of firms with sales in at least one market
+
+sim_out.nfirm = sim_out.nhfirms + sim_out.nexptr - sim_out.hf_nobs; % number of firms with sales in at least one market
 
 end
 % sim_out.firm_h_yr_sales: [t,type,firm ID,total dom. sales, total # dom. shipments,firm age in dom. mkt.]

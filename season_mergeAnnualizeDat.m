@@ -152,7 +152,7 @@ else
   mat_yr_sales  = double.empty(0,7);
 end
 
-fprintf('\ryear and pt_ndx =%4.0f %4.0f\n', [iterX_in.year, iterX_in.pt_ndx] )
+% fprintf('\ryear and pt_ndx =%4.0f %4.0f\n', [iterX_in.year, iterX_in.pt_ndx] )
 
 % if t==540
 %      debug_scraps

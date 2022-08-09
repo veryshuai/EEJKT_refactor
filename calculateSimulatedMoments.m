@@ -1,4 +1,4 @@
-function simMoms = calculateSimulatedMoments(sim_cum)
+function simMoms = calculateSimulatedMoments(sim_cum,mm)
 
 %% Construct simulated statistics
 simMoms = struct; %container for all simulated moments
@@ -52,14 +52,18 @@ simMoms.match_exit_rate = sim_cum.agg_nmat_exit/sim_cum.agg_mat_obs;
 % average log #shipments
 simMoms.avg_ln_ships = sim_cum.agg_ln_ships/sim_cum.agg_ship_obs;
 
-% create variables for analysis of degree distribution
-simMoms.ff_sim_max      = find(cumsum(sim_cum.agg_match_count)./sum(sim_cum.agg_match_count)<1);
-log_compCDF     = log(1 - cumsum(sim_cum.agg_match_count(simMoms.ff_sim_max))./sum(sim_cum.agg_match_count));
-log_matches     = log(1:1:size(simMoms.ff_sim_max,1))';
-xmat            = [ones(size(simMoms.ff_sim_max)),log_matches,log_matches.^2];
-% quadratic regression approximating degree distribution
-simMoms.b_degree        = regress(log_compCDF,xmat);
-% linear regression approximating degree distribution
+% degree distribution regression
+match_counts    = sortrows(sim_cum.agg_match_count,2);
+% topcode match counts at mm.max_match
+match_counts(:,2) = min([match_counts(:,2),(mm.max_match+1)*ones(size(match_counts,1),1)],[],2);
+match_freq      = sum(dummyvar(match_counts(:,2)));             
+simMoms.ff_sim_max  = cumsum(match_freq(1:mm.max_match)./sum(match_freq));
+
+log_compCDF      = log(1 - simMoms.ff_sim_max)';
+log_matches      = log(1:1:length(simMoms.ff_sim_max))';
+xmat             = [ones(length(log_matches),1),log_matches,log_matches.^2];
+simMoms.b_degree = regress(log_compCDF,xmat);
+
 
 % plot histogram of frequencies for meeting hazards
 sim_cum.agg_time_gaps = sim_cum.agg_time_gaps(2:size(sim_cum.agg_time_gaps,1),:);

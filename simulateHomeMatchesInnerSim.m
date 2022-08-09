@@ -77,7 +77,7 @@ for t = 2:1:mm.periods
     iterH_in.trans_count  = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx));
 
 if t == mm.periods
-   'pause here in simulateHomeMatchesInnerSim'
+%   'pause here in simulateHomeMatchesInnerSim'
     find_hcli        = find(sum(iterH_in.cur_cli_cnt,2)>0);
     transH{pt_ndx,1} = find_hcli;
     transH{pt_ndx,2} = iterH_in.cur_cli_cnt(find_hcli,:);

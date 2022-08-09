@@ -46,7 +46,7 @@ for t = 2:1:mm.periods
     iter_in.trans_count  = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx));
 
 if iter_in.t == mm.periods
-   'pause here in simulateForeignMatches'
+%   'pause here in simulateForeignMatches'
     find_xcli = find(sum(iter_in.cur_cli_cnt,2)>0);
     transF{pt_ndx,1} = find_xcli;
     transF{pt_ndx,2} = iter_in.cur_cli_cnt(find_xcli,:);

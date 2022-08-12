@@ -14,8 +14,7 @@ err_comp = @(sta,fin) error(sta:fin)' * inv_W(sta:fin,sta:fin) * error(sta:fin);
 real_moms_and_sim_moms = cat(2,Data',Model);
 print_diagnostics_to_standard_output(D, X, real_moms_and_sim_moms, err_comp, simMoms,mm);
 plots(simMoms); 
-%summary_tables_v2; 
-%estimate_summary;
+summary_tables(simMoms,mm); 
 
 % shouldMatchMoments(real_moms_and_sim_moms,D,"overwrite","results/shouldMatchMomentsData");
 shouldMatchMoments(real_moms_and_sim_moms,D,"test","results/shouldMatchMomentsData");

@@ -1,6 +1,7 @@
+function summary_tables(simMoms,mm)
+
 %% match maturation, by type 
-[bexit,max_mat_age,brooks] = match_summary(agg_mat_yr_sales_adj,agg_match_count,mm);
-% [bexit,max_mat_age,brooks] = match_summary_v2(agg_mat_yr_sales,agg_match_count,mm);
+[bexit,brooks] = match_summary(simMoms.agg_mat_yr_sales_adj,mm);
 
 %  Data for Brooks table 2 include all generated matches. Data from Brooks table 1 
 %  only include types with matches in both the current and the previous year. 
@@ -23,8 +24,8 @@ MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
      Firm_count2 = brooks(2:11,1)./brooks(2,1); Total_exports2 = brooks(2:11,2)./brooks(2,2); Avg_exports2 = brooks(2:11,3)./brooks(2,3);    
      Brooks_table2 = table(Firm_count2,Total_exports2,Avg_exports2,'RowNames',CohortAge)
 %% average log #shipments
-        avg_ln_ships = agg_ln_ships/agg_ship_obs;
-        
+      % avg_ln_ships = agg_ln_ships/agg_ship_obs;
+      display(simMoms.avg_ln_ships);  
       % create variables for analysis of degree distribution
    
 %         ff_sim_max      = find(cumsum(agg_match_count)./sum(agg_match_count)<1);
@@ -32,12 +33,12 @@ MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
 %         log_matches     = log(1:1:size(ff_sim_max,1))';
 %         xmat            = [ones(size(ff_sim_max)),log_matches,log_matches.^2];
         
-        ff_sim_max      = find(cumsum(agg_match_count)./sum(agg_match_count)<1);
-        log_compCDF     = log(1 - cumsum(agg_match_count(ff_sim_max))./sum(agg_match_count));
+        ff_sim_max      = find(cumsum(simMoms.agg_match_count)./sum(simMoms.agg_match_count)<1);
+        log_compCDF     = log(1 - cumsum(simMoms.agg_match_count(ff_sim_max))./sum(simMoms.agg_match_count));
         log_matches     = log(1:1:size(ff_sim_max,1))';
         xmat            = [ones(size(ff_sim_max)),log_matches,log_matches.^2];
         
-        temp = cumsum(agg_match_count(ff_sim_max)./sum(agg_match_count(ff_sim_max)));
+        temp = cumsum(simMoms.agg_match_count(ff_sim_max)./sum(simMoms.agg_match_count(ff_sim_max)));
         ptemp = temp(1:size(ff_sim_max,1)) - [0;temp(1:size(ff_sim_max,1)-1)];
         format short
         Category = {'1 buyer','2 buyers','3 buyers','4 buyers','5 buyers','6-10 buyers','11+ buyers'};

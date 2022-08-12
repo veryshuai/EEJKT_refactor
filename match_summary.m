@@ -1,4 +1,4 @@
-function [exit_by_age,max_mat_age,brooks] =  match_summary(match_recs,agg_match_count,mm);
+function [exit_by_age,brooks] =  match_summary(match_recs,mm);
 
 
 % This function generates failure rates by initial sales and match age.

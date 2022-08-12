@@ -3,6 +3,8 @@ function simMoms = calculateSimulatedMoments(sim_cum)
 %% Construct simulated statistics
 simMoms = struct; %container for all simulated moments
 
+simMoms.agg_mat_yr_sales_adj = sim_cum.agg_mat_yr_sales_adj;
+simMoms.agg_match_count = sim_cum.agg_match_count;
 simMoms.agg_nexptr = sim_cum.agg_nexptr;
 simMoms.agg_nfirm = sim_cum.agg_nfirm;
 

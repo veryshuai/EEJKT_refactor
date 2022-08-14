@@ -7,10 +7,10 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
           cum_succ  = iter_in.cum_succ;
    
           yr_lag3   = t-3*pd_per_yr+1; % reach back as far as 3 years looking for last match before first current year match  
-          firm_flip = exit_firm(:,yr_lag3:t);
+          firm_flip = exit_firm(:,yr_lag3:t); % isn't needed but need to be careful removing it from matrices
           new_meet  = cum_meets(:,yr_lag3:t) - cum_meets(:,yr_lag3-1:t-1); % deal with firm ID changes later
-          %%          
-          % create variables for firm exit regression
+          
+%% create variables for firm exit regression
           
           exit         = exit_firm(:,t-pd_per_yr+1:t) == 1;  % flags firm_IDs that flip ownership during year
           no_exit      = sum(exit_firm(:,t-pd_per_yr+1:t)==0,2) == pd_per_yr; % flags firm IDs that don't flip during year
@@ -42,8 +42,7 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
            cell_add      = find(new_meet>0);      % firm-months with new meetings (vector of row addresses, stacked column by column)          
            cum_meet_int = cum_meets(:,yr_lag3:t); % cum meetings, submatrix for 3 yr interval 
            cum_succ_int = cum_succ(:,yr_lag3:t);  % cum successes, submatrix for 3 yr interval
-           
-                    
+                             
            temp = sortrows([rr cc new_meet(cell_add) firm_flip(cell_add) cum_meet_int(cell_add) cum_succ_int(cell_add)],1);
            %  temp contains observations on all firm-period pairs in which new meetings take place. 
            % (1) firm_ID, (2) period w/in interval, (3)# new meetings, (4) firm replacement, (5) cum. meetings, (6) cum succeses 
@@ -64,7 +63,7 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
           % (4) # new meetings (5) firm replacement dummy, (6) cum. meetings as of previous meeting, 
           % (7) cum succeseses as of previous meeting
 
-%% drop rows that correspond to same firm ID but different firms      
+%%        Drop rows that correspond to same firm ID but different firms      
 
           t_start = temp(1:nnn-1,2);
           t_end   = temp(2:nnn,2);
@@ -73,28 +72,23 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
           tdiff2    = tdiff(rr2,:);
           t_gap_lag = t_start(rr2);
           t_span    = [t_gap_lag, max([t_end(rr2) t_gap_lag],[],2)];
-         
-
-          % (1) firm (2) time w/in interval (3) time gap (4) # new meetings, 
-          % (5) firm replacement, (6) lagged cum. meetings, (7) lagged cum succeses
           
           same_firm = zeros(length(rr2),1);
           for jj = 1:length(rr2)
-          same_firm(jj) = sum(exit_flag(jj,t_span(jj,1):t_span(jj,2)),2)==0;
+            same_firm(jj) = sum(exit_flag(jj,t_span(jj,1):t_span(jj,2)),2)==0;
           end
           
           time_gap = tdiff2(same_firm==1,:);
+          % (1) firm (2) time w/in interval (3) time gap (4) # new meetings, 
+          % (5) firm replacement, (6) lagged cum. meetings, (7) lagged cum succeses
 
-%% drop each firm's first match--don't know how long it's been
+          % only keep matches that happen in the current year
+          time_gap = time_gap(time_gap(:,2)>2*pd_per_yr,:)  ;        
 
-          % searching--and only keep matches that happened during current year
-          nnnn = size(time_gap,1);
-          time_gap(2:nnnn,:) = time_gap(2:nnnn,:).*(time_gap(1:nnnn-1,1) - time_gap(2:nnnn,1)==0); % same firm ID
-          no_trunc = find((time_gap(:,2) > pd_per_yr*2).*(time_gap(:,6)>0)); % note: time_gap(:,6)>0 is redundant
-          time_gap = time_gap(no_trunc,:); % takes only current year obs.
            
-           % Now deal with cases of multiple new meetings within a single
-           % period. Each of the k matches is treated as spread evenly
+%%         Deal with cases of multiple new meetings within a single period
+
+           % Each of the k matches is treated as spread evenly
            % within the period. Hence the time gap before the first one goes
            % back to the previous period in which a match occurred, and the time gaps
            % for the others are intra-period.

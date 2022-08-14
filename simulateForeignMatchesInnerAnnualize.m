@@ -7,9 +7,12 @@ function [iter_in,iter_out] = simulateForeignMatchesInnerAnnualize(iter_in,iter_
 
 % firm_yr_sales: [firmID,sales,#shipments,firm age]
 
-iter_in = simulateForeignMatchesInnerAnnualizeFirstYr(iter_in); %since no lag, first year is different
+iter_in = simulateForeignMatchesInnerAnnualizeFirstYr(iter_in); 
+% since no lag, first year is different
+
 iter_out = simulateForeignMatchesInnerAnnualizeDuds(iter_in, mm, iter_out); 
 % # unsuccessful meetings (duds) over previous year, by firm (needed for degree distribution later)
+
 [iter_in, iter_out] = simulateForeignMatchesInnerAnnualizeMeetingGaps(iter_in, mm, iter_out);
 
 if iter_in.year > 2

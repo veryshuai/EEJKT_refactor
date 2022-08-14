@@ -1,12 +1,18 @@
-function [time_gap2,mktexit_data] = time_gaps(t,exit_firm,pd_per_yr,cum_meets,cum_succ)
+function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
 
+          pd_per_yr = mm.pd_per_yr;
+          t         = iter_in.t;
+          exit_firm = iter_in.exit_firm;
+          cum_meets = iter_in.cum_meets;
+          cum_succ  = iter_in.cum_succ;
+   
           yr_lag3   = t-3*pd_per_yr+1; % reach back as far as 3 years looking for last match before first current year match  
           firm_flip = exit_firm(:,yr_lag3:t);
           new_meet  = cum_meets(:,yr_lag3:t) - cum_meets(:,yr_lag3-1:t-1); % deal with firm ID changes later
           %%          
           % create variables for firm exit regression
           
-          exit         = exit_firm(:,t-pd_per_yr+1:t) == 1;          % flags firm_IDs that flip ownership during year
+          exit         = exit_firm(:,t-pd_per_yr+1:t) == 1;  % flags firm_IDs that flip ownership during year
           no_exit      = sum(exit_firm(:,t-pd_per_yr+1:t)==0,2) == pd_per_yr; % flags firm IDs that don't flip during year
           cum_meets_xt = cum_meets(:,t-pd_per_yr:t-1).*exit; % cum meetings of exiting firms entering current yr
           cum_succ_xt  = cum_succ(:,t-pd_per_yr:t-1).*exit;  % cum successes of exiting firms entering current yr
@@ -30,33 +36,60 @@ function [time_gap2,mktexit_data] = time_gaps(t,exit_firm,pd_per_yr,cum_meets,cu
 
 %%   Create variables for match hazard rate regression
 
-           [rr,cc]   = find(new_meet>0);
+           [rr,cc]   = find(new_meet>0);          % new meetings over past 3 years
            if size(rr,1)*size(rr,2)>0
                
            cell_add      = find(new_meet>0);      % firm-months with new meetings (vector of row addresses, stacked column by column)          
            cum_meet_int = cum_meets(:,yr_lag3:t); % cum meetings, submatrix for 3 yr interval 
-           cum_succ_int = cum_succ(:,yr_lag3:t);  % cum successes, submatrix for 3 yr interval  
+           cum_succ_int = cum_succ(:,yr_lag3:t);  % cum successes, submatrix for 3 yr interval
            
+                    
            temp = sortrows([rr cc new_meet(cell_add) firm_flip(cell_add) cum_meet_int(cell_add) cum_succ_int(cell_add)],1);
            %  temp contains observations on all firm-period pairs in which new meetings take place. 
            % (1) firm_ID, (2) period w/in interval, (3)# new meetings, (4) firm replacement, (5) cum. meetings, (6) cum succeses 
            nnn = size(temp,1);
-
+           
+           exit_flag    = exit_firm(sortrows(rr),yr_lag3:t);
+           same_firm_ID = temp(2:nnn,1)-temp(1:nnn-1,1)==0;
+      
+%            same_ID = firm_ID(2:nnn)-firm_ID(1:nnn-1)==0;
+%            no_flip = temp(same_ID,2);
+%            firm_ID = temp(:,1);
+%            t_new = temp(2:nnn,2);
+%            t_old = temp(1:nnn-1,2);
+%                       
           tdiff = [temp(2:nnn,1:2), (temp(2:nnn,2)-temp(1:nnn-1,2)), temp(2:nnn,3:4), temp(1:nnn-1,5:6)]...
-                   .*(temp(1:nnn-1,1) - temp(2:nnn,1)==0);  % zero out diffs across different firms
+                   .*same_firm_ID;  % zero out diffs across different firms
           % (1) firm_ID, (2) period w/in interval, (3) time gap between meetings, 
-          % (5) firm replacement dummy, (5) cum. meetings as of previous meeting, 
-          % (6) cum succeseses as of previous meeting
+          % (4) # new meetings (5) firm replacement dummy, (6) cum. meetings as of previous meeting, 
+          % (7) cum succeseses as of previous meeting
 
-          [rr2,~] = find(tdiff(:,1)>0); 
-          time_gap = tdiff(rr2,:); % drop rows with differences across firms
+%% drop rows that correspond to same firm ID but different firms      
+
+          t_start = temp(1:nnn-1,2);
+          t_end   = temp(2:nnn,2);
+          
+          [rr2,~]   = find(tdiff(:,1)>0); 
+          tdiff2    = tdiff(rr2,:);
+          t_gap_lag = t_start(rr2);
+          t_span    = [t_gap_lag, max([t_end(rr2) t_gap_lag],[],2)];
+         
+
           % (1) firm (2) time w/in interval (3) time gap (4) # new meetings, 
           % (5) firm replacement, (6) lagged cum. meetings, (7) lagged cum succeses
+          
+          same_firm = zeros(length(rr2),1);
+          for jj = 1:length(rr2)
+          same_firm(jj) = sum(exit_flag(jj,t_span(jj,1):t_span(jj,2)),2)==0;
+          end
+          
+          time_gap = tdiff2(same_firm==1,:);
 
-          % drop each firm's first match--don't know how long it's been
+%% drop each firm's first match--don't know how long it's been
+
           % searching--and only keep matches that happened during current year
           nnnn = size(time_gap,1);
-          time_gap(2:nnnn,:) = time_gap(2:nnnn,:).*(time_gap(1:nnnn-1,1) - time_gap(2:nnnn,1)==0); 
+          time_gap(2:nnnn,:) = time_gap(2:nnnn,:).*(time_gap(1:nnnn-1,1) - time_gap(2:nnnn,1)==0); % same firm ID
           no_trunc = find((time_gap(:,2) > pd_per_yr*2).*(time_gap(:,6)>0)); % note: time_gap(:,6)>0 is redundant
           time_gap = time_gap(no_trunc,:); % takes only current year obs.
            

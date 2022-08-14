@@ -8,8 +8,6 @@ function [stay, iter_in] = simulateForeignMatchesInnerSimNoLearners(no_learn, st
         % no exog. death, and shipments prev. year
         stay(no_learn) = (rand(N_no_learn,1) > 1-exp(-mm.firm_death_haz));
 
-        % JT: pls. confirm that the arguments of policy.lambda_f are
-        % correct
         %(succ,trial,common succ rate (defunct), network size, prod of firm, macro shock)
         iter_in.cum_meets(no_learn,iter_in.t) = (iter_in.cum_meets(no_learn,iter_in.t-1) + poissinv(rand(N_no_learn,1),mm.theta2(mm.pt_type(iter_in.pt_ndx,2)) ...
             * reshape(policy.lambda_f(floor(mm.theta2(mm.pt_type(iter_in.pt_ndx,2))*(mm.n_size+1)),(mm.n_size+1),1,min((mm.net_size+1),iter_in.cum_succ(no_learn,iter_in.t-1)+1),...

@@ -10,8 +10,7 @@ end
 
    mask = ones(tot_cli,1).*(0:1:size(mm.Z,1));
    t_state = sum(new_st(:,3:size(mm.Z,1)+3).*mask,2); % convert Z_state dummies to indices
-% mat_tran col 1: initial state, col 2: exporter id, cols 3: dest.
-% state (Z index, or 0 for exit)
+% mat_tran col 1: initial state, col 2: exporter id, cols 3: dest. state (Z index, or 0 for exit)
    mat_tran = [new_st(:,1:2),t_state];
  
  % pick off new match shocks (Z's) for all matches, including new ones. 

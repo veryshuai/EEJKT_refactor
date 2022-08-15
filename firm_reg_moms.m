@@ -1,7 +1,11 @@
 function  [moms_xx,moms_xy,ysum,n_obs] = firm_reg_moms(iter_in,mm)
 
+% JT: This is a match level regression. Why is it called firm_reg_moms?
     
 obs2use = (iter_in.mat_cont_2yr(:,2).*iter_in.mat_cont_2yr(:,9))>0;
+% matches: [firm ID, match-specific sales, shipments, boy Z, eoy Z, match age, firm age]  
+% mat_cont_2yr: [matches_lagged, matches] spliced, continuing matches only
+
 data_mat = iter_in.mat_cont_2yr(obs2use,:);
 n_obs = size(data_mat,1);
 

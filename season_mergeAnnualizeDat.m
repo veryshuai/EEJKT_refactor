@@ -1,20 +1,10 @@
-function [mat_yr_sales, firm_yr_sales,iterX_in] = season_mergeAnnualizeDat(all_seas, som_seas, mm, mat_cols,iterX_in)
+function [mat_yr_sales,firm_yr_sales,iterX_in] = season_mergeAnnualizeDat(all_seas, som_seas, mm, mat_cols,iterX_in)
  
  % all_seas and som_seas: 
  %  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
  %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
 
  t = iterX_in.t;
- 
-%  if t == 72
-%      'pause here'
-%      pickID = [ 0 0 0 0 1 0 0 0 0 0];
-%      pickIDyr = kron(ones(1,12),pickID);
-%      test2a = all_seas.*(ones(size(all_seas,1),1)*pickIDyr);
-%      firmIDa = max(test2a,[],2);
-%      test2s = som_seas.*(ones(size(all_seas,1),1)*pickIDyr);
-%      firmIDs = max(test2s,[],2);
-%  end
   
  a = find(sum(all_seas,2)>0); % non-zero rows of all_seas
  s = find(sum(som_seas,2)>0); % non-zero rows of som_seas

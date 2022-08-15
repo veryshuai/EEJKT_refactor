@@ -47,7 +47,7 @@ transF = cell(mm.N_pt,6);
 
 
 % create first observation on firm-year level aggregates (will concatenate below)
-iter_out.match_count      = double.empty(0,2);
+iter_out.match_count      = double.empty(0,1);
 iter_out.mat_yr_sales     = zeros(0,9);
 iter_out.mat_yr_sales_adj = zeros(0,9);
 iter_out.firm_f_yr_sales  = zeros(0,6);

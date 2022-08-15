@@ -50,13 +50,7 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
            
            exit_flag    = exit_firm(sortrows(rr),yr_lag3:t);
            same_firm_ID = temp(2:nnn,1)-temp(1:nnn-1,1)==0;
-      
-%            same_ID = firm_ID(2:nnn)-firm_ID(1:nnn-1)==0;
-%            no_flip = temp(same_ID,2);
-%            firm_ID = temp(:,1);
-%            t_new = temp(2:nnn,2);
-%            t_old = temp(1:nnn-1,2);
-%                       
+                            
           tdiff = [temp(2:nnn,1:2), (temp(2:nnn,2)-temp(1:nnn-1,2)), temp(2:nnn,3:4), temp(1:nnn-1,5:6)]...
                    .*same_firm_ID;  % zero out diffs across different firms
           % (1) firm_ID, (2) period w/in interval, (3) time gap between meetings, 

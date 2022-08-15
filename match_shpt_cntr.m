@@ -1,6 +1,6 @@
 function [nship_obs,ln_ships,match_count] = match_shpt_cntr(matches,max_match)
 
-% match = mat_yr_sales: [firm ID, match-specific sales, shipments, boy Z, eoy Z, match age w/in yr, firm age] 
+% match = mat_yr_sales: [firm ID, match-specific sales, shipments, boy Z, eoy Z, match age, firm age] 
 
 % if size(matches,1) > 10
 %     'pause here'
@@ -15,26 +15,29 @@ ln_ships  = sum(log(matches(ff1_obs,3))) + sum(log(matches(ff2_obs,3)));
 %% construct match count vector
 match_count = double.empty(0,2);
 
-     if length(unique(ff1_obs))>1
-        incumb_match = [1:max(matches(ff1_obs,1));sum(dummyvar(matches(ff1_obs,1)))]';     
-        match_count = [match_count; incumb_match];
+      if length(unique(ff1_obs))>0
+%         incumb_match = [1:max(matches(ff1_obs,1));sum(dummyvar(matches(ff1_obs,1)))]';     
+%         match_count = [match_count; incumb_match];
+          incumb_match = sum(dummyvar(matches(ff1_obs,1)))';     
+          match_count = sortrows(incumb_match(incumb_match>0));
      end
-     if length(unique(ff1_obs))==1
-        incumb_match = [matches(ff1_obs,1);sum(dummyvar(matches(ff1_obs,1)))]'; 
-        match_count = [match_count; incumb_match];
-     end
+%      if length(unique(ff1_obs))==1
+%         incumb_match = [matches(ff1_obs,1);sum(dummyvar(matches(ff1_obs,1)))]'; 
+%         match_count = [match_count; incumb_match];
+%      end
      
-     if length(unique(ff2_obs))>1
-        newfirm_match = [1:2*max(matches(ff2_obs,1));sum(dummyvar(2*matches(ff2_obs,1)))]';   
-        match_count = [match_count; [newfirm_match(:,1)./2, newfirm_match(:,2)]];
+     if length(unique(ff2_obs))>0
+        newfirm_match = sum(dummyvar(matches(ff2_obs,1)))';   
+        match_count = [match_count; sortrows(newfirm_match(newfirm_match>0))];
+        match_count = sortrows(match_count);
      end
-     if length(unique(ff2_obs))==1
-        newfirm_match = [matches(ff2_obs,1);sum(dummyvar(matches(ff2_obs,1)))]'; 
-        match_count = [match_count; [newfirm_match(:,1)./2, newfirm_match(:,2)]];
-     end
+%      if length(unique(ff2_obs))==1
+%         newfirm_match = [matches(ff2_obs,1);sum(dummyvar(matches(ff2_obs,1)))]'; 
+%         match_count = [match_count; [newfirm_match(:,1)./2, newfirm_match(:,2)]];
+%      end
     
    % match count: [firm ID, number of matches in year]
-        match_count = sortrows(match_count(match_count(:,2)>0,:),1);
+%    match_count = sortrows(match_count(match_count(:,2)>0,:),2);
 
 
 %  to drop firms with more than max_match matches:

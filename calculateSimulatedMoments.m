@@ -53,10 +53,10 @@ simMoms.match_exit_rate = sim_cum.agg_nmat_exit/sim_cum.agg_mat_obs;
 simMoms.avg_ln_ships = sim_cum.agg_ln_ships/sim_cum.agg_ship_obs;
 
 % degree distribution regression
-match_counts    = sortrows(sim_cum.agg_match_count,2);
+match_counts    = sortrows(sim_cum.agg_match_count);
 % topcode match counts at mm.max_match
-match_counts(:,2) = min([match_counts(:,2),(mm.max_match+1)*ones(size(match_counts,1),1)],[],2);
-match_freq      = sum(dummyvar(match_counts(:,2)));             
+match_counts    = min([match_counts,(mm.max_match+1)*ones(size(match_counts,1),1)],[],2);
+match_freq      = sum(dummyvar(match_counts));             
 simMoms.ff_sim_max  = cumsum(match_freq(1:mm.max_match)./sum(match_freq));
 
 log_compCDF      = log(1 - simMoms.ff_sim_max)';

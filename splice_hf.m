@@ -28,8 +28,8 @@ sim_out_pt_ndx.firm_f_yr_sales = sim_out_pt_ndx.firm_f_yr_sales(some_shpmts_f,:)
 
 %% Count the number of distinct firms in the home and the foreign database
 
-sim_out_pt_ndx.nfirm = Nh_firm_yrs/(mm.periods/mm.pd_per_yr);  % home mkt. firms per year
-sim_out_pt_ndx.nexptr = Nf_firm_yrs/(mm.periods/mm.pd_per_yr); % foreign mkt. firms per year
+sim_out_pt_ndx.nfirm = Nh_firm_yrs;  % home mkt. firms 
+sim_out_pt_ndx.nexptr = Nf_firm_yrs; % foreign mkt. firms 
 
 if Nh_firm_yrs > 0
   export_rate = Nf_firm_yrs/Nh_firm_yrs;

@@ -28,8 +28,11 @@ fprintf('\r\n weighted metric:   %.15f\n', D);
     fprintf(' for_sales_shr_coef = %.3f\n',err_comp(37,37));
     fprintf(' exp_frac_coef      = %.3f\n',err_comp(38,38));
     
+    match_ndx = 1:mm.max_match;
+    max_clients = max(match_ndx(logical(sim_cum.agg_match_count>0)));
+    
     fprintf('\r\n number of exporters per yr = %.3f\n',simMoms.agg_nexptr/(mm.tot_yrs - mm.burn));
-    fprintf(' maximum number of clients  = %.3f\n',size(simMoms.ff_sim_max,2));
+    fprintf(' maximum number of clients  = %.3f\n',max(max_clients));
     fprintf(' number of firms per yr     = %.3f\n',simMoms.agg_nfirm/(mm.tot_yrs - mm.burn));
     fprintf( '\r\n  '); 
     

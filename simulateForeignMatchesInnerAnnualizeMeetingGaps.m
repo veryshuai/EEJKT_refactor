@@ -1,6 +1,6 @@
 function [iter_in, iter_out] = simulateForeignMatchesInnerAnnualizeMeetingGaps(iter_in, mm, iter_out)
 if iter_in.t>3*mm.pd_per_yr
-    [time_gap,iter_in.mkt_exit] = time_gaps(iter_in.t,iter_in.exit_firm,mm.pd_per_yr,iter_in.cum_meets,iter_in.cum_succ);
+    [time_gap,iter_in.mkt_exit] = time_gaps(iter_in,mm);
     %           time_gap: (1) firm_ID, (2) periods into interval, (3) time gap,
     %           (4) # new meetings, (5) iter_in.t, (6) cum. meetings, (7) cum succeses
 

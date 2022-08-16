@@ -1,14 +1,14 @@
 function [iter_in,iter_out] = simulateForeignMatchesInnerMoments(iter_in,iter_out,mm)
 if iter_in.year > mm.burn  % don't start building simulated data set until burn-in finished
-    if size(iter_in.mat_yr_sales,1)*size(iter_in.mat_yr_sales_lag)>0
+    if size(iter_in.mat_cont_2yr)>0
 
         tt =  ones(size(iter_in.mat_yr_sales,1),1).*[iter_in.t,iter_in.mic_type]; % add cols 1 and 2: t, firm type
         iter_out.mat_yr_sales  = [iter_out.mat_yr_sales;[tt,iter_in.mat_yr_sales]];
         % agg_mat_yr_sales: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, w/in yr. match age, firm age]
 
         if iter_in.year_lag == iter_in.year % check that mat_yr_splice_v2 ran & updated iter_in.mat_yr_sales_adj
-            tt2 =  ones(size(iter_in.mat_yr_sales_adj,1),1).*[iter_in.t-mm.pd_per_yr,iter_in.mic_type];
-            iter_out.mat_yr_sales_adj = [iter_out.mat_yr_sales_adj;[tt2,iter_in.mat_yr_sales_adj]]; % add cols 1 and 2: t, firm type
+            tt2 =  ones(size(iter_in.mat_yr_sales,1),1).*[iter_in.t-mm.pd_per_yr,iter_in.mic_type];
+            iter_out.mat_yr_sales = [iter_out.mat_yr_sales;[tt2,iter_in.mat_yr_sales]]; % add cols 1 and 2: t, firm type
             % agg_mat_yr_sales_adj: [t,type,firm ID, match sales, shipments, boy Z, adj_eoy Z, w/in yr. match age, firm age]
             ttt = ones(size(iter_in.firm_yr_sales,1),1).*[iter_in.t,iter_in.mic_type];
             iter_out.firm_f_yr_sales = [iter_out.firm_f_yr_sales;[ttt,iter_in.firm_yr_sales]]; % add cols 1 and 2: t, firm type
@@ -17,6 +17,8 @@ if iter_in.year > mm.burn  % don't start building simulated data set until burn-
 
         iter_out.mat_matur =  [iter_out.mat_matur; iter_in.mat_matur_dat];
 
+%       iter_in.mat_matur_dat: [sales, boy Z, eoy Z, match age, firm age, firm_ID, yr]
+%       iter_in.mat_cont_2yr:  [firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age] x 2 (lagged, then current) 
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %  match regression moments
 
@@ -37,7 +39,9 @@ if iter_in.year >= mm.burn
     
     % autoregressions and degree distribution
 
-    [fmoms_xx,fmoms_xy,fysum,fn_obs] = firm_reg_moms(iter_in.firm_yr_sales,iter_in.firm_yr_sales_lag,mm.sim_firm_num_by_prod_succ_type(iter_in.pt_ndx));
+    [fmoms_xx,fmoms_xy,fysum,fn_obs] = firm_reg_moms(iter_in,mm);
+% JT: I don't think we're using this regression and in any case it is 
+% done using data at the match level (iter_in.mat_cont_2yr), not the firm level
 
     iter_out.fmoms_xx = iter_out.fmoms_xx + fmoms_xx; % cumulate moments for firm regression
     iter_out.fmoms_xy = iter_out.fmoms_xy + fmoms_xy; % cumulate moments for firm regression
@@ -58,10 +62,11 @@ if iter_in.year >= mm.burn
     end
     % match exit regression moments
     if iter_in.year_lag == iter_in.year
-        ff_mexit = iter_in.mat_yr_sales_adj(:,2)>0;
-        if sum(ff_mexit,1)>0 % positive sales for at least one match
+        ff_mexit = iter_in.mat_yr_sales(:,2)>0; % positive lagged exports
+        if sum(ff_mexit,1)>0 
+            
             [mat_exit_x,mat_exit_y,mat_exit_moms_xx,mat_exit_moms_xy,mat_obs,nmat_exit]...
-                = match_exit_moms(iter_in.mat_yr_sales_adj(ff_mexit,:),mm.pd_per_yr);
+                = match_exit_moms(iter_in.mat_yr_sales(ff_mexit,:),mm.pd_per_yr);
 
             % Notes on variables:
 
@@ -82,14 +87,20 @@ if iter_in.year >= mm.burn
         end
     end
     % shipment and match counter
-
-    [nship_obs,ln_ships,match_count] = match_shpt_cntr(iter_in.mat_yr_sales_adj,mm.max_match);
+    
+    [nship_obs,ln_ships,match_count] = match_shpt_cntr(iter_in.mat_yr_sales,mm.max_match);
 
     iter_out.ship_obs    = iter_out.ship_obs + nship_obs ;
     iter_out.ln_ships    = iter_out.ln_ships + ln_ships ;
-    iter_out.match_count = iter_out.match_count + match_count ;
-    % include all the matches that generated a single sample shipment:
-    iter_out.match_count(1) = iter_out.match_count(1) + iter_out.singletons;
+    
+   try
+   if size(match_count,1)>0
+     match_histogram = sum(match_count*ones(1,mm.max_match) - ones(size(match_count,1),1)*(1:mm.max_match)==0);
+     iter_out.match_count = iter_out.match_count + match_histogram ;
+   end
+   catch 
+        'pause in simulateForeignMatchesInnerSim line 96'
+   end
 
 end  
 

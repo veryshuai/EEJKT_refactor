@@ -4,6 +4,7 @@ iter_in = struct;
 iter_out = struct;
 
 iter_in.pt_ndx       = pt_ndx;             % index firms by type: productivity and product appeal (theta)
+iter_in.year_lag     = 1;
 iter_in.macro_state_f = macro_state_f;
 iter_in.seas_tran = cell(1,mm.pd_per_yr);  % cells will hold one year's worth of season- and match-specific outcomes for all firms w/in type
 iter_in.seas_Zcut = zeros(1,mm.pd_per_yr); % elements will hold season-specifics Z cut-offs for endog. drops
@@ -22,8 +23,11 @@ iter_in.surviv_zst   = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z
 iter_in.trans_zst    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % counts survival types by firm after z innovations
 iter_in.flrlag       = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);     % initializing vector for age debugging
 iter_in.cumage       = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);    % initializing vector for age debugging
+
+iter_in.mat_cont_2yr              = double.empty(0,14);
 iter_in.mkt_exit                  = zeros(1,3);
 iter_in.mat_yr_sales_adj          = zeros(0,9);
+iter_in.mat_yr_sales_lag          = zeros(0,7);
 iter_in.trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx)); % counts transitions across buyer types,
 % for each seller type. New buyer types are considered type 0 at beginning of period, hence the +1.
 % Exiting firms are considered to move to type 0 at the the end of the period.
@@ -36,8 +40,14 @@ iter_in.N_match = 0;
 iter_in.season = 1;
 iter_in.firm_yr_sales_lag = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),4); %firm_yr_sales_lag will contain: [firmID,sales,#shipments,firm age]
 
+
+transF = cell(mm.N_pt,6);
+% to hold (1) firm_ID, (2) cur_cli_cnt, (2) cum_succ, (4) age, (5) new_firm
+% (6) cum_meets
+
+
 % create first observation on firm-year level aggregates (will concatenate below)
-iter_out.match_count      = zeros(mm.max_match,1);
+iter_out.match_count      = zeros(1,mm.max_match);
 iter_out.mat_yr_sales     = zeros(0,9);
 iter_out.mat_yr_sales_adj = zeros(0,9);
 iter_out.firm_f_yr_sales  = zeros(0,6);

@@ -8,13 +8,13 @@ mm.r         = 0.05/mm.pd_per_yr;   % Rate of time preference per period
 mm.firm_death_haz = 0.03/mm.pd_per_yr;   % Component of time preference due to exogenous death
 mm.delta     = 0.326/mm.pd_per_yr;  % Exogenous match separation rate 
 mm.b         = 1;      % Cost function parameter
-mm.scale_f   = X(12);   % Export profit function scale parameter
+mm.scale_f   = X(12);  % Export profit function scale parameter
 mm.scale_h   = X(2);   % Domestic profit function scale parameter
-mm.eta       = 5;         % Demand elasticity 
+mm.eta       = 5;          % Demand elasticity 
 mm.gam       = X(7);       % Network effect parameter
-mm.cs_h      = exp(X(8));      % Cost scaling parameter, home market
-mm.cs_f      = exp(X(11));      % Cost scaling parameter, foreign market
-mm.sig_p     = X(9);         %standard deviation of productivity distribution
+mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
+mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
+mm.sig_p     = X(9);       %standard deviation of productivity distribution
 
 
 %% Discretization of state-space

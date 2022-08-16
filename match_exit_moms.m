@@ -4,7 +4,7 @@
 % to discrete_sim_parfor3.m for aggregation across types.
 
 function [x,y,mat_exit_moms_xx,mat_exit_moms_xy,nobs,nmatch_exit] = match_exit_moms(matches,pd_per_yr)
- % mat_yr_sales: [firm ID, match-specific sales, shipments, boy Z, eoy Z, match age, firm age] 
+ % matches: [firm ID, match-specific sales, shipments, boy Z, eoy Z, match age, firm age] 
 
 ff = find(matches(:,2)>0);
 y  = matches(ff,5)==0;                % match dead by end of year

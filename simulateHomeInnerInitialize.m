@@ -38,8 +38,10 @@ theta_df = (size(mm.theta1,2)+1)*ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),
 iterH_in.theta1_cntr  = [uv,accumarray(idx(:),1)];
 iterH_in.theta_h      = sortrows(theta_df);
 
-iterH_in.firm_yr_sales_lag = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),4);
+iterH_in.firm_h_yr_sales_lag = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),4);
 % firm_yr_sales_lag will contain: [firmID,sales,#shipments,firm age]
+iterH_in.mat_h_yr_sales_lag = double.empty(0,4);
+iterH_in.mat_h_yr_sales = double.empty(0,4);
 
 % initialize keep_cli for first period
 iterH_in.keep_cli = ones(1,size(mm.Z,1)); % applies to clients existing in period 1
@@ -47,6 +49,9 @@ iterH_in.keep_cli(1:5) =  zeros(1,5); % implying worst 5 client types from perio
 iterH_in.year = 1;
 iterH_in.N_match = 0;
 iterH_in.season = 1;
+
+transH = cell(mm.N_pt,5);
+% to hold (1) firm_ID, (2) cur_cli_cnt, (3) cum_succ, (4) age, (5) new_firm 
 
 % create first observation on firm-year level aggregates (will concatenate below)
 iter_out.firm_h_yr_sales = double.empty(0,6);

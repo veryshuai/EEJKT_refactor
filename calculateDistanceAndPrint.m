@@ -16,7 +16,7 @@ print_diagnostics_to_standard_output(D, X, real_moms_and_sim_moms, err_comp, sim
 plots(simMoms); 
 summary_tables(simMoms,mm); 
 
-% shouldMatchMoments(real_moms_and_sim_moms,D,"overwrite","results/shouldMatchMomentsData");
-shouldMatchMoments(real_moms_and_sim_moms,D,"test","results/shouldMatchMomentsData");
+shouldMatchMoments(real_moms_and_sim_moms,D,"overwrite","results/shouldMatchMomentsData");
+% shouldMatchMoments(real_moms_and_sim_moms,D,"test","results/shouldMatchMomentsData");
 
 end

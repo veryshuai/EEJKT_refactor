@@ -1,4 +1,4 @@
-function simMoms = calculateSimulatedMoments(sim_cum)
+function simMoms = calculateSimulatedMoments(sim_cum,mm)
 
 %% Construct simulated statistics
 simMoms = struct; %container for all simulated moments

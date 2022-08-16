@@ -1,6 +1,5 @@
 function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX_in)
 
-
   N_firms = mm.sim_firm_num_by_prod_succ_type(iterX_in.pt_ndx);
 
   mat_cols = size(iterX_in.seas_tran{1},2)+1;  % Holds all matches. The +1 makes room for a match age variable
@@ -63,7 +62,7 @@ for ss=2:mm.pd_per_yr
        ff_firm_exit = find((match_count==0).*(match_count_lag>0));  % firm exits between previous and current season
        N_firm_exit = sum(ff_firm_exit>0); 
 
-% NOTE: This code treats a firm as exiting if it goes to zero matches at any 
+% NOTE: This function treats a firm as exiting if it goes to zero matches at any 
 %       point during the year, even if it makes subsequent matches before 
 %       year's end. This is not the way exit is defined in the data, where 
 %       firms must go 12 months without a shipment to be flagged as exiting.
@@ -99,10 +98,10 @@ for ss=2:mm.pd_per_yr
       temp1(:,4:5) 
       temp2(:,lcb-6:lcb-5)  
     end
-    
+    try
 %    load current season continuing matches into all_seas, incrementing match age by 1
      all_seas(1:all_cntr,1:ucb) = [temp2(:,1:lcb-1),temp1,temp2(:,lcb-1)+ones(size(temp1,1),1)] ;
-%    add new rows to all_seas for new matches. Match age is one for all new matches.
+%    add new rows to all_seas for new matches. Match age is zero for all new matches.
      all_seas(all_cntr+1:all_cntr+size(ff_new,1),lcb:ucb) = [smat_tran(ff_new,:),ones(size(ff_new,1),1)];
      all_cntr = size(ff_all_active,1)+size(ff_new,1);      
 %    move history of matches in their last season to som_seas    
@@ -115,7 +114,9 @@ for ss=2:mm.pd_per_yr
      all_seas(1:all_cntr,:) = all_seas(ff_live,:); % moving survivors to first rows    
      empty_mat = zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr);
      all_seas(all_cntr+1:iterX_in.N_match,:) = empty_mat;   % clear remaining rows
-
+    catch
+        'problem in mergeWithinYrSequence lines 102-116 of seasonMergeWithinYrSequence'
+    end
    end % end nrt >0 if block 
     match_count_lag = match_count; 
     nrt_lag = nrt; 

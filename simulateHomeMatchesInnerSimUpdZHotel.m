@@ -19,12 +19,24 @@ pt_ndx = iterH_in.pt_ndx;
         else
            iterH_in.new_cli_zst(i,:) = zeros(1,size(mm.Z,1));
         end
-               
+
+        % break down exogenous deaths that occur between t-1 and t down by z state, and
+        % record number of endogenous plus exogenous exits by z state in 1st column of trans_count:
         if iterH_in.exog_deaths(i,t-1) > 0
-            % break down exogenous deaths that occur between t-1 and t down by z state:
             iterH_in.die_cli_zst(i,:) = createDieVec(iterH_in.lag_cli_zst(i,:).*iterH_in.keep.cli,iterH_in.exog_deaths(i,t-1),size(mm.Z,1));
-            % record number of endogenous plus exogenous exits by z state in 1st column of trans_count:
         end
+        
+         % get rid of all clients when the firm slot turns over
+         if iterH_in.new_firm(i,t)*(1-iterH_in.new_firm(i,t-1)) == 1
+             iterH_in.die_cli_zst(i,:) = iterH_in.lag_cli_zst(i,:);
+             %.*iterH_in.keep_cli;     
+         end
+        
+%          if iterH_in.new_firm(i,t) == 1
+%              iterH_in.die_cli_zst(i,:) = iterH_in.lag_cli_zst(i,:);
+%              %.*iterH_in.keep_cli;     
+%          end
+         
         iterH_in.trans_count(2:size(mm.Z,1)+1,1,i) = (iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep.cli))' + iterH_in.die_cli_zst(i,:)';
         % For each firm (i) of a particular type, column 1 of trans_mat now
         % contains counts of all exiting matches, by buyer type (row).

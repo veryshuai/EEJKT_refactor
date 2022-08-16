@@ -92,8 +92,15 @@ if iter_in.year >= mm.burn
 
     iter_out.ship_obs    = iter_out.ship_obs + nship_obs ;
     iter_out.ln_ships    = iter_out.ln_ships + ln_ships ;
-    iter_out.match_count = [iter_out.match_count; match_count] ;
     
+   try
+   if size(match_count,1)>0
+     match_histogram = sum(match_count*ones(1,mm.max_match) - ones(size(match_count,1),1)*(1:mm.max_match)==0);
+     iter_out.match_count = iter_out.match_count + match_histogram ;
+   end
+   catch 
+        'pause in simulateForeignMatchesInnerSim line 96'
+   end
 
 end  
 

@@ -1,4 +1,4 @@
-function real_moms_and_sim_moms = calculateDistanceAndPrint(simMoms,mm,X)
+function D = calculateDistanceAndPrint(simMoms,mm,X)
 
 [Data, W, Model] = read_in_and_organize_moments(simMoms);
 

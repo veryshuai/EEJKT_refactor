@@ -1,4 +1,4 @@
-function [iter_out, transF] = simulateForeignMatches(pt_ndx,macro_state_f,mm,policy)
+function [iter_out] = simulateForeignMatches(pt_ndx,macro_state_f,mm,policy)
 
 [iter_in, iter_out] = simulateForeignInnerInitialize(mm, pt_ndx, macro_state_f);
 
@@ -48,12 +48,12 @@ for t = 2:1:mm.periods
 if iter_in.t == mm.periods
 %   'pause here in simulateForeignMatches'
     find_xcli = find(sum(iter_in.cur_cli_cnt,2)>0);
-    transF{pt_ndx,1} = find_xcli;
-    transF{pt_ndx,2} = iter_in.cur_cli_cnt(find_xcli,:);
-    transF{pt_ndx,3} = iter_in.cum_succ(find_xcli,:);
-    transF{pt_ndx,4}  = iter_in.cumage(find_xcli,:);  
-    transF{pt_ndx,5}  = iter_in.new_firm(find_xcli,:);  
-    transF{pt_ndx,6} = iter_in.cum_meets(find_xcli,:);
+    iter_out.transF{pt_ndx,1} = find_xcli;
+    iter_out.transF{pt_ndx,2} = iter_in.cur_cli_cnt(find_xcli,:);
+    iter_out.transF{pt_ndx,3} = iter_in.cum_succ(find_xcli,:);
+    iter_out.transF{pt_ndx,4}  = iter_in.cumage(find_xcli,:);  
+    iter_out.transF{pt_ndx,5}  = iter_in.new_firm(find_xcli,:);  
+    iter_out.transF{pt_ndx,6} = iter_in.cum_meets(find_xcli,:);
 end
 
     

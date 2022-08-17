@@ -1,4 +1,4 @@
-function sim_out_pt_ndx = splice_hf(sim_out_pt_ndx,transF,transH,policy,mm,pt_ndx)
+function sim_out_pt_ndx = splice_hf(sim_out_pt_ndx,policy,mm,pt_ndx)
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 % This function takes panel of realizations on domestic and foreign sales
 % for a particular type (theta_f and phi), and splices them together to 
@@ -37,8 +37,8 @@ if Nh_firm_yrs > 0
   fprintf('%2.0f exporters and %3.0f firms, for export rate of %3.2f\n',[sim_out_pt_ndx.nexptr  sim_out_pt_ndx.nfirm export_rate])  
 end
 
-rowsH = size(transH{pt_ndx,5},1);
-rowsF = size(transF{pt_ndx,5},1);
+rowsH = size(sim_out_pt_ndx.transH{pt_ndx,5},1);
+rowsF = size(sim_out_pt_ndx.transF{pt_ndx,5},1);
 if rowsH*rowsF>0
 
 

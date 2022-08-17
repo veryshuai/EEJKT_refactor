@@ -1,7 +1,7 @@
 function summary_tables(simMoms,mm)
 
 %% match maturation, by type 
-[bexit,brooks] = match_summary(simMoms.agg_mat_yr_sales_adj,mm);
+[bexit,brooks] = match_summary(simMoms.agg_mat_yr_sales,mm);
 
 %  Data for Brooks table 2 include all generated matches. Data from Brooks table 1 
 %  only include types with matches in both the current and the previous year. 
@@ -39,9 +39,9 @@ MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
         xmat            = [ones(size(ff_sim_max)),log_matches,log_matches.^2];
         
         temp = cumsum(simMoms.agg_match_count(ff_sim_max)./sum(simMoms.agg_match_count(ff_sim_max)));
-        ptemp = temp(1:size(ff_sim_max,1)) - [0;temp(1:size(ff_sim_max,1)-1)];
+        ptemp = temp(1:size(ff_sim_max,2)) - [0,temp(1:size(ff_sim_max,2)-1)];
         format short
         Category = {'1 buyer','2 buyers','3 buyers','4 buyers','5 buyers','6-10 buyers','11+ buyers'};
-        model_share = [ptemp(1:5)',sum(ptemp(6:10)),sum(ptemp(11:size(ff_sim_max,1)-1))]';
+        model_share = [ptemp(1:5),sum(ptemp(6:10)),sum(ptemp(11:size(ff_sim_max,2)-1))]';
         data_share = [0.792,0.112,0.031,0.016,0.009,0.022,0.016]';
         Ergodic_Dist = table(data_share,model_share,'RowNames',Category)

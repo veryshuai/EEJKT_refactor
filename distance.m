@@ -10,6 +10,5 @@ seed_crand(80085);
 mm = setModelParameters(X);
 policy = generatePolicyAndValueFunctions(mm);
 simMoms = simulateMomentsMain(policy,mm);
-
-calculate_distance_and_print
+calculateDistanceAndPrint(simMoms,mm,X)
 end  

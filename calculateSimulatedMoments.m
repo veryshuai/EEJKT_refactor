@@ -86,4 +86,4 @@ simMoms.mean_ln_haz    = means_vec(1);
 simMoms.mean_succ_rate = means_vec(2);
 simMoms.mean_usq_succ  = means_vec(3);
 
-end
+end 

@@ -95,7 +95,7 @@ if iter_in.year >= mm.burn
  
    if size(match_count,1)>0
      match_histogram = sum(match_count*ones(1,mm.max_match) - ones(size(match_count,1),1)*(1:mm.max_match)==0);
-     iter_out.match_count = iter_out.match_count + match_histogram ;
+     iter_out.match_count = iter_out.match_count + match_histogram ; % cumulating match counts over years, given pt_ndx
    end
 
 

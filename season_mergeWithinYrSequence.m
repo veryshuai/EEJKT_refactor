@@ -95,6 +95,8 @@ for ss=2:mm.pd_per_yr
       assert(sum((temp1(:,4)-temp2(:,lcb-5)).^2)==0);  % do Z's match?
     catch
       warning('problem with splicing of firms across seasons')
+      fprintf('\r\n firm type = %4.0' iterX.in_pt_ndx); 
+    
       temp1(:,4:5) 
       temp2(:,lcb-6:lcb-5)  
     end

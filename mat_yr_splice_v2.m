@@ -20,9 +20,9 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_lag,year_lag] =...
 % Find matches in current year that correspond to boy incumbents, and 
 % drop matches that correspond to post-flip periods.
    
-    incumb = mat_yr_sales(:,1)==(floor(mat_yr_sales(:,1))).*(mat_yr_sales(:,4)>0);
-    contin = mat_yr_sales_lag(:,5)>0;
-    tmp_tran = mat_yr_sales(incumb,:);
+    incumb = mat_yr_sales(:,1)==(floor(mat_yr_sales(:,1))).*(mat_yr_sales(:,4)>0); % boy Z > 0 this year
+    contin = mat_yr_sales_lag(:,5)>0;  % eoy Z > 0 last year
+    tmp_tran = mat_yr_sales(incumb,:); 
     tmp_tran_lag = mat_yr_sales_lag(contin,:);
    
 
@@ -35,15 +35,17 @@ try
     
 %  fprintf('\rNow at mat_yr_splice_v2, line 44. Evaluating year %2.0f\n', year)   
 
-    cont_find = tmp_tran(:,7) - tmp_tran_lag(:,7) >  0;   
-    tmp_tran(cont_find ,6) = tmp_tran_lag(cont_find ,6)...
-                               + mm.pd_per_yr*ones(length(cont_find),1);
+    cont_find = tmp_tran(:,7) - tmp_tran_lag(:,7) >  0;  % firm is older this year (no flip)
+    
+%     tmp_tran(cont_find ,6) = tmp_tran_lag(cont_find ,6)...
+%                                + mm.pd_per_yr*ones(length(cont_find),1);
                            
 % NOTE: this formulation gives a continuing match an entire year of additional 
-%  age, even if it only survives a fraction of the current year. It would 
-%  be better to use the # months survived in the current year, but this
-%  variable isn't readily added to the input set. This would be consistent 
-%  with the treatment of firm age.
+%  age, even if it only survives a fraction of the current year. 
+
+% Better to use the # months survived in the current year:
+
+  tmp_tran(cont_find ,6) = tmp_tran_lag(cont_find ,6) + tmp_tran(cont_find,6);
 
 catch
         'problem in mat_yr_splice_v2, lines 42-46';
@@ -51,6 +53,7 @@ end
  %%  
  try
  last_yr_exit = logical(ones(size(mat_yr_sales_lag,1),1)-contin);
+ % match was there last year but not this year
  mat_lastyr_lag = mat_yr_sales_lag(last_yr_exit,:);
 
  if sum(contin,1)>0

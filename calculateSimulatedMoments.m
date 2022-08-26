@@ -3,6 +3,8 @@ function simMoms = calculateSimulatedMoments(sim_cum,mm)
 %% Construct simulated statistics
 simMoms = struct; %container for all simulated moments
 
+simMoms.agg_mat_yr_sales = sim_cum.agg_mat_yr_sales;
+simMoms.agg_match_count = sim_cum.agg_match_count;
 simMoms.agg_nexptr = sim_cum.agg_nexptr;
 simMoms.agg_nfirm = sim_cum.agg_nfirm;
 
@@ -52,40 +54,37 @@ simMoms.match_exit_rate = sim_cum.agg_nmat_exit/sim_cum.agg_mat_obs;
 % average log #shipments
 simMoms.avg_ln_ships = sim_cum.agg_ln_ships/sim_cum.agg_ship_obs;
 
-% degree distribution regression         
+% create variables for analysis of degree distribution
 simMoms.ff_sim_max  = cumsum(sim_cum.agg_match_count(1:mm.max_match)./sum(sim_cum.agg_match_count));
-log_compCDF         = log(1 - simMoms.ff_sim_max)';
-log_matches         = log(1:1:length(simMoms.ff_sim_max))';
-xmat                = [ones(length(log_matches(1:end-1)),1),log_matches(1:end-1),log_matches(1:end-1).^2];
-simMoms.b_degree    = regress(log_compCDF(1:end-1),xmat);
-
-match_ndx = 1:mm.max_match;
-simMoms.max_clients = max(match_ndx(logical(sim_cum.agg_match_count>0)));
+simMoms.log_compCDF         = log(1 - simMoms.ff_sim_max)';
+simMoms.log_matches         = log(1:1:length(simMoms.ff_sim_max))';
+xmat                = [ones(length(simMoms.log_matches(1:end-1)),1),simMoms.log_matches(1:end-1),simMoms.log_matches(1:end-1).^2];
+simMoms.b_degree    = regress(simMoms.log_compCDF(1:end-1),xmat);
 
 % plot histogram of frequencies for meeting hazards
-simMoms.agg_time_gaps = sim_cum.agg_time_gaps(2:size(sim_cum.agg_time_gaps,1),:);
+sim_cum.agg_time_gaps = sim_cum.agg_time_gaps(2:size(sim_cum.agg_time_gaps,1),:);
 
 % create variables for hazard regressions
 ln_haz = log(1./sim_cum.agg_time_gaps(:,3));
-ln_csucc = log(1+sim_cum.agg_time_gaps(:,7));
+simMoms.ln_csucc = log(1+sim_cum.agg_time_gaps(:,7));
 ln_meet = log(sim_cum.agg_time_gaps(:,6));
 const = ones(size(ln_haz,1),1);
-ln_succ_rate = log(1+(sim_cum.agg_time_gaps(:,7)./sim_cum.agg_time_gaps(:,6)));
+simMoms.ln_succ_rate = log(1+(sim_cum.agg_time_gaps(:,7)./sim_cum.agg_time_gaps(:,6)));
 
 % success rate regression
-succ_rate = sim_cum.agg_time_gaps(:,7)./sim_cum.agg_time_gaps(:,6);
-[simMoms.b_succ_rate,~,uu] = regress(succ_rate,[const, ln_meet]);
+simMoms.succ_rate = sim_cum.agg_time_gaps(:,7)./sim_cum.agg_time_gaps(:,6);
+[simMoms.b_succ_rate,~,uu] = regress(simMoms.succ_rate,[const, ln_meet]);
 usq_succ = uu.^2;
 simMoms.b_usq_succ = regress(usq_succ,[const, ln_meet]);
 
 % translog meeting hazard regression
-X_haz = [const, ln_csucc, ln_csucc.^2, ln_succ_rate, ln_succ_rate.^2, ln_succ_rate.*ln_csucc];
+X_haz = [const, simMoms.ln_csucc, simMoms.ln_csucc.^2, simMoms.ln_succ_rate, simMoms.ln_succ_rate.^2, simMoms.ln_succ_rate.*simMoms.ln_csucc];
 simMoms.b_haz = regress(ln_haz,X_haz);
 
 % means of log hazard rate, success rate, and squared residuals from succ rate
-means_vec = mean([ln_haz,succ_rate,usq_succ]);
+means_vec = mean([ln_haz,simMoms.succ_rate,usq_succ]);
 simMoms.mean_ln_haz    = means_vec(1);
 simMoms.mean_succ_rate = means_vec(2);
 simMoms.mean_usq_succ  = means_vec(3);
 
-end 
+end

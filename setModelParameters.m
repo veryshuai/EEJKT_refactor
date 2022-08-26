@@ -55,11 +55,11 @@ mm.th2_pdf = [mm.th2_cdf(1),mm.th2_cdf(2:mm.dim1)-mm.th2_cdf(1:mm.dim1-1)];
 
 
 %% Solution parameters
-mm.v_tolerance   = 1e-3;    % convergence tolerance, value function iterations (WAS .005)
-mm.v_rel_tolerance   = 1e-6;    % relative convergence tolerance, value function iterations (WAS .005)
+mm.v_tolerance   = 1e-6;    % convergence tolerance, value function iterations (WAS 1e-3)
+mm.v_rel_tolerance   = 1e-6;    % relative convergence tolerance, value function iterations (WAS 1e-6)
 mm.max_iter      = 5e4; % maximum number of value function iterations
 
-mm.pi_tolerance  = 1e-4;    % convergence tolerance, profit function (WAS .001)
+mm.pi_tolerance  = 1e-12;    % convergence tolerance, profit function (WAS .001)
 mm.T             = 50;      % horizon for calculating profit function
 mm.tot_yrs       = 45;     % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
@@ -162,9 +162,15 @@ mm.X_h          = X_h;      %home macro shocks
 
 mm.D_h          = D_h;      %size of jump in home macro shock
 mm.Q_h          = Q_h;      %intensity matrix for home macro shock
+mm.Q_h_d = Q_h;
+j = size(Q_h,1);
+mm.Q_h_d(1:(j+1):end) = 0;
 
 mm.D_f          = D_f;      %size of jump in foreign macro shock
 mm.Q_f          = Q_f;      %intensity matrix for foreign macro shock
+mm.Q_f_d = Q_f;
+j = size(Q_f,1);
+mm.Q_f_d(1:(j+1):end) = 0;
 
 mm.erg_pp       = erg_pp;   %ergodic distribution of seller productivities
 

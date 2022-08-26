@@ -29,10 +29,9 @@ fprintf('\r\n weighted metric:   %.15f\n', D);
     fprintf(' exp_frac_coef      = %.3f\n',err_comp(38,38));
     
     fprintf('\r\n number of exporters per yr = %.3f\n',simMoms.agg_nexptr/(mm.tot_yrs - mm.burn));
-    fprintf(' maximum number of clients  = %.3f\n',simMoms.max_clients); 
+    fprintf(' maximum number of clients  = %.3f\n',size(simMoms.ff_sim_max,2));
     fprintf(' number of firms per yr     = %.3f\n',simMoms.agg_nfirm/(mm.tot_yrs - mm.burn));
     fprintf( '\r\n  '); 
-    
     
       fileID2 = fopen('results/ga_fitlog.txt','a');
       fprintf(fileID2,'\r\n fit metric = ');

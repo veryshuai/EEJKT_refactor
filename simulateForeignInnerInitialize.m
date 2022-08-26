@@ -26,7 +26,6 @@ iter_in.cumage       = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1);    % 
 
 iter_in.mat_cont_2yr              = double.empty(0,14);
 iter_in.mkt_exit                  = zeros(1,3);
-iter_in.mat_yr_sales_adj          = zeros(0,9);
 iter_in.mat_yr_sales_lag          = zeros(0,7);
 iter_in.trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx)); % counts transitions across buyer types,
 % for each seller type. New buyer types are considered type 0 at beginning of period, hence the +1.
@@ -41,7 +40,7 @@ iter_in.season = 1;
 iter_in.firm_yr_sales_lag = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),4); %firm_yr_sales_lag will contain: [firmID,sales,#shipments,firm age]
 
 
-transF = cell(mm.N_pt,6);
+iter_out.transF = cell(mm.N_pt,6);
 % to hold (1) firm_ID, (2) cur_cli_cnt, (2) cum_succ, (4) age, (5) new_firm
 % (6) cum_meets
 

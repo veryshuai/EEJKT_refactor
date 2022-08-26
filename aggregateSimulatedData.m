@@ -3,7 +3,6 @@ function sim_cum = aggregateSimulatedData(sim_out,mm)
 sim_cum = struct;
 
 sim_cum.agg_mat_yr_sales    = zeros(0,9); % for analysis of match dynamics
-sim_cum.agg_mat_yr_sales_adj= zeros(0,9); % for analysis of match exit
 sim_cum.agg_mat_ar1_x       = zeros(0,4); % for match ar1 regression residuals
 sim_cum.agg_mat_ar1_y       = zeros(0,1); % for match ar1 regression residuals
 sim_cum.agg_mat_exit_x      = zeros(0,5); % for match exit regression residuals
@@ -54,7 +53,6 @@ for pt_ndx = 1:1:mm.N_pt
     if mm.sim_firm_num_by_prod_succ_type(pt_ndx) > 0
         sim_cum.agg_time_gaps         = [sim_cum.agg_time_gaps;sim_out{pt_ndx}.time_gaps];
         sim_cum.agg_mat_yr_sales      = [sim_cum.agg_mat_yr_sales;sim_out{pt_ndx}.mat_yr_sales];
-        sim_cum.agg_mat_yr_sales_adj  = [sim_cum.agg_mat_yr_sales_adj;sim_out{pt_ndx}.mat_yr_sales_adj];
         
         sim_cum.agg_x_hf       = [sim_cum.agg_x_hf;sim_out{pt_ndx}.x_hf];
         sim_cum.agg_y_hf       = [sim_cum.agg_y_hf;sim_out{pt_ndx}.y_hf];

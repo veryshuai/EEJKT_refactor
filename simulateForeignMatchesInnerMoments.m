@@ -6,14 +6,14 @@ if iter_in.year > mm.burn  % don't start building simulated data set until burn-
         iter_out.mat_yr_sales  = [iter_out.mat_yr_sales;[tt,iter_in.mat_yr_sales]];
         % agg_mat_yr_sales: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, w/in yr. match age, firm age]
 
-        if iter_in.year_lag == iter_in.year % check that mat_yr_splice_v2 ran & updated iter_in.mat_yr_sales_adj
-            tt2 =  ones(size(iter_in.mat_yr_sales,1),1).*[iter_in.t-mm.pd_per_yr,iter_in.mic_type];
-            iter_out.mat_yr_sales = [iter_out.mat_yr_sales;[tt2,iter_in.mat_yr_sales]]; % add cols 1 and 2: t, firm type
+%       if iter_in.year_lag == iter_in.year % check that mat_yr_splice_v2 ran & updated iter_in.mat_yr_sales_adj
+%          tt2 =  ones(size(iter_in.mat_yr_sales,1),1).*[iter_in.t-mm.pd_per_yr,iter_in.mic_type];
+%          iter_out.mat_yr_sales = [iter_out.mat_yr_sales;[tt2,iter_in.mat_yr_sales]]; % add cols 1 and 2: t, firm type
             % agg_mat_yr_sales_adj: [t,type,firm ID, match sales, shipments, boy Z, adj_eoy Z, w/in yr. match age, firm age]
-            ttt = ones(size(iter_in.firm_yr_sales,1),1).*[iter_in.t,iter_in.mic_type];
-            iter_out.firm_f_yr_sales = [iter_out.firm_f_yr_sales;[ttt,iter_in.firm_yr_sales]]; % add cols 1 and 2: t, firm type
+         ttt = ones(size(iter_in.firm_yr_sales,1),1).*[iter_in.t,iter_in.mic_type];
+         iter_out.firm_f_yr_sales = [iter_out.firm_f_yr_sales;[ttt,iter_in.firm_yr_sales]]; % add cols 1 and 2: t, firm type
             % agg_firm_yr_sales: [t,type,firm ID, total exports,total shipments,firm age]
-        end
+%         end
 
         iter_out.mat_matur =  [iter_out.mat_matur; iter_in.mat_matur_dat];
 
@@ -91,13 +91,16 @@ if iter_in.year >= mm.burn
     [nship_obs,ln_ships,match_count] = match_shpt_cntr(iter_in.mat_yr_sales,mm.max_match);
 
     iter_out.ship_obs    = iter_out.ship_obs + nship_obs ;
-    iter_out.ln_ships    = iter_out.ln_ships + ln_ships ; 
- 
+    iter_out.ln_ships    = iter_out.ln_ships + ln_ships ;
+    
+   try
    if size(match_count,1)>0
      match_histogram = sum(match_count*ones(1,mm.max_match) - ones(size(match_count,1),1)*(1:mm.max_match)==0);
-     iter_out.match_count = iter_out.match_count + match_histogram ; % cumulating match counts over years, given pt_ndx
+     iter_out.match_count = iter_out.match_count + match_histogram ;
    end
-
+   catch 
+        'pause in simulateForeignMatchesInnerSim line 96'
+   end
 
 end  
 

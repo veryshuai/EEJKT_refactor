@@ -1,7 +1,5 @@
 function iter_in = simulateForeignMatchesInnerSimKickDormant(iter_in, mm)
 
-    % Dormant firms have no clients for at least one year. 
-    
     if iter_in.t > mm.pd_per_yr
         dormant = sum(iter_in.cur_cli_cnt(:,iter_in.t-mm.pd_per_yr+1:iter_in.t),2)==0; % no clients for one year
         iter_in.micro_state(dormant,iter_in.t)   = 1;  % reset initial micro state to 1 (entrant)

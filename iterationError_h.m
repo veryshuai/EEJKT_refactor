@@ -6,6 +6,6 @@ function [err,search] = iterationError_h(V_curr,a,pi,net,V_succ,mm,policy,countr
     denom = mm.r+search+abs(diag(Q_m));
     meeting_payoff = search.*(a*(pi'+V_succ)+(1-a)*V_curr);
     mac_state_change = Q_m_d*V_curr;
-    err = denom.^-1.*(-cost(search,net)+mac_state_change+meeting_payoff)-V_curr;
+    err = denom.^-1.*(-cost(search,net)+mac_state_change+meeting_payoff)-V_curr; %eq (8) in paper
 
 end

@@ -11,7 +11,7 @@ n = size(X,1);
 gamma = L/n;
 sig = L^.5*D;
 
-var = sig^2/(2*gamma); %result from Wikipedia about long term variance of OU process
+var = sig^2/(2*gamma);
 
 erg = normpdf(X,0,var^.5); %get normal pdf value at each shock value
 erg = erg./sum(erg); %make them sum to 1

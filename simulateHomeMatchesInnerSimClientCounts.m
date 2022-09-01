@@ -17,22 +17,22 @@ t = iterH_in.t;
 pt_ndx = iterH_in.pt_ndx;
 
     if  mm.sim_firm_num_by_prod_succ_type(pt_ndx) > 0
-        trans_rands = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.nn_h);
+        trans_rands = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.max_match_h);
         cntr = 0;
 
         for ii = 1:size(iterH_in.theta1_cntr,1) % looping over firms with different home-thetas
             cntr2 = cntr+iterH_in.theta1_cntr(ii,2);
-            iterH_in.ptm_type = find(policy.firm_type_prod_succ_macro(:,2) == iterH_in.macro_state_h(t)...
-                & policy.firm_type_prod_succ_macro(:,3) == iterH_in.theta1_cntr(ii,1)...
-                & policy.firm_type_prod_succ_macro(:,4) == mm.pt_type(pt_ndx,1),1,'first');
+            iterH_in.ptm_type = find(policy.firm_type_macro_succ_prod(:,2) == iterH_in.macro_state_h(t)...
+                & policy.firm_type_macro_succ_prod(:,3) == iterH_in.theta1_cntr(ii,1)...
+                & policy.firm_type_macro_succ_prod(:,4) == mm.pt_type(pt_ndx,1),1,'first');
             pmat_cum_ht = policy.pmat_cum_h{iterH_in.ptm_type};
             
             trans_rands(cntr+1:cntr2,:) = pmat_cum_ht(iterH_in.micro_state(cntr+1:cntr+iterH_in.theta1_cntr(ii,2),t-1),:)...
-                > rand(iterH_in.theta1_cntr(ii,2),1)*ones(1,mm.nn_h);
+                > rand(iterH_in.theta1_cntr(ii,2),1)*ones(1,mm.max_match_h);
             cntr = cntr2;
         end  % end of home-theta type loop 
 
-        iterH_in.micro_state(:,t) = int16(mm.nn_h + 1 - sum(trans_rands,2)); % drawn new micro states
+        iterH_in.micro_state(:,t) = int16(mm.max_match_h + 1 - sum(trans_rands,2)); % drawn new micro states
         iterH_in.cum_succ(:,t)    =  iterH_in.micro_state(:,t) - 1; % cumulative successes, new state, matrix for all firms starting (t+1)
 
     end

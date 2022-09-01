@@ -2,7 +2,7 @@ function [expected_match_profit,continuation_value] = solveExpectedMatchProfit(p
                                      
 event_hazard = mm.r + mm.delta + mm.L_b + abs(Q0(1,1)) + abs(mm.Q_z(1,1)); 
 
-shipment_payoff_except_z = (1/mm.eta) * exp(pie_scale) * exp(X) * exp((mm.eta-1)*mm.Phi'); %dimension is macro shock by prod
+shipment_payoff_except_z = exp(pie_scale + X + (mm.eta-1)*mm.Phi'); %dimension is macro shock by prod
 shipment_payoff = repmat(repmat(exp(mm.Z),1,size(shipment_payoff_except_z,2)),1,1,size(shipment_payoff_except_z,1))...
     .* permute(repmat(shipment_payoff_except_z,1,1,size(mm.Z,1)),[3 2 1]); %dimension is demand shk by prod by macro
 

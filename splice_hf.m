@@ -13,7 +13,7 @@ function sim_out_pt_ndx = splice_hf(sim_out_pt_ndx,policy,mm,pt_ndx)
 % sim_out.firm_f_yr_sales: [t,type,firm ID, total exports,total # foreign shipments,firm age in export mkt.]
 % sim_out.firm_h_yr_sales: [t,type,firm ID, total dom. sales, total # dom. shipments,firm age in dom. mkt.]
 
-% policy.firm_type_prod_succ_macro: [type, macro state index, theta index, productivity index]
+% policy.firm_type_macro_succ_prod: [type, macro state index, theta index, productivity index]
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 %% Get rid of obs. with 0 shipments, market by market
 
@@ -52,10 +52,10 @@ obs_id_f = sim_out_pt_ndx.firm_f_yr_sales(:,3) + (1/mm.periods+1)*sim_out_pt_ndx
 
 type_h  = sim_out_pt_ndx.firm_h_yr_sales(:,2);
 type_f  = sim_out_pt_ndx.firm_f_yr_sales(:,2);
-theta_f = policy.firm_type_prod_succ_macro(type_f,3); % Each element of this vector is common to all firms
+theta_f = policy.firm_type_macro_succ_prod(type_f,3); % Each element of this vector is common to all firms
 theta_h = sim_out_pt_ndx.theta_h_firm(some_shpmts_h);      % This is a vector of random draws--one per firm
-prod_h  = policy.firm_type_prod_succ_macro(type_h,4);
-prod_f  = policy.firm_type_prod_succ_macro(type_f,4);
+prod_h  = policy.firm_type_macro_succ_prod(type_h,4);
+prod_f  = policy.firm_type_macro_succ_prod(type_f,4);
 
 sim_out_h_dat = sortrows([obs_id_h,sim_out_pt_ndx.firm_h_yr_sales,theta_h,prod_h],1);
 sim_out_f_dat = sortrows([obs_id_f,sim_out_pt_ndx.firm_f_yr_sales,theta_f,prod_f],1);

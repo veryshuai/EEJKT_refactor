@@ -1,26 +1,26 @@
 function policy = intensityToProbabilityHome(mm,policy)
 
-Q_size_h = 70; %where is does this come from?
+Q_size_h = mm.max_match_h;
 
 %% construct intensity matrix for each firm type
-qmat_type = cell(size(policy.firm_type_prod_succ_macro,1),1);
-pmat_type = cell(size(policy.firm_type_prod_succ_macro,1),1);
-pmat_cum  = cell(size(policy.firm_type_prod_succ_macro,1),1);
+qmat_type = cell(size(policy.firm_type_macro_succ_prod,1),1);
+pmat_type = cell(size(policy.firm_type_macro_succ_prod,1),1);
+pmat_cum  = cell(size(policy.firm_type_macro_succ_prod,1),1);
 
-for typ_indx = 1:size(policy.firm_type_prod_succ_macro,1)
+for typ_indx = 1:size(policy.firm_type_macro_succ_prod,1)
 
-    ms             = policy.firm_type_prod_succ_macro(typ_indx,2);
-    succ_prob      = mm.theta2(policy.firm_type_prod_succ_macro(typ_indx,3));
-    prod_lvl       = policy.firm_type_prod_succ_macro(typ_indx,4);
+    ms             = policy.firm_type_macro_succ_prod(typ_indx,2);
+    succ_prob      = mm.theta2(policy.firm_type_macro_succ_prod(typ_indx,3));
+    prod_lvl       = policy.firm_type_macro_succ_prod(typ_indx,4);
 
     counter = 0;
 
     q_index_list = zeros(mm.n_size + 1,3);
     for ss=1:1:Q_size_h % number of successes, plus 1
         if ss <= mm.net_size + 1 %This was location of an old bug, now replaced with (mm.net_size) rather than learning size (mm.n_size)
-            search_inten = policy.lambda_h(1,policy.firm_type_prod_succ_macro(typ_indx,3),ss,prod_lvl,ms);
+            search_inten = policy.lambda_h(1,policy.firm_type_macro_succ_prod(typ_indx,3),ss,prod_lvl,ms);
         else
-            search_inten = policy.lambda_h(1,policy.firm_type_prod_succ_macro(typ_indx,3),mm.n_size + 1,prod_lvl,ms); 
+            search_inten = policy.lambda_h(1,policy.firm_type_macro_succ_prod(typ_indx,3),mm.net_size + 1,prod_lvl,ms); 
         end
 
         if ss ~= Q_size_h && ss ~= 1

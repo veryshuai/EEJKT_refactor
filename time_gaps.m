@@ -33,10 +33,8 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
 %%   Create variables for match hazard rate regression
            Nr        = size(new_meets,1);
            [rr,cc]   = find(new_meets>0);  % new meetings over past 3 years
-           cell_add  = find(new_meets>0);  % firm-months with new meetings (vector of row addresses, stacked column by column)          
-
-           if isempty(rr)==0
-               
+  
+           if isempty(rr)==0             
            cell_add      = find(new_meets>0);  % firm-months with new meetings (vector of row addresses, stacked column by column)          
            cum_meet_int = cum_meets(:,2:end); % cum meetings, submatrix for 3 yr interval 
            cum_succ_int = cum_succ(:,2:end);  % cum successes, submatrix for 3 yr interval

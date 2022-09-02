@@ -4,21 +4,16 @@ if iter_in.year > mm.burn  % don't start building simulated data set until burn-
 
         tt =  ones(size(iter_in.mat_yr_sales,1),1).*[iter_in.t,iter_in.mic_type]; % add cols 1 and 2: t, firm type
         iter_out.mat_yr_sales  = [iter_out.mat_yr_sales;[tt,iter_in.mat_yr_sales]];
-        % agg_mat_yr_sales: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, w/in yr. match age, firm age]
+       % agg_mat_yr_sales: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, w/in yr. match age, firm age]
 
-%       if iter_in.year_lag == iter_in.year % check that mat_yr_splice_v2 ran & updated iter_in.mat_yr_sales_adj
-%          tt2 =  ones(size(iter_in.mat_yr_sales,1),1).*[iter_in.t-mm.pd_per_yr,iter_in.mic_type];
-%          iter_out.mat_yr_sales = [iter_out.mat_yr_sales;[tt2,iter_in.mat_yr_sales]]; % add cols 1 and 2: t, firm type
-            % agg_mat_yr_sales_adj: [t,type,firm ID, match sales, shipments, boy Z, adj_eoy Z, w/in yr. match age, firm age]
          ttt = ones(size(iter_in.firm_yr_sales,1),1).*[iter_in.t,iter_in.mic_type];
          iter_out.firm_f_yr_sales = [iter_out.firm_f_yr_sales;[ttt,iter_in.firm_yr_sales]]; % add cols 1 and 2: t, firm type
-            % agg_firm_yr_sales: [t,type,firm ID, total exports,total shipments,firm age]
-%         end
+       % agg_firm_yr_sales: [t,type,firm ID, total exports,total shipments,firm age]
 
         iter_out.mat_matur =  [iter_out.mat_matur; iter_in.mat_matur_dat];
-
 %       iter_in.mat_matur_dat: [sales, boy Z, eoy Z, match age, firm age, firm_ID, yr]
 %       iter_in.mat_cont_2yr:  [firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age] x 2 (lagged, then current) 
+
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %  match regression moments
 

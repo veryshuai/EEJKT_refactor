@@ -35,17 +35,8 @@ try
     
 %  fprintf('\rNow at mat_yr_splice_v2, line 44. Evaluating year %2.0f\n', year)   
 
-    cont_find = tmp_tran(:,7) - tmp_tran_lag(:,7) >  0;  % firm is older this year (no flip)
-    
-%     tmp_tran(cont_find ,6) = tmp_tran_lag(cont_find ,6)...
-%                                + mm.pd_per_yr*ones(length(cont_find),1);
-                           
-% NOTE: this formulation gives a continuing match an entire year of additional 
-%  age, even if it only survives a fraction of the current year. 
-
-% Better to use the # months survived in the current year:
-
-  tmp_tran(cont_find ,6) = tmp_tran_lag(cont_find ,6) + tmp_tran(cont_find,6);
+    cont_find = tmp_tran(:,7) - tmp_tran_lag(:,7) >  0;  % firm is older this year (no flip)    
+    tmp_tran(cont_find ,6) = tmp_tran_lag(cont_find ,6) + tmp_tran(cont_find,6);
 
 catch
         'problem in mat_yr_splice_v2, lines 42-46';

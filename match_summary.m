@@ -31,7 +31,7 @@ pt_type  = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')]
  %   match_recs: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, match age, firm age] 
      ff_ship = match_recs(:,5) > 0;
      match_recs = match_recs(ff_ship,:);
-     match_recs(:,1) = floor(match_recs(:,1)/mm.pd_per_yr); % create integer year variable
+     match_recs(:,1) = floor(match_recs(:,1)/mm.pd_per_yr);   % restate time in years
      match_recs(:,8) = floor(match_recs(:,8)/mm.pd_per_yr)+1; % restate match age in years
      match_recs(:,9) = floor(match_recs(:,9)/mm.pd_per_yr)+1; % restate firm age in years
 

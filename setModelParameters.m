@@ -3,6 +3,9 @@ function mm = setModelParameters(X)
 mm = struct();
 
 %% technology parameters
+
+mm.param_vec = X;      % carry along parameter vector for diagnostic checks
+
 mm.pd_per_yr = 12;        % number of periods per year
 mm.r         = 0.05/mm.pd_per_yr;   % Rate of time preference per period
 mm.firm_death_haz = 0.03/mm.pd_per_yr;   % Component of time preference due to exogenous death

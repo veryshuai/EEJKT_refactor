@@ -95,8 +95,8 @@ for ss=2:mm.pd_per_yr
       assert(sum((temp1(:,4)-temp2(:,lcb-5)).^2)==0);  % do Z's match?
     catch
       warning('problem with splicing of firms across seasons')
-      temp1(:,4:5) 
-      temp2(:,lcb-6:lcb-5)  
+      fprintf('\r\n period = %.2f, firm type = %.2f\n', [iterX_in.t iterX_in.pt_ndx]) 
+    save(mismat_recs,temp1(:,4:5),temp2(:,lcb-6:lcb-5))  
     end
     try
 %    load current season continuing matches into all_seas, incrementing match age by 1
@@ -115,7 +115,8 @@ for ss=2:mm.pd_per_yr
      empty_mat = zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr);
      all_seas(all_cntr+1:iterX_in.N_match,:) = empty_mat;   % clear remaining rows
     catch
-        'problem in mergeWithinYrSequence lines 102-116 of seasonMergeWithinYrSequence'
+   fprintf('\r\n period = %.2f, firm type = %.2f\n', [iterX_in.t iterX_in.pt_ndx]) 
+   'problem in mergeWithinYrSequence lines 102-116 of seasonMergeWithinYrSequence'
     end
    end % end nrt >0 if block 
     match_count_lag = match_count; 

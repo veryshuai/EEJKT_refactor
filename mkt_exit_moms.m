@@ -2,10 +2,10 @@ function [exit_moms_xx,exit_moms_xy,sum_succ_rate,sum_exits,exit_obs] = mkt_exit
 % mkt_exit: (1) exit dummy (2) cumulative meetings (3) cumulative successes
 
 ff = mkt_exit(:,2)>0; % obs. with positive number of cumulative meetings
-if sum(ff,1) ~= size(mkt_exit,1)
-    mkt_exit
-    ff
-end
+% if sum(ff,1) ~= size(mkt_exit,1)
+%     mkt_exit
+%     ff
+% end
 
 mkt_exit = mkt_exit(ff,:);
 

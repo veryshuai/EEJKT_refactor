@@ -23,7 +23,7 @@ function [exit_by_age,brooks] =  match_summary(match_recs,mm)
 
 N_theta2 = size(mm.theta2',1);    % number of success rates (thetas)
 N_Phi    = size(mm.Phi,1);        % number of exporter productivities
-pt_type = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')];
+pt_type  = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')];
 % prod_ndx  = pt_type(pt_ndx,1);
 % theta_ndx = pt_type(pt_ndx,2);
 
@@ -31,13 +31,16 @@ pt_type = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')];
  %   match_recs: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, match age, firm age] 
      ff_ship = match_recs(:,5) > 0;
      match_recs = match_recs(ff_ship,:);
-     match_recs(:,1) = floor(match_recs(:,1)/mm.pd_per_yr); % create integer year variable
+     match_recs(:,1) = floor(match_recs(:,1)/mm.pd_per_yr);   % restate time in years
+     match_recs(:,8) = floor(match_recs(:,8)/mm.pd_per_yr)+1; % restate match age in years
+     match_recs(:,9) = floor(match_recs(:,9)/mm.pd_per_yr)+1; % restate firm age in years
+
        
      all_matches = match_recs(match_recs(:,1)>5,:); % throw out 5-yr burn-in period
    % all_matches = agg_mat_yr_sales(agg_mat_yr_sales(:,4)>0,:); % throw out matches with no sales
    % all_matches: [year,type,firm ID, sales, shipments, boy Z, eoy Z, match age, firm age]   
      
-     all_matches = all_matches(all_matches(:,9)>0,:);  % exclude the few firms with age 0
+  %  all_matches = all_matches(all_matches(:,9)>0,:);  % exclude the few firms with age 0
      yr1 = all_matches(:,8)==1; % pick matches in first year 
   
      new_matches = all_matches(yr1,:); % matches in their 1st yr.
@@ -85,7 +88,7 @@ pt_type = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')];
         new_cnt(jj)       = sum(new_sales(ff,3),1);
         dud_cnt(jj)       = sum(new_sales(ff,3).*(1-th_new(ff))./th_new(ff),1);
         new_typ_sales(jj) = mean(new_sales(ff,4));
-        dud_sales(jj)     = 0.1*mean(new_sales(ff,4));
+ %      dud_sales(jj)     = 0.1*mean(new_sales(ff,4));
         dud_sales(jj)     = 0.5*avg_sales;
         dud_size          = cat(1,dud_size,dud_sales(jj)*ones(sum(ff,1),1));
      end

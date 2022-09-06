@@ -20,7 +20,7 @@ for typ_indx = 1:size(policy.firm_type_macro_succ_prod,1)
         if ss <= mm.net_size + 1 %This was location of an old bug, now replaced with (mm.net_size) rather than learning size (mm.n_size)
             search_inten = policy.lambda_h(1,policy.firm_type_macro_succ_prod(typ_indx,3),ss,prod_lvl,ms);
         else
-            search_inten = policy.lambda_h(1,policy.firm_type_macro_succ_prod(typ_indx,3),mm.net_size + 1,prod_lvl,ms); 
+            search_inten = policy.lambda_h(1,policy.firm_type_macro_succ_prod(typ_indx,3),mm.net_size + 1,prod_lvl,ms);
         end
 
         if ss ~= Q_size_h && ss ~= 1

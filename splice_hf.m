@@ -31,11 +31,11 @@ sim_out_pt_ndx.firm_f_yr_sales = sim_out_pt_ndx.firm_f_yr_sales(some_shpmts_f,:)
 sim_out_pt_ndx.nfirm = Nh_firm_yrs;  % home mkt. firms 
 sim_out_pt_ndx.nexptr = Nf_firm_yrs; % foreign mkt. firms 
 
-if Nh_firm_yrs > 0
-  export_rate = Nf_firm_yrs/Nh_firm_yrs;
-  fprintf('pt_ndx =%2.0f, t=%3.0f\n',[pt_ndx, max(sim_out_pt_ndx.firm_h_yr_sales(:,1))])  
-  fprintf('%2.0f exporters and %3.0f firms, for export rate of %3.2f\n',[sim_out_pt_ndx.nexptr  sim_out_pt_ndx.nfirm export_rate])  
-end
+% if Nh_firm_yrs > 0
+%   export_rate = Nf_firm_yrs/Nh_firm_yrs;
+%   fprintf('pt_ndx =%2.0f, t=%3.0f\n',[pt_ndx, max(sim_out_pt_ndx.firm_h_yr_sales(:,1))])  
+%   fprintf('%2.0f exporters and %3.0f firms, for export rate of %3.2f\n',[sim_out_pt_ndx.nexptr  sim_out_pt_ndx.nfirm export_rate])  
+% end
 
 rowsH = size(sim_out_pt_ndx.transH{pt_ndx,5},1);
 rowsF = size(sim_out_pt_ndx.transF{pt_ndx,5},1);
@@ -174,6 +174,7 @@ sales_hf    = sales_splice(same_firm,1:7);
 % the vector of ones in export_rate accounts for firms that exclusively
 
 sim_out_pt_ndx.expt_rate = sales_hf(:,7)./(sales_hf(:,6)+sales_hf(:,7));
+sim_out_pt_ndx.sales_splice     = sales_splice;
 
 %% moments for regression of log foreign sales on log domestic sales
 

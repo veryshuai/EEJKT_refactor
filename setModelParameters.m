@@ -4,8 +4,8 @@ mm = struct();
 
 %% technology parameters
 mm.pd_per_yr = 12;        % number of periods per year
-mm.r         = 0.05/mm.pd_per_yr;   % Rate of time preference per period
-mm.firm_death_haz = 0.03/mm.pd_per_yr;   % Component of time preference due to exogenous death
+mm.r         = 0.13/mm.pd_per_yr;   % Rate of time preference per period
+mm.firm_death_haz = 0.08/mm.pd_per_yr;   % Component of time preference due to exogenous death
 mm.delta     = 0.326/mm.pd_per_yr;  % Exogenous match separation rate 
 mm.scale_f   = X(12);  % Export profit function scale parameter
 mm.scale_h   = X(2);   % Domestic profit function scale parameter
@@ -120,7 +120,7 @@ mm.max_ships = 3*round(mm.L_b); % maximum within-period shipments is triple expe
 mm.poisCDF_shipments   = poisscdf(1:1:mm.max_ships,mm.L_b);
 
 L_z = 4/mm.pd_per_yr; % four demand shock jumps per year (where is this from?)
-D_z = X(5); %X(5)/mm.pd_per_yr;
+D_z = X(5)/mm.pd_per_yr;
 [Q_z,Z] = makeq(L_z,D_z,mm.z_size);
 erg_pz = make_erg(L_z,D_z,Z); 
 

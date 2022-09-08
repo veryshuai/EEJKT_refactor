@@ -94,19 +94,22 @@ for ss=2:mm.pd_per_yr
       assert(sum((temp1(:,5)-temp2(:,lcb-6)).^2)==0);  % do firms match?
       assert(sum((temp1(:,4)-temp2(:,lcb-5)).^2)==0);  % do Z's match?
     catch
-      warning('problem with splicing of firms across seasons')
+      warning('problem with splicing of matches across seasons')
       fprintf('\r\n period = %.2f, firm type = %.2f\n', [iterX_in.t iterX_in.pt_ndx])
       'problem in lines 102-116 of seasonMergeWithinYrSequence'
       fileID4 = fopen('results/EEJKT_error_log.txt','a');
       fprintf(fileID4,'\r\n  ');
-      fprintf(fileID4,'\r\n problem splicing firms across seasons in seasonMergeWithinYrSequence');
+      fprintf(fileID4,'\r\n problem splicing matches across seasons in seasonMergeWithinYrSequence');
       fprintf(fileID4,'\r\n period = %.2f, firm type = %.2f', [iterX_in.t iterX_in.pt_ndx]);
       fprintf(fileID4,'\r\n params = ');
       fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
       fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:12));
       fprintf(fileID4, '\r\n  ');   
       fclose(fileID4);
-      save(mismat_recs,temp1(:,4:5),temp2(:,lcb-6:lcb-5))  
+      firm_type = iterX_in.pt_ndx;
+      problem_month = iterX_in.t;
+      params = mm.param_vec;
+      save 'mismat_recs.mat' 'temp1' 'temp2' 'params' 'firm_type' 'problem_month','-append';  
     end
     try
 %    load current season continuing matches into all_seas, incrementing match age by 1
@@ -124,9 +127,9 @@ for ss=2:mm.pd_per_yr
      all_seas(1:all_cntr,:) = all_seas(ff_live,:); % moving survivors to first rows    
      empty_mat = zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr);
      all_seas(all_cntr+1:iterX_in.N_match,:) = empty_mat;   % clear remaining rows
-%    move matches that die and end of year out of all_seas and into som_seas     
-     if ss==12
-         ff_eoy_die =  find((all_seas(1:all_cntr,lcb+5)==0).*all_seas(1:all_cntr,lcb+3)>0);
+%    move matches that die at end of year out of all_seas and into som_seas     
+     if ss==mm.pd_per_yr
+         ff_eoy_die =  find((all_seas(1:all_cntr,lcb+5)==0).*(all_seas(1:all_cntr,lcb+3)>0));
          ff_eoy_live = find(all_seas(1:all_cntr,lcb+5) > 0);
          som_cntr = som_cntr + size(ff_eoy_die,1);
          all_cntr = size(ff_eoy_live,1);
@@ -145,6 +148,10 @@ for ss=2:mm.pd_per_yr
       fprintf(fileID3,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
       fprintf(fileID3,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:12));
       fclose(fileID3);
+      firm_type = iterX_in.pt_ndx;
+      problem_month = iterX_in.t;
+      Xvec = mm.param_vec;
+      save 'mismat2_recs.mat' 'Xvec' 'firm_type' 'problem_month';    
     end
    end % end nrt >0 if block 
     match_count_lag = match_count; 

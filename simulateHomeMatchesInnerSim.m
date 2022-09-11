@@ -12,9 +12,11 @@ for t = 2:1:mm.periods
     iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
 
 [iterH_in] = simulateHomeMatchesInnerSimClientCounts(iterH_in, mm, policy);
-% if t >= 60 && t <= 72
+
+% if t >= 488
 %      'pause in simulateHomeMatchesInnerSim'
 % end
+
 [iterH_in] = simulateHomeMatchesInnerSimUpdZHotel(iterH_in, mm, policy);
 [iterH_in] = simulateHomeMatchesInnerSimKickDormant(iterH_in, mm);
 [iterH_in] = simulateHomeMatchesInnerSimFirmAge(iterH_in, mm);
@@ -23,13 +25,13 @@ for t = 2:1:mm.periods
  mat_tran = iterH_in.mat_tran;
  iterH_in.N_match = iterH_in.N_match + size(mat_tran,1);
 
+
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% construct annualized variables
     if iterH_in.season == mm.pd_per_yr
 
   [iterH_in.mat_h_yr_sales,iterH_in.firm_h_yr_sales] = season_merge(iterH_in,mm);
 
-     
         % firm_h_yr_sales:[firm ID, total dom. sales, total dom. shipments, firm age in domestic market]
 
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +86,24 @@ if t == mm.periods
     iter_out.transH{pt_ndx,3} = iterH_in.cum_succ(find_hcli,:);
     iter_out.transH{pt_ndx,4}  = iterH_in.cumage(find_hcli,:);  
     iter_out.transH{pt_ndx,5}  = iterH_in.new_firm(find_hcli,:);  
+    
+    
+%     firm_num = 10; 
+% %     iter_out.transH{pt_ndx,1}(13,1)
+%     stack = ...  % for debugging only
+%     [iter_out.transH{pt_ndx,2}( firm_num,:);...
+%     iter_out.transH{pt_ndx,3}( firm_num,:);...
+%     iter_out.transH{pt_ndx,4}( firm_num,:);... 
+%     iter_out.transH{pt_ndx,5}( firm_num,:)];
+
+ 
 end
 
+% if t>=490
+%     'pause'
+% end
+
 end
+
+
 end

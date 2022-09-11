@@ -10,9 +10,9 @@ t =iterH_in.t;
     if mat_tran_all_zeros
         mat_tran = zeros(0,4);ship_cur = zeros(0,1); age_vec = zeros(0,1);
     else
-        mkt = 2; % =2 for domestic market
+        mm.mkt = 2; % =2 for domestic market
 
-        [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mkt,mm,iterH_in,iterH_in.age);
+        [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mm.mkt,mm,iterH_in,iterH_in.age);
 
    iterH_in.ship_cur = ship_cur;
    iterH_in.age_vec = age_vec;

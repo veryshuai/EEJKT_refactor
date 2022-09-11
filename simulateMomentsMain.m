@@ -12,8 +12,8 @@ parfor pt_ndx = 1:mm.N_pt
 % for pt_ndx = 1:1:mm.N_pt 
 %for pt_ndx = 57
 %for pt_ndx = 105
-% for pt_ndx = 57
-  
+% parfor pt_ndx = 91
+ 
     rng(seeds(mm.pt_type(pt_ndx,1),1),'twister');
     seed_crand(seeds(mm.pt_type(pt_ndx,1),2));
 
@@ -28,6 +28,7 @@ parfor pt_ndx = 1:mm.N_pt
     end
 
 end
+ save 'mismat_sim_out.mat' 'sim_out'; 
 
 sim_cum = aggregateSimulatedData(sim_out,mm);
 

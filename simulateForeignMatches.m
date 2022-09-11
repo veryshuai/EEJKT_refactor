@@ -36,7 +36,13 @@ for t = 2:1:mm.periods
         
         [iter_in,iter_out] = simulateForeignMatchesInnerMoments(iter_in,iter_out,mm);
     end
-      
+
+    
+%     if t>=490
+%     'pause'
+%     end
+    
+    
     iter_in.season = iter_in.season + 1;
 
     iter_in.lag_cli_zst  = iter_in.cur_cli_zst;
@@ -54,8 +60,17 @@ if iter_in.t == mm.periods
     iter_out.transF{pt_ndx,4}  = iter_in.cumage(find_xcli,:);  
     iter_out.transF{pt_ndx,5}  = iter_in.new_firm(find_xcli,:);  
     iter_out.transF{pt_ndx,6} = iter_in.cum_meets(find_xcli,:);
+    
+%     stack = ...        % for debugging only
+%     [iter_out.transF{pt_ndx,2};...
+%     iter_out.transF{pt_ndx,3};...
+%     iter_out.transF{pt_ndx,4};... 
+%     iter_out.transF{pt_ndx,5};... 
+%     iter_out.transF{pt_ndx,6}];
+% save 'mismat_stackF.mat' 'iter_out';  
 end
 
-    
+
+
 end     
 end

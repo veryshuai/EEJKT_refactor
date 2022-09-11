@@ -15,15 +15,15 @@ function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX
   %  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
   %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
   
-  nrt        = size(smat_tran,1);
-  ff_die     = find(smat_tran(:,6)==0); % death of existing match--endog. & exog. 
-  ff_cont    = find(smat_tran(:,6)>0);  % find matches that continue next period, new and existing
+  nrt       = size(smat_tran,1);
+  ff_die    = find(smat_tran(:,6)==0); % death of existing match--endog. & exog. 
+  ff_cont   = find(smat_tran(:,6)>0);  % find matches that continue next period, new and existing
   
-  smat_die   = smat_tran(ff_die,:);    
-  smat_cont  = smat_tran(ff_cont,:);
+  smat_die  = smat_tran(ff_die,:);    
+  smat_cont = smat_tran(ff_cont,:);
   
-  all_cntr = size(ff_cont,1);   % counts the rows filled in all_seas
-  som_cntr = size(ff_die,1);    % counts the rows filled in som_seas
+  all_cntr  = size(ff_cont,1);   % counts the rows filled in all_seas
+  som_cntr  = size(ff_die,1);    % counts the rows filled in som_seas
 
   som_seas(1:som_cntr,1:mat_cols) = smat_die; 
   all_seas(1:all_cntr,1:mat_cols) = smat_cont;
@@ -100,7 +100,7 @@ for ss=2:mm.pd_per_yr
       fileID4 = fopen('results/EEJKT_error_log.txt','a');
       fprintf(fileID4,'\r\n  ');
       fprintf(fileID4,'\r\n problem splicing matches across seasons in seasonMergeWithinYrSequence');
-      fprintf(fileID4,'\r\n period = %.2f, firm type = %.2f', [iterX_in.t iterX_in.pt_ndx]);
+      fprintf(fileID4,'\r\n period = %.2f, firm type = %.2f, market = %.2f', [iterX_in.t iterX_in.pt_ndx mm.mkt]);
       fprintf(fileID4,'\r\n params = ');
       fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
       fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:12));

@@ -20,13 +20,22 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
         end
             
         %trans_count_test = trans_count;
-        iter_in.trans_count(2:size(mm.Z,1)+1,1,i) = (iter_in.lag_cli_zst(i,:).*(1-iter_in.keep_cli))' + iter_in.die_cli_zst(i,:)';
+%       iter_in.trans_count(2:size(mm.Z,1)+1,1,i) = (iter_in.lag_cli_zst(i,:).*(1-iter_in.keep_cli))' + iter_in.die_cli_zst(i,:)';
+        
+% Alternative expression to avoid double counting matches that fail for both exogenenous and endogenous reasons:        
+        iter_in.trans_count(2:size(mm.Z,1)+1,1,i) =  max([(iter_in.lag_cli_zst(i,:).*(1- iter_in.keep_cli))',  iter_in.die_cli_zst(i,:)']')';            
+ 
         % For each firm (i) of a particular type, column 1 of trans_count(:,:,i)
         % now contains counts of all exiting matches (endog. and exog.), by buyer type (row).
 
         % Update surviving client counts by z type using transition matrix for z.
         % Do this for those that don't die for endogenous or exogenous reasons.
-        iter_in.surviv_zst(i,:) = iter_in.lag_cli_zst(i,:).*iter_in.keep_cli - iter_in.die_cli_zst(i,:);
+        
+ %      iter_in.surviv_zst(i,:) = iter_in.lag_cli_zst(i,:).*iter_in.keep_cli - iter_in.die_cli_zst(i,:);
+% Alternative expression to avoid double counting matches that fail for both exogenenous and endogenous reasons: 
+        iter_in.surviv_zst(i,:) =  iter_in.lag_cli_zst(i,:) -  iter_in.trans_count(2:size(mm.Z,1)+1,1,i)';       
+   
+        
         N_sur = sum(iter_in.surviv_zst(i,:),2); % number of survivors from t-1 by b.o.p. type, firm i
 
         if N_sur > 0

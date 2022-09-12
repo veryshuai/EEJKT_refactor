@@ -36,8 +36,14 @@ pt_ndx = iterH_in.pt_ndx;
 %              iterH_in.die_cli_zst(i,:) = iterH_in.lag_cli_zst(i,:);
 %              %.*iterH_in.keep_cli;     
 %          end
-         
-        iterH_in.trans_count(2:size(mm.Z,1)+1,1,i) = (iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep.cli))' + iterH_in.die_cli_zst(i,:)';
+% if t == 95
+%     'pause'
+% end
+%      iterH_in.trans_count(2:size(mm.Z,1)+1,1,i) = (iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep.cli))' + iterH_in.die_cli_zst(i,:)';
+        % This expression double counted exits if they were both exogenous
+        % and at Z values below keep_cli. Replaced with below.
+
+      iterH_in.trans_count(2:size(mm.Z,1)+1,1,i) = max([(iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep.cli))', iterH_in.die_cli_zst(i,:)']')';
         % For each firm (i) of a particular type, column 1 of trans_mat now
         % contains counts of all exiting matches, by buyer type (row).
 
@@ -45,7 +51,12 @@ pt_ndx = iterH_in.pt_ndx;
         % z. Do this for those that don't die for endogenous reasons, minus those
         % that die for exogenous reasons:
 
-        iterH_in.surviv_zst(i,:) = iterH_in.lag_cli_zst(i,:).*iterH_in.keep.cli - iterH_in.die_cli_zst(i,:);
+%        iterH_in.surviv_zst(i,:) = iterH_in.lag_cli_zst(i,:).*iterH_in.keep.cli - iterH_in.die_cli_zst(i,:);
+%        This expression double-counted exogenous exits
+
+        iterH_in.surviv_zst(i,:) = iterH_in.lag_cli_zst(i,:) - iterH_in.trans_count(2:size(mm.Z,1)+1,1,i)';
+       
+        
         N_sur = sum(iterH_in.surviv_zst(i,:),2); % number of survivors from t-1, firm i
 
         if N_sur > 0
@@ -65,5 +76,6 @@ pt_ndx = iterH_in.pt_ndx;
             iterH_in.trans_count(1,2:size(mm.Z,1)+1,i) = iterH_in.new_cli_zst(i,:);
         end
     end
+    
     iterH_in.cur_cli_zst = iterH_in.new_cli_zst + iterH_in.trans_zst;
     

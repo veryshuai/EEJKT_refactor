@@ -1,5 +1,10 @@
 function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX_in)
 
+
+% if iterX_in.t >= 586 && iterX_in.mkt ==2
+%     'pause in season_mergeWithinYrSequence'
+% end
+
   N_firms = mm.sim_firm_num_by_prod_succ_type(iterX_in.pt_ndx);
 
   mat_cols = size(iterX_in.seas_tran{1},2)+1;  % Holds all matches. The +1 makes room for a match age variable
@@ -16,8 +21,9 @@ function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX
   %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
   
   nrt       = size(smat_tran,1);
-  ff_die    = find(smat_tran(:,6)==0); % death of existing match--endog. & exog. 
-  ff_cont   = find(smat_tran(:,6)>0);  % find matches that continue next period, new and existing
+  Zcut      = iterX_in.seas_Zcut(1);
+  ff_die    = find(smat_tran(:,6)<=Zcut); % death of existing match--endog. & exog. 
+  ff_cont   = find(smat_tran(:,6)>Zcut);  % find matches that continue next period, new and existing
   
   smat_die  = smat_tran(ff_die,:);    
   smat_cont = smat_tran(ff_cont,:);
@@ -35,6 +41,8 @@ function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX
            
 for ss=2:mm.pd_per_yr
    smat_tran = iterX_in.seas_tran{ss};
+   Zcut      = iterX_in.seas_Zcut(ss);
+   Zcut_lag  = iterX_in.seas_Zcut(ss-1);
    nrt = size(smat_tran,1);
    lcb = mat_cols*(ss-1)+1;  % lower column bound for horizontal additions to all_seas and some_seas
    ucb = mat_cols*ss;        % upper column bound for horizontal additions to all_seas and some_seas       
@@ -43,7 +51,7 @@ for ss=2:mm.pd_per_yr
    if nrt == 0  % no matches in the current season--move all matches to the 
                 % som_seas matrix and empty the all_seas matrix
 
-      ff_move =  find(all_seas(:,lcb-4)+all_seas(:,lcb-5)+all_seas(:,lcb-6)>0); % rows populated last period
+      ff_move =  find(all_seas(:,lcb-4)+all_seas(:,lcb-5)+all_seas(:,lcb-6)>0); % rows populated last period 
       if size(ff_move,1)>0
       som_seas(som_cntr+1:som_cntr+size(ff_move,1),:) = all_seas(ff_move,:); 
       som_cntr = size(som_seas,1);      
@@ -60,7 +68,7 @@ for ss=2:mm.pd_per_yr
       if nrt_lag > 0 % there were some matches in previous season
        match_count = sum(smat_tran(:,5).*ones(1,N_firms) - (1:1:N_firms)==0,1); % current match count, by firm
        ff_firm_exit = find((match_count==0).*(match_count_lag>0));  % firm exits between previous and current season
-       N_firm_exit = sum(ff_firm_exit>0); 
+       N_firm_exit  = sum(ff_firm_exit>0); 
 
 % NOTE: This block treats a firm as exiting if it goes to zero matches at any 
 %       point during the year, even if it makes subsequent matches before 
@@ -81,9 +89,9 @@ for ss=2:mm.pd_per_yr
       end
 %%         
     ff_new     = find(smat_tran(:,4)==0); % current season new matches   
-    ff_incum   = find(smat_tran(:,4)>0);  % current season inherited matches 
+    ff_incum   = find(smat_tran(:,4)>Zcut_lag);  % current season inherited matches 
     
-    ff_all_active  = find(all_seas(:,lcb-5)>0); % previous season matches that should have passed to current season (eop Z>0)
+    ff_all_active  = find(all_seas(:,lcb-5)>Zcut_lag); % previous season matches that should have passed to current season (eop Z>Zcut)
     all_cntr       = size(ff_all_active,1);
      
     temp1 = sortrows(smat_tran(ff_incum,:),[5 4]); % sort current matches, incumbents, by exporter ID, bop Z
@@ -94,22 +102,27 @@ for ss=2:mm.pd_per_yr
       assert(sum((temp1(:,5)-temp2(:,lcb-6)).^2)==0);  % do firms match?
       assert(sum((temp1(:,4)-temp2(:,lcb-5)).^2)==0);  % do Z's match?
     catch
-      warning('problem with splicing of matches across seasons')
-      fprintf('\r\n period = %.2f, firm type = %.2f\n', [iterX_in.t iterX_in.pt_ndx])
-      'problem in lines 102-116 of seasonMergeWithinYrSequence'
-      fileID4 = fopen('results/EEJKT_error_log.txt','a');
-      fprintf(fileID4,'\r\n  ');
-      fprintf(fileID4,'\r\n problem splicing matches across seasons in seasonMergeWithinYrSequence');
-      fprintf(fileID4,'\r\n period = %.2f, firm type = %.2f, market = %.2f', [iterX_in.t iterX_in.pt_ndx mm.mkt]);
-      fprintf(fileID4,'\r\n params = ');
-      fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
-      fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:12));
-      fprintf(fileID4, '\r\n  ');   
-      fclose(fileID4);
-      firm_type = iterX_in.pt_ndx;
-      problem_month = iterX_in.t;
-      params = mm.param_vec;
-      save 'mismat_recs.mat' 'temp1' 'temp2' 'params' 'firm_type' 'problem_month','-append';  
+       rows1 = size(ff_incum,1);
+       rows2 = size(ff_all_active,1);
+      fprintf('\r\n problem with splicing of matches across seasons: lines 95-97 \n')
+      fprintf('\r\n rows of temp1 = %.2f, rows of temp2 = %.2f\n', [rows1 rows2]) 
+      fprintf('\r\n period = %.2f, firm type = %.2f, market = %.2f\n', [iterX_in.t iterX_in.pt_ndx iterX_in.mkt])
+
+        fileID4 = fopen('results/EEJKT_error_log.txt','a');
+        fprintf(fileID4,'\r\n  ');
+        fprintf(fileID4,'\r\n problem splicing matches across seasons in seasonMergeWithinYrSequence');
+        fprintf(fileID4,'\r\n period = %.2f, firm type = %.2f, market = %.2f', [iterX_in.t iterX_in.pt_ndx iterX_in.mkt]);
+        fprintf(fileID4,'\r\n params = ');
+        fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
+        fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:12));
+        fprintf(fileID4, '\r\n  ');   
+        fclose(fileID4);
+        firm_type = iterX_in.pt_ndx;
+        problem_month = iterX_in.t;
+        problem_market = iterX_in.mkt;
+        params = mm.param_vec;
+        save 'mismat_recs.mat' 'temp1' 'temp2' 'params' 'firm_type' 'problem_month' 'problem_market','-append';  
+
     end
     try
 %    load current season continuing matches into all_seas, incrementing match age by 1
@@ -138,23 +151,27 @@ for ss=2:mm.pd_per_yr
          all_seas(all_cntr+1:iterX_in.N_match,:) = zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr);  %
      end
     catch
-      fprintf('\r\n period = %.2f, firm type = %.2f\n',[iterX_in.t iterX_in.pt_ndx]) 
-      'problem in lines 102-116 of seasonMergeWithinYrSequence'
+      fprintf('\r\n period = %.2f, firm type = %.2f, market =%.2f\n',[iterX_in.t iterX_in.pt_ndx iterX_in.mkt]) 
+      fprintf('\r\n problem with splicing of matches across seasons: lines 121-145\n')
+      if size(temp1,1) >20
       fileID3 = fopen('results/EEJKT_error_log.txt','a');
       fprintf(fileID3,'\r\n  ');
       fprintf(fileID3,'\r\n problem stacking matches in seasonMergeWithinYrSequence');
-      fprintf(fileID3,'\r\n period = %.2f, firm type = %.2f', [iterX_in.t iterX_in.pt_ndx]);
+      fprintf(fileID3,'\r\n period = %.2f, firm type = %.2f, market = %.2f', [iterX_in.t iterX_in.pt_ndx iterX_in.mkt]);
       fprintf(fileID3,'\r\n params = ');
       fprintf(fileID3,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
       fprintf(fileID3,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:12));
       fclose(fileID3);
       firm_type = iterX_in.pt_ndx;
       problem_month = iterX_in.t;
+      problem_market = iterX_in.mkt;
       Xvec = mm.param_vec;
-      save 'mismat2_recs.mat' 'Xvec' 'firm_type' 'problem_month';    
+      save 'mismat2_recs.mat' 'Xvec' 'firm_type' 'problem_month' 'problem_market';    
+      end
     end
    end % end nrt >0 if block 
     match_count_lag = match_count; 
     nrt_lag = nrt; 
 end
+
 end

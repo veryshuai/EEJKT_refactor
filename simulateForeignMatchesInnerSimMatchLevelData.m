@@ -20,5 +20,7 @@ function [iter_in, mat_tran] = simulateForeignMatchesInnerSimMatchLevelData(iter
     % iter_in.seas_tran: [t, season, year, initial state, exporter id, ending state, match revenue,
     %             # shipments, firm age (# periods)]
     iter_in.seas_Zcut(iter_in.season)   = drop_Zcut;
+    
+    iter_in.mkt = 1;
 
 end

@@ -11,6 +11,7 @@ iterH_in.seas_Zcut = zeros(1,mm.pd_per_yr); % elements will hold season-specific
 
 iterH_in.cur_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % clients active in the current period
 iterH_in.add_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % gross additions to client count
+iterH_in.actv_cli_cnt = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % active clients
 iterH_in.cum_succ     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % cumulative number of successes
 iterH_in.new_firm     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods);   % will mark first period of a new firm
 iterH_in.exog_deaths  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % number of exogenous match deaths

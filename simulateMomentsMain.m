@@ -9,10 +9,10 @@ sim_out = cell(mm.N_pt,1);
 seeds = randi(1e6,size(mm.Phi,1),2);
 
 parfor pt_ndx = 1:mm.N_pt
-% for pt_ndx = 1:1:mm.N_pt 
+%for pt_ndx = 1:1:mm.N_pt 
 %for pt_ndx = 57
 %for pt_ndx = 105
-% parfor pt_ndx = 91
+% parfor pt_ndx = 50
 
     rng(seeds(mm.pt_type(pt_ndx,1),1),'twister');
     seed_crand(seeds(mm.pt_type(pt_ndx,1),2));

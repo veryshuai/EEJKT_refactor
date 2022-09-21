@@ -13,10 +13,6 @@ for t = 2:1:mm.periods
 
 [iterH_in] = simulateHomeMatchesInnerSimClientCounts(iterH_in, mm, policy);
 
-% if t >= 488
-%      'pause in simulateHomeMatchesInnerSim'
-% end
-
 [iterH_in] = simulateHomeMatchesInnerSimUpdZHotel(iterH_in, mm, policy);
 [iterH_in] = simulateHomeMatchesInnerSimKickDormant(iterH_in, mm);
 [iterH_in] = simulateHomeMatchesInnerSimFirmAge(iterH_in, mm);
@@ -24,7 +20,6 @@ for t = 2:1:mm.periods
 
  mat_tran = iterH_in.mat_tran;
  iterH_in.N_match = iterH_in.N_match + size(mat_tran,1);
-
 
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% construct annualized variables
@@ -88,20 +83,23 @@ if t == mm.periods
     iter_out.transH{pt_ndx,5}  = iterH_in.new_firm(find_hcli,:);  
     
     
-%     firm_num = 10; 
-% %     iter_out.transH{pt_ndx,1}(13,1)
-%     stack = ...  % for debugging only
-%     [iter_out.transH{pt_ndx,2}( firm_num,:);...
-%     iter_out.transH{pt_ndx,3}( firm_num,:);...
-%     iter_out.transH{pt_ndx,4}( firm_num,:);... 
-%     iter_out.transH{pt_ndx,5}( firm_num,:)];
-
+  % for debugging only: collect home count series by firm #, given pt_ndx
+    rooms =  iter_out.transH{pt_ndx,1};
+    stackH = zeros(length(rooms),mm.periods+1); 
+    for i=1:length(rooms)
+    lb = (i-1)*4 + 1;
+    ub = i*4;
+    stackH(lb:ub,:) = ... 
+    [rooms(i),iter_out.transH{pt_ndx,2}(i,:);...
+    rooms(i),iter_out.transH{pt_ndx,3}(i,:);...
+    rooms(i),iter_out.transH{pt_ndx,4}(i,:);... 
+    rooms(i),iter_out.transH{pt_ndx,5}(i,:)];
+    iter_out.stackH = stackH;
+  % end debugging block  
+    
+    end
  
 end
-
-% if t>=490
-%     'pause'
-% end
 
 end
 

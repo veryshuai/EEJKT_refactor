@@ -20,7 +20,7 @@ pt_ndx = iterH_in.pt_ndx;
            iterH_in.new_cli_zst(i,:) = zeros(1,size(mm.Z,1));
         end
 
-        % break down exogenous deaths that occur between t-1 and t down by z state, and
+        % break down exogenous match deaths that occur between t-1 and t down by z state, and
         % record number of endogenous plus exogenous exits by z state in 1st column of trans_count:
         if iterH_in.exog_deaths(i,t-1) > 0
             iterH_in.die_cli_zst(i,:) = createDieVec(iterH_in.lag_cli_zst(i,:).*iterH_in.keep.cli,iterH_in.exog_deaths(i,t-1),size(mm.Z,1));
@@ -36,9 +36,7 @@ pt_ndx = iterH_in.pt_ndx;
 %              iterH_in.die_cli_zst(i,:) = iterH_in.lag_cli_zst(i,:);
 %              %.*iterH_in.keep_cli;     
 %          end
-% if t == 95
-%     'pause'
-% end
+
 %      iterH_in.trans_count(2:size(mm.Z,1)+1,1,i) = (iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep.cli))' + iterH_in.die_cli_zst(i,:)';
         % This expression double counted exits if they were both exogenous
         % and at Z values below keep_cli. Replaced with below.
@@ -55,7 +53,12 @@ pt_ndx = iterH_in.pt_ndx;
 %        This expression double-counted exogenous exits
 
         iterH_in.surviv_zst(i,:) = iterH_in.lag_cli_zst(i,:) - iterH_in.trans_count(2:size(mm.Z,1)+1,1,i)';
-       
+ %        iterH_in.surviv_zst(i,:) = (iterH_in.lag_cli_zst(i,:) - iterH_in.trans_count(2:size(mm.Z,1)+1,1,i)').*iterH_in.keep_cli;   
+
+%          if iterH_in.t ==13
+%              'pause in simulateHomeMatchesInnerSimUpdZHotel'
+%          end
+         
         
         N_sur = sum(iterH_in.surviv_zst(i,:),2); % number of survivors from t-1, firm i
 

@@ -11,7 +11,7 @@ t =iterH_in.t;
         mat_tran = zeros(0,4);ship_cur = zeros(0,1); age_vec = zeros(0,1);
     else
         mm.mkt = 2; % =2 for domestic market
-         [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mm.mkt,mm,iterH_in,iterH_in.age);
+        [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mm.mkt,mm,iterH_in,iterH_in.age);
 
    iterH_in.ship_cur = ship_cur;
    iterH_in.age_vec = age_vec;
@@ -23,7 +23,13 @@ t =iterH_in.t;
         iterH_in.N_match = size(mat_tran,1);
     end
 
+    try
     iterH_in.seas_tran{1,iterH_in.season} = [[t,iterH_in.season,iterH_in.year].*ones(size(mat_tran,1),1),mat_tran,ship_cur,age_vec];
     iterH_in.seas_Zcut(iterH_in.season)   = iterH_in.drop_Zcut;
     iterH_in.mat_tran = mat_tran;
     iterH_in.mkt = 2;
+    catch
+       'problem in simulateHomeMatchesInnerSimMatchLevelData'
+    end
+    
+    end

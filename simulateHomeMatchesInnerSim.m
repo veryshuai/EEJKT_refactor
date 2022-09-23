@@ -2,12 +2,17 @@ function [iter_out] = simulateHomeMatchesInnerSim(iter_out, mm, iterH_in, pt_ndx
 
 tic
 iterH_in.pt_ndx = pt_ndx;
+iterH_in.season = 1;
 
 for t = 2:1:mm.periods
     iterH_in.t = t;
-    if mod(iterH_in.t-1,mm.pd_per_yr) == 0
-        iterH_in.season = 1; % reset season when previous period completes a year
-    end
+    if mod(t,mm.pd_per_yr) == 0; iterH_in.season = 12;
+    else
+    iterH_in.season = mod(t,mm.pd_per_yr);
+    end       
+%     if mod(iterH_in.t-1,mm.pd_per_yr) == 0
+%         iterH_in.season = 1; % reset season when previous period completes a year
+%     end
 
     iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
 
@@ -63,7 +68,7 @@ for t = 2:1:mm.periods
         iterH_in.mat_h_yr_sales_lag = iterH_in.mat_h_yr_sales;   
     end   % season == mm.pd_per_yr if statement
 
-    iterH_in.season = iterH_in.season + 1;
+    % iterH_in.season = iterH_in.season + 1;
 
     %% load lagged client state matrix and re-initialize objects
 

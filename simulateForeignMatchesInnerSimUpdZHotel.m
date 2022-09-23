@@ -8,41 +8,33 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
         % break down new clients that occur between t-1 and t into e.o.p. z-types
                
         if iter_in.add_cli_cnt(i,iter_in.t)> 0
-           iter_in.new_cli_zst(i,:) = new_vec_C(iter_in.add_cli_cnt(i,iter_in.t),size(mm.Z,1),cumsum(mm.erg_pz)); % distribute gross additions
+         % distribute gross additions across entry states
+           iter_in.new_cli_zst(i,:) = new_vec_C(iter_in.add_cli_cnt(i,iter_in.t),size(mm.Z,1),cumsum(mm.erg_pz)); 
         else
             iter_in.new_cli_zst(i,:)= zeros(1,size(mm.Z,1));
         end        
-               
-        
+                       
+       % break down exogenous deaths that occur between t-1 and t down by b.o.p. z state:
         if iter_in.exog_deaths(i,iter_in.t-1) > 0
-            % break down exogenous deaths that occur between t-1 and t down by b.o.p. z state:
             iter_in.die_cli_zst(i,:) = createDieVec(iter_in.lag_cli_zst(i,:).*iter_in.keep_cli,iter_in.exog_deaths(i,iter_in.t-1),size(mm.Z,1));
         end
-              
-        if iter_in.new_firm(i,iter_in.t)*(1-iter_in.new_firm(i,iter_in.t-1)) == 1 % get rid of all clients when firm dies
-             iter_in.die_cli_zst(i,:) = iter_in.lag_cli_zst(i,:);
-             %.*iter_in.keep_cli; 
-        end
-            
-        %trans_count_test = trans_count;
-%       iter_in.trans_count(2:size(mm.Z,1)+1,1,i) = (iter_in.lag_cli_zst(i,:).*(1-iter_in.keep_cli))' + iter_in.die_cli_zst(i,:)';
         
-% Alternative expression to avoid double counting matches that fail for both exogenenous and endogenous reasons:        
+        % get rid of all clients when firm dies      
+        if iter_in.new_firm(i,iter_in.t)*(1-iter_in.new_firm(i,iter_in.t-1)) == 1 
+             iter_in.die_cli_zst(i,:) = iter_in.lag_cli_zst(i,:);
+        end
+                 
         iter_in.trans_count(2:size(mm.Z,1)+1,1,i) =  max([(iter_in.lag_cli_zst(i,:).*(1- iter_in.keep_cli))',  iter_in.die_cli_zst(i,:)']')';            
- 
-        % For each firm (i) of a particular type, column 1 of trans_count(:,:,i)
-        % now contains counts of all exiting matches (endog. and exog.), by buyer type (row).
+        % Update column 1 of trans_count(:,:,i) so that it contains counts of
+        % all exiting matches (endog. and exog.), by buyer type (row).
 
+        iter_in.surviv_zst(i,:) =  iter_in.lag_cli_zst(i,:) -  iter_in.trans_count(2:size(mm.Z,1)+1,1,i)';       
         % Update surviving client counts by z type using transition matrix for z.
         % Do this for those that don't die for endogenous or exogenous reasons.
         
- %      iter_in.surviv_zst(i,:) = iter_in.lag_cli_zst(i,:).*iter_in.keep_cli - iter_in.die_cli_zst(i,:);
-% Alternative expression to avoid double counting matches that fail for both exogenenous and endogenous reasons: 
-        iter_in.surviv_zst(i,:) =  iter_in.lag_cli_zst(i,:) -  iter_in.trans_count(2:size(mm.Z,1)+1,1,i)';       
-%         iter_in.surviv_zst(i,:) = (iter_in.lag_cli_zst(i,:) - iter_in.trans_count(2:size(mm.Z,1)+1,1,i)').*iter_in.keep_cli;   
+        N_sur = sum(iter_in.surviv_zst(i,:),2); 
+        % number of survivors from t-1 by b.o.p. type, firm i
         
-        N_sur = sum(iter_in.surviv_zst(i,:),2); % number of survivors from t-1 by b.o.p. type, firm i
-
         if N_sur > 0
             sur_typ = find(iter_in.surviv_zst(i,:)); % addresses for z-states populated by at least one survivor, firm i
             for jj = sur_typ  % loop over initial (b.o.p.) states of surviving matches, exporter i
@@ -54,11 +46,9 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
                 iter_in.trans_count(jj+1,2:size(mm.Z,1)+1,i) = sum(trans_z(:,1:size(mm.Z,1)) - [zeros(size(draw,1),1),trans_z(:,1:size(mm.Z,1)-1)],1);
                 % cumulate over b.o.p. z types to get row vector of surviving client e.o.p. types. Rows (i) index exporter hotel rooms:
                 iter_in.trans_zst(i,:) = iter_in.trans_zst(i,:) +  iter_in.trans_count(jj+1,2:size(mm.Z,1)+1,i);
-            end
-            
-%         else
-%             iter_in.trans_zst = zeros(mm.sim_firm_num_by_prod_succ_type(iter_in.pt_ndx),size(mm.Z,1));
+            end           
         end
+        
         if sum(iter_in.new_cli_zst(i,:),2)>0
             iter_in.trans_count(1,2:size(mm.Z,1)+1,i) = iter_in.new_cli_zst(i,:); % load new clients for exporter i in first row of trans_count
         end

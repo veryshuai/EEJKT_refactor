@@ -1,25 +1,32 @@
 function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX_in)
 
-
-% if iterX_in.t >= 586 && iterX_in.mkt ==2
-%     'pause in season_mergeWithinYrSequence'
-% end
-
   N_firms = mm.sim_firm_num_by_prod_succ_type(iterX_in.pt_ndx);
 
-  mat_cols = size(iterX_in.seas_tran{1},2)+1;  % Holds all matches. The +1 makes room for a match age variable
+    if isempty(iterX_in.seas_tran{1}) == 1
+      smat_tran  = double.empty(0,10);  
+      mat_cols   = 10;
+    else
+      mat_age  = ones(size(iterX_in.seas_tran{1},1),1); % Initial match age within year (season 1)
+      smat_tran = [sortrows(iterX_in.seas_tran{1},[5 6]),mat_age]; 
+      mat_cols = size(iterX_in.seas_tran{1},2)+1;  % Holds all matches. The +1 makes room for a match age variable
+    end
+    
   all_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); % To hold data on matches present at end of year
   som_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); % To hold data on matches that die before end of year
-  mat_age  = ones(size(iterX_in.seas_tran{1},1),1); % Initial match age within year (season 1)
+ 
+% if iterX_in.t >= 585
+%     'pause in season_mergeWithinYrSequence'
+%  end
   
-  smat_tran  = [sortrows(iterX_in.seas_tran{1},[5 6]),mat_age]; 
+%  end
   % iterX_in.seas_tran: [t, season, year, mat_tran, #shipments, exporter age(in periods)]; where
   % mat_tran:  [initial state, exporter id, ending state, match revenue]
-  
+
   % smat_tran: 
   %  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
   %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
   
+
   nrt       = size(smat_tran,1);
   Zcut      = iterX_in.seas_Zcut(1);
   ff_die    = find(smat_tran(:,6)<=Zcut); % death of existing match--endog. & exog. 
@@ -40,17 +47,24 @@ function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX
   match_count_lag = sum(smat_tran(:,5).*ones(1,N_firms) - (1:1:N_firms)==0,1);
            
 for ss=2:mm.pd_per_yr
-   smat_tran = iterX_in.seas_tran{ss};
-   Zcut      = iterX_in.seas_Zcut(ss);
+   if isempty(iterX_in.seas_tran{ss}) == 0
+     smat_tran = iterX_in.seas_tran{ss};
+   else
+     smat_tran  = double.empty(0,9);   
+   end
+   
+%  Zcut      = iterX_in.seas_Zcut(ss);
    Zcut_lag  = iterX_in.seas_Zcut(ss-1);
    nrt = size(smat_tran,1);
    lcb = mat_cols*(ss-1)+1;  % lower column bound for horizontal additions to all_seas and some_seas
    ucb = mat_cols*ss;        % upper column bound for horizontal additions to all_seas and some_seas       
 %%     
    match_count = zeros(1,N_firms);  
-   if nrt == 0  % no matches in the current season--move all matches to the 
-                % som_seas matrix and empty the all_seas matrix
 
+   if isempty(iterX_in.seas_tran{ss})==1
+%  if nrt == 0  % no matches in the current season--move all matches to the 
+                % som_seas matrix and empty the all_seas matrix
+   try
       ff_move =  find(all_seas(:,lcb-4)+all_seas(:,lcb-5)+all_seas(:,lcb-6)>0); % rows populated last period 
       if size(ff_move,1)>0
       som_seas(som_cntr+1:som_cntr+size(ff_move,1),:) = all_seas(ff_move,:); 
@@ -58,7 +72,10 @@ for ss=2:mm.pd_per_yr
       all_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); 
       all_cntr = 0;
       end
-            
+   catch
+     'problem in season_margeWithinYrSequence' 
+   end    
+        
    else  % nrt>0 positive number of matches in the current season 
        
 %      Firms that go to zero active matches (exit the market) have no records
@@ -79,7 +96,7 @@ for ss=2:mm.pd_per_yr
              for jj = 1:N_firm_exit
                  % identify previous season matches of exiting firms, allowing for multiple matches:
                  ff_matfirm_exit = find(ones(size(all_seas,1),1).*ff_firm_exit(1,jj)==all_seas(:,lcb-6)); 
-                 % last period matches with exiting firm_ID. Move these 
+                 % last period matches with an exiting firm #. Move these 
                  % matches from all_seas to som_seas and increment som_cntr:
                  som_seas(som_cntr+1:som_cntr+size(ff_matfirm_exit,1),:) = all_seas(ff_matfirm_exit,:); 
                  all_seas(ff_matfirm_exit,:) = zeros(size(ff_matfirm_exit,1),mat_cols*mm.pd_per_yr);
@@ -173,5 +190,8 @@ for ss=2:mm.pd_per_yr
     match_count_lag = match_count; 
     nrt_lag = nrt; 
 end
+
+ if ss == mm.pd_per_yr 
+
 
 end

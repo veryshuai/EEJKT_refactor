@@ -8,7 +8,7 @@ function [mat_yr_sales,firm_yr_sales,iterX_in] = season_mergeAnnualizeDat(all_se
   
  a = find(sum(all_seas,2)>0); % non-zero rows of all_seas
  s = find(sum(som_seas,2)>0); % non-zero rows of som_seas
- 
+ try
  fndx_a = zeros(size(a,1),mm.pd_per_yr);
  fndx_s = zeros(size(s,1),mm.pd_per_yr);  
   for ss=1:mm.pd_per_yr 
@@ -17,7 +17,9 @@ function [mat_yr_sales,firm_yr_sales,iterX_in] = season_mergeAnnualizeDat(all_se
   end
  firm_a = max(fndx_a,[],2); % get firm IDs for each row of all_seas
  firm_s = max(fndx_s,[],2); % get firm IDs for each row of som_seas
- 
+ catch
+     'pause in season_mergeAnnualizeDat'
+ end
 %% aggregate match-specific sales and shipments across seasons
  pick_sales     = kron(ones(mm.pd_per_yr,1),[zeros(6,2);eye(2);zeros(2,2)]); % to pick off sales and shipments from all seasons
  mat_yr_sales_a = all_seas(a,:)*pick_sales; % add up within-yr. sales for matches that are active at year's end

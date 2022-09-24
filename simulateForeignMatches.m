@@ -2,6 +2,11 @@ function [iter_out] = simulateForeignMatches(pt_ndx,macro_state_f,mm,policy)
 
 [iter_in, iter_out] = simulateForeignInnerInitialize(mm, pt_ndx, macro_state_f);
 
+iterF_check.seas_tran     = cell(mm.tot_yrs,1); 
+iterF_check.match_mat     = cell(mm.tot_yrs,1);
+iterF_check.Zcut_H        = cell(mm.tot_yrs,1);
+iterF_check.mat_yr_sales  = cell(mm.tot_yrs,1);
+iterF_check.firm_yr_sales = cell(mm.tot_yrs,1);
 
 for t = 2:1:mm.periods
 
@@ -35,6 +40,16 @@ for t = 2:1:mm.periods
         [iter_in,iter_out] = simulateForeignMatchesInnerAnnualize(iter_in,iter_out,mm);
         
         [iter_in,iter_out] = simulateForeignMatchesInnerMoments(iter_in,iter_out,mm);
+
+    if pt_ndx == mm.check_type    
+    yr_ndx = iter_in.year;
+    iterF_check.seas_tran{yr_ndx}     = iter_in.seas_tran;
+    iterF_check.trans_count{yr_ndx}   = iter_in.trans_count;
+    iterF_check.Zcut_H{yr_ndx}        = iter_in.seas_Zcut;
+    iterF_check.mat_yr_sales{yr_ndx}  = iter_in.mat_yr_sales;
+    iterF_check.firm_yr_sales{yr_ndx} = iter_in.firm_yr_sales;
+    end
+    
     end
 
     iter_in.season = iter_in.season + 1;
@@ -68,6 +83,8 @@ if iter_in.t == mm.periods
     rooms(i),iter_out.transF{pt_ndx,5}(i,:)];
     iter_out.stackF = stackF;
     end
+
+    iter_out.iterF_check = iterF_check;   
 end
 
 

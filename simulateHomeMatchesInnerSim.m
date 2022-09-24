@@ -4,11 +4,11 @@ tic
 iterH_in.pt_ndx = pt_ndx;
 iterH_in.season = 1;
 
-iterH_tst.seas_tran     = cell(mm.tot_yrs,1); 
-iterH_tst.match_mat     = cell(mm.tot_yrs,1);
-iterH_tst.Zcut_H        = cell(mm.tot_yrs,1);
-iterH_tst.mat_yr_sales  = cell(mm.tot_yrs,1);
-iterH_tst.firm_yr_sales = cell(mm.tot_yrs,1);
+iterH_check.seas_tran       = cell(mm.tot_yrs,1); 
+iterH_check.match_mat       = cell(mm.tot_yrs,1);
+iterH_check.Zcut_H          = cell(mm.tot_yrs,1);
+iterH_check.mat_h_yr_sales  = cell(mm.tot_yrs,1);
+iterH_check.firm_h_yr_sales = cell(mm.tot_yrs,1);
 
 for t = 2:1:mm.periods
     iterH_in.t = t;
@@ -39,14 +39,7 @@ iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
   [iterH_in.mat_h_yr_sales,iterH_in.firm_h_yr_sales] = season_merge(iterH_in,mm);
 
         % firm_h_yr_sales:[firm ID, total dom. sales, total dom. shipments, firm age in domestic market]
-
-        yr_ndx = iterH_in.year+1;
-        iterH_tst.seas_tran{yr_ndx}     = iterH_in.seas_tran;
-        iterH_tst.match_mat{yr_ndx}     = iterH_in.mat_tran;
-        iterH_tst.Zcut_H{yr_ndx}        = iterH_in.drop_Zcut;
-        iterH_tst.mat_yr_sales{yr_ndx}  = iterH_in.mat_h_yr_sales;
-        iterH_tst.firm_yr_sales{yr_ndx} = iterH_in.mat_h_yr_sales;
-   
+        
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% the following matrices accumulate annualized values over time and firm types
 
@@ -56,6 +49,15 @@ iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
         iter_out.theta_h_firm  = [iter_out.theta_h_firm;theta_h_firm]; % keep track of domestic thetas for each firm
         % iter_out.firm_h_yr_sales: [t,type,firm ID, total sales, total shipments,firm age]
 
+        if pt_ndx == mm.check_type
+        yr_ndx = iterH_in.year+1;
+        iterH_check.seas_tran{yr_ndx}       = iterH_in.seas_tran;
+        iterH_check.match_mat{yr_ndx}       = iterH_in.mat_tran;
+        iterH_check.Zcut_H{yr_ndx}          = iterH_in.drop_Zcut;
+        iterH_check.mat_h_yr_sales{yr_ndx}  = iterH_in.mat_h_yr_sales;
+        iterH_check.firm_h_yr_sales{yr_ndx} = iterH_in.firm_h_yr_sales;
+        end
+        
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% Construct and cumulate moments
            
@@ -116,7 +118,7 @@ if t == mm.periods
        
   % end checking block    
     end
-         iter_out.tst{pt_ndx} = iterH_tst;
+         iter_out.iterH_check = iterH_check;
 
 end
 

@@ -18,6 +18,9 @@ function D = distance(X)
     seed_crand(80085);
     
     mm = setModelParameters(X);
+    % choose the firm type to use for spot checking
+    mm.check_type = 118;
+    
     policy = generatePolicyAndValueFunctions(mm);
     simMoms = simulateMomentsMain(policy,mm);
     [D,~] = calculateDistanceAndPrint(simMoms,mm,X);

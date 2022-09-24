@@ -1,8 +1,20 @@
-function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
+%%              SimulateForeignMatchesInnerSimUpdZHotel
 
-% if iter_in.t >= 375
-%     'pause in season_merge'
-% end
+ % This script maps Z states onto each active match for a given firm type
+ % (pt_ndx) and period (t).
+
+ % iter_in.trans_count(:,:,i):  For firm # i, each row, corresponds to a
+ % b.o.p. z state and figures in columns indicate number of its matches starting 
+ % from that state and transiting to a particular e.o.p z state. Col 1 contains 
+ % counts of exiting matches, other columns correspond to z values. Row
+ % 1 corresponds to new matches
+
+ % iter_in.trans_zst(i,:): For each firm (i), gives # surviving matches 
+ % in each e.o.p. z state (cols). Columns correspond to z values
+
+%% 
+
+function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
 
     for i=1:mm.sim_firm_num_by_prod_succ_type(iter_in.pt_ndx)
         % break down new clients that occur between t-1 and t into e.o.p. z-types
@@ -33,7 +45,7 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
         % Do this for those that don't die for endogenous or exogenous reasons.
         
         N_sur = sum(iter_in.surviv_zst(i,:),2); 
-        % number of survivors from t-1 by b.o.p. type, firm i
+        % number of survivors from t-1 by b.o.p. z, firm i
         
         if N_sur > 0
             sur_typ = find(iter_in.surviv_zst(i,:)); % addresses for z-states populated by at least one survivor, firm i

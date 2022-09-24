@@ -17,8 +17,7 @@ function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX
 % if iterX_in.t >= 585
 %     'pause in season_mergeWithinYrSequence'
 %  end
-  
-%  end
+
   % iterX_in.seas_tran: [t, season, year, mat_tran, #shipments, exporter age(in periods)]; where
   % mat_tran:  [initial state, exporter id, ending state, match revenue]
 
@@ -189,9 +188,4 @@ for ss=2:mm.pd_per_yr
    end % end nrt >0 if block 
     match_count_lag = match_count; 
     nrt_lag = nrt; 
-end
-
- if ss == mm.pd_per_yr 
-
-
 end

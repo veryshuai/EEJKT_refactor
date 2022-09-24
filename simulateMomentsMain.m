@@ -29,6 +29,7 @@ parfor pt_ndx = 1:mm.N_pt
 
 end
  save 'mismat_sim_out.mat' 'sim_out'; 
+ save 'iterH_checks.mat' 'iterH_tst';  
 
 sim_cum = aggregateSimulatedData(sim_out,mm);
 

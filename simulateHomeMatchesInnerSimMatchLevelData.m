@@ -1,11 +1,14 @@
-function [iterH_in] = simulateHomeMatchesInnerSimMatchLevelData(iterH_in, mm)
-
 %%                   simulateHomeMatchesInnerSimMatchLevelData 
 
-t =iterH_in.t;
+% This function appends sales, shipments and age variables to match records
+%%
+function [iterH_in] = simulateHomeMatchesInnerSimMatchLevelData(iterH_in, mm)
+
+t = iterH_in.t;
 
 %  First load season to season transitions into mat_tran, which describes
-    %  matches of all mm.sim_firm_num_by_prod_succ_type(pt_ndx) of a particular type for a particular transition (t-1 to t).
+%  matches of a particular type for a particular transition (t-1 to t).
+
     mat_tran_all_zeros = ~any(iterH_in.trans_count(:));
     if mat_tran_all_zeros
         mat_tran = zeros(0,4);ship_cur = zeros(0,1); age_vec = zeros(0,1);

@@ -31,11 +31,13 @@ parfor pt_ndx = 1:mm.N_pt
 
 end
 
-check_cell_H = sim_out{mm.check_type}.iterH_check;
-check_cell_F = sim_out{mm.check_type}.iterF_check;
-check_count_H = sim_out{mm.check_type}.stackH;
-check_count_F = sim_out{mm.check_type}.stackF;
-save 'iter_out_checks.mat' 'check_type' 'check_cell_H' 'check_cell_F' 'check_count_H' 'check_count_F';  
+%% Uncomment commands below to generate data for spot checks
+
+% check_cell_H = sim_out{mm.check_type}.iterH_check;
+% check_cell_F = sim_out{mm.check_type}.iterF_check;
+% check_count_H = sim_out{mm.check_type}.stackH;
+% check_count_F = sim_out{mm.check_type}.stackF;
+% save 'iter_out_checks.mat' 'check_type' 'check_cell_H' 'check_cell_F' 'check_count_H' 'check_count_F';  
 
 sim_cum = aggregateSimulatedData(sim_out,mm);
 

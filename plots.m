@@ -1,4 +1,4 @@
-function plots(simMoms)
+function plots(simMoms,Data,Model)
 
 % nonparametric plot of degree distribution 
         figure(1)
@@ -131,7 +131,55 @@ tmod_haz = mod_haz;
 %         xlabel('success rate')
 %         zlabel('exit probability')
         
+% Generate moments vs data plots
 
-         
+% % Table 6: Match hazards, success rates, and endurance
+% figure();
+% scatter([Data(1:5)';Data(21:26)';Data(33:36)'],[Model(1:5);Model(21:26);Model(33:36)],'filled');
+% hold on
+% plot(-4:3,-4:3),'red';
+% hold off
+% xlabel('Data')
+% ylabel('Model')
+% title('Match Hazards, Success Rates, and Endurance')
+% saveas(gcf,'results/pics/MatchHazardsSuccessRatesAndEnduranceFIT.png')
+% 
+% % Table 7: Client distribution and shipment frequency
+% figure();
+% scatter(Data(12:14)',Model(12:14),'filled');
+% hold on
+% plot(-2:1,-2:1),'red';
+% hold off
+% xlabel('Data')
+% ylabel('Model')
+% title('Client Distribution and Shipment Frequency')
+% saveas(gcf,'results/pics/ClientDistributionAndShipmentFrequencyFIT.png')
+% 
+% % Table 8: Home and Foreign Sales Regressions
+% figure();
+% scatter([Data(6:10)';Data(16);Data(20);Data(37:38)'],[Model(6:10);Model(16);Model(20);Model(37:38)],'filled');
+% hold on
+% plot(-1:12,-1:12),'red';
+% hold off
+% xlabel('Data')
+% ylabel('Model')
+% title('Home and Foreign Sales Regressions')
+% saveas(gcf,'results/pics/HomeAndForeignSalesRegressionsFIT.png')
+%          
+% % Table 10: Cohort evolutions
+% 
+% 
+% % Table 11: Exporter client degree dist
+% dataClientDegree = [0.778 0.116 0.043 0.021 0.011]';
+% modelClientDegree = exp(simMoms.log_compCDF(1:5));
+% figure();
+% scatter(dataClientDegree,modelClientDegree,'filled');
+% hold on
+% plot(0:1,0:1,'red');
+% hold off
+% xlabel('Data')
+% ylabel('Model')
+% title('Exporter Client Degree Distribution')
+% saveas(gcf,'results/pics/ExporterClientDegreeDistributionFIT.png')
 
         

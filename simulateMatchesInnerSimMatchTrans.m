@@ -10,11 +10,20 @@ function [tot_cli, new_st] = simulateMatchesInnerSimMatchTrans(trans_count, mm)
 % State 0 (column 1) identifies exit for incumbent matches and the pre-entry state
 % for entrants (row 1). States 1 through N_Z correspond to Z indices.
 
-
 n_cli2      = zeros(size(trans_count,1),size(trans_count,3)); % working around annoying Matlab convention here
 n_cli2(:,:) = sum(trans_count(:,:,:),2); % # clients by initial state (rows 1:N_Z+1) and exporting firm (cols 2:N_firms)
 n_cli1      = sum(n_cli2,1)';  % initial client counts, incl. entrants, by exporting firm
-  
+
+% The foollowing block writes trans_count for one firm to a txt file (for debugging only)
+fileID3 = fopen('results/diagnostics.txt','a');
+   [~, ncols] = size(trans_count(:,:,1156));
+   outputstr = ' %2.0f'; 
+   outputstr = repmat(outputstr, 1, ncols); 
+   outputstr = [outputstr '\n']; 
+fprintf(fileID3, outputstr,trans_count(:,:,1156).');
+fclose(fileID3);
+ 
+
   [init_st2,expr2] = find(n_cli2>0); % populated (initial states/exporter) addresses, incl. entering exporters
   sz_init_st2 = size(init_st2,1);    % # populated initial state/exporter cells
   tot_cont_cli = sum(n_cli1)-sum(sum(trans_count(:,1,:))); % total # end-of-period clients. trans(:,1,:) contains exits

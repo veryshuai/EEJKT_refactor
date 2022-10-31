@@ -20,15 +20,27 @@ for t = 2:1:mm.periods
 %         iterH_in.season = 1; % reset season when previous period completes a year
 %     end
 
+% The following block labels trans_count output, which are written to
+% diagnostics.txt for debugging in simulateMatchesInnerSimMatchTrans
+fileID3 = fopen('results/diagnostics.txt','a');
+   fprintf(fileID3,'\r\n t =%4.0f',t);
+   fprintf(fileID3, '\r\n  ');
+fclose(fileID3);
+
+if t>=371
+    'pause in SimulateHomeMatchesInnerSim, line 31'
+end
+
 iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
 
 [iterH_in] = simulateHomeMatchesInnerSimClientCounts(iterH_in, mm, policy);
-
 [iterH_in] = simulateHomeMatchesInnerSimUpdZHotel(iterH_in, mm, policy);
 [iterH_in] = simulateHomeMatchesInnerSimKickDormant(iterH_in, mm);
 [iterH_in] = simulateHomeMatchesInnerSimFirmAge(iterH_in, mm);
 [iterH_in] = simulateHomeMatchesInnerSimMatchLevelData(iterH_in, mm);
 
+
+    
  mat_tran = iterH_in.mat_tran;
  iterH_in.N_match = iterH_in.N_match + size(mat_tran,1);
 

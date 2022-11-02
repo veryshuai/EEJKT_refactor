@@ -22,6 +22,13 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
         if iter_in.add_cli_cnt(i,iter_in.t)> 0
          % distribute gross additions across entry states
            iter_in.new_cli_zst(i,:) = new_vec_C(iter_in.add_cli_cnt(i,iter_in.t),size(mm.Z,1),cumsum(mm.erg_pz)); 
+
+          % detect and redo rare cases where random draws failed (not needed on UNIX systems)
+           flag = find(sum(iter_in.new_cli_zst(i,:),2) - iter_in.add_cli_cnt(i,t) ~= 0);
+             if flag == 1
+             iter_in.new_cli_zst(i,:) = new_vec_C(iter_in.add_cli_cnt(i,t),size(mm.Z,1),cumsum(mm.erg_pz));
+             end          
+                           
         else
             iter_in.new_cli_zst(i,:)= zeros(1,size(mm.Z,1));
         end        

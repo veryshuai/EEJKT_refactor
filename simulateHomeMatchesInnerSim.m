@@ -27,9 +27,9 @@ fileID3 = fopen('results/diagnostics.txt','a');
    fprintf(fileID3, '\r\n  ');
 fclose(fileID3);
 
-if t>=371
-    'pause in SimulateHomeMatchesInnerSim, line 31'
-end
+% if t>=371
+%     'pause in SimulateHomeMatchesInnerSim, line 31'
+% end
 
 iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
 

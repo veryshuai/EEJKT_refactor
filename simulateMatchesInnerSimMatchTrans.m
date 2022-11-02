@@ -14,14 +14,14 @@ n_cli2      = zeros(size(trans_count,1),size(trans_count,3)); % working around a
 n_cli2(:,:) = sum(trans_count(:,:,:),2); % # clients by initial state (rows 1:N_Z+1) and exporting firm (cols 2:N_firms)
 n_cli1      = sum(n_cli2,1)';  % initial client counts, incl. entrants, by exporting firm
 
-% The foollowing block writes trans_count for one firm to a txt file (for debugging only)
-fileID3 = fopen('results/diagnostics.txt','a');
-   [~, ncols] = size(trans_count(:,:,1156));
-   outputstr = ' %2.0f'; 
-   outputstr = repmat(outputstr, 1, ncols); 
-   outputstr = [outputstr '\n']; 
-fprintf(fileID3, outputstr,trans_count(:,:,1156).');
-fclose(fileID3);
+% The following block writes trans_count for one firm to a txt file (for debugging only, firm_ID = 1156)
+% fileID3 = fopen('results/diagnostics.txt','a');
+%    [~, ncols] = size(trans_count(:,:,1156));
+%    outputstr = ' %2.0f'; 
+%    outputstr = repmat(outputstr, 1, ncols); 
+%    outputstr = [outputstr '\n']; 
+% fprintf(fileID3, outputstr,trans_count(:,:,1156).');
+% fclose(fileID3);
  
 
   [init_st2,expr2] = find(n_cli2>0); % populated (initial states/exporter) addresses, incl. entering exporters

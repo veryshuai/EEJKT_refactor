@@ -29,6 +29,13 @@ pt_ndx = iterH_in.pt_ndx;
         % distribute new clients between t-1 and t across initial z-states       
         if iterH_in.add_cli_cnt(i,t) > 0
            iterH_in.new_cli_zst(i,:) = new_vec_C(iterH_in.add_cli_cnt(i,t),size(mm.Z,1),cumsum(mm.erg_pz)); 
+           
+        % detect and redo rare cases where random draws failed (not needed on UNIX systems)
+             flag = find(sum(iterH_in.new_cli_zst(i,:),2) - iterH_in.add_cli_cnt(i,t) ~= 0);
+             if flag == 1
+             iterH_in.new_cli_zst(i,:) = new_vec_C(iterH_in.add_cli_cnt(i,t),size(mm.Z,1),cumsum(mm.erg_pz));
+             end         
+             
         else
            iterH_in.new_cli_zst(i,:) = zeros(1,size(mm.Z,1));
         end

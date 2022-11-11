@@ -14,13 +14,17 @@ try
 %     0.674671051170727,12.9981423348683,0.114262951381515,1.60040440594609,...
 %     1.27705129904746,-0.291910617912570,7.44522115406195,-9.96676755945645]; % problem vector
 
+X = [-5.75356966903725	-5.25223507169887	0.164825015774296	1.17936463019703 ...
+    0.378914704447539	14.3015666827662	0.106596797278845	1.58037006160446 ...
+    1.30315909881952	-0.376856695185435	5.35823230259007	-7.36635544725547];  % problem vector
+ 
    
     rng(80085,'twister');
     seed_crand(80085);
     
     mm = setModelParameters(X);
     % choose the firm type to use for spot checking
-    mm.check_type = 118;
+    mm.check_type = 91;
     
     policy = generatePolicyAndValueFunctions(mm);
     simMoms = simulateMomentsMain(policy,mm);

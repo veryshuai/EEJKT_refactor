@@ -29,7 +29,7 @@ end
    ship_cur   = ship_cur + 0.0*sampl_ship; % impose sample shipment is negligible
    
   % NOTE: the ratio of sample shipment to normal shipment could be estimated, 
-  % but for now I am fixing it at 0.
+  % but for now we fix it at 0.
 %%
 %  Note: revenue function is based expression in makepie (before Z effect):
 %  payoff = 1 / de * exp(sf) * exp((de-1)*st(1,:)+st(2,:)); 

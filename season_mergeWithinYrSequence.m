@@ -120,7 +120,7 @@ for ss=2:mm.pd_per_yr
     catch
        rows1 = size(ff_incum,1);
        rows2 = size(ff_all_active,1);
-      fprintf('\r\n problem with splicing of matches across seasons: lines 95-97 \n')
+      fprintf('\r\n problem with splicing of matches across seasons: season_merge temp1 & temp2 \n')
       fprintf('\r\n rows of temp1 = %.2f, rows of temp2 = %.2f\n', [rows1 rows2]) 
       fprintf('\r\n period = %.2f, firm type = %.2f, market = %.2f\n', [iterX_in.t iterX_in.pt_ndx iterX_in.mkt])
 

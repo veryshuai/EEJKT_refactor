@@ -1,3 +1,7 @@
+%%                         simulateForeignMatchesInnerSimFirmAge    
+
+% calculate each firm's time (in periods) in foreign market 
+
 function [iter_in, age] = simulateForeignMatchesInnerSimFirmAge(iter_in, mm)
     % Calculate time (in periods) in export market
     flr = max(iter_in.flrlag,iter_in.t*iter_in.new_firm(:,iter_in.t)); 

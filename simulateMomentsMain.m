@@ -8,11 +8,13 @@ sim_out = cell(mm.N_pt,1);
 
 seeds = randi(1e6,size(mm.Phi,1),2);
 
-parfor pt_ndx = 1:mm.N_pt
-%for pt_ndx = 1:1:mm.N_pt 
+
+
+% parfor pt_ndx = 1:mm.N_pt
+for pt_ndx = 1:1:mm.N_pt 
 %for pt_ndx = 57
 %for pt_ndx = 105
-% parfor pt_ndx = 50
+% parfor pt_ndx = 71
 
     rng(seeds(mm.pt_type(pt_ndx,1),1),'twister');
     seed_crand(seeds(mm.pt_type(pt_ndx,1),2));
@@ -28,7 +30,14 @@ parfor pt_ndx = 1:mm.N_pt
     end
 
 end
- save 'mismat_sim_out.mat' 'sim_out'; 
+
+%% Uncomment commands below to generate data for spot checks
+
+% check_cell_H = sim_out{mm.check_type}.iterH_check;
+% check_cell_F = sim_out{mm.check_type}.iterF_check;
+% check_count_H = sim_out{mm.check_type}.stackH;
+% check_count_F = sim_out{mm.check_type}.stackF;
+% save 'iter_out_checks.mat' 'check_type' 'check_cell_H' 'check_cell_F' 'check_count_H' 'check_count_F';  
 
 sim_cum = aggregateSimulatedData(sim_out,mm);
 

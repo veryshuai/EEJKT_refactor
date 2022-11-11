@@ -1,3 +1,7 @@
+%%                   simulateForeignMatchesInnerSimMatchLevelData 
+
+% This function appends sales, shipments and age variables to match records
+%%
 function [iter_in, mat_tran] = simulateForeignMatchesInnerSimMatchLevelData(iter_in, mm, age, drop_Zcut)
 
     mat_tran_all_zeros = ~any(iter_in.trans_count(:));

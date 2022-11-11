@@ -4,6 +4,12 @@ tic
 iterH_in.pt_ndx = pt_ndx;
 iterH_in.season = 1;
 
+iterH_check.seas_tran       = cell(mm.tot_yrs,1); 
+iterH_check.match_mat       = cell(mm.tot_yrs,1);
+iterH_check.Zcut_H          = cell(mm.tot_yrs,1);
+iterH_check.mat_h_yr_sales  = cell(mm.tot_yrs,1);
+iterH_check.firm_h_yr_sales = cell(mm.tot_yrs,1);
+
 for t = 2:1:mm.periods
     iterH_in.t = t;
     if mod(t,mm.pd_per_yr) == 0; iterH_in.season = 12;
@@ -14,15 +20,27 @@ for t = 2:1:mm.periods
 %         iterH_in.season = 1; % reset season when previous period completes a year
 %     end
 
-    iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
+% The following block labels trans_count output, which are written to
+% diagnostics.txt for debugging in simulateMatchesInnerSimMatchTrans
+fileID3 = fopen('results/diagnostics.txt','a');
+   fprintf(fileID3,'\r\n t =%4.0f',t);
+   fprintf(fileID3, '\r\n  ');
+fclose(fileID3);
+
+% if t>=371
+%     'pause in SimulateHomeMatchesInnerSim, line 31'
+% end
+
+iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
 
 [iterH_in] = simulateHomeMatchesInnerSimClientCounts(iterH_in, mm, policy);
-
 [iterH_in] = simulateHomeMatchesInnerSimUpdZHotel(iterH_in, mm, policy);
 [iterH_in] = simulateHomeMatchesInnerSimKickDormant(iterH_in, mm);
 [iterH_in] = simulateHomeMatchesInnerSimFirmAge(iterH_in, mm);
 [iterH_in] = simulateHomeMatchesInnerSimMatchLevelData(iterH_in, mm);
 
+
+    
  mat_tran = iterH_in.mat_tran;
  iterH_in.N_match = iterH_in.N_match + size(mat_tran,1);
 
@@ -33,7 +51,7 @@ for t = 2:1:mm.periods
   [iterH_in.mat_h_yr_sales,iterH_in.firm_h_yr_sales] = season_merge(iterH_in,mm);
 
         % firm_h_yr_sales:[firm ID, total dom. sales, total dom. shipments, firm age in domestic market]
-
+        
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% the following matrices accumulate annualized values over time and firm types
 
@@ -43,6 +61,15 @@ for t = 2:1:mm.periods
         iter_out.theta_h_firm  = [iter_out.theta_h_firm;theta_h_firm]; % keep track of domestic thetas for each firm
         % iter_out.firm_h_yr_sales: [t,type,firm ID, total sales, total shipments,firm age]
 
+        if pt_ndx == mm.check_type
+        yr_ndx = iterH_in.year+1;
+        iterH_check.seas_tran{yr_ndx}       = iterH_in.seas_tran;
+        iterH_check.match_mat{yr_ndx}       = iterH_in.mat_tran;
+        iterH_check.Zcut_H{yr_ndx}          = iterH_in.drop_Zcut;
+        iterH_check.mat_h_yr_sales{yr_ndx}  = iterH_in.mat_h_yr_sales;
+        iterH_check.firm_h_yr_sales{yr_ndx} = iterH_in.firm_h_yr_sales;
+        end
+        
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% Construct and cumulate moments
            
@@ -78,8 +105,8 @@ for t = 2:1:mm.periods
     iterH_in.trans_zst    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));
     iterH_in.trans_count  = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx));
 
-if t == mm.periods
-%   'pause here in simulateHomeMatchesInnerSim'
+if t == mm.periods   
+%   for checking only: collect count series for each firm type
     find_hcli        = find(sum(iterH_in.cur_cli_cnt,2)>0);
     iter_out.transH{pt_ndx,1} = find_hcli;
     iter_out.transH{pt_ndx,2} = iterH_in.cur_cli_cnt(find_hcli,:);
@@ -88,7 +115,7 @@ if t == mm.periods
     iter_out.transH{pt_ndx,5}  = iterH_in.new_firm(find_hcli,:);  
     
     
-  % for debugging only: collect home count series by firm #, given pt_ndx
+  % for checking only: rearrange count series in blocks, by firm t and firm #
     rooms =  iter_out.transH{pt_ndx,1};
     stackH = zeros(length(rooms),mm.periods+1); 
     for i=1:length(rooms)
@@ -100,10 +127,11 @@ if t == mm.periods
     rooms(i),iter_out.transH{pt_ndx,4}(i,:);... 
     rooms(i),iter_out.transH{pt_ndx,5}(i,:)];
     iter_out.stackH = stackH;
-  % end debugging block  
-    
+       
+  % end checking block    
     end
- 
+         iter_out.iterH_check = iterH_check;
+
 end
 
 end

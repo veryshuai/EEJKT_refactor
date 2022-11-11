@@ -2,6 +2,11 @@ function [iter_out] = simulateForeignMatches(pt_ndx,macro_state_f,mm,policy)
 
 [iter_in, iter_out] = simulateForeignInnerInitialize(mm, pt_ndx, macro_state_f);
 
+iterF_check.seas_tran     = cell(mm.tot_yrs,1); 
+iterF_check.match_mat     = cell(mm.tot_yrs,1);
+iterF_check.Zcut_H        = cell(mm.tot_yrs,1);
+iterF_check.mat_yr_sales  = cell(mm.tot_yrs,1);
+iterF_check.firm_yr_sales = cell(mm.tot_yrs,1);
 
 for t = 2:1:mm.periods
 
@@ -35,14 +40,18 @@ for t = 2:1:mm.periods
         [iter_in,iter_out] = simulateForeignMatchesInnerAnnualize(iter_in,iter_out,mm);
         
         [iter_in,iter_out] = simulateForeignMatchesInnerMoments(iter_in,iter_out,mm);
+
+    if pt_ndx == mm.check_type    
+    yr_ndx = iter_in.year;
+    iterF_check.seas_tran{yr_ndx}     = iter_in.seas_tran;
+    iterF_check.trans_count{yr_ndx}   = iter_in.trans_count;
+    iterF_check.Zcut_H{yr_ndx}        = iter_in.seas_Zcut;
+    iterF_check.mat_yr_sales{yr_ndx}  = iter_in.mat_yr_sales;
+    iterF_check.firm_yr_sales{yr_ndx} = iter_in.firm_yr_sales;
+    end
+    
     end
 
-    
-%     if t>=490
-%     'pause'
-%     end
-    
-    
     iter_in.season = iter_in.season + 1;
 
     iter_in.lag_cli_zst  = iter_in.cur_cli_zst;
@@ -52,7 +61,7 @@ for t = 2:1:mm.periods
     iter_in.trans_count  = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx));
 
 if iter_in.t == mm.periods
-%   'pause here in simulateForeignMatches'
+%   for checking only: collect the count matrices in transF, by firm type
     find_xcli = find(sum(iter_in.cur_cli_cnt,2)>0);
     iter_out.transF{pt_ndx,1} = find_xcli;
     iter_out.transF{pt_ndx,2} = iter_in.cur_cli_cnt(find_xcli,:);
@@ -61,7 +70,7 @@ if iter_in.t == mm.periods
     iter_out.transF{pt_ndx,5}  = iter_in.new_firm(find_xcli,:);  
     iter_out.transF{pt_ndx,6} = iter_in.cum_meets(find_xcli,:);
     
-% for debugging only: collect foreign count series by firm #, given pt_ndx
+% for checking only: rearrange count matrices in blocks, by firm # & type
     rooms =  iter_out.transF{pt_ndx,1};
     stackF = zeros(length(rooms),mm.periods+1); 
     for i=1:length(rooms)
@@ -74,6 +83,8 @@ if iter_in.t == mm.periods
     rooms(i),iter_out.transF{pt_ndx,5}(i,:)];
     iter_out.stackF = stackF;
     end
+
+    iter_out.iterF_check = iterF_check;   
 end
 
 

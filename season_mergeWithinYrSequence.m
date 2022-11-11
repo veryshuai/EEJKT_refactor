@@ -17,8 +17,7 @@ function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX
 % if iterX_in.t >= 585
 %     'pause in season_mergeWithinYrSequence'
 %  end
-  
-%  end
+
   % iterX_in.seas_tran: [t, season, year, mat_tran, #shipments, exporter age(in periods)]; where
   % mat_tran:  [initial state, exporter id, ending state, match revenue]
 
@@ -73,7 +72,7 @@ for ss=2:mm.pd_per_yr
       all_cntr = 0;
       end
    catch
-     'problem in season_margeWithinYrSequence' 
+     'problem in season_mergeWithinYrSequence' 
    end    
         
    else  % nrt>0 positive number of matches in the current season 
@@ -138,7 +137,7 @@ for ss=2:mm.pd_per_yr
         problem_month = iterX_in.t;
         problem_market = iterX_in.mkt;
         params = mm.param_vec;
-        save 'mismat_recs.mat' 'temp1' 'temp2' 'params' 'firm_type' 'problem_month' 'problem_market','-append';  
+        save 'mismat_recs.mat' 'temp1' 'temp2' 'Zcut' 'smat_tran' 'params' 'firm_type' 'problem_month' 'problem_market','-append';  
 
     end
     try
@@ -189,9 +188,4 @@ for ss=2:mm.pd_per_yr
    end % end nrt >0 if block 
     match_count_lag = match_count; 
     nrt_lag = nrt; 
-end
-
- if ss == mm.pd_per_yr 
-
-
 end

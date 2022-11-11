@@ -51,6 +51,8 @@ iterH_in.year = 1;
 iterH_in.N_match = 0;
 iterH_in.season = 1;
 
+iter_out.tst    = cell(mm.N_pt);
+% iterH_tst cells consolidate data for testing only--comment them out for faster estimation
 iter_out.transH = cell(mm.N_pt,5);
 % to hold (1) firm_ID, (2) cur_cli_cnt, (3) cum_succ, (4) age, (5) new_firm 
 

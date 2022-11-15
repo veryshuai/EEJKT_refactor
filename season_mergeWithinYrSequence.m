@@ -1,4 +1,4 @@
-function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX_in)
+function [mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence(mm, iterX_in)
 
   N_firms = mm.sim_firm_num_by_prod_succ_type(iterX_in.pt_ndx);
 
@@ -14,7 +14,7 @@ function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX
   all_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); % To hold data on matches present at end of year
   som_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); % To hold data on matches that die before end of year
  
-% if iterX_in.t >= 585
+% if iterX_in.year >= 40
 %     'pause in season_mergeWithinYrSequence'
 %  end
 
@@ -24,10 +24,13 @@ function [mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX
   % smat_tran: 
   %  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
   %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
-  
+
+  Zcut_eoy_lag = iterX_in.Zcut_eoy_lag;
 
   nrt       = size(smat_tran,1);
   Zcut      = iterX_in.seas_Zcut(1);
+  ff_keep   = find(max((smat_tran(:,4)>Zcut_eoy_lag),(smat_tran(:,4)==0))); % matches that didn't die last period
+  smat_tran = smat_tran(ff_keep,:);
   ff_die    = find(smat_tran(:,6)<=Zcut); % death of existing match--endog. & exog. 
   ff_cont   = find(smat_tran(:,6)>Zcut);  % find matches that continue next period, new and existing
   
@@ -52,7 +55,7 @@ for ss=2:mm.pd_per_yr
      smat_tran  = double.empty(0,9);   
    end
    
-%  Zcut      = iterX_in.seas_Zcut(ss);
+   Zcut      = iterX_in.seas_Zcut(ss);
    Zcut_lag  = iterX_in.seas_Zcut(ss-1);
    nrt = size(smat_tran,1);
    lcb = mat_cols*(ss-1)+1;  % lower column bound for horizontal additions to all_seas and some_seas
@@ -72,7 +75,7 @@ for ss=2:mm.pd_per_yr
       all_cntr = 0;
       end
    catch
-     'problem in season_mergeWithinYrSequence' 
+     'problem in season_mergeWithinYrSequence lines 62-73' 
    end    
         
    else  % nrt>0 positive number of matches in the current season 
@@ -82,7 +85,9 @@ for ss=2:mm.pd_per_yr
 %      Need to move these matches to som_seas matrix.
        
       if nrt_lag > 0 % there were some matches in previous season
-       match_count = sum(smat_tran(:,5).*ones(1,N_firms) - (1:1:N_firms)==0,1); % current match count, by firm
+%      ff_cont   = find(smat_tran(:,6)>Zcut);
+%      smat_tran = smat_tran(ff_keep,:);
+       match_count = sum((smat_tran(:,5).*ones(1,N_firms)) - (1:1:N_firms)==0,1); % current match count, by firm
        ff_firm_exit = find((match_count==0).*(match_count_lag>0));  % firm exits between previous and current season
        N_firm_exit  = sum(ff_firm_exit>0); 
 
@@ -105,8 +110,8 @@ for ss=2:mm.pd_per_yr
       end
 %%         
     ff_new     = find(smat_tran(:,4)==0); % current season new matches   
-    ff_incum   = find(smat_tran(:,4)>Zcut_lag);  % current season inherited matches 
-    
+    ff_incum   = find(smat_tran(:,4)>Zcut_lag);  % current season inherited matches
+
     ff_all_active  = find(all_seas(:,lcb-5)>Zcut_lag); % previous season matches that should have passed to current season (eop Z>Zcut)
     all_cntr       = size(ff_all_active,1);
      
@@ -140,26 +145,37 @@ for ss=2:mm.pd_per_yr
         save 'mismat_recs.mat' 'temp1' 'temp2' 'Zcut' 'smat_tran' 'params' 'firm_type' 'problem_month' 'problem_market','-append';  
 
     end
-    try
+
+     try  
+        
 %    load current season continuing matches into all_seas, incrementing match age by 1
      all_seas(1:all_cntr,1:ucb) = [temp2(:,1:lcb-1),temp1,temp2(:,lcb-1)+ones(size(temp1,1),1)] ;
 %    add new rows to all_seas for new matches. Match age is zero for all new matches.
      all_seas(all_cntr+1:all_cntr+size(ff_new,1),lcb:ucb) = [smat_tran(ff_new,:),ones(size(ff_new,1),1)];
-     all_cntr = size(ff_all_active,1)+size(ff_new,1);      
+     all_cntr = size(ff_all_active,1)+size(ff_new,1);  
+      
 %    move history of matches in their last season to som_seas    
-     ff_die = find(all_seas(1:all_cntr,lcb+5)==0); % eop Z ==0
+     ff_die = find(all_seas(1:all_cntr,lcb+5)<=Zcut); % eop Z <= Zcut     
+%    ff_die = find(all_seas(1:all_cntr,lcb+5)==0); % eop Z == 0
+
      som_seas(som_cntr+1:som_cntr+size(ff_die,1),1:ucb) = all_seas(ff_die,1:ucb);
      som_cntr = som_cntr + size(ff_die,1);
+     
 %    clear history of last-season matches out of all_seas and put surviving matches in first rows   
-     ff_live = find(all_seas(:,lcb+5)>0); % continuing matches (eop Z>0)
+     ff_live = find(all_seas(:,lcb+5)>Zcut); % continuing matches (eop Z>Zcut)
+%    ff_live = find(all_seas(:,lcb+5)>0); % continuing matches (eop Z>0)
+     
      all_cntr = size(ff_live,1);    
      all_seas(1:all_cntr,:) = all_seas(ff_live,:); % moving survivors to first rows    
      empty_mat = zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr);
      all_seas(all_cntr+1:iterX_in.N_match,:) = empty_mat;   % clear remaining rows
 %    move matches that die at end of year out of all_seas and into som_seas     
      if ss==mm.pd_per_yr
-         ff_eoy_die =  find((all_seas(1:all_cntr,lcb+5)==0).*(all_seas(1:all_cntr,lcb+3)>0));
-         ff_eoy_live = find(all_seas(1:all_cntr,lcb+5) > 0);
+         ff_eoy_die =  find((all_seas(1:all_cntr,lcb+5)<=Zcut).*(all_seas(1:all_cntr,lcb+3)>0));
+         ff_eoy_live = find(all_seas(1:all_cntr,lcb+5) > Zcut);
+%        ff_eoy_die =  find((all_seas(1:all_cntr,lcb+5)==0).*(all_seas(1:all_cntr,lcb+3)>0));
+%        ff_eoy_live = find(all_seas(1:all_cntr,lcb+5) > 0);          
+         
          som_cntr = som_cntr + size(ff_eoy_die,1);
          all_cntr = size(ff_eoy_live,1);
          som_seas(som_cntr+1:som_cntr+size(ff_eoy_die,1),1:ucb) = all_seas(ff_eoy_die,1:ucb);
@@ -168,7 +184,7 @@ for ss=2:mm.pd_per_yr
      end
     catch
       fprintf('\r\n period = %.2f, firm type = %.2f, market =%.2f\n',[iterX_in.t iterX_in.pt_ndx iterX_in.mkt]) 
-      fprintf('\r\n problem with splicing of matches across seasons: lines 121-145\n')
+      fprintf('\r\n problem with splicing in seasonMergeWithinYrSequence: lines 121-145\n')
       if size(temp1,1) >20
       fileID3 = fopen('results/EEJKT_error_log.txt','a');
       fprintf(fileID3,'\r\n  ');
@@ -188,4 +204,5 @@ for ss=2:mm.pd_per_yr
    end % end nrt >0 if block 
     match_count_lag = match_count; 
     nrt_lag = nrt; 
+    Zcut_eoy = Zcut;
 end

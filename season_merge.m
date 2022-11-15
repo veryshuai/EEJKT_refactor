@@ -1,4 +1,4 @@
-function [mat_yr_sales,firm_yr_sales,iterX_in] = season_merge(iterX_in,mm)
+function [mat_yr_sales,firm_yr_sales,Zcut_eoy] = season_merge(iterX_in,mm)
 
 %  This function takes a year's worth of season-specific match
 %  outcomes for a particular type of firm and organizes the information
@@ -8,13 +8,13 @@ function [mat_yr_sales,firm_yr_sales,iterX_in] = season_merge(iterX_in,mm)
 
 %% build within-yr monthly trajectories for all matches--continuing, new, and dying
 
-[mat_cols, all_seas, som_seas] = season_mergeWithinYrSequence(mm, iterX_in);
- 
+[mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence(mm, iterX_in);
+
  % all_seas and som_seas 
  %  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
  %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
 
-
+% iterX_in.Zcut_eoy = Zcut_eoy;
 %%  Package up the match info. for use in regressions
 
 [mat_yr_sales,firm_yr_sales,iterX_in] = season_mergeAnnualizeDat(all_seas, som_seas, mm, mat_cols,iterX_in);

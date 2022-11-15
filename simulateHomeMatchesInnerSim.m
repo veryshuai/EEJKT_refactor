@@ -48,7 +48,7 @@ iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
     %% construct annualized variables
     if iterH_in.season == mm.pd_per_yr
 
-  [iterH_in.mat_h_yr_sales,iterH_in.firm_h_yr_sales] = season_merge(iterH_in,mm);
+  [iterH_in.mat_h_yr_sales,iterH_in.firm_h_yr_sales,iterH_in.Zcut_eoy] = season_merge(iterH_in,mm);
 
         % firm_h_yr_sales:[firm ID, total dom. sales, total dom. shipments, firm age in domestic market]
         

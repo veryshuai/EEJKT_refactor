@@ -16,6 +16,11 @@
 
 function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
 
+%       if iter_in.year >= 16
+%           'pause in simulateForeignMatchesInnerSimUpdZHotel'
+%       end
+
+
     for i=1:mm.sim_firm_num_by_prod_succ_type(iter_in.pt_ndx)
         % break down new clients that occur between t-1 and t into e.o.p. z-types
                
@@ -46,6 +51,7 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
         iter_in.trans_count(2:size(mm.Z,1)+1,1,i) =  max([(iter_in.lag_cli_zst(i,:).*(1- iter_in.keep_cli))',  iter_in.die_cli_zst(i,:)']')';            
         % Update column 1 of trans_count(:,:,i) so that it contains counts of
         % all exiting matches (endog. and exog.), by buyer type (row).
+        % NOTE: The Zcut is applied to last period's Z draw
 
         iter_in.surviv_zst(i,:) =  iter_in.lag_cli_zst(i,:) -  iter_in.trans_count(2:size(mm.Z,1)+1,1,i)';       
         % Update surviving client counts by z type using transition matrix for z.

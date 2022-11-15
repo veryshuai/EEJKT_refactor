@@ -1,10 +1,10 @@
 function [iter_in,iter_out] = simulateForeignMatchesInnerAnnualize(iter_in,iter_out,mm)
 
-      if iter_in.year_lag == 15
-          'pause here'
-      end
+%       if iter_in.year_lag == 15
+%           'pause here'
+%       end
 
-[iter_in.mat_yr_sales,iter_in.firm_yr_sales] =  season_merge(iter_in,mm);
+[iter_in.mat_yr_sales,iter_in.firm_yr_sales,iter_in.Zcut_eoy] =  season_merge(iter_in,mm);
 
 % mat_yr_sales:  [firm ID, match-specific sales, shipments, boy Z, eoy Z,
 %                 match age in periods (w/in year), firm age in periods]
@@ -27,7 +27,7 @@ if iter_in.year > 2
 
       
       [iter_in.mat_cont_2yr,iter_in.mat_yr_sales,iter_in.mat_yr_sales_lag,iter_in.year_lag]...
-          = mat_yr_splice_v2(iter_in.mat_yr_sales,iter_in.mat_yr_sales_lag,mm,iter_in.year);
+          = mat_yr_splice_v2(iter_in,mm,iter_in.year);
       %  mat_cont_2yr: [mat_yr_sales_lag(ff_cont_lag,:), mat_yr_sales(ff_cont,:)]
       %  mat_yr_sales: [firm ID, match-specific sales, shipments, boy Z, eoy Z, match age in yrs, firm age in yrs]
       %  mat_yr_sales_adj: same as lagged mat_yr_sales except eoy Z set to zero if no sales next year

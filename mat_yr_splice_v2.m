@@ -1,7 +1,12 @@
 % Called from SimulateForeignMatchesInnerAnnualize
 
 function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_lag,year_lag] =...
-    mat_yr_splice_v2(mat_yr_sales,mat_yr_sales_lag,mm,year)
+    mat_yr_splice_v2(iterX_in,mm,year)
+
+mat_yr_sales = iterX_in.mat_yr_sales;
+mat_yr_sales_lag = iterX_in.mat_yr_sales_lag;
+% Zcut_boy = iterX_in.seas_Zcut(1);
+Zcut_eoy_lag = iterX_in.Zcut_eoy_lag;
 
 % This function splices the current year's records on matches for a given
 % firm type with last year's records for the same firm type. Splicing is
@@ -20,8 +25,9 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_lag,year_lag] =...
 % Find matches in current year that correspond to boy incumbents, and 
 % drop matches that correspond to post-flip periods.
    
-    incumb = mat_yr_sales(:,1)==(floor(mat_yr_sales(:,1))).*(mat_yr_sales(:,4)>0); % boy Z > 0 this year
-    contin = mat_yr_sales_lag(:,5)>0;  % eoy Z > 0 last year
+    incumb = mat_yr_sales(:,1)==(floor(mat_yr_sales(:,1))).*(mat_yr_sales(:,4)>Zcut_eoy_lag); % boy Z > Zcut_eoy_lag (used to be 0) this year
+%   contin = mat_yr_sales_lag(:,5)>0;  % eoy Z > 0 last year
+    contin = mat_yr_sales_lag(:,5)>Zcut_eoy_lag;
     tmp_tran = mat_yr_sales(incumb,:); 
     tmp_tran_lag = mat_yr_sales_lag(contin,:);
    

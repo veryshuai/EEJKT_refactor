@@ -99,7 +99,8 @@ if iter_in.year >= mm.burn
 
 end  
 
-iter_in.mat_yr_sales_lag = iter_in.mat_yr_sales;   % update lags
+iter_in.mat_yr_sales_lag  = iter_in.mat_yr_sales;   % update lags
 iter_in.firm_yr_sales_lag = iter_in.firm_yr_sales;
+iter_in.Zcut_eoy_lag      = iter_in.Zcut_eoy;
 
 end

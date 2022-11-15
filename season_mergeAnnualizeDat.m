@@ -134,4 +134,10 @@ end
 
  end
  
+ if t == 360 || t == 372
+   fprintf('\rt =%4.0f, pt_ndx = %4.0f\n', [t, iterX_in.pt_ndx] )
+    mat_yr_sales
+    'pause at end of season_mergeAnnualizeDat'  
+end
+ 
 end

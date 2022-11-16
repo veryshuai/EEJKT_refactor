@@ -7,9 +7,11 @@ function policy = solvePolicyMain(mm)
 
     policy.postSuccessProb_f = makeForeignSuccessPosteriors(mm); %[trials,successes]
 
+    tic
     [policy.value_h,policy.lambda_h] = solvePolicyHome(policy,mm);  
     [policy.value_f,policy.lambda_f] = solvePolicyForeign(policy,mm); 
+    toc
 
-    shouldHaveMonotonicPolicyFunctions(policy,mm);
+    %shouldHaveMonotonicPolicyFunctions(policy,mm);
 
 end

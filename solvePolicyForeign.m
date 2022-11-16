@@ -25,12 +25,13 @@ for prod_ind = 1:size(mm.Phi)
         end
     end
     
-    for tri = 1:mm.n_size
-        for succ = 1:mm.n_size+1-tri
+    for tri_iterator = 1:mm.n_size
+        curr_trys = mm.n_size+1-tri_iterator;
+        for succ = 1:curr_trys
     
-            new_v = val_func_iter('learning',squeeze(V(succ,mm.n_size+2-tri,1,succ,prod_ind,:)),squeeze(V(succ+1,mm.n_size-tri+2,1,succ+1,prod_ind,:)),squeeze(V(succ,mm.n_size-tri+2,1,succ,prod_ind,:)),policy.postSuccessProb_f(mm.n_size+1-tri,succ),policy.pi_f(prod_ind,:)',succ,mm,policy,'foreign');
-            V(succ,mm.n_size+1-tri,1,succ,prod_ind,:) = new_v;
-            [~,l_opt(succ,mm.n_size+1-tri,1,succ,prod_ind,:)] = iterationError_f(squeeze(V(succ,mm.n_size+1-tri,1,succ,prod_ind,:)),policy.postSuccessProb_f(mm.n_size+1-tri,succ),policy.pi_f(prod_ind,:)',succ,squeeze(V(succ,mm.n_size-tri+2,1,succ,prod_ind,:)),squeeze(V(succ+1,mm.n_size-tri+2,1,succ+1,prod_ind,:)),mm);
+            new_v = val_func_iter('learning',squeeze(V(succ,curr_trys+1,1,succ,prod_ind,:)),squeeze(V(succ+1,curr_trys+1,1,succ+1,prod_ind,:)),squeeze(V(succ,curr_trys+1,1,succ,prod_ind,:)),policy.postSuccessProb_f(curr_trys,succ),policy.pi_f(prod_ind,:)',succ,mm,policy,'foreign');
+            V(succ,curr_trys,1,succ,prod_ind,:) = new_v;
+            [~,l_opt(succ,curr_trys,1,succ,prod_ind,:)] = iterationError_f(squeeze(V(succ,curr_trys,1,succ,prod_ind,:)),policy.postSuccessProb_f(curr_trys,succ),policy.pi_f(prod_ind,:)',succ,squeeze(V(succ,curr_trys+1,1,succ,prod_ind,:)),squeeze(V(succ+1,curr_trys+1,1,succ+1,prod_ind,:)),mm);
 
         end
     end

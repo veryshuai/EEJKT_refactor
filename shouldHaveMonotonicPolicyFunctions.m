@@ -64,6 +64,7 @@ for prod_ind = 1:2*mm.phi_size + 1
                         disp(strcat('trials:' ,num2str(trial_ind)));
                         disp(strcat('mac shock:' ,num2str(mac_shk_ind)));
                         disp(strcat('prod_ind:' ,num2str(prod_ind)));
+                        disp(strcat('pct increase' , num2str(pol_diff/policy.lambda_f(succ_ind,trial_ind-1,1,succ_ind,prod_ind,mac_shk_ind))));
                     end
                 end              
             end

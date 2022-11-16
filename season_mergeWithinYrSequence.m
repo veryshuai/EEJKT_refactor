@@ -14,10 +14,6 @@ function [mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence
   all_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); % To hold data on matches present at end of year
   som_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); % To hold data on matches that die before end of year
  
-% if iterX_in.year >= 40
-%     'pause in season_mergeWithinYrSequence'
-%  end
-
   % iterX_in.seas_tran: [t, season, year, mat_tran, #shipments, exporter age(in periods)]; where
   % mat_tran:  [initial state, exporter id, ending state, match revenue]
 
@@ -25,8 +21,12 @@ function [mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence
   %  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
   %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
 
+try
   Zcut_eoy_lag = iterX_in.Zcut_eoy_lag;
-
+catch
+ fprintf('\rIn SimulateHomeMatchesInnerSimUpdZHotel, t =%4.0f, pt_ndx = %4.0f\n', [ iterX_in.t,  iterX_in.pt_ndx] )
+end
+    
   nrt       = size(smat_tran,1);
   Zcut      = iterX_in.seas_Zcut(1);
   ff_keep   = find(max((smat_tran(:,4)>Zcut_eoy_lag),(smat_tran(:,4)==0))); % matches that didn't die last period
@@ -184,7 +184,7 @@ for ss=2:mm.pd_per_yr
      end
     catch
       fprintf('\r\n period = %.2f, firm type = %.2f, market =%.2f\n',[iterX_in.t iterX_in.pt_ndx iterX_in.mkt]) 
-      fprintf('\r\n problem with splicing in seasonMergeWithinYrSequence: lines 121-145\n')
+      fprintf('\r\n problem with splicing in seasonMergeWithinYrSequence: lines 151-183\n')
       if size(temp1,1) >20
       fileID3 = fopen('results/EEJKT_error_log.txt','a');
       fprintf(fileID3,'\r\n  ');

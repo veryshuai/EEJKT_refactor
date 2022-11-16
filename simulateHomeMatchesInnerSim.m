@@ -16,20 +16,13 @@ for t = 2:1:mm.periods
     else
     iterH_in.season = mod(t,mm.pd_per_yr);
     end       
-%     if mod(iterH_in.t-1,mm.pd_per_yr) == 0
-%         iterH_in.season = 1; % reset season when previous period completes a year
-%     end
 
 % The following block labels trans_count output, which are written to
 % diagnostics.txt for debugging in simulateMatchesInnerSimMatchTrans
-fileID3 = fopen('results/diagnostics.txt','a');
-   fprintf(fileID3,'\r\n t =%4.0f',t);
-   fprintf(fileID3, '\r\n  ');
-fclose(fileID3);
-
-% if t>=371
-%     'pause in SimulateHomeMatchesInnerSim, line 31'
-% end
+% fileID3 = fopen('results/diagnostics.txt','a');
+%    fprintf(fileID3,'\r\n t =%4.0f',t);
+%    fprintf(fileID3, '\r\n  ');
+% fclose(fileID3);
 
 iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
 
@@ -77,10 +70,13 @@ iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
         if iterH_in.year > mm.burn  % cosntruct moments for firm domestic sales regressions
             % autoregressions and degree distribution
             
-        [iterH_in.mat_h_cont_2yr,iterH_in.mat_h_yr_sales,iterH_in.mat_h_yr_sales_lag,~] = ...
-            mat_yr_splice_v2(iterH_in.mat_h_yr_sales,iterH_in.mat_h_yr_sales_lag,mm,iterH_in.year);
+         % slopply patch: need to clean this up   
+         iterH_in.mat_yr_sales = iterH_in.mat_h_yr_sales;
+         iterH_in.mat_yr_sales_lag = iterH_in.mat_h_yr_sales_lag;
 
-
+         [iterH_in.mat_h_cont_2yr,iterH_in.mat_h_yr_sales,iterH_in.mat_h_yr_sales_lag,~] =...
+            mat_yr_splice_v2(iterH_in,mm,iterH_in.year);  
+   
             [x,y,fmoms_xx,fmoms_xy,fysum,fn_obs] = firm_reg_h_moms(iterH_in,mm);
 
             iter_out.x_fsales_h   = [iter_out.x_fsales_h;x];
@@ -92,11 +88,13 @@ iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
 
         end   % year > mm.burn if statement
         iterH_in.firm_h_yr_sales_lag = iterH_in.firm_h_yr_sales; % stack data for firm regression
-        iterH_in.mat_h_yr_sales_lag = iterH_in.mat_h_yr_sales;   
+        iterH_in.mat_h_yr_sales_lag  = iterH_in.mat_h_yr_sales;   
+        iterH_in.Zcut_eoy_lag        = iterH_in.Zcut_eoy;        
+        
     end   % season == mm.pd_per_yr if statement
-
-    % iterH_in.season = iterH_in.season + 1;
-
+    
+    iterH_in.keep_cli_lag        = iterH_in.keep_cli;
+ 
     %% load lagged client state matrix and re-initialize objects
 
     iterH_in.lag_cli_zst  = iterH_in.cur_cli_zst;
@@ -133,6 +131,7 @@ if t == mm.periods
          iter_out.iterH_check = iterH_check;
 
 end
+
 
 end
 

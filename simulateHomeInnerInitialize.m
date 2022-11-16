@@ -44,9 +44,13 @@ iterH_in.firm_h_yr_sales_lag = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),4
 iterH_in.mat_h_yr_sales_lag = double.empty(0,4);
 iterH_in.mat_h_yr_sales = double.empty(0,4);
 
-% initialize keep_cli for first period
-iterH_in.keep_cli = ones(1,size(mm.Z,1)); % applies to clients existing in period 1
+% initialize keep_cli and Zcut_eoy for first period
+iterH_in.keep_cli      = ones(1,size(mm.Z,1)); % applies to clients existing in period 1
+iterH_in.keep_cli_lag  = ones(1,size(mm.Z,1)); 
 iterH_in.keep_cli(1:5) =  zeros(1,5); % implying worst 5 client types from period 1 are dropped
+iterH_in.Zcut_eoy = 0;
+iterH_in.Zcut_eoy_lag = 0;
+
 iterH_in.year = 1;
 iterH_in.N_match = 0;
 iterH_in.season = 1;

@@ -16,19 +16,16 @@
 
 function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
 
-%       if iter_in.year >= 16
-%           'pause in simulateForeignMatchesInnerSimUpdZHotel'
-%       end
-
+% fprintf('\rIn SimulateHomeMatchesInnerSimUpdZHotel, t =%4.0f, pt_ndx = %4.0f\n', [ iter_in.t,  iter_in.pt_ndx] )
 
     for i=1:mm.sim_firm_num_by_prod_succ_type(iter_in.pt_ndx)
-        % break down new clients that occur between t-1 and t into e.o.p. z-types
-               
+        % break down new clients that occur between t-1 and t into e.o.p. z-types    
+        
         if iter_in.add_cli_cnt(i,iter_in.t)> 0
          % distribute gross additions across entry states
            iter_in.new_cli_zst(i,:) = new_vec_C(iter_in.add_cli_cnt(i,iter_in.t),size(mm.Z,1),cumsum(mm.erg_pz)); 
 
-          % detect and redo rare cases where random draws failed (not needed on UNIX systems)
+          % PATCH: detect and redo rare cases where random draws failed (not needed on UNIX systems)
            flag = find(sum(iter_in.new_cli_zst(i,:),2) - iter_in.add_cli_cnt(i,iter_in.t) ~= 0);
              if flag == 1
              iter_in.new_cli_zst(i,:) = new_vec_C(iter_in.add_cli_cnt(i,iter_in.t),size(mm.Z,1),cumsum(mm.erg_pz));
@@ -48,7 +45,7 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
              iter_in.die_cli_zst(i,:) = iter_in.lag_cli_zst(i,:);
         end
                  
-        iter_in.trans_count(2:size(mm.Z,1)+1,1,i) =  max([(iter_in.lag_cli_zst(i,:).*(1- iter_in.keep_cli))',  iter_in.die_cli_zst(i,:)']')';            
+        iter_in.trans_count(2:size(mm.Z,1)+1,1,i) =  max([(iter_in.lag_cli_zst(i,:).*(1- iter_in.keep_cli_lag))',  iter_in.die_cli_zst(i,:)']')';            
         % Update column 1 of trans_count(:,:,i) so that it contains counts of
         % all exiting matches (endog. and exog.), by buyer type (row).
         % NOTE: The Zcut is applied to last period's Z draw

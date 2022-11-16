@@ -22,6 +22,11 @@ function[iterH_in] = simulateHomeMatchesInnerSimUpdZHotel(iterH_in, mm, policy)
 t = iterH_in.t;
 pt_ndx = iterH_in.pt_ndx;
 
+%fprintf('\rIn SimulateHomeMatchesInnerSimUpdZHotel, t =%4.0f, pt_ndx = %4.0f\n', [t, pt_ndx] )
+% if t >= 469
+%     'pause in simulateHomeMatchesInnerSimUpdZHotel'
+% end
+
 % break down by buyer types (z)
 
     for i=1:mm.sim_firm_num_by_prod_succ_type(pt_ndx)
@@ -30,7 +35,7 @@ pt_ndx = iterH_in.pt_ndx;
         if iterH_in.add_cli_cnt(i,t) > 0
            iterH_in.new_cli_zst(i,:) = new_vec_C(iterH_in.add_cli_cnt(i,t),size(mm.Z,1),cumsum(mm.erg_pz)); 
            
-        % detect and redo rare cases where random draws failed (not needed on UNIX systems)
+        % PATCH: detect and redo rare cases where random draws failed (not needed on UNIX systems)
              flag = find(sum(iterH_in.new_cli_zst(i,:),2) - iterH_in.add_cli_cnt(i,t) ~= 0);
              if flag == 1
              iterH_in.new_cli_zst(i,:) = new_vec_C(iterH_in.add_cli_cnt(i,t),size(mm.Z,1),cumsum(mm.erg_pz));
@@ -43,7 +48,7 @@ pt_ndx = iterH_in.pt_ndx;
         % Among matches that die endogenously, break down exogenous match 
         % deaths that occur between t-1 and t down by z state:
         if iterH_in.exog_deaths(i,t-1) > 0
-            iterH_in.die_cli_zst(i,:) = createDieVec(iterH_in.lag_cli_zst(i,:).*iterH_in.keep.cli,iterH_in.exog_deaths(i,t-1),size(mm.Z,1));
+            iterH_in.die_cli_zst(i,:) = createDieVec(iterH_in.lag_cli_zst(i,:).*iterH_in.keep_cli_lag,iterH_in.exog_deaths(i,t-1),size(mm.Z,1));
         end
         
          % Get rid of all clients when the firm slot turns over
@@ -51,9 +56,12 @@ pt_ndx = iterH_in.pt_ndx;
              iterH_in.die_cli_zst(i,:) = iterH_in.lag_cli_zst(i,:);   
          end
  
+%          if t>= 252 
+%              'pause in SimulateHomeMatchesInnerSimUpdZHotel '
+%          end         
 
         iterH_in.trans_count(2:size(mm.Z,1)+1,1,i)...
-        = max([(iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep.cli))', iterH_in.die_cli_zst(i,:)']')';
+        = max([(iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep_cli_lag))', iterH_in.die_cli_zst(i,:)']')';
         % Update column 1 of trans_count(:,:,i) so that it contains counts of
         % all exiting matches (endog. and exog.), by buyer type (row).
 

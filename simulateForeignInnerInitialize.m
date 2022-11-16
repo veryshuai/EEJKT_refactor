@@ -35,6 +35,7 @@ iter_in.trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_
 % Dimensions: (1) initial z-state (2) new z-state (3) firm index, given type
 
 iter_in.keep_cli      = ones(1,size(mm.Z,1)); % applies to clients existing in period 1
+iter_in.keep_cli_lag  = ones(1,size(mm.Z,1)); 
 iter_in.keep_cli(1:5) =  zeros(1,5); % implying worst 5 client types from period 1 are dropped.
 iter_in.year = 1;
 iter_in.N_match = 0;

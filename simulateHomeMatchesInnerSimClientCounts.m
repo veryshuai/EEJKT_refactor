@@ -54,11 +54,11 @@ pt_ndx = iterH_in.pt_ndx;
     %% Deal with endogenous and exogenous drops (not in policy.pmat_cum_h)
 
     % identify z values at which exporters keep current matches from t-1 to t
-    iterH_in.keep.cli = policy.c_val_h(:,mm.pt_type(pt_ndx,1),iterH_in.macro_state_h(t-1))' > 0; % = 1 if want to keep type for t
+    iterH_in.keep_cli = policy.c_val_h(:,mm.pt_type(pt_ndx,1),iterH_in.macro_state_h(t-1))' > 0; % = 1 if want to keep type for t
     % matches dropped at z value <= drop_Zcut:
-    iterH_in.drop_Zcut = size(mm.Z,1) - sum(iterH_in.keep.cli); 
+    iterH_in.drop_Zcut = size(mm.Z,1) - sum(iterH_in.keep_cli); 
     % count endogenous drops (z too low to continue)
-    iterH_in.drop_cnt = sum(iterH_in.lag_cli_zst.*(1-iterH_in.keep.cli),2);
+    iterH_in.drop_cnt = sum(iterH_in.lag_cli_zst.*(1-iterH_in.keep_cli_lag),2);
 
     % draw the number of exogenous deaths of remaining matches between t-1 and t
     ddum = find(iterH_in.cur_cli_cnt(:,t-1)-iterH_in.drop_cnt > 0);

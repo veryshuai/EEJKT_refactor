@@ -127,11 +127,6 @@ end
 
 % fprintf('\ryear and pt_ndx =%4.0f %4.0f\n', [iterX_in.year, iterX_in.pt_ndx] )
 
-% if t==540
-%      debug_scraps
-%     'pause at end of season_mergeAnnualizeDat'  
-% end
-
  end
  
  

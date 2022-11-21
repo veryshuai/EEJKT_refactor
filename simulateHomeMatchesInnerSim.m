@@ -6,7 +6,7 @@ iterH_in.season = 1;
 
 iterH_check.seas_tran       = cell(mm.tot_yrs,1); 
 iterH_check.match_mat       = cell(mm.tot_yrs,1);
-iterH_check.Zcut_H          = cell(mm.tot_yrs,1);
+iterH_check.Zcut_eoyH       = cell(mm.tot_yrs,1);
 iterH_check.mat_h_yr_sales  = cell(mm.tot_yrs,1);
 iterH_check.firm_h_yr_sales = cell(mm.tot_yrs,1);
 
@@ -58,7 +58,7 @@ iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
         yr_ndx = iterH_in.year+1;
         iterH_check.seas_tran{yr_ndx}       = iterH_in.seas_tran;
         iterH_check.match_mat{yr_ndx}       = iterH_in.mat_tran;
-        iterH_check.Zcut_H{yr_ndx}          = iterH_in.drop_Zcut;
+        iterH_check.Zcut_eoyH{yr_ndx}       = iterH_in.Zcut_eoy; 
         iterH_check.mat_h_yr_sales{yr_ndx}  = iterH_in.mat_h_yr_sales;
         iterH_check.firm_h_yr_sales{yr_ndx} = iterH_in.firm_h_yr_sales;
         end
@@ -90,6 +90,7 @@ iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
         iterH_in.firm_h_yr_sales_lag = iterH_in.firm_h_yr_sales; % stack data for firm regression
         iterH_in.mat_h_yr_sales_lag  = iterH_in.mat_h_yr_sales;   
         iterH_in.Zcut_eoy_lag        = iterH_in.Zcut_eoy;        
+        
         
     end   % season == mm.pd_per_yr if statement
     
@@ -128,6 +129,7 @@ if t == mm.periods
        
   % end checking block    
     end
+         iter_out.domfirm_count = length(rooms);
          iter_out.iterH_check = iterH_check;
 
 end

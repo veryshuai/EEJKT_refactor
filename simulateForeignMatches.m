@@ -4,7 +4,7 @@ function [iter_out] = simulateForeignMatches(pt_ndx,macro_state_f,mm,policy)
 
 iterF_check.seas_tran     = cell(mm.tot_yrs,1); 
 iterF_check.match_mat     = cell(mm.tot_yrs,1);
-iterF_check.Zcut_H        = cell(mm.tot_yrs,1);
+iterF_check.Zcut_eoyF     = cell(mm.tot_yrs,1);
 iterF_check.mat_yr_sales  = cell(mm.tot_yrs,1);
 iterF_check.firm_yr_sales = cell(mm.tot_yrs,1);
 
@@ -48,7 +48,7 @@ for t = 2:1:mm.periods
     yr_ndx = iter_in.year;
     iterF_check.seas_tran{yr_ndx}     = iter_in.seas_tran;
     iterF_check.trans_count{yr_ndx}   = iter_in.trans_count;
-    iterF_check.Zcut_H{yr_ndx}        = iter_in.seas_Zcut;
+    iterF_check.Zcut_eoyF{yr_ndx}     = iter_in.Zcut_eoy;
     iterF_check.mat_yr_sales{yr_ndx}  = iter_in.mat_yr_sales;
     iterF_check.firm_yr_sales{yr_ndx} = iter_in.firm_yr_sales;
     end
@@ -88,6 +88,8 @@ if iter_in.t == mm.periods
     end
 
     iter_out.iterF_check = iterF_check;   
+    iter_out.exptr_count = size(find_xcli,1);
+
 end
 
 

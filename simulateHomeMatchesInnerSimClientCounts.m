@@ -56,10 +56,20 @@ pt_ndx = iterH_in.pt_ndx;
     % identify z values at which exporters keep current matches from t-1 to t
     iterH_in.keep_cli = policy.c_val_h(:,mm.pt_type(pt_ndx,1),iterH_in.macro_state_h(t-1))' > 0; % = 1 if want to keep type for t
     % matches dropped at z value <= drop_Zcut:
-    iterH_in.drop_Zcut = size(mm.Z,1) - sum(iterH_in.keep_cli); 
+    iterH_in.drop_Zcut = size(mm.Z,1) - sum(iterH_in.keep_cli);
+    
+%     fprintf('\r\n t=%4.0f, drop_Zcut =%2.0f\r',[t,iterH_in.drop_Zcut]);
+    
     % count endogenous drops (z too low to continue)
     iterH_in.drop_cnt = sum(iterH_in.lag_cli_zst.*(1-iterH_in.keep_cli_lag),2);
-
+   
+   %% DIAGNOSTIC PRINT: Display Zcuts for firms types with interior values
+%      Zcut_lag_temp = size(mm.Z,1) - sum(iterH_in.keep_cli_lag);
+%      if Zcut_lag_temp > 0 && Zcut_lag_temp < 15
+%        fprintf('\r\n pt_ndx=%4.0f, t=%4.0f, Zcut_lagH =%2.0f',[iterH_in.pt_ndx,t,Zcut_lag_temp]);
+%      end
+    %% 
+     
     % draw the number of exogenous deaths of remaining matches between t-1 and t
     ddum = find(iterH_in.cur_cli_cnt(:,t-1)-iterH_in.drop_cnt > 0);
     if sum(ddum)>0

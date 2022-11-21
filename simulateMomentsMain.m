@@ -12,8 +12,8 @@ seeds = randi(1e6,size(mm.Phi,1),2);
 
 parfor pt_ndx = 1:mm.N_pt
 % for pt_ndx = 1:1:mm.N_pt 
+%for pt_ndx = 88
 %for pt_ndx = 57
-%for pt_ndx = 105
 % parfor pt_ndx = 69
 
     rng(seeds(mm.pt_type(pt_ndx,1),1),'twister');
@@ -32,13 +32,17 @@ parfor pt_ndx = 1:mm.N_pt
 end
 
 %% Uncomment commands below to generate data for spot checks
-
-% check_cell_H = sim_out{mm.check_type}.iterH_check;
-% check_cell_F = sim_out{mm.check_type}.iterF_check;
-% check_count_H = sim_out{mm.check_type}.stackH;
-% check_count_F = sim_out{mm.check_type}.stackF;
-% save 'iter_out_checks.mat' 'check_type' 'check_cell_H' 'check_cell_F' 'check_count_H' 'check_count_F';  
+check_type = mm.check_type;
+if sim_out{check_type}.domfirm_count > 0
+  check_cell_H = sim_out{mm.check_type}.iterH_check;
+  check_count_H = sim_out{mm.check_type}.stackH;
+   save 'iter_out_HomeChecks.mat' 'check_type' 'check_cell_H' 'check_count_H';  
+end
+if sim_out{check_type}.exptr_count >0
+   check_cell_F = sim_out{mm.check_type}.iterF_check;
+   check_count_F = sim_out{mm.check_type}.stackF;
+ save 'iter_out_XptrChecks.mat' 'check_type' 'check_cell_F' 'check_count_F';  
+end
 
 sim_cum = aggregateSimulatedData(sim_out,mm);
-
 simMoms = calculateSimulatedMoments(sim_cum,mm);

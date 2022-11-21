@@ -56,10 +56,6 @@ pt_ndx = iterH_in.pt_ndx;
              iterH_in.die_cli_zst(i,:) = iterH_in.lag_cli_zst(i,:);   
          end
  
-%          if t>= 252 
-%              'pause in SimulateHomeMatchesInnerSimUpdZHotel '
-%          end         
-
         iterH_in.trans_count(2:size(mm.Z,1)+1,1,i)...
         = max([(iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep_cli_lag))', iterH_in.die_cli_zst(i,:)']')';
         % Update column 1 of trans_count(:,:,i) so that it contains counts of

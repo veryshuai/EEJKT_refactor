@@ -49,7 +49,13 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
         % Update column 1 of trans_count(:,:,i) so that it contains counts of
         % all exiting matches (endog. and exog.), by buyer type (row).
         % NOTE: The Zcut is applied to last period's Z draw
-
+        
+      %% DIAGNOSTIC PRINT: Display Zcuts for firms types with interior values
+%         Zcut_lagF = size(mm.Z,1) - sum(iter_in.keep_cli_lag);
+%         if Zcut_lagF >0 && Zcut_lagF<15
+%           fprintf('\r\n pt_ndx=%4.0f, t=%4.0f, Zcut_lagF =%2.0f',[iter_in.pt_ndx,iter_in.t,Zcut_lagF]);
+%         end
+ %%  
         iter_in.surviv_zst(i,:) =  iter_in.lag_cli_zst(i,:) -  iter_in.trans_count(2:size(mm.Z,1)+1,1,i)';       
         % Update surviving client counts by z type using transition matrix for z.
         % Do this for those that don't die for endogenous or exogenous reasons.

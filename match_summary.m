@@ -21,7 +21,7 @@ function [exit_by_age,brooks] =  match_summary(match_recs,mm)
 
 %%  Preliminary data preparation
 
-N_theta2 = size(mm.theta2',1);    % number of success rates (thetas)
+N_theta2 = size(mm.theta2',1);    % number of possible success rates (thetas)
 N_Phi    = size(mm.Phi,1);        % number of exporter productivities
 pt_type  = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')];
 % prod_ndx  = pt_type(pt_ndx,1);

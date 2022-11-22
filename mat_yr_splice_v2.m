@@ -3,12 +3,6 @@
 function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_lag,year_lag] =...
     mat_yr_splice_v2(iterX_in,mm,year)
 
-
-mat_yr_sales = iterX_in.mat_yr_sales;
-mat_yr_sales_lag = iterX_in.mat_yr_sales_lag;
-% Zcut_boy = iterX_in.seas_Zcut(1);
-Zcut_eoy_lag = iterX_in.Zcut_eoy_lag;
-
 % This function splices the current year's records on matches for a given
 % firm type with last year's records for the same firm type. Splicing is
 % done by firm ID and by matching last year's eoy Z with this year's boy Z.
@@ -18,8 +12,12 @@ Zcut_eoy_lag = iterX_in.Zcut_eoy_lag;
 
 %  mat_yr_sales: [(1) firm ID, (2) match-specific sales, (3) shipments,   
 %      (4) boy Z, (5) eoy Z, (6) match age in periods, (7) firm age in periods]
-   
-    mat_yr_sales = sortrows(mat_yr_sales,[1,4,6]);
+
+    mat_yr_sales     = iterX_in.mat_yr_sales;
+    mat_yr_sales_lag = iterX_in.mat_yr_sales_lag;
+    Zcut_eoy_lag     = iterX_in.Zcut_eoy_lag;   
+    
+    mat_yr_sales     = sortrows(mat_yr_sales,[1,4,6]);
 
 %% find matches to splice, recognizing firm_ID slots that flip occupants
 
@@ -50,9 +48,9 @@ catch
 end
  %%  
  try
- last_yr_exit = logical(ones(size(mat_yr_sales_lag,1),1)-contin);
- % match was there last year but not this year
- mat_lastyr_lag = mat_yr_sales_lag(last_yr_exit,:);
+    last_yr_exit = logical(ones(size(mat_yr_sales_lag,1),1)-contin);
+    % match was there last year but not this year
+    mat_lastyr_lag = mat_yr_sales_lag(last_yr_exit,:);
 
  if sum(contin,1)>0
 

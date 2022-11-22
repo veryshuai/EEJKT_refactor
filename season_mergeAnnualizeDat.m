@@ -1,5 +1,10 @@
 function [mat_yr_sales,firm_yr_sales,iterX_in] = season_mergeAnnualizeDat(all_seas, som_seas, mm, mat_cols,iterX_in)
  
+% This function is called, firm type by firm type, at the end of each year. 
+% It aggegrates monthly data at the match and firm_ID level up to annual
+% data using all_seas and som_seas. Each block of 10 columns in these
+% matrices corresponds to 1 period (month) and contains the follow variables:
+
  % all_seas and som_seas: 
  %  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
  %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
@@ -11,10 +16,10 @@ function [mat_yr_sales,firm_yr_sales,iterX_in] = season_mergeAnnualizeDat(all_se
  try
  fndx_a = zeros(size(a,1),mm.pd_per_yr);
  fndx_s = zeros(size(s,1),mm.pd_per_yr);  
-  for ss=1:mm.pd_per_yr 
+ for ss=1:mm.pd_per_yr 
    fndx_a(:,ss) = all_seas(a,ss*mat_cols-5); % each season, firm ID is 6th col. from end, if active
    fndx_s(:,ss) = som_seas(s,ss*mat_cols-5);
-  end
+ end
  firm_a = max(fndx_a,[],2); % get firm IDs for each row of all_seas
  firm_s = max(fndx_s,[],2); % get firm IDs for each row of som_seas
  catch
@@ -29,9 +34,9 @@ function [mat_yr_sales,firm_yr_sales,iterX_in] = season_mergeAnnualizeDat(all_se
 %% create indicator for season in which firm flips
   firm_age = iterX_in.cumage(:,t-mm.pd_per_yr+1:t); % age in periods, current year  
  if t > mm.pd_per_yr
-  firm_age_lag = iterX_in.cumage(:,t-mm.pd_per_yr:t-1); % age in periods, last year 
+   firm_age_lag = iterX_in.cumage(:,t-mm.pd_per_yr:t-1); % age in periods, last year 
  else
-  firm_age_lag = zeros(size(firm_age,1),1);
+   firm_age_lag = zeros(size(firm_age,1),1);
  end
  flip_seas = (firm_age-firm_age_lag)<0; % marks season in which firm flips
  flip_firm = sum(flip_seas,2)>0; % equals 1 when age drops during year
@@ -41,7 +46,7 @@ function [mat_yr_sales,firm_yr_sales,iterX_in] = season_mergeAnnualizeDat(all_se
  iterX_in.flip_ndx = zeros(length(flip_seas),1);
  [rr,cc] = find(flip_seas);
  for jj=1:length(rr)
- iterX_in.flip_ndx(rr(jj)) = cc(jj);
+   iterX_in.flip_ndx(rr(jj)) = cc(jj);
  end
 
  %% Find firm IDs, match age, and firm age for populated rows, by season

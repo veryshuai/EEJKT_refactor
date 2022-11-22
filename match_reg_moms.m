@@ -17,9 +17,6 @@ function  [x,y,moms_xx,moms_xy,ysum,n_obs] = match_reg_moms(mat_cont,ncols)
 %     nship_obs = size(ff2_obs,1);
 %     ln_ships = sum(log(matches(ff2_obs,3)));
 %     
-% %     if nship_obs > 40
-% %         'pause here'
-% %     end
 %     
 % %% construct match count vector
 %     
@@ -36,9 +33,6 @@ function  [x,y,moms_xx,moms_xy,ysum,n_obs] = match_reg_moms(mat_cont,ncols)
 %         match_count = zeros(max_match,1);
 %     end
    
-%     if size(x,1) > 40
-%      'pause here'
-%     end
 end
 
 

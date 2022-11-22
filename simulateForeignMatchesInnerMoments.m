@@ -10,7 +10,8 @@ if iter_in.year > mm.burn  % don't start building simulated data set until burn-
          iter_out.firm_f_yr_sales = [iter_out.firm_f_yr_sales;[ttt,iter_in.firm_yr_sales]]; % add cols 1 and 2: t, firm type
        % agg_firm_yr_sales: [t,type,firm ID, total exports,total shipments,firm age]
 
-        iter_out.mat_matur =  [iter_out.mat_matur; iter_in.mat_matur_dat];
+%        iter_out.mat_matur =  [iter_out.mat_matur; iter_in.mat_matur_dat];
+        
 %       iter_in.mat_matur_dat: [sales, boy Z, eoy Z, match age, firm age, firm_ID, yr]
 %       iter_in.mat_cont_2yr:  [firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age] x 2 (lagged, then current) 
 
@@ -92,6 +93,11 @@ if iter_in.year >= mm.burn
    if size(match_count,1)>0
      match_histogram = sum(match_count*ones(1,mm.max_match) - ones(size(match_count,1),1)*(1:mm.max_match)==0);
      iter_out.match_count = iter_out.match_count + match_histogram ;
+     
+%    if iter_in.pt_ndx == 90
+%        'Pause in simulateForeignMatchesInnerMoments'
+%    end
+     
    end
    catch 
         'pause in simulateForeignMatchesInnerSim line 96'

@@ -2,21 +2,15 @@ function [iter_out] = simulateForeignMatches(pt_ndx,macro_state_f,mm,policy)
 
 [iter_in, iter_out] = simulateForeignInnerInitialize(mm, pt_ndx, macro_state_f);
 
+%% ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+% DIAGNOSTIC VARIABLES--not used for estimation
 iterF_check.seas_tran     = cell(mm.tot_yrs,1); 
 iterF_check.match_mat     = cell(mm.tot_yrs,1);
 iterF_check.Zcut_eoyF     = cell(mm.tot_yrs,1);
 iterF_check.mat_yr_sales  = cell(mm.tot_yrs,1);
 iterF_check.firm_yr_sales = cell(mm.tot_yrs,1);
-
+%% ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 for t = 2:1:mm.periods
-
-% try
-%     assert(sum(abs(iter_in.cur_cli_cnt(:,t-1)-sum(iter_in.lag_cli_zst,2)))==0)
-% catch
-%     'cur_cli_cnt and lag_cli_zst inconsistent'
-%         [pt_ndx,t]
-%         [iter_in.cur_cli_cnt(:,t-1),sum(iter_in.lag_cli_zst,2)]
-% end   
    
     iter_in.t = t;
     if mod(iter_in.t-1,mm.pd_per_yr) == 0
@@ -43,7 +37,8 @@ for t = 2:1:mm.periods
         
         [iter_in,iter_out] = simulateForeignMatchesInnerMoments(iter_in,iter_out,mm);
         
-
+%% ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^%
+% DIAGNOSTIC VARIABLES--not used for estimation
     if pt_ndx == mm.check_type    
     yr_ndx = iter_in.year;
     iterF_check.seas_tran{yr_ndx}     = iter_in.seas_tran;
@@ -52,7 +47,7 @@ for t = 2:1:mm.periods
     iterF_check.mat_yr_sales{yr_ndx}  = iter_in.mat_yr_sales;
     iterF_check.firm_yr_sales{yr_ndx} = iter_in.firm_yr_sales;
     end
-    
+%% ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    
     end
 
     iter_in.season = iter_in.season + 1;
@@ -62,6 +57,8 @@ for t = 2:1:mm.periods
     iter_in.die_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));
     iter_in.trans_zst    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));
     iter_in.trans_count  = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx));
+%% ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+% DIAGNOSTIC VARIABLES--not used for estimation
 
 if iter_in.t == mm.periods
 %   for checking only: collect the count matrices in transF, by firm type
@@ -91,7 +88,7 @@ if iter_in.t == mm.periods
     iter_out.exptr_count = size(find_xcli,1);
 
 end
-
+%% ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 end     

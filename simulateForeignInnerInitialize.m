@@ -9,6 +9,7 @@ iter_in.macro_state_f = macro_state_f;
 iter_in.seas_tran = cell(1,mm.pd_per_yr);  % cells will hold one year's worth of season- and match-specific outcomes for all firms w/in type
 iter_in.seas_Zcut = zeros(1,mm.pd_per_yr); % elements will hold season-specifics Z cut-offs for endog. drops
 iter_in.cur_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % clients active in the current period
+iter_in.cur_duds     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % dud meetings in the current period
 iter_in.add_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % gross additions to client count
 iter_in.actv_cli_cnt = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % active clients
 iter_in.cum_meets    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % cumulative number of meetings

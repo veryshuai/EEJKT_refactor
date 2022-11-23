@@ -84,7 +84,7 @@ if iter_in.year >= mm.burn
     end
     % shipment and match counter
     
-    [nship_obs,ln_ships,match_count] = match_shpt_cntr(iter_in.mat_yr_sales,mm.max_match);
+    [nship_obs,ln_ships,match_count,match_countD] = match_shpt_cntr(iter_in,mm);
 
     iter_out.ship_obs    = iter_out.ship_obs + nship_obs ;
     iter_out.ln_ships    = iter_out.ln_ships + ln_ships ;

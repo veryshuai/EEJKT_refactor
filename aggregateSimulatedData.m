@@ -43,6 +43,7 @@ sim_cum.agg_mat_exit_moms_xy  = zeros(5,1);
 sim_cum.agg_mat_obs       = 0;
 sim_cum.agg_nmat_exit     = 0;
 sim_cum.agg_match_count  = zeros(1,mm.max_match);
+sim_cum.agg_match_countD = zeros(1,mm.max_match);
 sim_cum.singletons = 0;
 sim_cum.agg_ln_ships = 0;
 
@@ -88,14 +89,15 @@ for pt_ndx = 1:1:mm.N_pt
         sim_cum.agg_mat_exit_moms_xx = sim_cum.agg_mat_exit_moms_xx + squeeze(sim_out{pt_ndx}.mat_exit_moms_xx);
         sim_cum.agg_mat_exit_moms_xy = sim_cum.agg_mat_exit_moms_xy + squeeze(sim_out{pt_ndx}.mat_exit_moms_xy);
         
-        sim_cum.agg_mat_obs     = sim_cum.agg_mat_obs + sim_out{pt_ndx}.mat_obs;
-        sim_cum.agg_nmat_exit   = sim_cum.agg_nmat_exit + sim_out{pt_ndx}.nmat_exit;
-        sim_cum.agg_mat_exit_x  = [sim_cum.agg_mat_exit_x;sim_out{pt_ndx}.mat_exit_x];
-        sim_cum.agg_mat_exit_y  = [sim_cum.agg_mat_exit_y;sim_out{pt_ndx}.mat_exit_y];
-        sim_cum.agg_ship_obs    = sim_cum.agg_ship_obs    + sim_out{pt_ndx}.ship_obs;
-        sim_cum.agg_ln_ships    = sim_cum.agg_ln_ships    + sim_out{pt_ndx}.ln_ships;
-        sim_cum.agg_match_count = sim_cum.agg_match_count + sim_out{pt_ndx}.match_count; 
-        sim_cum.singletons      = sim_cum.singletons + sim_out{pt_ndx}.singletons;
+        sim_cum.agg_mat_obs      = sim_cum.agg_mat_obs + sim_out{pt_ndx}.mat_obs;
+        sim_cum.agg_nmat_exit    = sim_cum.agg_nmat_exit + sim_out{pt_ndx}.nmat_exit;
+        sim_cum.agg_mat_exit_x   = [sim_cum.agg_mat_exit_x;sim_out{pt_ndx}.mat_exit_x];
+        sim_cum.agg_mat_exit_y   = [sim_cum.agg_mat_exit_y;sim_out{pt_ndx}.mat_exit_y];
+        sim_cum.agg_ship_obs     = sim_cum.agg_ship_obs    + sim_out{pt_ndx}.ship_obs;
+        sim_cum.agg_ln_ships     = sim_cum.agg_ln_ships    + sim_out{pt_ndx}.ln_ships;
+        sim_cum.agg_match_count  = sim_cum.agg_match_count + sim_out{pt_ndx}.match_count; 
+        sim_cum.agg_match_countD = sim_cum.agg_match_countD + sim_out{pt_ndx}.match_countD; 
+        sim_cum.singletons       = sim_cum.singletons + sim_out{pt_ndx}.singletons;
     end
 
 end       

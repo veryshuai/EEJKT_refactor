@@ -16,7 +16,7 @@ if iter_in.year > mm.burn  % don't start building simulated data set until burn-
 %       iter_in.mat_cont_2yr:  [firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age] x 2 (lagged, then current) 
 
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %  match regression moments
+        %%  match regression moments
 
         [mat_ar1_x,mat_ar1_y,moms_xx,moms_xy,ysum,n_obs] = match_reg_moms(iter_in.mat_cont_2yr,iter_in.ncols);
 
@@ -33,7 +33,7 @@ end
 
 if iter_in.year >= mm.burn  
     
-    % autoregressions and degree distribution
+    %% autoregressions and degree distribution
 
     [fmoms_xx,fmoms_xy,fysum,fn_obs] = firm_reg_moms(iter_in,mm);
 % JT: I don't think we're using this regression and in any case it is 
@@ -44,7 +44,7 @@ if iter_in.year >= mm.burn
     iter_out.fysum    = iter_out.fysum + fysum;
     iter_out.fnobs    = iter_out.fnobs + fn_obs ;
 
-    % foreign market exit regression moments
+    %% foreign market exit regression moments
 
     ff_exit = iter_in.mkt_exit(:,2)>0;  % column 2 of mkt_exit is number of meetings
     if sum(ff_exit,1)>0
@@ -56,7 +56,7 @@ if iter_in.year >= mm.burn
         iter_out.exit_obs = iter_out.exit_obs + exit_obs;
         iter_out.sum_exits = iter_out.sum_exits + sum_exits;
     end
-    % match exit regression moments
+    %% match exit regression moments
     if iter_in.year_lag == iter_in.year
         ff_mexit = iter_in.mat_yr_sales(:,2)>0; % positive lagged exports
         if sum(ff_mexit,1)>0 
@@ -82,30 +82,37 @@ if iter_in.year >= mm.burn
             iter_out.mat_exit_y   = [iter_out.mat_exit_y;mat_exit_y];
         end
     end
-    % shipment and match counter
+    %% shipment and match counter
     
     [nship_obs,ln_ships,match_count,match_countD] = match_shpt_cntr(iter_in,mm);
 
     iter_out.ship_obs    = iter_out.ship_obs + nship_obs ;
     iter_out.ln_ships    = iter_out.ln_ships + ln_ships ;
     
+    % topcode match counts for each firm_ID 
+    match_count  = min(mm.max_match, match_count);
+    match_countD = min(mm.max_match, match_countD);
+    
+    % convert to frequency counts (# firms with each possible match count)
    try
-   if size(match_count,1)>0
+   if size(match_count,1)>0 % counts excluding duds
      match_histogram = sum(match_count*ones(1,mm.max_match) - ones(size(match_count,1),1)*(1:mm.max_match)==0);
      iter_out.match_count = iter_out.match_count + match_histogram ;
-     
-%    if iter_in.pt_ndx == 90
-%        'Pause in simulateForeignMatchesInnerMoments'
-%    end
-     
    end
+   
+   if size(match_countD,1)>0 % counts including duds (alternative meaasure)
+     match_histogramD = sum(match_countD*ones(1,mm.max_match) - ones(size(match_countD,1),1)*(1:mm.max_match)==0);
+     iter_out.match_countD = iter_out.match_countD + match_histogramD ;
+   end  
+   
    catch 
-        'pause in simulateForeignMatchesInnerSim line 96'
+        'problem in simulateForeignMatchesInnerMoments lines 93-101'
    end
 
 end  
+%% update lags
 
-iter_in.mat_yr_sales_lag  = iter_in.mat_yr_sales;   % update lags
+iter_in.mat_yr_sales_lag  = iter_in.mat_yr_sales;    
 iter_in.firm_yr_sales_lag = iter_in.firm_yr_sales;
 iter_in.Zcut_eoy_lag      = iter_in.Zcut_eoy;
 

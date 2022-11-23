@@ -2,7 +2,10 @@ function plots(simMoms,Data,Model)
 
 % nonparametric plot of degree distribution 
         figure(1)
-        scatter(simMoms.log_matches,simMoms.log_compCDF)      
+        scatter(simMoms.log_matches,simMoms.log_compCDF) 
+        
+        figure(2)
+        scatter(simMoms.log_matches,simMoms.log_compCDF_D) 
 
 % plot histogram of frequencies for meeting hazards
         %figure(2)
@@ -13,8 +16,7 @@ function plots(simMoms,Data,Model)
 
         grdsize   = 40;
         b_mkt_exitDAT  = [0.8397,-0.6290,0.1205,0.0211,0.5976,-0.1290]; % from last_matchDAT (and RDC release)
-%       b_hazDAT   = [-0.3258+log(12),-0.8181,0.3117,-1.1323,2.4514,-0.7082]; % from match_lag_coefsDAT (and RDC release)
-        b_hazDAT   = [-0.3258,-0.8181,0.3117,-1.1323,2.4514,-0.7082]; % from match_lag_coefsDAT (and RDC release)
+        b_hazDAT       = [-0.3258,-0.8181,0.3117,-1.1323,2.4514,-0.7082]; % from match_lag_coefsDAT (and RDC release)
         
         succ_grid = (min(simMoms.ln_succ_rate):((max(simMoms.ln_succ_rate)-min(simMoms.ln_succ_rate))/grdsize):max(simMoms.ln_succ_rate))';
         csucc_grid = (min(simMoms.ln_csucc):((max(simMoms.ln_csucc)-min(simMoms.ln_csucc))/grdsize):max(simMoms.ln_csucc))';

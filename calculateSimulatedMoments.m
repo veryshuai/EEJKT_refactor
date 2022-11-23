@@ -54,12 +54,20 @@ simMoms.match_exit_rate = sim_cum.agg_nmat_exit/sim_cum.agg_mat_obs;
 % average log #shipments
 simMoms.avg_ln_ships = sim_cum.agg_ln_ships/sim_cum.agg_ship_obs;
 
-% create variables for analysis of degree distribution
-simMoms.ff_sim_max  = cumsum(sim_cum.agg_match_count(1:mm.max_match)./sum(sim_cum.agg_match_count));
-simMoms.log_compCDF         = log(1 - simMoms.ff_sim_max)';
-simMoms.log_matches         = log(1:1:length(simMoms.ff_sim_max))';
-xmat                = [ones(length(simMoms.log_matches(1:end-1)),1),simMoms.log_matches(1:end-1),simMoms.log_matches(1:end-1).^2];
-simMoms.b_degree    = regress(simMoms.log_compCDF(1:end-1),xmat);
+% create variables for analysis of degree distribution: excluding duds
+% simMoms.ff_sim_max  = cumsum(sim_cum.agg_match_count(1:mm.max_match)./sum(sim_cum.agg_match_count));
+% simMoms.log_compCDF         = log(1 - simMoms.ff_sim_max)';
+% simMoms.log_matches         = log(1:1:length(simMoms.ff_sim_max))';
+% xmat                = [ones(length(simMoms.log_matches(1:end-1)),1),simMoms.log_matches(1:end-1),simMoms.log_matches(1:end-1).^2];
+% simMoms.b_degree    = regress(simMoms.log_compCDF(1:end-1),xmat);
+
+% create variables for analysis of degree distribution: including duds
+simMoms.ff_sim_max    = cumsum(sim_cum.agg_match_countD(1:mm.max_match)./sum(sim_cum.agg_match_countD));
+simMoms.log_compCDF_D = log(1 - simMoms.ff_sim_max)';
+simMoms.log_matches   = log(1:1:length(simMoms.ff_sim_max))';
+xmat                  = [ones(length(simMoms.log_matches(1:end-1)),1),...
+                        simMoms.log_matches(1:end-1),simMoms.log_matches(1:end-1).^2];
+simMoms.b_degree      = regress(simMoms.log_compCDF_D(1:end-1),xmat);
 
 % plot histogram of frequencies for meeting hazards
 sim_cum.agg_time_gaps = sim_cum.agg_time_gaps(2:size(sim_cum.agg_time_gaps,1),:);

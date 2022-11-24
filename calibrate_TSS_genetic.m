@@ -24,24 +24,17 @@
 % scale_f  =  X(12);         % log of foreign profit function scalar 
 
 %%
-% X = [ -3.82908  -2.83652   0.15152   2.08200   1.59488   5.39672...
-%        0.29474   0.58545   1.74938  -1.44383  15.28438  -7.80303]; % bad X for debugging
-%       
-%   theta = [-6.35647  -5.27227   0.21626   1.56615   1.18474  13.08123...
-%             0.25626   3.64325   1.46860  -0.43414   9.10446  -9.30786];  
 
-%  theta  = [-3.60529  -3.87941  0.23156  2.46487  1.88176  15.42634 ...
-%             0.38246  11.72211  1.88618 -1.21819 13.00238  -6.13506];
+  theta =  [-8.53630  -7.02531   0.23560   0.87633   0.40764  12.76228...
+            0.08514   1.51229   1.24776  -0.28887   8.37010  -9.03099]; 
+           % fit = 11.6206; % fit: 12.5248646781
 
-  theta = [ -8.49013  -4.65589   0.12675   1.43893   0.60198  18.56052...
-             0.22690   2.64899   1.10174  -0.28678   6.52369  -7.50426]; % fit: 12.5248646781
-
-  D = length(theta);
+  K = length(theta);
         
 % population size
-PS = 2*D;
+PS = 2*K;
 disp(['Population size ' num2str(PS)])
-H = rand(PS,D);
+H = rand(PS,K);
 
 bounds = [theta - 0.30*abs(theta); theta + 0.30*abs(theta)]';
 
@@ -80,7 +73,7 @@ while t<=R
         'PopInitRange',IR,'FitnessScaling',@fitscalingrank);
     disp('optimization starting')
     tic
-    [x,fval_ga,exitflag,output,population] = ga(@(X) distance(X),D,[],[],[],[],...
+    [x,fval_ga,exitflag,output,population] = ga(@(X) distance(X),K,[],[],[],[],...
         [],[],[],options);
     FileName = ['Output/' 'Optimization','_',datestr(now,'yyyy_mmdd_HHMM'),...
         '_Run',num2str(t),'of',num2str(R)];
@@ -96,7 +89,7 @@ while t<=R
    IRt = IR';
    pop_range0 = round(100*mean(abs(pop_range_t(:,2)-pop_range_t(:,1))./abs(IRt(:,2)-IRt(:,1))));
    disp(['Average (max minus min) population range as percentage of initial range: ' num2str(pop_range0)])
-   pop_range1 = round(100*(sum(pop_range_t(:,1)<IRt(:,1)) + sum(pop_range_t(:,2)>IRt(:,2)))/(2*D));
+   pop_range1 = round(100*(sum(pop_range_t(:,1)<IRt(:,1)) + sum(pop_range_t(:,2)>IRt(:,2)))/(2*K));
    disp(['Percentage of initial bounds that are violated by at least one parameter vector in the current population: ' ...
        num2str(pop_range1)])
    

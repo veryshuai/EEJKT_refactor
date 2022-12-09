@@ -10,8 +10,8 @@ ff = find(matches(:,2)>0);
 y  = matches(ff,5)==0;                % match dead by end of year
 x1 = matches(ff,4)==0;                % first year dummy
 x2 = log(matches(ff,2));              % sales during year
-x3 = log(1+matches(ff,6)./pd_per_yr); % age of match
-x4 = log(1+matches(ff,7));            % age of exporter
+x3 = log(1+matches(ff,6)./pd_per_yr); % log age of match, in periods
+x4 = log(1+matches(ff,7)./pd_per_yr); % log age of exporter, in periods
 x0 = ones(size(ff,1),1);
 x  = [x0,x1,x2,x3,x4];
 nobs = size(matches,1);

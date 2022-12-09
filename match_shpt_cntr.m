@@ -53,17 +53,19 @@ assert(sum(dud_count(:,2)) == size(dud_matches,1))
 matchesD = [matches;dud_matches];
 match_countD = double.empty(0,1);
 
+% incumbent firms with shipments>0
 ff1D_obs = find((floor(matchesD(:,1))-matchesD(:,1)==0).*(matchesD(:,3) >0));
- % new firms with +0.5 IDs & shipments>0
+% new firms with +0.5 IDs & shipments>0
 ff2D_obs = find((floor(matchesD(:,1))-matchesD(:,1)~=0).*(matchesD(:,3) >0));
-% number of matches w/ shipments > 0
 
-      if length(unique(ff1D_obs))>0        
+% number of matches w/ shipments > 0
+      
+      if length(unique(ff1D_obs))>0 % incumbent firms       
          incumb_matchD = sum(dummyvar(matchesD(ff1D_obs,1)))';     
          match_countD = sortrows(incumb_matchD(incumb_match>0));
      end
      
-     if length(unique(ff2D_obs))>0
+     if length(unique(ff2D_obs))>0 % new firms
         newfirm_matchD = sum(dummyvar(matchesD(ff2D_obs,1)))';   
         match_countD = [match_countD; sortrows(newfirm_matchD(newfirm_match>0))];
         match_countD = sortrows(match_countD);

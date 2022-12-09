@@ -1,13 +1,14 @@
 function  [x,y,moms_xx,moms_xy,ysum,n_obs] = match_reg_moms(mat_cont,ncols)
 
-     % matches: [firm ID, match-specific sales, shipments, boy Z, eoy Z, match age, firm age]  
+     % matches: [firm ID, match-specific sales, shipments, boy Z, eoy Z, match age in periods, firm age in periods]  
      % mat_cont: [matches_lagged, matches] spliced, continuing matches only
      
     ff_obs = find(mat_cont(:,2).*mat_cont(:,ncols+2)>0); % obs. with positive current and lagged sales
     dat = mat_cont(ff_obs,:);
     n_obs = size(ff_obs,1);
     y = log(dat(:,ncols+2));         % log year current sales
-    ln_age = log(dat(:,ncols)+1/4);  % log firm age last year
+%   ln_age = log(dat(:,ncols)+1/4);  % log firm age last year (assuming data-based age is in years)
+    ln_age = log(dat(:,ncols)/12 +1/4); % log firm age last year (treating data-based age as # years)
     x = [ones(n_obs,1),log(dat(:,2)),dat(:,4)==0,ln_age];  % 1st yr. match dummy, log(lagged sales), firm age
     moms_xx = x'*x;
     moms_xy = x'*y;

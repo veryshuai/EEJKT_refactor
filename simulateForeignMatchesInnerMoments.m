@@ -16,7 +16,7 @@ if iter_in.year > mm.burn  % don't start building simulated data set until burn-
 %       iter_in.mat_cont_2yr:  [firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age] x 2 (lagged, then current) 
 
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%  match regression moments
+        %%  match AR1 regression moments
 
         [mat_ar1_x,mat_ar1_y,moms_xx,moms_xy,ysum,n_obs] = match_reg_moms(iter_in.mat_cont_2yr,iter_in.ncols);
 
@@ -25,8 +25,10 @@ if iter_in.year > mm.burn  % don't start building simulated data set until burn-
         iter_out.ysum    = iter_out.ysum + ysum;
         iter_out.nobs    = iter_out.nobs + n_obs;
 
-        iter_out.mat_ar1_x = [iter_out.mat_ar1_x;mat_ar1_x];
-        iter_out.mat_ar1_y = [iter_out.mat_ar1_y;mat_ar1_y];
+        iter_out.mat_ar1_x = [iter_out.mat_ar1_x;mat_ar1_x]; % cumulate explanatory variable matrix
+        iter_out.mat_ar1_y = [iter_out.mat_ar1_y;mat_ar1_y]; % cumulate dependent variable
+        
+        % NOTE: we don't really need to cumulate both the moments and the raw data
     end
 
 end
@@ -66,13 +68,13 @@ if iter_in.year >= mm.burn
 
             % Notes on variables:
 
-            %         mat_exit_y  = matches(ff,5)==0;         % match dead by end of year
-            %         mat_exit_x = [x0,x1,x2,x3,x4];
-            %           x0 = ones(size(ff,1),1);              % ff picks off non-missing obs.
-            %           x1 = matches(ff,4)==0;                % first year dummy
-            %           x2 = log(matches(ff,2));              % sales during year
-            %           x3 = log(1+matches(ff,6)./mm.pd_per_yr); % age of match
-            %           x4 = log(1+matches(ff,7));            % age of exporter
+            %  mat_exit_y  = matches(ff,5)==0;         % match dead by end of year
+            %  mat_exit_x = [x0,x1,x2,x3,x4];
+            %    x0 = ones(size(ff,1),1);                 % ff picks off non-missing obs.
+            %    x1 = matches(ff,4)==0;                   % first year dummy
+            %    x2 = log(matches(ff,2));                 % sales during year
+            %    x3 = log(1+matches(ff,6)./mm.pd_per_yr); % age of match
+            %    x4 = log(1+matches(ff,7)./mm.pd_per_yr); % age of exporter
 
             iter_out.mat_exit_moms_xx = iter_out.mat_exit_moms_xx + mat_exit_moms_xx;
             iter_out.mat_exit_moms_xy = iter_out.mat_exit_moms_xy + mat_exit_moms_xy;
@@ -90,6 +92,7 @@ if iter_in.year >= mm.burn
     iter_out.ln_ships    = iter_out.ln_ships + ln_ships ;
     
     % topcode match counts for each firm_ID 
+    duds         = match_countD - match_count;
     match_count  = min(mm.max_match, match_count);
     match_countD = min(mm.max_match, match_countD);
     
@@ -104,6 +107,8 @@ if iter_in.year >= mm.burn
      match_histogramD = sum(match_countD*ones(1,mm.max_match) - ones(size(match_countD,1),1)*(1:mm.max_match)==0);
      iter_out.match_countD = iter_out.match_countD + match_histogramD ;
    end  
+   
+   iter_out.duds = iter_out.duds + sum(duds);
    
    catch 
         'problem in simulateForeignMatchesInnerMoments lines 93-101'

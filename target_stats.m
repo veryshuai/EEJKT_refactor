@@ -64,7 +64,7 @@ match_ar1_coefsCOV = ...
 loglog_coefsCOV = ...
   [0.022689638548   -.015310017854   0.002420753146    ;
    -.015310017854   0.012614810554  -0.002268716169;             
-   0.002420753146  -0.002268716169   0.000443232645]; % we used to weight this block by 0.01          
+   0.002420753146  -0.002268716169   0.000443232645]; % (we used to weight this matrix by 0.01)          
 
     mavshipCOV = 0.00415553^2;  % note that I squared the standard error here
 

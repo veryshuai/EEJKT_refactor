@@ -45,6 +45,7 @@ sim_cum.agg_nmat_exit     = 0;
 sim_cum.agg_match_count  = zeros(1,mm.max_match);
 sim_cum.agg_match_countD = zeros(1,mm.max_match);
 sim_cum.singletons = 0;
+sim_cum.duds       = 0;
 sim_cum.agg_ln_ships = 0;
 
 %% Cumulate over firm types
@@ -98,6 +99,7 @@ for pt_ndx = 1:1:mm.N_pt
         sim_cum.agg_match_count  = sim_cum.agg_match_count + sim_out{pt_ndx}.match_count; 
         sim_cum.agg_match_countD = sim_cum.agg_match_countD + sim_out{pt_ndx}.match_countD; 
         sim_cum.singletons       = sim_cum.singletons + sim_out{pt_ndx}.singletons;
+        sim_cum.duds             = sim_cum.duds + sim_out{pt_ndx}.duds;
     end
 
 end       

@@ -1,11 +1,11 @@
 function plots(simMoms,Data,Model)
 
 % nonparametric plot of degree distribution 
-        figure(1)
-        scatter(simMoms.log_matches,simMoms.log_compCDF) 
-        
-        figure(2)
-        scatter(simMoms.log_matches,simMoms.log_compCDF_D) 
+%         figure(1)
+%         scatter(simMoms.log_matches,simMoms.log_compCDF) 
+
+        figure(1)      
+        scatter(simMoms.log_matches(1:end-1),simMoms.log_compCDF_D(1:end-1)) 
 
 % plot histogram of frequencies for meeting hazards
         %figure(2)

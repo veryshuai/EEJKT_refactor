@@ -67,7 +67,9 @@ simMoms.log_compCDF_D = log(1 - simMoms.ff_sim_max)';
 simMoms.log_matches   = log(1:1:length(simMoms.ff_sim_max))';
 xmat                  = [ones(length(simMoms.log_matches(1:end-1)),1),...
                         simMoms.log_matches(1:end-1),simMoms.log_matches(1:end-1).^2];
+                  
 simMoms.b_degree      = regress(simMoms.log_compCDF_D(1:end-1),xmat);
+simMoms.duds          = sim_cum.duds;
 
 % plot histogram of frequencies for meeting hazards
 sim_cum.agg_time_gaps = sim_cum.agg_time_gaps(2:size(sim_cum.agg_time_gaps,1),:);

@@ -34,14 +34,12 @@ pt_type  = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')]
      match_recs(:,1) = floor(match_recs(:,1)/mm.pd_per_yr);   % restate time in years
      match_recs(:,8) = floor(match_recs(:,8)/mm.pd_per_yr)+1; % restate match age in years
      match_recs(:,9) = floor(match_recs(:,9)/mm.pd_per_yr)+1; % restate firm age in years
-
-       
+   % all_matches: [year,type,firm ID, sales, shipments, boy Z, eoy Z, match age, firm age]   
+    
      all_matches = match_recs(match_recs(:,1)>5,:); % throw out 5-yr burn-in period
    % all_matches = agg_mat_yr_sales(agg_mat_yr_sales(:,4)>0,:); % throw out matches with no sales
-   % all_matches: [year,type,firm ID, sales, shipments, boy Z, eoy Z, match age, firm age]   
-     
-  %  all_matches = all_matches(all_matches(:,9)>0,:);  % exclude the few firms with age 0
-     yr1 = all_matches(:,8)==1; % pick matches in first year 
+    
+     yr1 = all_matches(:,8)<=1; % pick matches in first year 
   
      new_matches = all_matches(yr1,:); % matches in their 1st yr.
    % new_matches: [year, type, firm_ID, sales, shipments, boy Z, eoy Z, match age w/in yr, firm age] 

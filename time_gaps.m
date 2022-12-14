@@ -3,8 +3,7 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
           pd_per_yr = mm.pd_per_yr;
           t         = iter_in.t;
 
-%         exit_firm = iter_in.exit_firm;
-%  Reach back 3 years to find last meeting by current firm
+          %  Reach back 3 years to find last meeting by current firm
           cum_meets   = iter_in.cum_meets(:,t-3*pd_per_yr:t);
           cum_succ    = iter_in.cum_succ(:,t-3*pd_per_yr:t);
           cur_cli_cnt = iter_in.cur_cli_cnt(:,t-3*pd_per_yr:t);
@@ -16,7 +15,7 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
 %% create variables for firm exit regression
           yr_lag       = 2*pd_per_yr; % end of year period, last year          
           exit         = logical((min(new_meets(:,yr_lag+1:end),[],2) < 0).*(cur_cli_cnt(:,yr_lag)>0));  % flags firm_IDs that flip ownership during year
-          no_exit      = logical((min(new_meets(:,yr_lag+1:end),[],2) == 0).*(cur_cli_cnt(:,yr_lag)>0)); % flags firm IDs that don't flip during previous yr
+          no_exit      = logical((min(new_meets(:,yr_lag+1:end),[],2) >= 0).*(cur_cli_cnt(:,yr_lag)>0)); % flags firm IDs that don't flip during previous yr
 
           cum_meets_xt = cum_meets(exit,yr_lag);   % cum meetings of exiting firms entering current yr
           cum_succ_xt  = cum_succ(exit,yr_lag);    % cum successes of exiting firms entering current yr

@@ -59,7 +59,6 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
           % measure gap length and identify gaps that span a flipping period
            nnn = length(rr);
            gap = zeros(nnn-1,1);
-%          flip_in_gap = false(nnn,1);
            same_firm = false(nnn,1);
            for j=2:nnn
                gap(j,1) = cc(j) - cc(j-1);

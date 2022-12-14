@@ -165,10 +165,17 @@ for ss=2:mm.pd_per_yr
      ff_live = find(all_seas(:,lcb+5)>Zcut); % continuing matches (eop Z>Zcut)
 %    ff_live = find(all_seas(:,lcb+5)>0); % continuing matches (eop Z>0)
      
-     all_cntr = size(ff_live,1);    
+     all_cntr = size(ff_live,1);        
      all_seas(1:all_cntr,:) = all_seas(ff_live,:); % moving survivors to first rows    
-     empty_mat = zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr);
-     all_seas(all_cntr+1:iterX_in.N_match,:) = empty_mat;   % clear remaining rows
+     
+%      empty_mat = zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr);
+%      all_seas(all_cntr+1:iterX_in.N_match,:) = empty_mat;   % clear remaining rows
+     
+%       all_seas(all_cntr+1:iterX_in.N_match,:) =...
+%           zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr); % clear remaining rows
+      
+      all_seas(all_cntr+1:iterX_in.N_match,:) = 0; % clear remaining rows
+      
 %    move matches that die at end of year out of all_seas and into som_seas     
      if ss==mm.pd_per_yr
          ff_eoy_die =  find((all_seas(1:all_cntr,lcb+5)<=Zcut).*(all_seas(1:all_cntr,lcb+3)>0));
@@ -180,7 +187,9 @@ for ss=2:mm.pd_per_yr
          all_cntr = size(ff_eoy_live,1);
          som_seas(som_cntr+1:som_cntr+size(ff_eoy_die,1),1:ucb) = all_seas(ff_eoy_die,1:ucb);
          all_seas(1:all_cntr,:) = all_seas(ff_eoy_live,:); 
-         all_seas(all_cntr+1:iterX_in.N_match,:) = zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr);  %
+         
+ %       all_seas(all_cntr+1:iterX_in.N_match,:) = zeros(iterX_in.N_match-all_cntr,mat_cols*mm.pd_per_yr);  %       
+         all_seas(all_cntr+1:iterX_in.N_match,:) = 0; 
      end
     catch
       fprintf('\r\n period = %.2f, firm type = %.2f, market =%.2f\n',[iterX_in.t iterX_in.pt_ndx iterX_in.mkt]) 

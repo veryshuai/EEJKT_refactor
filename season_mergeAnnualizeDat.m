@@ -98,8 +98,9 @@ if size(z_a,1) + size(z_s,1) > 0
 try
   if sum(flip_firm)>0
   for j=1:length(F_active)
+     % SLOW! :
      j_type = mat_yr_sales(:,1)==F_active(j); 
-     % adjust firm ID to distinguish post-flip matches
+% SLOW! :   % adjust firm ID to distinguish post-flip matches
      mat_yr_sales(j_type,1) =...
               mat_yr_sales(j_type,1) + 0.5.*flip_firm(F_active(j))...
            .*(entry_month(F_active(j))>iterX_in.flip_ndx(F_active(j)));

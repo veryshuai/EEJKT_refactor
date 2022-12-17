@@ -54,7 +54,7 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
           new_meets_add = temp(:,3);
           cum_meet_add  = temp(:,4);
           cum_succ_add  = temp(:,5);
-          firm_flip     = temp(:,6:end);
+          firm_flip_add = temp(:,6:end);
 
           % measure gap length and identify gaps that span a flipping period
            nnn = length(rr);
@@ -63,7 +63,7 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
            for j=2:nnn
                gap(j,1) = cc(j) - cc(j-1);
                same_firm(j) = ...
-               logical(rr(j)-rr(j-1)==0 && sum(firm_flip(j,cc(j-1):cc(j)))==0) ;
+               logical(rr(j)-rr(j-1)==0 && sum(firm_flip_add(j,cc(j-1):cc(j)))==0) ;
            end
            
            %  temp2 contains observations on all firm-period pairs in which new meetings take place. 

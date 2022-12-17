@@ -79,7 +79,7 @@ pt_ndx = iterH_in.pt_ndx;
                 trans_z = ones(iterH_in.surviv_zst(i,jj),1)*policy.pmat_cum_z(jj,:) > draw;
                 % count # clients in each destination z state for each beginning z state.
                 
-       %SLOW!: % Record counts in cols 2:size(mm.Z,1)+1 of trans_count. Rows are initial states, plus 1:
+      %SLOW!: % Record counts in cols 2:size(mm.Z,1)+1 of trans_count. Rows are initial states, plus 1:
                 iterH_in.trans_count(jj+1,2:size(mm.Z,1)+1,i) = sum(trans_z(:,1:size(mm.Z,1)) - [zeros(size(draw,1),1),trans_z(:,1:size(mm.Z,1)-1)],1);
                 
       %SLOW!:  % cumulate over b.o.p. z types to get vector of surviving client e.o.p. types. Rows (i) are exporters:

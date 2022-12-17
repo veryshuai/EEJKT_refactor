@@ -6,9 +6,10 @@ function [nship_obs,ln_ships,match_count,match_countD] = match_shpt_cntr(iter_in
 % match = mat_yr_sales: [firm ID, match-specific sales, shipments, boy Z, eoy Z, match age, firm age] 
 % match_count is a vector that counts the number of matches for each active firm
 
-yr_tlag   = iter_in.t-mm.pd_per_yr;
+yr_tlag  = iter_in.t-mm.pd_per_yr;
 matches  = iter_in.mat_yr_sales;
 duds     = iter_in.cur_duds(:,yr_tlag+1:iter_in.t);
+firm_age = iter_in.cumage(:,end);
 
 %% find number of shipments for each match, take logs and sum
  % firms with integer IDs & shipments>0
@@ -37,15 +38,16 @@ match_count = double.empty(0,1);
 
 % Note: this dud count will miss duds at new firms during their first year
 
-dud_count   = [(1:size(duds,1))',sum(duds,2)];
-ff_dudfinder = find(dud_count(:,2)>0);
-dud_count(ff_dudfinder,:);
+dud_count   = [(1:size(duds,1))',sum(duds,2),firm_age];
+% ff_dudfinder = find(dud_count(:,2)>0);
+% dud_count(ff_dudfinder,:);
 
 dud_matches = double.empty(0,7);
 for ii = 1:size(duds,1)
     Ndud = dud_count(ii,2);
   if Ndud >0  
-  dud_matches = [dud_matches; [dud_count(ii,1)*ones(Ndud,1), ones(Ndud,6)]];
+  % assign dud matches shipment=1, sale=1, bop Z = eop Z = match_age = 0, and actual firm age     
+  dud_matches = [dud_matches; [dud_count(ii,1)*ones(Ndud,1), ones(Ndud,1).*[1 1 1 0 0 dud_count(ii,3)] ] ];
   end
 end
 assert(sum(dud_count(:,2)) == size(dud_matches,1))

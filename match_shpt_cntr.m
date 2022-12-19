@@ -1,4 +1,4 @@
-function [nship_obs,ln_ships,match_count,match_countD] = match_shpt_cntr(iter_in,mm)
+function [nship_obs,ln_ships,match_count,match_countD,dud_matches] = match_shpt_cntr(iter_in,mm)
 
 % This function is called from simulateForeignMatchesInnerMoments, which
 % passes the arguments iter_in.mat_yr_sales and mm.max_match
@@ -39,14 +39,12 @@ match_count = double.empty(0,1);
 % Note: this dud count will miss duds at new firms during their first year
 
 dud_count   = [(1:size(duds,1))',sum(duds,2),firm_age];
-% ff_dudfinder = find(dud_count(:,2)>0);
-% dud_count(ff_dudfinder,:);
 
 dud_matches = double.empty(0,7);
 for ii = 1:size(duds,1)
     Ndud = dud_count(ii,2);
   if Ndud >0  
-  % assign dud matches shipment=1, sale=1, bop Z = eop Z = match_age = 0, and actual firm age     
+  % dud matches: firm_ID, shipment=1, sale=1, bop Z = eop Z = match_age = 0, and actual firm age     
   dud_matches = [dud_matches; [dud_count(ii,1)*ones(Ndud,1), ones(Ndud,1).*[1 1 1 0 0 dud_count(ii,3)] ] ];
   end
 end

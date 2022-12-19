@@ -53,7 +53,7 @@ iter_out.transF = cell(mm.N_pt,6);
 % create first observation on firm-year level aggregates (will concatenate below)
 iter_out.match_count      = zeros(1,mm.max_match);
 iter_out.match_countD     = zeros(1,mm.max_match);
-iter_out.duds             = 0;
+iter_out.dud_matches      = zeros(0,9);
 iter_out.mat_yr_sales     = zeros(0,9);
 iter_out.mat_yr_sales_adj = zeros(0,9);
 iter_out.firm_f_yr_sales  = zeros(0,6);
@@ -68,6 +68,7 @@ iter_out.ysum      = 0;
 iter_out.nobs      = 0;
 iter_out.ship_obs  = 0;
 iter_out.ln_ships = 0;
+iter_out.duds     = 0;
 
 % firm level moment aggregators
 iter_out.fmoms_xx = zeros(4,4);

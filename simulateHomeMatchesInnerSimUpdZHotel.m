@@ -57,9 +57,14 @@ pt_ndx = iterH_in.pt_ndx;
          end
  
          %SLOW!
-        iterH_in.trans_count(2:size(mm.Z,1)+1,1,i)...
-        = max([(iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep_cli_lag))', iterH_in.die_cli_zst(i,:)']')';
-    
+%         iterH_in.trans_count(2:size(mm.Z,1)+1,1,i)...
+%         = max([(iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep_cli_lag))', iterH_in.die_cli_zst(i,:)']')';
+%     
+        temp = max([(iterH_in.lag_cli_zst(i,:).*(1-iterH_in.keep_cli_lag))', iterH_in.die_cli_zst(i,:)']')'; 
+        for rndx = 1:size(mm.Z,1)
+            iterH_in.trans_count(rndx+1,1,i) = temp(rndx,1);
+        end
+        
         % Update column 1 of trans_count(:,:,i) so that it contains counts of
         % all exiting matches (endog. and exog.), by buyer type (row).
 
@@ -80,10 +85,23 @@ pt_ndx = iterH_in.pt_ndx;
                 % count # clients in each destination z state for each beginning z state.
                 
       %SLOW!: % Record counts in cols 2:size(mm.Z,1)+1 of trans_count. Rows are initial states, plus 1:
-                iterH_in.trans_count(jj+1,2:size(mm.Z,1)+1,i) = sum(trans_z(:,1:size(mm.Z,1)) - [zeros(size(draw,1),1),trans_z(:,1:size(mm.Z,1)-1)],1);
+      %         iterH_in.trans_count(jj+1,2:size(mm.Z,1)+1,i) = sum(trans_z(:,1:size(mm.Z,1)) - [zeros(size(draw,1),1),trans_z(:,1:size(mm.Z,1)-1)],1);
+       
+               temp = sum(trans_z(:,1:size(mm.Z,1)) - [zeros(size(draw,1),1),trans_z(:,1:size(mm.Z,1)-1)],1);
+               for rndx=1:size(mm.Z,1)
+                 iterH_in.trans_count(jj+1,rndx+1,i) = temp(rndx);
+               end
+
                 
       %SLOW!:  % cumulate over b.o.p. z types to get vector of surviving client e.o.p. types. Rows (i) are exporters:
-                iterH_in.trans_zst(i,:) = iterH_in.trans_zst(i,:) +  iterH_in.trans_count(jj+1,2:size(mm.Z,1)+1,i);
+%              iterH_in.trans_zst(i,:) = iterH_in.trans_zst(i,:) +  iterH_in.trans_count(jj+1,2:size(mm.Z,1)+1,i);
+
+%               temp = iterH_in.trans_zst(i,:) +  iterH_in.trans_count(jj+1,2:size(mm.Z,1)+1,i);
+               for cndx=1:size(mm.Z,1)
+ %                 iterH_in.trans_zst(i,cndx) = temp(cndx);
+                  iterH_in.trans_zst(i,cndx) = iterH_in.trans_zst(i,cndx) +  iterH_in.trans_count(jj+1,cndx+1,i);
+               end
+               
             end
         end
         

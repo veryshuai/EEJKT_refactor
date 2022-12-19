@@ -11,7 +11,7 @@ seeds = randi(1e6,size(mm.Phi,1),2);
 
 
 parfor pt_ndx = 1:mm.N_pt
-%for pt_ndx = 1:1:mm.N_pt 
+% for pt_ndx = 1:1:mm.N_pt 
 %for pt_ndx = 90
 % for pt_ndx = 57
 % for pt_ndx = 108

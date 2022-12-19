@@ -1,7 +1,7 @@
 function summary_tables(simMoms,mm)
 
 %% match maturation, by type 
-[bexit,brooks] = match_summary(simMoms.agg_mat_yr_sales,mm);
+[bexit,brooks] = match_summary(simMoms.agg_mat_yr_sales,simMoms.agg_dud_matches,mm);
 
 %  Data for Brooks table 2 include all generated matches. Data from Brooks table 1 
 %  only include types with matches in both the current and the previous year. 
@@ -64,22 +64,39 @@ MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
      %% average log #shipments
       % avg_ln_ships = agg_ln_ships/agg_ship_obs;
       display(simMoms.avg_ln_ships);  
-      % create variables for analysis of degree distribution
-   
-%         ff_sim_max      = find(cumsum(agg_match_count)./sum(agg_match_count)<1);
-%         log_compCDF     = log(1 - cumsum(agg_match_count(ff_sim_max))./sum(agg_match_count));
-%         log_matches     = log(1:1:size(ff_sim_max,1))';
-%         xmat            = [ones(size(ff_sim_max)),log_matches,log_matches.^2];
-        
-        ff_sim_max      = find(cumsum(simMoms.agg_match_count)./sum(simMoms.agg_match_count)<1);
-        log_compCDF     = log(1 - cumsum(simMoms.agg_match_count(ff_sim_max))./sum(simMoms.agg_match_count));
-        log_matches     = log(1:1:size(ff_sim_max,1))';
-        xmat            = [ones(size(ff_sim_max)),log_matches,log_matches.^2];
-        
+      
+%% create variables for analysis of degree distribution
+
+% Degree distribution excluding duds
+        ff_sim_max      = find(cumsum(simMoms.agg_match_count)'./sum(simMoms.agg_match_count)<1);
+        log_compCDF     = log(1 - cumsum(simMoms.agg_match_count(ff_sim_max))'./sum(simMoms.agg_match_count));
+        log_matches     = log(1:1:length(ff_sim_max))';
+        xmat            = [ones(length(ff_sim_max),1),log_matches,log_matches.^2];
+                 
         temp = cumsum(simMoms.agg_match_count(ff_sim_max)./sum(simMoms.agg_match_count(ff_sim_max)));
-        ptemp = temp(1:size(ff_sim_max,2)) - [0,temp(1:size(ff_sim_max,2)-1)];
+        ptemp = temp(1:length(ff_sim_max)) - [0,temp(1:length(ff_sim_max)-1)];
+
+% Degree distribution including duds        
+        ff_sim_maxD      = find(cumsum(simMoms.agg_match_countD)'./sum(simMoms.agg_match_countD)<1);
+        log_compCDF_D    = log(1 - cumsum(simMoms.agg_match_countD(ff_sim_maxD)')./sum(simMoms.agg_match_countD));
+        log_matchesD     = log(1:1:length(ff_sim_maxD))';
+        xmatD            = [ones(length(ff_sim_maxD),1),log_matchesD,log_matchesD.^2];
+        
+        tempD = cumsum(simMoms.agg_match_countD(ff_sim_maxD)./sum(simMoms.agg_match_countD(ff_sim_maxD)));
+        ptempD = tempD(1:length(ff_sim_maxD)) - [0,tempD(1:length(ff_sim_maxD)-1)];
+        
+% degree distribution, not counting duds       
         format short
         Category = {'1 buyer','2 buyers','3 buyers','4 buyers','5 buyers','6-10 buyers','11+ buyers'};
         model_share = [ptemp(1:5),sum(ptemp(6:10)),sum(ptemp(11:size(ff_sim_max,2)-1))]';
         data_share = [0.792,0.112,0.031,0.016,0.009,0.022,0.016]';
         Ergodic_Dist = table(data_share,model_share,'RowNames',Category)
+        
+% degree distribution, counting duds        
+        format short
+        Category = {'1 buyer','2 buyers','3 buyers','4 buyers','5 buyers','6-10 buyers','11+ buyers'};
+        model_shareD = [ptempD(1:5),sum(ptempD(6:10)),sum(ptempD(11:size(ff_sim_maxD,2)-1))]';
+        data_shareD = [0.792,0.112,0.031,0.016,0.009,0.022,0.016]';
+        Ergodic_Dist = table(data_shareD,model_shareD,'RowNames',Category)
+        
+        

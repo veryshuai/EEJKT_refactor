@@ -9,7 +9,6 @@ function [Data, W, Model] = read_in_and_organize_moments(simMoms)
     exp_dom_coefsSIM     = [simMoms.ybar_hfsales;simMoms.beta_hfsales(2);simMoms.mse_hf]; % [mean dep var.,coef,MSE]  
     dom_ar1_coefsSIM     = [simMoms.ybar_fsales_h;simMoms.beta_fsales_h(2);simMoms.mse_h]; % [mean dep var.,coef,MSE] 
     ln_haz_coefsSIM      = [simMoms.mean_ln_haz;simMoms.b_haz(2:6)]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)] 
-    last_match_coefsSIM  = [simMoms.mkt_exit_rate;simMoms.beta_mkt_exit(2:6)]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)]            
     succ_rate_coefsSIM   = [simMoms.mean_succ_rate;simMoms.b_succ_rate(2)]; % [mean succ rate, ln(1+meetings)]
     sr_var_coefsSIM      = [simMoms.mean_usq_succ;simMoms.b_usq_succ(2)]; % [mean dep. var, ln(1+meetings)]
     for_sales_shrSIM     = [simMoms.avg_expt_rate]; % mean share of exports to U.S. in total sales 
@@ -17,6 +16,6 @@ function [Data, W, Model] = read_in_and_organize_moments(simMoms)
 
  Model = cat(1,match_death_coefsSIM,match_ar1_coefsSIM,loglog_coefsSIM,...
     mavshipSIM,exp_dom_coefsSIM,dom_ar1_coefsSIM,ln_haz_coefsSIM,...   
-    last_match_coefsSIM,succ_rate_coefsSIM,sr_var_coefsSIM,for_sales_shrSIM,...    
+    succ_rate_coefsSIM,sr_var_coefsSIM,for_sales_shrSIM,...    
     exp_fracSIM);
 end

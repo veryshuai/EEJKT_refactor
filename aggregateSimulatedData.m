@@ -83,7 +83,7 @@ for pt_ndx = 1:1:mm.N_pt
         sim_cum.agg_nfirm      = sim_cum.agg_nfirm + sim_out{pt_ndx}.nfirm;
         sim_cum.agg_nexptr     = sim_cum.agg_nexptr + sim_out{pt_ndx}.nexptr;
         sim_cum.agg_expt_rate  = [sim_cum.agg_expt_rate;sim_out{pt_ndx}.expt_rate];
-        sim_cum.agg_exit_xx    = sim_cum.agg_exit_xx + squeeze(sim_out{pt_ndx}.exit_xx);
+%       sim_cum.agg_exit_xx    = sim_cum.agg_exit_xx + squeeze(sim_out{pt_ndx}.exit_xx);
         sim_cum.agg_exit_xy    = sim_cum.agg_exit_xy + squeeze(sim_out{pt_ndx}.exit_xy)'; %chekc direction
         
         sim_cum.agg_sum_succ_rate    = sim_cum.agg_sum_succ_rate + sim_out{pt_ndx}.sum_succ_rate;

@@ -23,13 +23,7 @@ function [Data, error, Model] = do_not_match_some_moments(Data, error, Model)
     Data(18) = 0;
 %   Model(15) = 0;
     error(18) = 0;
-    
-% To exclude market exit regression, allow next block
-    
-     Data(27:32) = 0;
-     Model(27:32) = 0;
-     error(27:32) = 0;
-    
+        
 % To exclude variance of error in domestic AR1, allow next block  
     
   Data(20) = 0;

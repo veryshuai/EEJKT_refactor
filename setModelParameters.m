@@ -10,8 +10,8 @@ mm.pd_per_yr = 12;        % number of periods per year
 mm.r         = 0.13/mm.pd_per_yr;   % Rate of time preference per period
 mm.firm_death_haz = 0.08/mm.pd_per_yr;   % Component of time preference due to exogenous death
 mm.delta     = 0.326/mm.pd_per_yr;  % Exogenous match separation rate 
-mm.scale_f   = X(12);  % Export profit function scale parameter
-mm.scale_h   = X(2);   % Domestic profit function scale parameter
+mm.scale_h   = X(2);       % Domestic profit function scale parameter
+mm.scale_f   = X(2);       % Export profit function scale parameter (same as home)
 mm.eta       = 5;          % Demand elasticity 
 mm.gam       = X(7);       % Network effect parameter
 mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
@@ -60,7 +60,7 @@ mm.tot_yrs       = 50;     % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
 
-mm.S         = 25000;    % number of potential exporting firms to simulate 
+mm.S         = 15000;    % number of potential exporting firms to simulate 
 mm.burn      = 10;       %number of burn-in years
 mm.max_match = 50;    % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;    % Number of possible matches for domestic market

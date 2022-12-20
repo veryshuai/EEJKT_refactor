@@ -48,22 +48,6 @@ if iter_in.year >= mm.burn
 %     iter_out.fmoms_xy = iter_out.fmoms_xy + fmoms_xy; % cumulate moments for firm regression
 %     iter_out.fysum    = iter_out.fysum + fysum;
 %     iter_out.fnobs    = iter_out.fnobs + fn_obs ;
-
-    %% foreign market exit regression moments
-
-    % JT: We are not currently targetting the moments associated with this
-    % regression 
-    
-%     ff_exit = iter_in.mkt_exit(:,2)>0;  % column 2 of mkt_exit is number of meetings
-%     if sum(ff_exit,1)>0
-%         [exit_moms_xx,exit_moms_xy,sum_succ_rate,sum_exits,exit_obs] = mkt_exit_moms(iter_in.mkt_exit);
-% 
-%         iter_out.exit_xx = iter_out.exit_xx + exit_moms_xx;
-%         iter_out.exit_xy = iter_out.exit_xy + exit_moms_xy';
-%          iter_out.sum_succ_rate = iter_out.sum_succ_rate + sum_succ_rate;
-%         iter_out.exit_obs = iter_out.exit_obs + exit_obs;
-%         iter_out.sum_exits = iter_out.sum_exits + sum_exits;
-%     end
     
     %% match exit regression moments
     if iter_in.year_lag == iter_in.year

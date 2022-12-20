@@ -38,18 +38,6 @@ simMoms.ybar_hfsales  = sim_cum.agg_hfysum/sim_cum.agg_hf_nobs;
 simMoms.avg_expt_rate = mean(sim_cum.agg_expt_rate);
 simMoms.share_exptr   = sim_cum.agg_nexptr/sim_cum.agg_nfirm;
 
-% market exit regression
-if rank(sim_cum.agg_exit_xx) == size(sim_cum.agg_exit_xx,2)
-    inv_agg_exit_xx = inv(sim_cum.agg_exit_xx);
-else
-    rank_xx = rank(sim_cum.agg_exit_xx);
-    fprintf('\r Warning: singular matrix for market exit. Rank: %.1f\n', rank_xx);
-%   inv_agg_exit_xx = [inv(sim_cum.agg_exit_xx(1:3,1:3)), zeros(3,3); zeros(3,6)];
-    inv_agg_exit_xx = [ones(3,3), zeros(3,3); zeros(3,6)]; % (not used in calcs.)
-end
-simMoms.beta_mkt_exit   = inv_agg_exit_xx*sim_cum.agg_exit_xy;
-simMoms.mkt_exit_rate   = sim_cum.agg_sum_exits/sim_cum.agg_exit_obs;
-
 % match exit regression
 simMoms.beta_match_exit = inv(sim_cum.agg_mat_exit_moms_xx)*sim_cum.agg_mat_exit_moms_xy; 
 simMoms.match_exit_rate = sim_cum.agg_nmat_exit/sim_cum.agg_mat_obs;

@@ -81,7 +81,7 @@ sim_cum.agg_time_gaps = sim_cum.agg_time_gaps(2:size(sim_cum.agg_time_gaps,1),:)
 % create variables for hazard regressions
 ln_haz = log(1./sim_cum.agg_time_gaps(:,3));
 simMoms.ln_csucc = log(1+sim_cum.agg_time_gaps(:,7));
-ln_meet = log(sim_cum.agg_time_gaps(:,6));
+ln_meet = log(1+sim_cum.agg_time_gaps(:,6));
 const = ones(size(ln_haz,1),1);
 simMoms.ln_succ_rate = log(1+(sim_cum.agg_time_gaps(:,7)./sim_cum.agg_time_gaps(:,6)));
 

@@ -70,7 +70,6 @@ iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
         if iterH_in.year > mm.burn  % cosntruct moments for firm domestic sales regressions
             % autoregressions and degree distribution
             
-         % slopply patch: need to clean this up   
          iterH_in.mat_yr_sales = iterH_in.mat_h_yr_sales;
          iterH_in.mat_yr_sales_lag = iterH_in.mat_h_yr_sales_lag;
 

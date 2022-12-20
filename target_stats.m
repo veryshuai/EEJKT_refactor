@@ -32,9 +32,9 @@ function [Data, W] = target_stats()
     exp_dom_coefsDAT     = [11.0399,0.3228142,2.606^2]; % [mean dep var.,coef,MSE]  
     dom_ar1_coefsDAT     = [14.29349,0.9764422,0.46207^2]; % [mean dep var.,coef,MSE] 
 %   without dummy for new exporter
-%   ln_haz_coefsDAT      = [-0.7188,-0.8181,0.3117,-1.1323,2.4514,-0.7082]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)] 
+   ln_haz_coefsDAT      = [-0.7188,-0.8181,0.3117,-1.1323,2.4514,-0.7082]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)] 
 %   with dummy for new firm (not targetted):
-    ln_haz_coefsDAT      = [-0.7188,-0.6547,0.1717,0.1149,-0.2504,0.1058]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)] 
+%     ln_haz_coefsDAT      = [-0.7188,-0.6547,0.1717,0.1149,-0.2504,0.1058]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)] 
 
     last_match_coefsDAT  = [0.635,-0.6290,0.1205,0.0211,0.5976,-0.1290]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)]            
     succ_rate_coefsDAT   = [0.413,0.093];  % [mean succ rate, ln(1+meetings)]
@@ -88,23 +88,23 @@ loglog_coefsCOV = ...
 % The following matrices are based on U.S. customs records. 
 
 % without dummy for new exporters
-%   match_lag_coefsCOV = ...
-%    [0.00621 0      0      0      0      0        ;
-%     0       0.1128 0      0      0      0        ;
-%     0       0      0.0168 0      0      0        ;
-%     0       0      0      0.2962 0      0        ;
-%     0       0      0      0      0.3956 0        ;
-%     0       0      0      0      0      0.1341]^2; %Results disclosed 12-12-16 & 5-7-19
+  match_lag_coefsCOV = ...
+   [0.00621 0      0      0      0      0        ;
+    0       0.1128 0      0      0      0        ;
+    0       0      0.0168 0      0      0        ;
+    0       0      0      0.2962 0      0        ;
+    0       0      0      0      0.3956 0        ;
+    0       0      0      0      0      0.1341]^2; %Results disclosed 12-12-16 & 5-7-19
 
 % with dummy for new exporters (not targetted)
-   match_lag_coefsCOV = ...
-   [0.00621 0      0      0      0      0        ;
-    0      0.1126 0      0      0      0        ;
-     0      0      0.0183 0      0      0        ;
-     0      0      0      0.3024 0      0        ;
-     0      0      0      0      0.4195 0        ;
-     0      0      0      0      0      0.1404]^2; % Results disclosed 12-12-16 & 5-07-19
-
+%    match_lag_coefsCOV = ...
+%    [0.00621 0      0      0      0      0        ;
+%     0      0.1126 0      0      0      0        ;
+%      0      0      0.0183 0      0      0        ;
+%      0      0      0      0.3024 0      0        ;
+%      0      0      0      0      0.4195 0        ;
+%      0      0      0      0      0      0.1404]^2; % Results disclosed 12-12-16 & 5-07-19
+% 
 
 
   last_match_coefsCOV = ...

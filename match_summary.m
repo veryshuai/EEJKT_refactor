@@ -1,44 +1,28 @@
 function [exit_by_age,brooks] =  match_summary(succ_matches,dud_matches,mm)
 
-
 % This function generates failure rates by initial sales and match age.
 % More precisely, by type group and match age, where types are classified
 % according to their initial sales.
- 
-% agg_mat_yr_sales includes all generated matches, so it can be used to analyze first-year
-% matches that don't continue to the next year, and it can be used to analyze cohorts at the
-% firm level.
-
-% match_recs: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, match age, firm age]    
-
-% If shipments occur but a match wasn't active at beginning of period, we set its age to 1. 
-% If no shipments occur during period, we set age=0, regardless of whether a match is active. 
-% (see mat_yr_splice, line 17.) Match age increments by one per year if it remains active  
-% and shipments occur.
-
-% Firm age is 1 plus lagged firm age for continuing firms, given that shipments occur for 
-% at least one match. When no shipments occur, firm age resets to 0.
 
 %%  Preliminary data preparation
 
 N_theta2 = size(mm.theta2',1);    % number of possible success rates (thetas)
 N_Phi    = size(mm.Phi,1);        % number of exporter productivities
 pt_type  = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')];
-% prod_ndx  = pt_type(pt_ndx,1);
-% theta_ndx = pt_type(pt_ndx,2);
-
+% prod_ndx  = pt_type(pt_ndx,1); theta_ndx = pt_type(pt_ndx,2);
 
  %   succ_matches, dud_matches: 
  %    [t,type,firm ID, match sales, shipments, boy Z, eoy Z, match age, firm age] 
- 
-     match_recs = [succ_matches;dud_matches];    
+  
+     match_recs = [succ_matches;dud_matches]; % stack successful and dud matches   
+     
      ff_ship = match_recs(:,5) > 0;                           
      match_recs = match_recs(ff_ship,:);                      % select matches with shipments>0
      match_recs(:,1) = floor(match_recs(:,1)/mm.pd_per_yr);   % restate time in years
      match_recs(:,8) = floor(match_recs(:,8)/mm.pd_per_yr)+1; % restate match age in years
      match_recs(:,9) = floor(match_recs(:,9)/mm.pd_per_yr)+1; % restate firm age in years
   %  match_recs: [year, type, firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age]   
-    
+
      all_matches = match_recs(match_recs(:,1)>5,:);           % throw out burn-in period
    % all_matches = agg_mat_yr_sales(agg_mat_yr_sales(:,4)>0,:); % throw out matches with no sales
     
@@ -77,10 +61,7 @@ pt_type  = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')]
      new_typ_sales = zeros(active_typ,1);
      new_type      = zeros(active_typ,1);
      new_cnt       = zeros(active_typ,1);
-     dud_cnt       = zeros(active_typ,1);
-     dud_sales     = zeros(active_typ,1);
-     dud_size      = ones(0,1);
-     avg_sales     = mean(new_sales(:,4));
+
      for jj=1:active_typ % get mean sales and counts, new matches, by type
         ff2 = new_sales(:,1) == ones(size(new_sales,1),1).*type_list(jj);
         th_typ(jj)        = mean(th_new(ff2,1),1);   % thetas, by type
@@ -115,8 +96,7 @@ pt_type  = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')]
                  all_matches(:,3),all_matches(:,1)];    
   % splicedat: [type, sales, boy Z, eoy Z, match age (yrs), firm age (yrs), firm_ID, year]
 
- % Create data sets for each initial size quartile; include new and
- % continuing matches.
+ % Create data sets for each initial size quartile; include new and continuing matches.
      matdat_q = cell(4,1);
      for qq = 1:4
      aggdat_q = zeros(0,8); 
@@ -140,8 +120,6 @@ pt_type  = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')]
           end
       end
      exit_by_age = exit_rate(1:5,:);
-   
-     % NOTE: the age 0 firms have no shipments, although they are active.
 
 %% Brooks tables 
 
@@ -151,8 +129,7 @@ pt_type  = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')]
 % combination. Need this stage to avoid averaging over different firms with
 % the same type, firm-ID, and age.
     firm_ndx = all_matches(:,2) + 1000*all_matches(:,3) + 0.01*all_matches(:,1) + 100000*floor(all_matches(:,9));
-  % firm_ndx1 = type + 1000*firm_ID + 0.01*year + 100000*firm_age
-    
+  
     big_id_list = unique(firm_ndx);
     ntypes = size(big_id_list,1);
     xx = zeros(ntypes,1);

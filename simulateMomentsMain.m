@@ -43,6 +43,9 @@ end
 %    check_count_F = sim_out{mm.check_type}.stackF;
 %  save 'iter_out_XptrChecks.mat' 'check_type' 'check_cell_F' 'check_count_F';  
 % end
+
+% ALSO UNCOMMENT: lines 118-132 in simulateHomeMatchesInnerSim.m
+%                 lines 74-85 in simulateForeignMatches.m
 %%
 sim_cum = aggregateSimulatedData(sim_out,mm);
 simMoms = calculateSimulatedMoments(sim_cum,mm);

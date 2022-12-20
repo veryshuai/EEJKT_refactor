@@ -100,7 +100,7 @@ for pt_ndx = 1:1:mm.N_pt
         sim_cum.agg_ln_ships     = sim_cum.agg_ln_ships    + sim_out{pt_ndx}.ln_ships;
         sim_cum.agg_match_count  = sim_cum.agg_match_count + sim_out{pt_ndx}.match_count; 
         sim_cum.agg_match_countD = sim_cum.agg_match_countD + sim_out{pt_ndx}.match_countD; 
-        sim_cum.singletons       = sim_cum.singletons + sim_out{pt_ndx}.singletons;
+%       sim_cum.singletons       = sim_cum.singletons + sim_out{pt_ndx}.singletons;
         sim_cum.duds             = sim_cum.duds + sim_out{pt_ndx}.duds;
     end
 

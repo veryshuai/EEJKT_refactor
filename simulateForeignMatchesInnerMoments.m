@@ -88,7 +88,7 @@ if iter_in.year >= mm.burn
 
     
     % topcode match counts for each firm_ID 
-    duds         = match_countD - match_count;
+%   duds         = match_countD - match_count;
     match_count  = min(mm.max_match, match_count);
     match_countD = min(mm.max_match, match_countD);
     
@@ -104,7 +104,7 @@ if iter_in.year >= mm.burn
      iter_out.match_countD = iter_out.match_countD + match_histogramD ;
    end  
    
-   iter_out.duds = iter_out.duds + sum(duds);
+%   iter_out.duds = iter_out.duds + sum(duds);
    
    catch 
         'problem in simulateForeignMatchesInnerMoments lines 93-101'

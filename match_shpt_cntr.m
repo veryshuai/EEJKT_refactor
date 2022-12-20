@@ -12,9 +12,9 @@ duds     = iter_in.cur_duds(:,yr_tlag+1:iter_in.t);
 firm_age = iter_in.cumage(:,end);
 
 %% find number of shipments for each match, take logs and sum
- % firms with integer IDs & shipments>0
+ % firms with integer IDs & shipments>0:
 ff1_obs = find((floor(matches(:,1))-matches(:,1)==0).*(matches(:,3) >0));
- % new firms with +0.5 IDs & shipments>0
+ % new firms with +0.5 IDs & shipments>0:
 ff2_obs = find((floor(matches(:,1))-matches(:,1)~=0).*(matches(:,3) >0));
 % number of matches w/ shipments > 0
 nship_obs = length(ff1_obs)+length(ff2_obs); 
@@ -23,13 +23,13 @@ ln_ships  = sum(log(matches(ff1_obs,3))) + sum(log(matches(ff2_obs,3)));
 %% match counts by frequency across firm_ID, excluding duds
 match_count = double.empty(0,1);
 
-      if length(unique(ff1_obs))>0        
-         incumb_match = sum(dummyvar(matches(ff1_obs,1)))';     
-         match_count = sortrows(incumb_match(incumb_match>0));
+      if ~isempty(ff1_obs) 
+        incumb_match = sum(dummyvar(matches(ff1_obs,1)))';     
+        match_count = sortrows(incumb_match(incumb_match>0));
      end
      
-     if length(unique(ff2_obs))>0
-        newfirm_match = sum(dummyvar(matches(ff2_obs,1)))';   
+     if ~isempty(ff2_obs)
+       newfirm_match = sum(dummyvar(matches(ff2_obs,1)))';   
         match_count = [match_count; sortrows(newfirm_match(newfirm_match>0))];
         match_count = sortrows(match_count);
      end
@@ -60,14 +60,14 @@ ff2D_obs = find((floor(matchesD(:,1))-matchesD(:,1)~=0).*(matchesD(:,3) >0));
 
 % number of matches w/ shipments > 0
       
-      if length(unique(ff1D_obs))>0 % incumbent firms       
-         incumb_matchD = sum(dummyvar(matchesD(ff1D_obs,1)))';     
-         match_countD = sortrows(incumb_matchD(incumb_match>0));
+    if ~isempty(ff1D_obs) % incumbent firms       
+        incumb_matchD = sum(dummyvar(matchesD(ff1D_obs,1)))';     
+        match_countD = sortrows(incumb_matchD(incumb_matchD>0));
      end
      
-     if length(unique(ff2D_obs))>0 % new firms
+     if~isempty(ff2D_obs) % new firms
         newfirm_matchD = sum(dummyvar(matchesD(ff2D_obs,1)))';   
-        match_countD = [match_countD; sortrows(newfirm_matchD(newfirm_match>0))];
+        match_countD = [match_countD; sortrows(newfirm_matchD(newfirm_matchD>0))];
         match_countD = sortrows(match_countD);
      end
      

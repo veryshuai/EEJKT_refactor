@@ -88,14 +88,14 @@ MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
 % degree distribution, not counting duds       
         format short
         Category = {'1 buyer','2 buyers','3 buyers','4 buyers','5 buyers','6-10 buyers','11+ buyers'};
-        model_share = [ptemp(1:5),sum(ptemp(6:10)),sum(ptemp(11:size(ff_sim_max,2)-1))]';
+        model_share = [ptemp(1:5),sum(ptemp(6:10)),sum(ptemp(11:end-1))]';
         data_share = [0.792,0.112,0.031,0.016,0.009,0.022,0.016]';
         Ergodic_Dist = table(data_share,model_share,'RowNames',Category)
         
 % degree distribution, counting duds        
         format short
         Category = {'1 buyer','2 buyers','3 buyers','4 buyers','5 buyers','6-10 buyers','11+ buyers'};
-        model_shareD = [ptempD(1:5),sum(ptempD(6:10)),sum(ptempD(11:size(ff_sim_maxD,2)-1))]';
+        model_shareD = [ptempD(1:5),sum(ptempD(6:10)),sum(ptempD(11:end-1))]';
         data_shareD = [0.792,0.112,0.031,0.016,0.009,0.022,0.016]';
         Ergodic_Dist = table(data_shareD,model_shareD,'RowNames',Category)
         

@@ -71,18 +71,19 @@ if iter_in.t == mm.periods
     iter_out.transF{pt_ndx,6} = iter_in.cum_meets(find_xcli,:);
     
 % for checking only: rearrange count matrices in blocks, by firm # & type
-%     rooms =  iter_out.transF{pt_ndx,1};
-%     stackF = zeros(length(rooms),mm.periods+1); 
-%     for i=1:length(rooms)
-%     lb = (i-1)*4 + 1;
-%     ub = i*4;
-%     stackF(lb:ub,:) = ...  % for debugging only
-%     [rooms(i),iter_out.transF{pt_ndx,2}(i,:);...
-%     rooms(i),iter_out.transF{pt_ndx,3}(i,:);...
-%     rooms(i),iter_out.transF{pt_ndx,4}(i,:);... 
-%     rooms(i),iter_out.transF{pt_ndx,5}(i,:)];
-%     iter_out.stackF = stackF;
-%     end
+    rooms =  iter_out.transF{pt_ndx,1};
+    stackF = zeros(length(rooms),mm.periods+1); 
+    for i=1:length(rooms)
+    lb = (i-1)*5 + 1;
+    ub = i*5;
+    stackF(lb:ub,:) = ...  % for debugging only
+    [rooms(i),iter_out.transF{pt_ndx,2}(i,:);...
+    rooms(i),iter_out.transF{pt_ndx,3}(i,:);...
+    rooms(i),iter_out.transF{pt_ndx,4}(i,:);... 
+    rooms(i),iter_out.transF{pt_ndx,5}(i,:);...
+    rooms(i),iter_out.transF{pt_ndx,6}(i,:)];
+    iter_out.stackF = stackF;
+    end
 
     iter_out.iterF_check = iterF_check;   
     iter_out.exptr_count = size(find_xcli,1);

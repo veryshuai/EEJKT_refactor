@@ -32,17 +32,17 @@ seeds = randi(1e6,size(mm.Phi,1),2);
 end
 
 %% Uncomment commands below to generate data for spot checks
-% check_type = mm.check_type;
-% if sim_out{check_type}.domfirm_count > 0
-%   check_cell_H = sim_out{mm.check_type}.iterH_check;
-%   check_count_H = sim_out{mm.check_type}.stackH;
-%    save 'iter_out_HomeChecks.mat' 'check_type' 'check_cell_H' 'check_count_H';  
-% end
-% if sim_out{check_type}.exptr_count >0
-%    check_cell_F = sim_out{mm.check_type}.iterF_check;
-%    check_count_F = sim_out{mm.check_type}.stackF;
-%  save 'iter_out_XptrChecks.mat' 'check_type' 'check_cell_F' 'check_count_F';  
-% end
+check_type = mm.check_type;
+if sim_out{check_type}.domfirm_count > 0
+  check_cell_H = sim_out{mm.check_type}.iterH_check;
+  check_count_H = sim_out{mm.check_type}.stackH;
+   save 'iter_out_HomeChecks.mat' 'check_type' 'check_cell_H' 'check_count_H';  
+end
+if sim_out{check_type}.exptr_count >0
+   check_cell_F = sim_out{mm.check_type}.iterF_check;
+   check_count_F = sim_out{mm.check_type}.stackF;
+ save 'iter_out_XptrChecks.mat' 'check_type' 'check_cell_F' 'check_count_F';  
+end
 
 % ALSO UNCOMMENT: lines 118-132 in simulateHomeMatchesInnerSim.m
 %                 lines 74-85 in simulateForeignMatches.m

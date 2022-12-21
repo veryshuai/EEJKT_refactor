@@ -10,10 +10,10 @@ function [iter_in,iter_out] = simulateForeignMatchesInnerAnnualize(iter_in,iter_
 iter_in = simulateForeignMatchesInnerAnnualizeFirstYr(iter_in); 
 % since no lag, first year is different
 
-%iter_out = simulateForeignMatchesInnerAnnualizeDuds(iter_in, mm, iter_out); 
+iter_out = simulateForeignMatchesInnerAnnualizeDuds(iter_in, mm, iter_out); 
 % # unsuccessful meetings (duds) over previous year, by firm (needed for degree distribution later)
 
-% iter_in.cur_duds(:,iter_in.t-mm.pd_per_yr+1:iter_in.t) = iter_out.cur_yr_duds;
+iter_in.cur_duds(:,iter_in.t-mm.pd_per_yr+1:iter_in.t) = iter_out.cur_yr_duds;
 % load this year's dud counts into the cur_duds series for all firm_IDs
 
 [iter_in, iter_out] = simulateForeignMatchesInnerAnnualizeMeetingGaps(iter_in, mm, iter_out);

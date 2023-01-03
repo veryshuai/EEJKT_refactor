@@ -1,4 +1,4 @@
-function [stay, iter_in] = simulateForeignMatchesInnerSimNoLearners(no_learn, stay, mm, iter_in, policy)
+function [iter_in] = simulateForeignMatchesInnerSimNoLearners(no_learn, stay, mm, iter_in, policy)
   
     % Update cumulative meetings and successes for firms with >= mm.n_size meets, if
     % any. These firms are presumed to know their thetas, hence nn1 = floor(succ_prob*nn2)
@@ -6,7 +6,7 @@ function [stay, iter_in] = simulateForeignMatchesInnerSimNoLearners(no_learn, st
     N_no_learn  = sum(no_learn);
     if N_no_learn >0
         % no exog. death, and shipments prev. year
-        stay(no_learn) = (rand(N_no_learn,1) > 1-exp(-mm.firm_death_haz));
+        %stay(no_learn) = (rand(N_no_learn,1) > 1-exp(-mm.firm_death_haz));
 
         %(succ,trial,common succ rate (defunct), network size, prod of firm, macro shock)
         iter_in.cum_meets(no_learn,iter_in.t) = (iter_in.cum_meets(no_learn,iter_in.t-1)+ poissinv(rand(N_no_learn,1),...

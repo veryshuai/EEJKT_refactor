@@ -21,6 +21,8 @@ pt_ndx = iterH_in.pt_ndx;
     if  mm.sim_firm_num_by_prod_succ_type(pt_ndx) > 0
         trans_rands = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.max_match_h);
         cntr = 0;
+        search_inten = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1); %holds search intensity, in case we need it
+        theta_record = size(search_inten);
 
         % load policy matrices and draw states, looping over firms with different home-thetas
         for ii = 1:size(iterH_in.theta1_cntr,1) 
@@ -32,6 +34,8 @@ pt_ndx = iterH_in.pt_ndx;
             % draw next period states for given thetaH type
             trans_rands(cntr+1:cntr2,:) = pmat_cum_ht(iterH_in.micro_state(cntr+1:cntr+iterH_in.theta1_cntr(ii,2),t-1),:)...
                 > rand(iterH_in.theta1_cntr(ii,2),1)*ones(1,mm.max_match_h);
+            search_inten(cntr+1:cntr2,1) = policy.lambda_h(1,iterH_in.theta1_cntr(ii,1),min(iterH_in.cum_succ(cntr+1:cntr+iterH_in.theta1_cntr(ii,2),t-1)+1,mm.net_size+1),mm.pt_type(pt_ndx,1),iterH_in.macro_state_h(t-1));
+            theta_record(cntr+1:cntr2,1) = iterH_in.theta1_cntr(ii,1);
             cntr = cntr2;
         end 
 
@@ -44,12 +48,31 @@ pt_ndx = iterH_in.pt_ndx;
 
     %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     % calculate number of number of new matches
-    iterH_in.add_cli_cnt(:,t) = max(iterH_in.cum_succ(:,t) - iterH_in.cum_succ(:,t-1),0); %
+    % how we do this depends on whether the matches are maxed out
+    % until that point, change in cum successes are the same as new clients
+    % once cum successes are maxed out, we need to use the policy function
+    
+    maxed_out = (iterH_in.cum_succ(:,t) >= mm.max_match_h-1) & (iterH_in.cum_succ(:,t-1) >= mm.max_match_h-1); 
+    not_maxed = ~maxed_out;
+    iterH_in.add_cli_cnt(not_maxed,t) = max(iterH_in.cum_succ(not_maxed,t) - iterH_in.cum_succ(not_maxed,t-1),0); %
     % max() resets count to 0 for neg. differences to deal with new exporters
+    
+    if any(maxed_out)
+        maxed_meets = poissrnd(search_inten(maxed_out));
+        maxed_succs = binornd(maxed_meets,mm.theta1(theta_record(maxed_out))');
+        iterH_in.add_cli_cnt(maxed_out,t) = maxed_succs;
+        %iterH_in.add_cli_cnt(maxed_out,t) = min((mm.max_match_h-1) - iterH_in.cur_cli_cnt(maxed_out,t-1), iterH_in.add_cli_cnt(maxed_out,t)); %keep client count under limit
+    end
 
     % identify periods in which a new firm is active in the home mkt., 
     % but hasn't made matches yet 
     iterH_in.new_firm(:,t) = iterH_in.micro_state(:,t) == 1;
+    % also identify firms which died and must start over from the next
+    % period
+    firm_dies = (rand(size(iterH_in.cum_succ(:,t))) < 1-exp(-mm.firm_death_haz));
+    iterH_in.cum_succ(firm_dies,t) = 0;
+    iterH_in.add_cli_cnt(firm_dies,t) = 0;
+    iterH_in.new_firm(firm_dies,t) = 1;
 
     %% Deal with endogenous and exogenous drops (not in policy.pmat_cum_h)
 

@@ -17,6 +17,7 @@ mm.gam       = X(7);       % Network effect parameter
 mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
 mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
 mm.sig_p     = X(9);       %standard deviation of productivity distribution
+mm.optimism  = X(12);      %parameter on prior distribution (positive means optimistic, negative pessamisitic)
 
 
 %% Discretization of state-space
@@ -78,44 +79,21 @@ mm.l_opt_func_f = @(a,net,pi,V_succ,V_fail,V_orig)...
     max(max(((1+log(net))^mm.gam*(a*(pi+V_succ) + (1-a)*V_fail - V_orig)/mm.cs_f)+1,0).^(1/(mm.kappa1-1))-1,0);            
 
 %% Exogenous Jump Process Parameters
+      
+gam_h = 1 - 0.8412593; %DJ: calculations from COL_AR1.do, reversion coef, use Euler-Maruyama discretization of OU  
+sig_h = 0.04688; %DJ: calculations from COL_AR1.do, root MSE, Euler-Maruyama discretization of OU 
+gam_f = 1 - 0.948018; %DJ: from Jim's email 2023/1/11, AR1 reversion coef, Euler-Maruyama discretization of OU
+sig_f = 0.11338; %DJ: from Jim's email 2023/1/11, AR1 root MSE, Euler-Maruyama discretization of OU
 
-% Uncomment commands below to reestimate exogenous variables
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%--Get exogenous parameters. Once these are estimated, no need to       --%
-%  estimate again                                                         %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
-% DATA I HAVE
-%     col_exp_raw = dlmread('Col_Ind_Gds_Exp_for_MLE_trial_2011_7_8.txt','\t');
-%     col_exp = detrend(col_exp_raw(:,3)); %detrend
-%     us_exp_raw = dlmread('US_man_exp_2011_8_10.txt','\t');
-%     us_exp = detrend(log(us_exp_raw(:))); %detrend
-% 
-%     [~,sig_h,gam_h] = OU_Calibrate_ML(col_exp,1); %arguments are data and time interval, output is estimated mean, volatility, and mean reversion
-%     [~,sig_f,gam_f] = OU_Calibrate_ML(us_exp,1); %arguments are data and time interval, output is estimated mean, volatility, and mean reversion
-% 
-%     L_h = gam_h * mm.x_size; %lambda, arrival rate of shock
-%     D_h = sig_h*L_h^(-.5); %delta, size of jump states
-%     [Q_h,X_h] = makeq(L_h,D_h,mm.x_size);
-% 
-%     L_f = gam_f * mm.x_size; %lambda, arrival rate of shock
-%     D_f = sig_f*L_f^(-.5);   % delta, size of jump states
-%     [Q_f,X_f] = makeq(L_f,D_f,mm.x_size);
-% 
-%     actual_h = zeros(size(col_exp,1),2);
-%     actual_f = zeros(size(us_exp,1),2);
-%     actual_h(:,1) = 1990:2007;
-%     actual_f(:,1) = 1990:2009;
-%     for k = 1:size(actual_h,1)
-%         [~,actual_h(k,2)] = min(abs(col_exp(k)-X_h)); 
-%     end
-%     for k = 1:size(actual_f,1)
-%         [~,actual_f(k,2)] = min(abs(us_exp(k)-X_f)); 
-%     end
-% 
-%     save('exog_est/exog.mat','L_h','D_h','Q_h','X_h','L_f','D_f','Q_f','X_f','actual_f','actual_h');
-%%
-load exog_est/exog.mat  % see comment above for contents of exog.mat
+L_h = gam_h * mm.x_size; %lambda, arrival rate of shock
+D_h = sig_h*L_h^(-.5); %delta, size of jump states
+[Q_h,X_h] = makeq(L_h,D_h,mm.x_size);
+
+L_f = gam_f * mm.x_size; %lambda, arrival rate of shock
+D_f = sig_f*L_f^(-.5);   % delta, size of jump states
+[Q_f,X_f] = makeq(L_f,D_f,mm.x_size);
+
+%load exog_est/exog.mat  % old estimates for checking
 
 mm.L_b = X(6)/mm.pd_per_yr;
 

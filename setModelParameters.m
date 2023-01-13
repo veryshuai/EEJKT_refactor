@@ -117,8 +117,8 @@ Phi = (-3:3/mm.phi_size:3)' * mm.sig_p;
 Q_z_d = Q_z;
 Q_z_d(1:size(Q_z,1)+1:end) = 0;
 
-mm.actual_h     = actual_h; %actual indexes of home macro shocks for available years
-mm.actual_f     = actual_f; %actual indexes of foreign macro shocks for available years    
+%mm.actual_h     = actual_h; %actual indexes of home macro shocks for available years
+%mm.actual_f     = actual_f; %actual indexes of foreign macro shocks for available years    
 
 mm.Z            = Z;        %buyer productivities
 mm.Phi          = Phi;      %seller productivies

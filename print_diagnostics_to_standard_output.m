@@ -4,7 +4,7 @@ fprintf('\r\n weighted metric:   %.15f\n', D);
     
    fprintf('\r\n params = ');
    fprintf('\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',X(1:6));
-   fprintf('\r%8.5f %8.5f %8.5f %8.5f %8.5f',X(7:11));
+   fprintf('\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',X(7:end));
    fprintf( '\r\n  ');   
     
     format shortG
@@ -28,7 +28,7 @@ fprintf('\r\n weighted metric:   %.15f\n', D);
     fprintf(' exp_frac_coef      = %.3f\n',err_comp(32,32));
     
     fprintf('\r\n number of exporters per yr = %.3f\n',simMoms.agg_nexptr/(mm.tot_yrs - mm.burn));
-    fprintf(' maximum number of clients  = %.3f\n',size(simMoms.ff_sim_max,2));
+    fprintf(' maximum number of clients  = %.3f\n',max(simMoms.max_countD));
     fprintf(' number of firms per yr     = %.3f\n',simMoms.agg_nfirm/(mm.tot_yrs - mm.burn));
     fprintf( '\r\n  '); 
     

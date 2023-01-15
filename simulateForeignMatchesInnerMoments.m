@@ -79,7 +79,9 @@ if iter_in.year >= mm.burn
     
     [nship_obs,ln_ships,match_count,match_countD,dud_matches] = match_shpt_cntr(iter_in,mm);
   % dud matches: [firm_ID, shipment=1, sale=1, bop Z = eop Z = match_age = 0, firm age]
-
+  % match_count and match_countD are vectors of match counts for active firms w/out % w/ duds
+  % ln_ships is the sum of ln shipment values, all firms; nships_obs is # shipments
+  
     iter_out.ship_obs    = iter_out.ship_obs + nship_obs ;
     iter_out.ln_ships    = iter_out.ln_ships + ln_ships ;
     
@@ -95,12 +97,12 @@ if iter_in.year >= mm.burn
     % convert to frequency counts (# firms with each possible match count)
    try
    if size(match_count,1)>0 % counts excluding duds
-     match_histogram = sum(match_count*ones(1,mm.max_match) - ones(size(match_count,1),1)*(1:mm.max_match)==0);
+     match_histogram = sum(match_count*ones(1,mm.max_match) - ones(size(match_count,1),1)*(1:mm.max_match)==0,1);
      iter_out.match_count = iter_out.match_count + match_histogram ;
    end
    
    if size(match_countD,1)>0 % counts including duds (alternative meaasure)
-     match_histogramD = sum(match_countD*ones(1,mm.max_match) - ones(size(match_countD,1),1)*(1:mm.max_match)==0);
+     match_histogramD = sum(match_countD*ones(1,mm.max_match) - ones(size(match_countD,1),1)*(1:mm.max_match)==0,1);
      iter_out.match_countD = iter_out.match_countD + match_histogramD ;
    end  
    

@@ -5,7 +5,7 @@ function plots(simMoms,Data,Model)
 %         scatter(simMoms.log_matches,simMoms.log_compCDF) 
 
         figure(1)      
-        scatter(simMoms.log_matches(1:end-1),simMoms.log_compCDF_D(1:end-1)) 
+        scatter(simMoms.log_matchesD,simMoms.log_compCDF_D) 
 
 % plot histogram of frequencies for meeting hazards
         %figure(2)

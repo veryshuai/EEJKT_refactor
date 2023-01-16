@@ -28,7 +28,7 @@ fprintf('\r\n weighted metric:   %.15f\n', D);
     fprintf(' BPS distribution   = %.3f\n',err_comp(30,36));
     
     fprintf('\r\n number of exporters per yr = %.3f\n',simMoms.agg_nexptr/(mm.tot_yrs - mm.burn));
-    fprintf(' maximum number of clients  = %.3f\n',size(simMoms.max_countD));
+    fprintf(' maximum number of clients  = %.3f\n',max(simMoms.max_countD));
     fprintf(' number of firms per yr     = %.3f\n',simMoms.agg_nfirm/(mm.tot_yrs - mm.burn));
     fprintf( '\r\n  '); 
     

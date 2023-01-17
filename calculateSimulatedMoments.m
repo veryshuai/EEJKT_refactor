@@ -46,21 +46,32 @@ simMoms.match_exit_rate = sim_cum.agg_nmat_exit/sim_cum.agg_mat_obs;
 simMoms.avg_ln_ships = sim_cum.agg_ln_ships/sim_cum.agg_ship_obs;
 
 % create variables for analysis of degree distribution: excluding duds
-% simMoms.ff_sim_max  = cumsum(sim_cum.agg_match_count(1:mm.max_match)./sum(sim_cum.agg_match_count));
-% simMoms.log_compCDF         = log(1 - simMoms.ff_sim_max)';
-% simMoms.log_matches         = log(1:1:length(simMoms.ff_sim_max))';
-% xmat                = [ones(length(simMoms.log_matches(1:end-1)),1),simMoms.log_matches(1:end-1),simMoms.log_matches(1:end-1).^2];
-% simMoms.b_degree    = regress(simMoms.log_compCDF(1:end-1),xmat);
+simMoms.ff_sim_max   = cumsum(sim_cum.agg_match_count(1:mm.max_match)./sum(sim_cum.agg_match_count));
+simMoms.max_count    = find(simMoms.ff_sim_max<.9999); 
+simMoms.log_compCDF = [log(1 - simMoms.ff_sim_max(simMoms.max_count))'];
+simMoms.log_matches  = log(1:1:length(simMoms.max_count))';
+xmat                 = [ones(length(simMoms.log_matches),1),...
+                        simMoms.log_matches,simMoms.log_matches.^2];
+simMoms.b_degree0      = regress(simMoms.log_compCDF,xmat);
+
+match_pdf = sim_cum.agg_match_count(1:mm.max_match)./sum(sim_cum.agg_match_count);
+simMoms.model_share = [match_pdf(1:5),sum(match_pdf(6:10)),sum(match_pdf(11:end-1))]';
+
 
 % create variables for analysis of degree distribution: including duds
-simMoms.ff_sim_max    = cumsum(sim_cum.agg_match_countD(1:mm.max_match)./sum(sim_cum.agg_match_countD));
-simMoms.log_compCDF_D = [log(1 - simMoms.ff_sim_max(1:end-1))'];
-simMoms.log_matches   = log(1:1:length(simMoms.ff_sim_max)-1)';
-xmat                  = [ones(length(simMoms.log_matches),1),...
-                        simMoms.log_matches,simMoms.log_matches.^2];
+simMoms.ff_sim_maxD   = cumsum(sim_cum.agg_match_countD(1:mm.max_match)./sum(sim_cum.agg_match_countD));
+simMoms.max_countD    = find(simMoms.ff_sim_maxD<0.9999); 
+simMoms.log_compCDF_D = [log(1 - simMoms.ff_sim_maxD(simMoms.max_countD))'];
+simMoms.log_matchesD  = log(1:1:length(simMoms.max_countD))';
+xmat                  = [ones(length(simMoms.log_matchesD),1),...
+                        simMoms.log_matchesD,simMoms.log_matchesD.^2];
                   
 simMoms.b_degree      = regress(simMoms.log_compCDF_D,xmat);
 simMoms.duds          = sim_cum.duds;
+
+% elements of degree distribution
+match_pdfD = sim_cum.agg_match_countD(1:mm.max_match)./sum(sim_cum.agg_match_countD);
+simMoms.model_shareD = [match_pdfD(1:5),sum(match_pdfD(6:10)),sum(match_pdfD(11:end-1))]';
 
 % plot histogram of frequencies for meeting hazards
 sim_cum.agg_time_gaps = sim_cum.agg_time_gaps(2:size(sim_cum.agg_time_gaps,1),:); % JT: why exclude first obs.?

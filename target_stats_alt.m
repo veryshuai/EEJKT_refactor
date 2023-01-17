@@ -1,4 +1,4 @@
-function [Data, Data_alt, W, W_alt] = target_stats()
+function [Data, W] = target_stats_alt()
 % returns the data statistics used in the loss function
 
     %% TARGET SOURCES: 
@@ -27,8 +27,11 @@ function [Data, Data_alt, W, W_alt] = target_stats()
  
     match_death_coefsDAT = [0.3951 0.03421 -0.03163 -0.05370 -0.02778]; % [mean D, R(ijt), lnXf(ijt), ln(match age), ln(exporter age)]
     match_ar1_coefsDAT   = [10.6653 0.82637 0.32834 0.06312 1.20786^2]; % [mean ln Xf(ijt), ln Xf(ijt-1), R(ijt-1), ln(exporter age)]   
+   
     loglog_coefsDAT      = [-5.9731 -1.88130 -0.05446];  % [intercept, slope, quadratic term]
-    SPB_distDAT          = [0.792,0.112,0.031,0.016,0.009,0.022,0.016]; % ergodic distribution based on data transition matrix
+    
+    SPB_dist           = [0.792,0.112,0.031,0.016,0.009,0.022,0.016]; % ergodic distribution based on data transition matrix
+ 
     mavshipDAT           = 0.9706402010; % average ln(# shipments) 
     exp_dom_coefsDAT     = [11.0399,0.3228142,2.606^2]; % [mean dep var.,coef,MSE]  
     dom_ar1_coefsDAT     = [14.29349,0.9764422,0.46207^2]; % [mean dep var.,coef,MSE] 
@@ -45,13 +48,7 @@ function [Data, Data_alt, W, W_alt] = target_stats()
     
    Data = [match_death_coefsDAT,match_ar1_coefsDAT,loglog_coefsDAT,mavshipDAT,exp_dom_coefsDAT,...
        dom_ar1_coefsDAT,ln_haz_coefsDAT,succ_rate_coefsDAT,sr_var_coefsDAT,...
-       for_sales_shrDAT,exp_fracDAT];
-
-% Drop ln_haz_coefsDAT; add SPB_distDAT   
-   
- Data_alt = [match_death_coefsDAT,match_ar1_coefsDAT,mavshipDAT,exp_dom_coefsDAT,...
-       dom_ar1_coefsDAT,ln_haz_coefsDAT,succ_rate_coefsDAT,sr_var_coefsDAT,...
-       for_sales_shrDAT,exp_fracDAT,SPB_distDAT];
+       for_sales_shrDAT,exp_fracDAT,SPB_dist];
      
 %      Data = [match_death_coefsDAT (1-5),match_ar1_coefsDAT (6-10),loglog_coefsDAT (11-13),mavshipDAT (14),exp_dom_coefsDAT (15-17),...
 %       dom_ar1_coefsDAT (18-20),match_lag_coefsDAT (21-26),last_match_coefsDAT (27-32),succ_rate_coefsDAT (33-34),sr_var_coefsDAT (35-36)];
@@ -72,20 +69,18 @@ match_ar1_coefsCOV = ...
       0.000000000000 -0.000004772804  0.000124115947  0.000193084788  0       ;
       0               0               0               0               0.00012];
 
-% Covariance matrix for degree distribution coefficients  
-  
 loglog_coefsCOV = ...
   [0.022689638548   -.015310017854   0.002420753146    ;
    -.015310017854   0.012614810554  -0.002268716169;             
-   0.002420753146  -0.002268716169   0.000443232645]; % we used to weight this block by 0.01          
+   0.002420753146  -0.002268716169   0.000443232645]; % we used to weight this block by 0.01     
 
-% Covariance matrix for buyers per seller shares
+% Sellres per buyer distribution covariance matrix
 
-   N_exptr = 3000;   % total number of exporting firms is ~ 3000
-   cdf_BPS = cumsum(SPB_distDAT);
-   
-   BPS_distCOV = cum_cov(cdf_BPS,N_exptr); 
-   
+N_exptr = 3000;   % total number of exporting firms is ~ 3000
+cdf_BPS = cumsum(SPB_dist);
+var_SPB_dist = cum_cov(cdf_BPS,N_exptr); 
+
+% Mean average shipment variance
 
     mavshipCOV = 0.00415553^2;  % note that I squared the standard error here
 
@@ -147,18 +142,9 @@ succ_rate_coefsCOV = ...  % based on RDC disclosure 2-3-17
     
  % weighting matrix for moment vector revised 12-17-16  
    
-        W = blkdiag(match_death_coefsCOV,...
-       match_ar1_coefsCOV,loglog_coefsCOV,mavshipCOV,exp_dom_coefsCOV,...
-       dom_ar1_coefsCOV,match_lag_coefsCOV,...
-       succ_rate_coefsCOV,sr_var_coefsCOV,for_sales_shrCOV,exp_fracCOV);
-
-% Drop covarinace matrix for degree dist. coefs., add matrix for BPS_dist   
-   
-    W_alt = blkdiag(match_death_coefsCOV,...
+       W = blkdiag(match_death_coefsCOV,...
        match_ar1_coefsCOV,mavshipCOV,exp_dom_coefsCOV,...
        dom_ar1_coefsCOV,match_lag_coefsCOV,...
-       succ_rate_coefsCOV,sr_var_coefsCOV,...
-       for_sales_shrCOV,exp_fracCOV,BPS_distCOV);
-   
+       succ_rate_coefsCOV,sr_var_coefsCOV,for_sales_shrCOV,exp_fracCOV,var_SPB_dist);
    
 end

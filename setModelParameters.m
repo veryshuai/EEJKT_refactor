@@ -31,6 +31,7 @@ mm.theta_size    = 20;    % Number of possible market potential values (WAS 51)
 mm.dim1          = 7;     % Number of possible theta1 values (specific to home market);
 mm.dim2          = 7;     % Number pf possible theta2 values (specific to foreign market);
 
+
 %% Theta distributions
 
 mm.ah        = X(4)*X(3); % Beta function, home (theta1) success parameter

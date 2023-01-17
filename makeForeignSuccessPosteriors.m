@@ -1,4 +1,4 @@
-function postSuccessProbs = makeForeignSuccessPosteriors(mm)
+function postSuccessProbs_new = makeForeignSuccessPosteriors(mm)
 
 postSuccessProbs = zeros(mm.n_size+1,mm.n_size+1); 
 for j=1:mm.n_size+1 %trials

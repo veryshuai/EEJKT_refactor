@@ -105,13 +105,21 @@ D_z = X(5)/mm.pd_per_yr;
 [Q_z,Z] = makeq(L_z,D_z,mm.z_size);
 erg_pz = make_erg(L_z,D_z,Z); 
 
-% Normal around zero (lognormal ultimately)
-erg_pp = zeros(2 * mm.phi_size,1);
-for k = 1:2 * mm.phi_size + 1
-    erg_pp(k) = normpdf(-3 + 3/mm.phi_size * (k-1));
-end
+% % Normal around zero (lognormal ultimately)
+% erg_pp = zeros(2 * mm.phi_size,1);
+% for k = 1:2 * mm.phi_size + 1
+%     erg_pp(k) = normpdf(-3 + 3/mm.phi_size * (k-1));
+% end
+% erg_pp = erg_pp./sum(erg_pp);
+% Phi = (-3:3/mm.phi_size:3)' * mm.sig_p;
+
+% Exponential distribution of productivities
+n_prod_disc = 2 * mm.phi_size + 1;
+cdf_grid = linspace(1/(2*n_prod_disc),(2*n_prod_disc - 1)/(2*n_prod_disc),n_prod_disc);
+Phi_levels = expinv(cdf_grid,mm.sig_p);
+erg_pp = exppdf(Phi_levels,mm.sig_p);
 erg_pp = erg_pp./sum(erg_pp);
-Phi = (-3:3/mm.phi_size:3)' * mm.sig_p;
+Phi = log(Phi_levels');
 
 %create Q_z with zeros on the diagonal (will use this later)
 Q_z_d = Q_z;

@@ -54,7 +54,7 @@ fprintf('\r\n weighted metric:   %.15f\n', D);
       fprintf(fileID1, '\r\n  ');
       fprintf(fileID1, '\r\n%6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f',full(mmm(21:30,:)));  
       fprintf(fileID1, '\r\n  ');
-      fprintf(fileID1, '\r\n%6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f',full(mmm(31:end,:))); 
+      fprintf(fileID1, '\r\n%6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f',full([mmm(31:36,:);zeros(4,2)])); 
       fprintf(fileID1, '\r\n  ');               
       fclose(fileID1);
 end

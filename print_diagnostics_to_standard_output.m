@@ -44,7 +44,7 @@ fprintf('\r\n weighted metric:   %.15f\n', D);
     
       fprintf(fileID1, '\r\n parameters: ');
       fprintf(fileID1, '\r\n%9.5f %9.5f %9.5f %9.5f %9.5f %9.5f',X(1:6));
-      fprintf(fileID1, '\r\n%9.5f %9.5f %9.5f %9.5f %9.5f',X(7:11));
+      fprintf(fileID1, '\r\n%9.5f %9.5f %9.5f %9.5f %9.5f %9.5f',X(7:end));
       fprintf(fileID1, '\r\n  ');
   
       fprintf(fileID1, '\r\n moments: ');   

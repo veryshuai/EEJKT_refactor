@@ -41,16 +41,25 @@ match_count = double.empty(0,1);
 dud_count   = [(1:size(duds,1))',sum(duds,2),firm_age];
 
 dud_matches = double.empty(0,7);
+
+% impute dud revenue using profit function evaluated at Zcut, macro state, and 1 shipment
+scale     = mm.scale_f;
+macro_shk = mm.X_f(iter_in.macro_state_f(iter_in.t));
+dud_rev   = exp(scale + (mm.eta-1)*mm.Phi(mm.pt_type(iter_in.pt_ndx,1)) + macro_shk).*exp(iter_in.Zcut_eoy); 
+
+% create records of dud matches
 for ii = 1:size(duds,1)
-    Ndud = dud_count(ii,2);
+  Ndud = dud_count(ii,2);
   if Ndud >0  
-  % dud matches: firm_ID, shipment=1, sale=1, bop Z = eop Z = match_age = 0, and actual firm age     
-  dud_matches = [dud_matches; [dud_count(ii,1)*ones(Ndud,1), ones(Ndud,1).*[1 1 1 0 0 dud_count(ii,3)] ] ];
+  % dud matches: firm_ID, shipment=1, sale=dud_rev, bop Z = eop Z = match_age = 0, and actual firm age     
+  dud_matches = [dud_matches; [dud_count(ii,1)*ones(Ndud,1), ones(Ndud,1).*[1 1 dud_rev 0 0 dud_count(ii,3)] ] ];
   end
 end
 assert(sum(dud_count(:,2)) == size(dud_matches,1))
 
+% stack dud matches with others to crate alternative set of match records
 matchesD = [matches;dud_matches];
+% initialize vector that will count firms in each match count category
 match_countD = double.empty(0,1);
 
 % incumbent firms with shipments>0
@@ -60,12 +69,12 @@ ff2D_obs = find((floor(matchesD(:,1))-matchesD(:,1)~=0).*(matchesD(:,3) >0));
 
 % number of matches w/ shipments > 0
       
-    if ~isempty(ff1D_obs) % incumbent firms       
+    if ~isempty(ff1D_obs) % incumbent firm match counts       
         incumb_matchD = sum(dummyvar(matchesD(ff1D_obs,1)))';     
         match_countD = sortrows(incumb_matchD(incumb_matchD>0));
      end
      
-     if~isempty(ff2D_obs) % new firms
+     if~isempty(ff2D_obs) % new firm counts stacked with incumbent counts
         newfirm_matchD = sum(dummyvar(matchesD(ff2D_obs,1)))';   
         match_countD = [match_countD; sortrows(newfirm_matchD(newfirm_matchD>0))];
         match_countD = sortrows(match_countD);

@@ -13,7 +13,7 @@
 % mm.ah        = X(4)*X(3);  % Beta function, home and foreign success parameter
 % mm.bh        = X(4)*(1-X(3));% Beta function, home and foreign failure parameter
 % D_z          = X(5)/mm.pd_per_yr; % jump size, match profit shock
-% mm.L_b       = X(6)/mm.pd_per_yr; % new shipment hazard
+% mm.L_bF      = X(6)/mm.pd_per_yr; % new shipment hazard, foreign market
 % mm.gam       = X(7);       % Network effect parameter
 % mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
 % mm.sig_p     = X(9);       %standard deviation of productivity distribution
@@ -29,13 +29,6 @@
 
 %  theta = [-10.80310  -2.61962   0.26410   0.30794   0.38029  11.15223...
 %            0.06463   2.18974   1.03113  -0.17300   10.55341   1];
-
-% theta = [-12.0234360850160,-8.86822062058644,0.216000078376388,0.702389472395804,...
-%        0.374214942055985,11.6388730026429,0.164637004707622,0.907628494202198,...
-%        0.915592893141143,-0.254901443835102,6.77853609204470,2]; 
-   
-%  theta = [-12.41111  -8.54950   0.19560   0.70351   0.27889   9.26793...
-%            0.19288   0.69155   1.16032  -0.23543   7.72443 2.27114];
        
  theta = [-9.40239 -7.24271 0.15795 0.503421 0.32490 11.29315...
            0.22917  0.51595 0.98336 -0.27606 7.21416  2.84157];

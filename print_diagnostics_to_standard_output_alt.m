@@ -32,15 +32,15 @@ fprintf('\r\n weighted metric:   %.15f\n', D);
     fprintf(' number of firms per yr     = %.3f\n',simMoms.agg_nfirm/(mm.tot_yrs - mm.burn));
     fprintf( '\r\n  '); 
     
-      fileID2 = fopen('results/ga_fitlog.txt','a');
+      fileID2 = fopen('results/ga_fitlog_noOpt_1Scl.txt','a');
       fprintf(fileID2,'\r\n fit metric = ');
-      dlmwrite('results/ga_fitlog.txt',D,'-append','precision',12);
+      dlmwrite('results/ga_fitlog_noOpt_1Scl.txt',D,'-append','precision',12);
       fclose(fileID2);
  
 
-      fileID1 = fopen('results/ga_running_output.txt','a');
+      fileID1 = fopen('results/ga_running_output_noOpt_1Scl.txt','a');
       fprintf(fileID1,'\r\n fit metrics (weighted and unweighted): ');
-      dlmwrite('results/ga_running_output.txt',D,'-append','precision',12);
+      dlmwrite('results/ga_running_output_noOpt_1Scl.txt',D,'-append','precision',12);
     
       fprintf(fileID1, '\r\n parameters: ');
       fprintf(fileID1, '\r\n%9.5f %9.5f %9.5f %9.5f %9.5f %9.5f',X(1:6));

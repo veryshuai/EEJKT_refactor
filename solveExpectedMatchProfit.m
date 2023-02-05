@@ -1,6 +1,6 @@
-function [expected_match_profit,continuation_value] = solveExpectedMatchProfit(pie_scale,X,Q0,Q0_d,F,mm)
+function [expected_match_profit,continuation_value] = solveExpectedMatchProfit(pie_scale,L_b,X,Q0,Q0_d,F,mm)
                                      
-event_hazard = mm.r + mm.delta + mm.L_b + abs(Q0(1,1)) + abs(mm.Q_z(1,1)); 
+event_hazard = mm.r + mm.delta + L_b + abs(Q0(1,1)) + abs(mm.Q_z(1,1)); 
 
 shipment_payoff_except_z = exp(pie_scale + X + (mm.eta-1)*mm.Phi'); %dimension is macro shock by prod
 shipment_payoff = repmat(repmat(exp(mm.Z),1,size(shipment_payoff_except_z,2)),1,1,size(shipment_payoff_except_z,1))...
@@ -24,7 +24,7 @@ for j=1:size(mm.Phi)
         display('WARNING: makepie.m did not converge!');
     end
 
-    c_val_gross_new = (c_val * Q0_d' + mm.Q_z_d * c_val + mm.L_b * pi_z) / event_hazard ;          
+    c_val_gross_new = (c_val * Q0_d' + mm.Q_z_d * c_val + L_b * pi_z) / event_hazard ;          
     c_val_new = max(-F + c_val_gross_new,0);
     pi_z_new = squeeze(shipment_payoff(:,j,:)) + c_val_new;
     

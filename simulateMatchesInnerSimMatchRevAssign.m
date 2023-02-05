@@ -3,9 +3,13 @@ function [mat_tran, ship_cur, age_vec] = simulateMatchesInnerSimMatchRevAssign(t
 if mkt==1   % foreign market
   scale     = mm.scale_f;
   macro_shk = mm.X_f(iterX_in.macro_state_f(iterX_in.t));
+  poisCDF_shipments = mm.poisCDF_shipmentsF;
+  max_ships  = mm.max_shipsF;
 elseif mkt==2 % home market
   scale     = mm.scale_h;
   macro_shk = mm.X_h(iterX_in.macro_state_h(iterX_in.t));
+  poisCDF_shipments = mm.poisCDF_shipmentsH;
+  max_ships  = mm.max_shipsH;
 end
 
    mask = ones(tot_cli,1).*(0:1:size(mm.Z,1));
@@ -19,8 +23,8 @@ end
 
  % draw random shipment counts for new and continuing matches.
    rr = rand(tot_cli,1);
-   select  = ones(tot_cli,1).*mm.poisCDF_shipments > rr; 
-   ship_cur = (mm.max_ships.*ones(tot_cli,1) - sum(select,2)).*(new_expZ>0); % shipments, t   
+   select  = ones(tot_cli,1).*poisCDF_shipments > rr; 
+   ship_cur = (max_ships.*ones(tot_cli,1) - sum(select,2)).*(new_expZ>0); % shipments, t   
    
    %% modeling choice here
    

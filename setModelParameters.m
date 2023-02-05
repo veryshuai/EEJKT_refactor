@@ -62,7 +62,7 @@ mm.tot_yrs       = 50;     % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
 
-mm.S         = 15000;    % number of potential exporting firms to simulate 
+mm.S         = 10000;    % number of potential exporting firms to simulate 
 mm.burn      = 10;       %number of burn-in years
 mm.max_match = 50;    % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;    % Number of possible matches for domestic market
@@ -96,10 +96,16 @@ D_f = sig_f*L_f^(-.5);   % delta, size of jump states
 
 %load exog_est/exog.mat  % old estimates for checking
 
-mm.L_b = X(6)/mm.pd_per_yr;
+% Shipment orders in home market are twice as frequent 
+% (Alessandria, Kaboski, and Midrigan, AER, 2010)
+mm.L_bF = X(6)/mm.pd_per_yr;
+mm.L_bH = 1*mm.L_bF;
 
-mm.max_ships = 3*round(mm.L_b); % maximum within-period shipments is triple expected number
-mm.poisCDF_shipments   = poisscdf(1:1:mm.max_ships,mm.L_b);
+mm.max_shipsF = 3*round(mm.L_bF); % maximum within-period shipments is triple expected number
+mm.poisCDF_shipmentsF   = poisscdf(1:1:mm.max_shipsF,mm.L_bF);
+
+mm.max_shipsH = 3*round(mm.L_bH); % maximum within-period shipments is triple expected number
+mm.poisCDF_shipmentsH   = poisscdf(1:1:mm.max_shipsH,mm.L_bH);
 
 L_z = 4/mm.pd_per_yr; % four demand shock jumps per year (where is this from?)
 D_z = X(5)/mm.pd_per_yr;

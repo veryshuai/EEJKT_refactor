@@ -9,7 +9,7 @@
     
 % mm.F_h       = exp(X(1)); % cost of maintaining a client- home 
 % mm.scale_h   = X(2);       % Profit function scale parameter, home
-% mm.scale_f   = X(2);       % Profit function scale parameter, foreign
+% mm.scale_f   = X(12);       % Profit function scale parameter, foreign
 % mm.ah        = X(4)*X(3);  % Beta function, home and foreign success parameter
 % mm.bh        = X(4)*(1-X(3));% Beta function, home and foreign failure parameter
 % D_z          = X(5)/mm.pd_per_yr; % jump size, match profit shock
@@ -19,7 +19,7 @@
 % mm.sig_p     = X(9);       %standard deviation of productivity distribution
 % mm.F_f       = exp(X(10)); % cost of maintaining a client- foreign
 % mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
-% mm.optimism  = X(12);      %parameter on prior distribution (positive means optimistic, negative pessamisitic) 
+% mm.optimism  = X(12);      % (CURRENTLY NOT USING) parameter on prior distribution (positive means optimistic, negative pessamisitic) 
 
 
 %%
@@ -38,7 +38,7 @@
 %            0.19288   0.69155   1.16032  -0.23543   7.72443 2.27114];
        
  theta = [-9.40239 -7.24271 0.15795 0.503421 0.32490 11.29315...
-           0.22917  0.51595 0.98336 -0.27606 7.21416  2.84157];
+           0.22917  0.51595 0.98336 -0.27606 7.21416  0.15795];
             
 
    D0 = distance(theta)

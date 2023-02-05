@@ -1,10 +1,10 @@
-function postSuccessProbs_new = makeForeignSuccessPosteriors(mm)
+function postSuccessProbs = makeForeignSuccessPosteriors(mm)
 
 postSuccessProbs = zeros(mm.n_size+1,mm.n_size+1); 
 for j=1:mm.n_size+1 %trials
     for k = 1:j %successes
-        % postSuccessProbs_new(j,k) = (mm.af + (k-1)) / (mm.af + mm.bf + (j-1));
-        postSuccessProbs(j,k) = (mm.af + mm.optimism + (k-1)) / (mm.af + mm.optimism + mm.bf + (j-1));
+        postSuccessProbs(j,k) = (mm.af + (k-1)) / (mm.af + mm.bf + (j-1));
+        %postSuccessProbs(j,k) = (mm.af + mm.optimism + (k-1)) / (mm.af + mm.optimism + mm.bf + (j-1));
     end
 end
 

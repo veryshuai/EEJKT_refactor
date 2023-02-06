@@ -1,3 +1,4 @@
+
 function D = distance(X)
 
 %try

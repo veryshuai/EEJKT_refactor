@@ -29,7 +29,8 @@ iterH_in.trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by
 % Exiting firms are considered to move to type 0 at the the end of the period.
 % columns: (1) initial z-state (2) new z-state (3) firm index, given type (4) firm type
 
-% create home theta draws
+% create home theta draws for each hotel room--these won't change when
+% occupant turns over
 theta_df = (size(mm.theta1,2)+1)*ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1) - ...
     sum(ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1)*mm.th1_cdf >...
     rand(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1)*ones(1,size(mm.theta1,2)),2);

@@ -46,7 +46,7 @@ match_count = double.empty(0,1);
      end
      
      if ~isempty(ff2_obs)
-       newfirm_match = sum(dummyvar(matches(ff2_obs,1)))';   
+        newfirm_match = sum(dummyvar(matches(ff2_obs,1)))';   
         match_count = [match_count; sortrows(newfirm_match(newfirm_match>0))];
         match_count = sortrows(match_count);
      end
@@ -62,7 +62,7 @@ scale     = mm.scale_f;
 macro_shk = mm.X_f(iter_in.macro_state_f(iter_in.t));
 dud_rev   = exp(scale + (mm.eta-1)*mm.Phi(mm.pt_type(iter_in.pt_ndx,1)) + macro_shk).*exp(iter_in.Zcut_eoy); 
 
-% create records of dud matches
+% create records of dud matches and stack them
 for ii = 1:size(all_duds,1)
   Ndud = dud_count(ii,2);
   if Ndud >0  

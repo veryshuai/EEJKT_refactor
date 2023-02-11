@@ -78,7 +78,7 @@ if iter_in.year >= mm.burn
     %% shipment and match counter
     
     [nship_obs,ln_ships,match_count,match_countD,dud_matches] = match_shpt_cntr(iter_in,mm);
-  % dud matches: [firm_ID, shipment=1, sale=1, bop Z = eop Z = match_age = 0, firm age]
+  % dud matches: [firm_ID, shipment=1, sales at Zcut, bop Z = eop Z = match_age = 0, firm age]
   % match_count and match_countD are vectors of match counts for active firms w/out % w/ duds
   % ln_ships is the sum of ln shipment values, all firms; nships_obs is # shipments
   
@@ -87,10 +87,9 @@ if iter_in.year >= mm.burn
     
     ttt = ones(size(dud_matches,1),1).*[iter_in.t,iter_in.mic_type];
     iter_out.dud_matches = [iter_out.dud_matches; [ttt,dud_matches]] ;
-
+  % iter_out.dud matches: [t, mic_type, firm_ID, shipment=1, sales at Zcut, bop Z = eop Z = match_age = 0, firm age]
     
     % topcode match counts for each firm_ID 
-%   duds         = match_countD - match_count;
     match_count  = min(mm.max_match, match_count);
     match_countD = min(mm.max_match, match_countD);
     

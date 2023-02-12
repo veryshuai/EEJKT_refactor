@@ -131,7 +131,7 @@ if t == mm.periods
    iter_out.domfirm_count = length(rooms);
  %% end checking block 
  
-         iter_out.iterH_check = iterH_check;
+    iter_out.iterH_check = iterH_check;
 
 end
 

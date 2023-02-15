@@ -147,12 +147,17 @@ for ss=2:mm.pd_per_yr
     end
 
      try  
-        
 %    load current season continuing matches into all_seas, incrementing match age by 1
      all_seas(1:all_cntr,1:ucb) = [temp2(:,1:lcb-1),temp1,temp2(:,lcb-1)+ones(size(temp1,1),1)] ;
 %    add new rows to all_seas for new matches. Match age is zero for all new matches.
      all_seas(all_cntr+1:all_cntr+size(ff_new,1),lcb:ucb) = [smat_tran(ff_new,:),ones(size(ff_new,1),1)];
+
+    
      all_cntr = size(ff_all_active,1)+size(ff_new,1);  
+          
+%      if ss==mm.pd_per_yr
+%      fprintf('\r\n period = %.2f, firm type = %.2f, market =%.2f\n',[iterX_in.t iterX_in.pt_ndx iterX_in.mkt]) 
+%      end
       
 %    move history of matches in their last season to som_seas    
      ff_die = find(all_seas(1:all_cntr,lcb+5)<=Zcut); % eop Z <= Zcut     
@@ -203,4 +208,7 @@ for ss=2:mm.pd_per_yr
     match_count_lag = match_count; 
     nrt_lag = nrt; 
     Zcut_eoy = Zcut;
+    
+end
+    fprintf('\r matches = %.2f, firms = %.2f, firm type = %.2f, market = %.2f\n',[all_cntr, N_firms, iterX_in.pt_ndx iterX_in.mkt]) 
 end

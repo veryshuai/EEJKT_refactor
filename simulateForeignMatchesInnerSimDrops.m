@@ -13,7 +13,10 @@ function [iter_in, drop_Zcut, drop_cnt] = simulateForeignMatchesInnerSimDrops(it
     % draw the number of exogenous deaths of remaining matches between t-1 and t
     ddum = find(iter_in.cur_cli_cnt(:,iter_in.t-1)-drop_cnt > 0);
     if sum(ddum)>0
-        iter_in.exog_deaths(ddum,iter_in.t-1) =...
-            random('bino',iter_in.cur_cli_cnt(ddum,iter_in.t-1)-drop_cnt(ddum),1-exp(-mm.delta));
+%         iter_in.exog_deaths(ddum,iter_in.t-1) =...
+%             random('bino',iter_in.cur_cli_cnt(ddum,iter_in.t-1)-drop_cnt(ddum),1-exp(-mm.delta));
+
+          iter_in.exog_deaths(ddum,iter_in.t-1) =...
+            my_binornd(iter_in.cur_cli_cnt(ddum,iter_in.t-1)-drop_cnt(ddum),ones(length(ddum),1)*(1-exp(-mm.delta)));
     end
 end

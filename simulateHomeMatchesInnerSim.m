@@ -103,6 +103,7 @@ iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
     iterH_in.trans_zst    = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));
     iterH_in.trans_count  = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by_prod_succ_type(pt_ndx));
 
+ %     fprintf('\r passing line 106 simulateHomeMatchesInnerSim, period %.0f\n', t);
 if t == mm.periods   
 %   for checking only: collect count series for each firm type
     find_hcli        = find(sum(iterH_in.cur_cli_cnt,2)>0);

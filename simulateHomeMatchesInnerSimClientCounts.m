@@ -59,7 +59,8 @@ pt_ndx = iterH_in.pt_ndx;
     
     if any(maxed_out)
         maxed_meets = poissrnd(search_inten(maxed_out));
-        maxed_succs = binornd(maxed_meets,mm.theta1(theta_record(maxed_out))');
+%       maxed_succs = binornd(maxed_meets,mm.theta1(theta_record(maxed_out))');
+        maxed_succs = my_binornd(maxed_meets,mm.theta1(theta_record(maxed_out))');
         iterH_in.add_cli_cnt(maxed_out,t) = maxed_succs;
         %iterH_in.add_cli_cnt(maxed_out,t) = min((mm.max_match_h-1) - iterH_in.cur_cli_cnt(maxed_out,t-1), iterH_in.add_cli_cnt(maxed_out,t)); %keep client count under limit
     end
@@ -96,8 +97,12 @@ pt_ndx = iterH_in.pt_ndx;
     % draw the number of exogenous deaths of remaining matches between t-1 and t
     ddum = find(iterH_in.cur_cli_cnt(:,t-1)-iterH_in.drop_cnt > 0);
     if sum(ddum)>0
-        iterH_in.exog_deaths(ddum,t-1) =...
-            random('bino',iterH_in.cur_cli_cnt(ddum,t-1)-iterH_in.drop_cnt(ddum),(1-exp(-mm.delta)));
+%         iterH_in.exog_deaths(ddum,t-1) =...
+%             random('bino',iterH_in.cur_cli_cnt(ddum,t-1)-iterH_in.drop_cnt(ddum),(1-exp(-mm.delta)));
+                          
+         iterH_in.exog_deaths(ddum,t-1) =...
+            my_binornd(iterH_in.cur_cli_cnt(ddum,t-1)-iterH_in.drop_cnt(ddum),ones(length(ddum),1)*(1-exp(-mm.delta)));
+
     end
    
 %%  update current count for new matches, drops, and exogenous deaths 

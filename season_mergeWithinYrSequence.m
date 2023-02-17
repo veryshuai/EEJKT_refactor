@@ -210,5 +210,5 @@ for ss=2:mm.pd_per_yr
     Zcut_eoy = Zcut;
     
 end
-    fprintf('\r matches = %.2f, firms = %.2f, firm type = %.2f, market = %.2f\n',[all_cntr, N_firms, iterX_in.pt_ndx iterX_in.mkt]) 
+     fprintf('\r matches = %.2f, firms = %.2f, firm type = %.2f, market = %.2f\n',[all_cntr, N_firms, iterX_in.pt_ndx iterX_in.mkt]) 
 end

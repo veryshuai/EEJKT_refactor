@@ -31,7 +31,7 @@ parfor pt_ndx = 1:mm.N_pt
 end
 
 %% Uncomment commands below to generate data for spot checks
-check_type = mm.check_type;
+uotacheck_type = mm.check_type;
 if sim_out{check_type}.domfirm_count > 0
   check_cell_H = sim_out{mm.check_type}.iterH_check;
   check_count_H = sim_out{mm.check_type}.stackH;

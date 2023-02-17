@@ -53,6 +53,7 @@ sim_cum.agg_ln_ships = 0;
 %% Cumulate over firm types
 
 for pt_ndx = 1:1:mm.N_pt
+% for pt_ndx = 113
 % mm.sim_firm_num_by_prod_succ_type(pt_ndx)
     if mm.sim_firm_num_by_prod_succ_type(pt_ndx) > 0
         sim_cum.agg_time_gaps    = [sim_cum.agg_time_gaps;sim_out{pt_ndx}.time_gaps];
@@ -80,9 +81,9 @@ for pt_ndx = 1:1:mm.N_pt
         sim_cum.agg_hfmoms_xy  = sim_cum.agg_hfmoms_xy + squeeze(sim_out{pt_ndx}.hfmoms_xy); %check direction
         sim_cum.agg_hfysum     = sim_cum.agg_hfysum    + sim_out{pt_ndx}.hfysum;
         sim_cum.agg_hf_nobs    = sim_cum.agg_hf_nobs   + sim_out{pt_ndx}.hf_nobs;
-        sim_cum.agg_nfirm      = sim_cum.agg_nfirm + sim_out{pt_ndx}.nfirm;
-        sim_cum.agg_nexptr     = sim_cum.agg_nexptr + sim_out{pt_ndx}.nexptr;
-        sim_cum.agg_expt_rate  = [sim_cum.agg_expt_rate;sim_out{pt_ndx}.expt_rate];
+        sim_cum.agg_nfirm      = sim_cum.agg_nfirm + sim_out{pt_ndx}.nfirm;   % number of firms
+        sim_cum.agg_nexptr     = sim_cum.agg_nexptr + sim_out{pt_ndx}.nexptr; % number of exporters
+        sim_cum.agg_expt_rate  = [sim_cum.agg_expt_rate;sim_out{pt_ndx}.expt_rate]; %vector of shares of output exported, exporters only
 %       sim_cum.agg_exit_xx    = sim_cum.agg_exit_xx + squeeze(sim_out{pt_ndx}.exit_xx);
         sim_cum.agg_exit_xy    = sim_cum.agg_exit_xy + squeeze(sim_out{pt_ndx}.exit_xy)'; %chekc direction
         

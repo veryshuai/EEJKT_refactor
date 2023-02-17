@@ -16,7 +16,16 @@ function sim_out_pt_ndx = splice_hf(sim_out_pt_ndx,policy,mm,pt_ndx)
 
 % policy.firm_type_macro_succ_prod: [type, macro state index, theta index, productivity index]
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-%% Sum duds within a year for each firm_ID after sorting by firm and period
+%% Initialize counts
+
+  sim_out_pt_ndx.nfirm   = 0;   % count, all active firms 
+  sim_out_pt_ndx.nhfirms = 0;   % count, home mkt. firms 
+  sim_out_pt_ndx.nexptr  = 0;   % count, foreign mkt. firms  
+  sim_out_pt_ndx.hf_nobs = 0;   % count, firm-yrs in both mkts.   
+ 
+  sim_out_pt_ndx.expt_rate = double.empty(0,1); 
+
+  %% Sum duds within a year for each firm_ID after sorting by firm and period
 
   dud_matches = [sim_out_pt_ndx.dud_matches(:,1:3),sim_out_pt_ndx.dud_matches(:,6),...
                  sim_out_pt_ndx.dud_matches(:,4),sim_out_pt_ndx.dud_matches(:,9)];
@@ -108,7 +117,7 @@ catch
   fprintf('\r Warning: year, firm ID or productivity mismatch for home versus foreign sales');
 end
 
-%% Construct statistics of interest
+%% 
 
 if sum(ff)*sum(hh) == 0
    both_mkt    = double.empty(0,15);
@@ -116,7 +125,8 @@ if sum(ff)*sum(hh) == 0
    Nhf_firm_yrs = 0;
 else
     
-  try       
+  try
+% Combine export and domestic sales records by firm type and year in both_mkt      
   both_mkt = [theta_f, theta_h ,prod_f, f_bothmkt(:,2:end),h_bothmkt(:,2:end)];       
   % both_mkt: [(1) theta_f, (2) theta_h, (3) prod_h , (4-9) firm_h_yr_sales(:,2:end),
   %            (10-15) firm_f_yr_sales(:,2:end)]
@@ -126,19 +136,25 @@ else
   
 %% Count the number of distinct firm-yrs in the home and the foreign database
 
+% number of firms in both markets, aggregating over firms and years
   Nhf_firm_yrs = size(both_mkt,1);
-  export_rate  = Nf_firm_yrs/(Nh_firm_yrs+Nf_firm_yrs-Nhf_firm_yrs);
+  
+ % number of firms with sales in at least one market
+  N_firm_yrs  = Nh_firm_yrs + Nf_firm_yrs - Nhf_firm_yrs;  
+ % number of pure exportes 
+  Nexprt_only = Nf_firm_yrs - Nhf_firm_yrs;
+ 
+  sim_out_pt_ndx.nfirm   = N_firm_yrs;   % load count, all active firms 
+  sim_out_pt_ndx.nhfirms = Nh_firm_yrs;  % load count, home mkt. firms 
+  sim_out_pt_ndx.nexptr  = Nf_firm_yrs;  % load count, foreign mkt. firms  
+  sim_out_pt_ndx.hf_nobs = Nhf_firm_yrs; % load count, firms in both mkts.   
+  
+  % load vector of export shares among active exporters, including pure exporters
+  sim_out_pt_ndx.expt_rate = [both_mkt(:,7)./(both_mkt(:,7)+both_mkt(:,14)); ones(Nexprt_only,1)];
 
-  sim_out_pt_ndx.hf_nobs = Nhf_firm_yrs;
   % sim_out_pt_ndx.hffirms = Nhf_firm_yrs; 
   sim_out_pt_ndx.nexptr  = Nf_firm_yrs;
   sim_out_pt_ndx.nhfirms = Nh_firm_yrs;
-
-% number of firms with sales in at least one market
-  sim_out_pt_ndx.nfirm = Nh_firm_yrs + Nf_firm_yrs - Nhf_firm_yrs;
-
-% NOTE: Calculated this way, there sometimes appear to be more exporters 
-% than home market firms because the home firms don't turn over as much
 
 end
   sim_out_pt_ndx.firm_h_yr_sales = firm_h_yr_sales;
@@ -151,14 +167,6 @@ end
 % eyeball           = sortrows(sales_hf_temp,[1 2 5 4 8]);
 % eyeball_expt_rate = [eyeball, eyeball(:,7)./(eyeball(:,6)+eyeball(:,7))];
 
-  Nexprt_only = Nf_firm_yrs - Nhf_firm_yrs;
-  Nhome_only  = Nh_firm_yrs - Nhf_firm_yrs;
-  
-  sim_out_pt_ndx.nfirm  = Nh_firm_yrs;  % home mkt. firms 
-  sim_out_pt_ndx.nexptr = Nf_firm_yrs; % foreign mkt. firms  
-  sim_out_pt_ndx.expt_rate = [both_mkt(:,7)./(both_mkt(:,7)+both_mkt(:,14));ones(Nexprt_only,1);zeros(Nhome_only,1)];
-% sim_out_pt_ndx.sales_splice = sales_splice;
-
 %% Load matrices into sim_out_pdx
   sim_out_pt_ndx.firm_f_yr_sales = firm_f_yr_salesD(:,2:end);
   sim_out_pt_ndx.firm_h_yr_sales = firm_h_yr_sales(:,2:end);
@@ -166,12 +174,9 @@ end
 
 %% moments for regression of log foreign sales on log domestic sales
 
-sales_hf    = both_mkt;
-
 if size(both_mkt,1)>0
-   sim_out_pt_ndx.hf_nobs   = size(sales_hf,1);
-   sim_out_pt_ndx.y_hf      = log(sales_hf(:,7));
-   sim_out_pt_ndx.x_hf      = [ones(sim_out_pt_ndx.hf_nobs,1),log(sales_hf(:,13))];
+   sim_out_pt_ndx.y_hf      = log(both_mkt(:,7));
+   sim_out_pt_ndx.x_hf      = [ones(sim_out_pt_ndx.hf_nobs,1),log(both_mkt(:,13))];
    sim_out_pt_ndx.hfmoms_xx = sim_out_pt_ndx.x_hf'*sim_out_pt_ndx.x_hf;
    sim_out_pt_ndx.hfmoms_xy = sim_out_pt_ndx.x_hf'*sim_out_pt_ndx.y_hf;
    sim_out_pt_ndx.hfysum    = sum(sim_out_pt_ndx.y_hf);    

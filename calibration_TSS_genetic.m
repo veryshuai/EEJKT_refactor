@@ -38,7 +38,7 @@
       
  % X = theta;     
 
-  D0 = distance(theta)
+  D0 = distance(theta);
 
   K = length(theta);
         

@@ -27,6 +27,6 @@ print_diagnostics_to_standard_output_alt(D_alt, X, real_moms_and_sim_moms_alt, e
 
 %%
 % shouldMatchMoments(real_moms_and_sim_moms,D,"overwrite","results/shouldMatchMomentsData");
-% shouldMatchMoments(real_moms_and_sim_moms,D,"test","results/shouldMatchMomentsData");
+ shouldMatchMoments(real_moms_and_sim_moms,D,"test","results/shouldMatchMomentsData");
 
 end

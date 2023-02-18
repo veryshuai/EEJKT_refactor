@@ -1,5 +1,13 @@
 function [mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence(mm, iterX_in)
 
+% This function splices together monthly matches within a year, maintaining
+% Z transitions, for each firm_ID within a particular firm type. The
+% outputs are stacked annualized matches that are active at the end of
+% the year (all_seas) or dead by the end of the year (som_seas). For each
+% annualized match, a row of all_seas and som_seas contains: 
+%  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
+%  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
+
   N_firms = mm.sim_firm_num_by_prod_succ_type(iterX_in.pt_ndx);
 
     if isempty(iterX_in.seas_tran{1}) == 1
@@ -10,9 +18,13 @@ function [mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence
       smat_tran = [sortrows(iterX_in.seas_tran{1},[5 6]),mat_age]; 
       mat_cols = size(iterX_in.seas_tran{1},2)+1;  % Holds all matches. The +1 makes room for a match age variable
     end
-    
-  all_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); % To hold data on matches present at end of year
-  som_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); % To hold data on matches that die before end of year
+  
+  % max_match = iterX_in.N_match;   
+  max_match = floor(iterX_in.N_match/10);
+  
+  
+  all_seas = zeros(max_match,mat_cols*mm.pd_per_yr); % To hold data on matches present at end of year
+  som_seas = zeros(max_match,mat_cols*mm.pd_per_yr); % To hold data on matches that die before end of year
  
   % iterX_in.seas_tran: [t, season, year, mat_tran, #shipments, exporter age(in periods)]; where
   % mat_tran:  [initial state, exporter id, ending state, match revenue]
@@ -71,7 +83,7 @@ for ss=2:mm.pd_per_yr
       if size(ff_move,1)>0
       som_seas(som_cntr+1:som_cntr+size(ff_move,1),:) = all_seas(ff_move,:); 
       som_cntr = size(som_seas,1);      
-      all_seas = zeros(iterX_in.N_match,mat_cols*mm.pd_per_yr); 
+      all_seas = zeros(max_match,mat_cols*mm.pd_per_yr); 
       all_cntr = 0;
       end
    catch
@@ -147,7 +159,18 @@ for ss=2:mm.pd_per_yr
     end
 
      try  
-%    load current season continuing matches into all_seas, incrementing match age by 1
+
+%    check if all_seas has enough rows to hold all active matches. If not, expand.
+     rows_needed = size(ff_all_active,1)+size(ff_new,1);
+     if max_match < rows_needed
+         new_max_match = floor(rows_needed*1.2); 
+         fprintf('\r Increased size of all_seas from %.0f to %.0f rows\n',...
+        [max_match, new_max_match])
+         max_match = new_max_match;
+         all_seas = cat(1,all_seas,zeros(max_match,mat_cols*mm.pd_per_yr));
+     end
+     
+%    load current season continuing matches into all_seas, incrementing match age by 1         
      all_seas(1:all_cntr,1:ucb) = [temp2(:,1:lcb-1),temp1,temp2(:,lcb-1)+ones(size(temp1,1),1)] ;
 %    add new rows to all_seas for new matches. Match age is zero for all new matches.
      all_seas(all_cntr+1:all_cntr+size(ff_new,1),lcb:ucb) = [smat_tran(ff_new,:),ones(size(ff_new,1),1)];
@@ -172,7 +195,7 @@ for ss=2:mm.pd_per_yr
      
      all_cntr = size(ff_live,1);        
      all_seas(1:all_cntr,:) = all_seas(ff_live,:); % moving survivors to first rows         
-     all_seas(all_cntr+1:iterX_in.N_match,:) = 0; % clear remaining rows
+     all_seas(all_cntr+1:end,:) = 0; % clear remaining rows
       
 %    move matches that die at end of year out of all_seas and into som_seas     
      if ss==mm.pd_per_yr
@@ -183,7 +206,7 @@ for ss=2:mm.pd_per_yr
          all_cntr = size(ff_eoy_live,1);
          som_seas(som_cntr+1:som_cntr+size(ff_eoy_die,1),1:ucb) = all_seas(ff_eoy_die,1:ucb);
          all_seas(1:all_cntr,:) = all_seas(ff_eoy_live,:);    
-         all_seas(all_cntr+1:iterX_in.N_match,:) = 0; 
+         all_seas(all_cntr+1:end,:) = 0; 
      end
     catch
       fprintf('\r\n period = %.2f, firm type = %.2f, market =%.2f\n',[iterX_in.t iterX_in.pt_ndx iterX_in.mkt]) 
@@ -210,5 +233,10 @@ for ss=2:mm.pd_per_yr
     Zcut_eoy = Zcut;
     
 end
-%      fprintf('\r matches = %.2f, firms = %.2f, firm type = %.2f, market = %.2f\n',[all_cntr, N_firms, iterX_in.pt_ndx iterX_in.mkt]) 
+       all_seas_active = find(sum(all_seas,2)>0);
+       som_seas_active = find(sum(som_seas,2)>0);
+       Nall            = size(all_seas_active,1);
+       Nsom            = size(som_seas_active,1);
+      fprintf('\r match-months: %.0f, EOY active: %.0f, other matches: %.0f, all_seas rows: %.0f, firms: %.0f, firm type: %.0f, market: %.0f\n',...
+          [iterX_in.N_match, Nall, Nsom, max_match N_firms, iterX_in.pt_ndx iterX_in.mkt]) 
 end

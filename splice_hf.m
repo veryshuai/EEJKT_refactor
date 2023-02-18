@@ -2,7 +2,9 @@ function sim_out_pt_ndx = splice_hf(sim_out_pt_ndx,policy,mm,pt_ndx)
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 % This function takes panel of realizations on domestic and foreign sales
 % for a particular type (theta_f and phi), and splices them together to 
-% create synthetic firms
+% create synthetic firms. It also counts firms that service the export
+% market only, the home market only, or both, and constructs export to 
+% total sales ratios for each exporter.
 
 % transF contains records for populated rows of the following exporter transition variables from iter_in: 
  %   transF{pt_inx,1:6}: [find_xcli, cur_cli_cnt, cum_succ, cumage, new_firm, cum_meets]

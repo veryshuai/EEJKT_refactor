@@ -164,8 +164,8 @@ for ss=2:mm.pd_per_yr
      rows_needed = size(ff_all_active,1)+size(ff_new,1);
      if max_match < rows_needed
          new_max_match = floor(rows_needed*1.2); 
-         fprintf('\r Increased size of all_seas from %.0f to %.0f rows\n',...
-        [max_match, new_max_match])
+%          fprintf('\r Increased size of all_seas from %.0f to %.0f rows\n',...
+%         [max_match, new_max_match])
          max_match = new_max_match;
          all_seas = cat(1,all_seas,zeros(max_match,mat_cols*mm.pd_per_yr));
      end
@@ -233,10 +233,12 @@ for ss=2:mm.pd_per_yr
     Zcut_eoy = Zcut;
     
 end
-       all_seas_active = find(sum(all_seas,2)>0);
-       som_seas_active = find(sum(som_seas,2)>0);
-       Nall            = size(all_seas_active,1);
-       Nsom            = size(som_seas_active,1);
-      fprintf('\r match-months: %.0f, EOY active: %.0f, other matches: %.0f, all_seas rows: %.0f, firms: %.0f, firm type: %.0f, market: %.0f\n',...
-          [iterX_in.N_match, Nall, Nsom, max_match N_firms, iterX_in.pt_ndx iterX_in.mkt]) 
+% Some diagnostic prints:
+
+%        all_seas_active = find(sum(all_seas,2)>0);
+%        som_seas_active = find(sum(som_seas,2)>0);
+%        Nall            = size(all_seas_active,1);
+%        Nsom            = size(som_seas_active,1);
+%       fprintf('\r match-months: %.0f, EOY active: %.0f, other matches: %.0f, all_seas rows: %.0f, firms: %.0f, firm type: %.0f, market: %.0f\n',...
+%           [iterX_in.N_match, Nall, Nsom, max_match N_firms, iterX_in.pt_ndx iterX_in.mkt]) 
 end

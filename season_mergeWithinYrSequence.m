@@ -10,6 +10,13 @@ function [mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence
 
   N_firms = mm.sim_firm_num_by_prod_succ_type(iterX_in.pt_ndx);
 
+  if iterX_in.N_match > 1e+6
+   fprintf('\r Too many match-months: %.0f, firms: %.0f, firm type: %.0f, market: %.0f\n',...
+           [iterX_in.N_match, N_firms, iterX_in.pt_ndx, iterX_in.mkt]) 
+       msg = 'Choking on more than 1,000,000 firm months: abort evaluation';
+       error(msg);
+  end
+  
     if isempty(iterX_in.seas_tran{1}) == 1
       smat_tran  = double.empty(0,10);  
       mat_cols   = 10;
@@ -20,7 +27,7 @@ function [mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence
     end
   
   % max_match = iterX_in.N_match;   
-  max_match = floor(iterX_in.N_match/10);
+  max_match = floor(iterX_in.N_match/10) + 1;
   
   
   all_seas = zeros(max_match,mat_cols*mm.pd_per_yr); % To hold data on matches present at end of year

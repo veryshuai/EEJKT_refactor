@@ -3,13 +3,12 @@
 %as well as optional settings for the genetic algorithm.
 
 
-% relation between parameters and the X vector:
 
 %% relation between parameters and the X vector:
     
 % mm.F_h       = exp(X(1)); % cost of maintaining a client- home 
 % mm.scale_h   = X(2);       % Profit function scale parameter, home
-% mm.scale_f   = X(12);       % Profit function scale parameter, foreign
+% mm.scale_f   = X(2);       % Profit function scale parameter, foreign
 % mm.ah        = X(4)*X(3);  % Beta function, home and foreign success parameter
 % mm.bh        = X(4)*(1-X(3));% Beta function, home and foreign failure parameter
 % D_z          = X(5)/mm.pd_per_yr; % jump size, match profit shock
@@ -23,13 +22,9 @@
 
 
 %%
-%  theta = [-2.82994  -10.96398   0.17170   0.54027   0.42817   9.38425...
-%           0.14956   0.44010   1.29846  -1.22687   8.64075  -6.81164]; 
-%   fit metric = 11.1420323841
 
  theta = [-2.82994  -10.96398    0.17170   0.54027   0.42817   9.38425...
-          0.14956   2.44010   1.29846  -1.22687   8.64075  -6.81164]; 
- % fit metric: 11.23980451
+          0.14956   2.44010   1.29846  -1.22687   8.64075 ]; 
 
  % X = theta;     
 

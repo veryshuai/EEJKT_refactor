@@ -17,7 +17,7 @@ mm.gam       = X(7);       % Network effect parameter
 mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
 mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
 mm.sig_p     = X(9);       %standard deviation of productivity distribution
-mm.optimism  = X(12);      %parameter on prior distribution (positive means optimistic, negative pessamisitic)
+mm.optimism  = 0;      %parameter on prior distribution (positive means optimistic, negative pessamisitic)
 
 
 %% Discretization of state-space

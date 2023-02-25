@@ -88,5 +88,5 @@ iter_out.mat_obs          = 0;
 iter_out.nmat_exit        = 0;
 iter_out.mat_exit_x       = zeros(0,5);
 iter_out.mat_exit_y       = zeros(0,1);
-% iter_out.mat_matur        = zeros(0,7);
+
 end

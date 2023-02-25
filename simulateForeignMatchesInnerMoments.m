@@ -4,21 +4,17 @@ if iter_in.year > mm.burn  % don't start building simulated data set until burn-
 
         tt =  ones(size(iter_in.mat_yr_sales,1),1).*[iter_in.t,iter_in.mic_type]; % add cols 1 and 2: t, firm type
         iter_out.mat_yr_sales  = [iter_out.mat_yr_sales;[tt,iter_in.mat_yr_sales]];
-       % agg_mat_yr_sales: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, match age, firm age]
+       % mat_yr_sales: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, match age, firm age]
 
          ttt = ones(size(iter_in.firm_yr_sales,1),1).*[iter_in.t,iter_in.mic_type];
          iter_out.firm_f_yr_sales = [iter_out.firm_f_yr_sales;[ttt,iter_in.firm_yr_sales]]; % add cols 1 and 2: t, firm type
-       % agg_firm_yr_sales: [t,type,firm ID, total exports,total shipments,firm age]
-
-%        iter_out.mat_matur =  [iter_out.mat_matur; iter_in.mat_matur_dat];
-        
-%       iter_in.mat_matur_dat: [sales, boy Z, eoy Z, match age, firm age, firm_ID, yr]
-%       iter_in.mat_cont_2yr:  [firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age] x 2 (lagged, then current) 
+       % firm_f_yr_sales: [t,type,firm ID, total exports,total shipments,firm age]
 
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%  match AR1 regression moments
 
         [mat_ar1_x,mat_ar1_y,moms_xx,moms_xy,ysum,n_obs] = match_reg_moms(iter_in.mat_cont_2yr,iter_in.ncols);
+%       iter_in.mat_cont_2yr:  [firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age] x 2 (lagged, then current) 
 
         iter_out.moms_xx = iter_out.moms_xx + moms_xx; % cumulate moments for match regression
         iter_out.moms_xy = iter_out.moms_xy + moms_xy; % cumulate moments for match regression

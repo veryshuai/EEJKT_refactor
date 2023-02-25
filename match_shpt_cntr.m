@@ -67,13 +67,15 @@ for ii = 1:size(all_duds,1)
   Ndud = dud_count(ii,2);
   if Ndud >0  
   % dud matches: firm_ID, shipment=1, sale=dud_rev, bop Z = eop Z = match_age = 0, and actual firm age     
-  dud_matches = [dud_matches; [dud_count(ii,1)*ones(Ndud,1), ones(Ndud,1).*[1 1 dud_rev 0 0 dud_count(ii,3)] ] ];
+  dud_matches = [dud_matches; [dud_count(ii,1)*ones(Ndud,1), ones(Ndud,1).*[dud_rev 1 0 0 0 dud_count(ii,3)] ] ];
   end
 end
 assert(sum(dud_count(:,2)) == size(dud_matches,1))
 
 % stack dud matches with others to crate alternative set of match records
 matchesD = [matches;dud_matches];
+% matchesD: [firmID, revenue, shipments, boy Z, eoy Z, match age, firm age]
+
 % initialize vector that will count firms in each match count category
 match_countD = double.empty(0,1);
 

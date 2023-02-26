@@ -29,8 +29,7 @@ function sim_out_pt_ndx = splice_hf(sim_out_pt_ndx,policy,mm,pt_ndx)
 
   %% Sum duds within a year for each firm_ID after sorting by firm and period
 
-  dud_matches = [sim_out_pt_ndx.dud_matches(:,1:3),sim_out_pt_ndx.dud_matches(:,6),...
-                 sim_out_pt_ndx.dud_matches(:,4),sim_out_pt_ndx.dud_matches(:,9)];
+  dud_matches = [sim_out_pt_ndx.dud_matches(:,1:5),sim_out_pt_ndx.dud_matches(:,9)];
   dud_firmyr        = dud_matches(:,1) + 0.000001*dud_matches(:,3);
   dud_temp_matches  = sortrows([dud_firmyr,dud_matches],1);
 % dud_matches:                  [t, type, firm_ID, sales, shipments (1), firm age in export mkt.]

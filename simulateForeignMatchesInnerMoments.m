@@ -31,19 +31,6 @@ end
 
 if iter_in.year >= mm.burn  
     
-    %% autoregressions and degree distribution
-
-% JT: we're not using this regression and in any case it is 
-% done using data at the match level (iter_in.mat_cont_2yr), not the firm level
-% (If we go back to including a firm-level AR, we need to fix this.)
-%     
-%     [fmoms_xx,fmoms_xy,fysum,fn_obs] = firm_reg_moms(iter_in,mm);
-% 
-% 
-%     iter_out.fmoms_xx = iter_out.fmoms_xx + fmoms_xx; % cumulate moments for firm regression
-%     iter_out.fmoms_xy = iter_out.fmoms_xy + fmoms_xy; % cumulate moments for firm regression
-%     iter_out.fysum    = iter_out.fysum + fysum;
-%     iter_out.fnobs    = iter_out.fnobs + fn_obs ;
     
     %% match exit regression moments
     if iter_in.year_lag == iter_in.year
@@ -59,9 +46,10 @@ if iter_in.year >= mm.burn
             %  mat_exit_x = [x0,x1,x2,x3,x4];
             %    x0 = ones(size(ff,1),1);                 % ff picks off non-missing obs.
             %    x1 = matches(ff,4)==0;                   % match new this year
-            %    x2 = log(matches(ff,2));                 % sales during year
-            %    x3 = log(1+matches(ff,6)./mm.pd_per_yr); % age of match
-            %    x4 = log(1+matches(ff,7)./mm.pd_per_yr); % age of exporter
+            %    x2 = log(matches(ff,2));                 % log sales during year
+            %    x3 = log(1+matches(ff,6)./mm.pd_per_yr); % log age of match (in years)
+            %    x4 = log(1+matches(ff,7)./mm.pd_per_yr); % log age of exporter (in years)
+                       
 
             iter_out.mat_exit_moms_xx = iter_out.mat_exit_moms_xx + mat_exit_moms_xx;
             iter_out.mat_exit_moms_xy = iter_out.mat_exit_moms_xy + mat_exit_moms_xy;
@@ -74,16 +62,16 @@ if iter_in.year >= mm.burn
     %% shipment and match counter
     
     [nship_obs,ln_ships,match_count,match_countD,dud_matches] = match_shpt_cntr(iter_in,mm);
-  % dud matches: [firm_ID, shipment=1, sales at Zcut, bop Z = eop Z = match_age = 0, firm age]
+  % dud matches: [firm_ID, sales at Zcut, shipments (1), bop Z = eop Z = match_age = 0, firm age]
   % match_count and match_countD are vectors of match counts for active firms w/out % w/ duds
-  % ln_ships is the sum of ln shipment values, all firms; nships_obs is # shipments
+  % ln_ships is the sum of ln shipment values, all firms; nships_obs is #shipments, all firms
   
     iter_out.ship_obs    = iter_out.ship_obs + nship_obs ;
     iter_out.ln_ships    = iter_out.ln_ships + ln_ships ;
     
     ttt = ones(size(dud_matches,1),1).*[iter_in.t,iter_in.mic_type];
     iter_out.dud_matches = [iter_out.dud_matches; [ttt,dud_matches]] ;
-  % iter_out.dud matches: [t, mic_type, firm_ID, shipment=1, sales at Zcut, bop Z = eop Z = match_age = 0, firm age]
+  % iter_out.dud matches: [t, mic_type, firm_ID, sales at Zcut, shipment=1,  bop Z = eop Z = match_age = 0, firm age]
     
     % topcode match counts for each firm_ID 
     match_count  = min(mm.max_match, match_count);

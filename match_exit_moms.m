@@ -10,7 +10,7 @@ ff = find(matches(:,2)>0);
 y  = matches(ff,5)==0;                % match dead by end of year
 
 x0 = ones(size(ff,1),1);              % intercept
-x1 = matches(ff,4)==0;                % new match this year 
+x1 = matches(ff,4)==0;                % dummy, new match this year 
 x2 = log(matches(ff,2));              % log sales during year
 x3 = log(1+matches(ff,6)./pd_per_yr); % log age of match, in years
 x4 = log(1+matches(ff,7)./pd_per_yr); % log age of exporter, in years

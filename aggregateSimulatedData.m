@@ -78,9 +78,19 @@ for pt_ndx = 1:1:mm.N_pt
         sim_cum.agg_fysum_h    = sim_cum.agg_fysum_h + sim_out{pt_ndx}.fysum_h;
         sim_cum.agg_fnobs_h    = sim_cum.agg_fnobs_h + sim_out{pt_ndx}.fnobs_h;
         sim_cum.agg_hfmoms_xx  = sim_cum.agg_hfmoms_xx + squeeze(sim_out{pt_ndx}.hfmoms_xx);
-        sim_cum.agg_hfmoms_xy  = sim_cum.agg_hfmoms_xy + squeeze(sim_out{pt_ndx}.hfmoms_xy); %check direction
+
+        sim_cum.agg_hfmoms_xy  = sim_cum.agg_hfmoms_xy + squeeze(sim_out{pt_ndx}.hfmoms_xy); %check direction       
         sim_cum.agg_hfysum     = sim_cum.agg_hfysum    + sim_out{pt_ndx}.hfysum;
-        sim_cum.agg_hf_nobs    = sim_cum.agg_hf_nobs   + sim_out{pt_ndx}.hf_nobs;
+        sim_cum.agg_hf_nobs    = sim_cum.agg_hf_nobs   + sim_out{pt_ndx}.hf_nobs;              
+        
+  
+%         temp_agg_hfmoms_xx = sim_cum.agg_hfmoms_xx;
+%         temp_agg_hfmoms_xy = sim_cum.agg_hfmoms_xy; 
+%         temp_agg_hfysum  = sim_cum.agg_hfysum;
+%         temp_agg_hf_obs = sim_cum.agg_hf_nobs;       
+%         [pt_ndx,temp_agg_hfysum,temp_agg_hf_obs]
+%         [temp_agg_hfmoms_xx,temp_agg_hfmoms_xy ]
+            
         sim_cum.agg_nfirm      = sim_cum.agg_nfirm + sim_out{pt_ndx}.nfirm;   % number of firms
         sim_cum.agg_nexptr     = sim_cum.agg_nexptr + sim_out{pt_ndx}.nexptr; % number of exporters
         sim_cum.agg_expt_rate  = [sim_cum.agg_expt_rate;sim_out{pt_ndx}.expt_rate]; %vector of shares of output exported, exporters only

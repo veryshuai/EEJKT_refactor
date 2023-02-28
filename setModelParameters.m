@@ -4,23 +4,33 @@ mm = struct();
 
 %% technology parameters
 
-mm.param_vec = X;      % carry along parameter vector for diagnostic checks
-
 mm.pd_per_yr = 12;        % number of periods per year
 mm.r         = 0.13/mm.pd_per_yr;   % Rate of time preference per period
 mm.firm_death_haz = 0.08/mm.pd_per_yr;   % Component of time preference due to exogenous death
 mm.delta     = 0.326/mm.pd_per_yr;  % Exogenous match separation rate 
+mm.eta       = 5;          % Demand elasticity 
+
+%% Estimated parameters
+
+mm.param_vec = X;      % carry along parameter vector for diagnostic checks
+
+mm.F_h       = exp(X(1));  % cost of maintaining a client- home 
 mm.scale_h   = X(2);       % Domestic profit function scale parameter
 mm.scale_f   = X(2);       % Export profit function scale parameter (same as home)
-mm.eta       = 5;          % Demand elasticity 
+mm.ah        = X(4)*X(3);  % Beta function, home (theta1) success parameter
+mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
+D_z          = X(5)/mm.pd_per_yr; % Jump size, match productivity shock
+mm.L_bF      = X(6)/mm.pd_per_yr; % Shipment order arrival hazard
 mm.gam       = X(7);       % Network effect parameter
 mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
-mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
 mm.sig_p     = X(9);       %standard deviation of productivity distribution
-mm.optimism  = 0;      %parameter on prior distribution (positive means optimistic, negative pessamisitic)
+mm.F_f       = exp(X(10)); % cost of maintaining a client- foreign
+mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
+mm.optimism  = X(12);      %parameter on prior distribution (positive means optimistic, negative pessamisitic)
 
 
 %% Discretization of state-space
+
 %mm.grid_length   = 2.5;   % number of standard deviations from mean used for discretization
 mm.n_size        = 20;    % Maximum number of informative signals per firm 
 mm.net_size      = 40;    % maximum number of network effects
@@ -34,12 +44,8 @@ mm.dim2          = 7;     % Number pf possible theta2 values (specific to foreig
 
 %% Theta distributions
 
-mm.ah        = X(4)*X(3); % Beta function, home (theta1) success parameter
-mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
-mm.af        = mm.ah;     % Beta function, foreign (theta2) success parameter (assume same as home)
-mm.bf        = mm.bh;     % Beta function, foreign (theta2) success parameter (assume same as home)
-mm.F_f       = exp(X(10));       % cost of maintaining a client- foreign
-mm.F_h       = exp(X(1)); % cost of maintaining a client- home 
+mm.af = mm.ah; % Beta function, foreign (theta2) success parameter (assume same as home)
+mm.bf = mm.bh; % Beta function, foreign (theta2) success parameter (assume same as home)
 
 mm.theta1           = linspace((1/mm.dim1)*0.5,(1 - 1/mm.dim1*0.5),mm.dim1); %was 1/mm.dim1:1/mm.dim1:1;
 mm.theta2           = linspace((1/mm.dim2)*0.5,(1 - 1/mm.dim2*0.5),mm.dim2); % was 1/mm.dim2:1/mm.dim2:1;
@@ -55,7 +61,6 @@ mm.th2_pdf = [mm.th2_cdf(1),mm.th2_cdf(2:mm.dim1)-mm.th2_cdf(1:mm.dim1-1)];
 %% Solution parameters
 mm.v_tolerance   = 1e-3;    % convergence tolerance, value function iterations (WAS 1e-3)
 mm.max_iter      = 5e4; % maximum number of value function iterations
-
 mm.pi_tolerance  = 1e-8;    % convergence tolerance, profit function (WAS .001)
 mm.T             = 50;      % horizon for calculating profit function
 mm.tot_yrs       = 50;     % years to simulate, including burn-in (mm.burn)
@@ -98,7 +103,7 @@ D_f = sig_f*L_f^(-.5);   % delta, size of jump states
 
 % Shipment orders in home market are twice as frequent 
 % (Alessandria, Kaboski, and Midrigan, AER, 2010)
-mm.L_bF = X(6)/mm.pd_per_yr;
+
 mm.L_bH = 2*mm.L_bF;  % Impose that domestic shipments are twice as frequent as exports
 
 mm.max_shipsF = 3*round(mm.L_bF); % maximum within-period shipments is triple expected number
@@ -108,7 +113,6 @@ mm.max_shipsH = 3*round(mm.L_bH); % maximum within-period shipments is triple ex
 mm.poisCDF_shipmentsH   = poisscdf(1:1:mm.max_shipsH,mm.L_bH);
 
 L_z = 4/mm.pd_per_yr; % four demand shock jumps per year (where is this from?)
-D_z = X(5)/mm.pd_per_yr;
 [Q_z,Z] = makeq(L_z,D_z,mm.z_size);
 erg_pz = make_erg(L_z,D_z,Z); 
 

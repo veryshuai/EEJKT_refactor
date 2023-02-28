@@ -31,15 +31,15 @@ fprintf('\r\n weighted metric:   %.15f\n', D);
     fprintf(' maximum number of clients  = %.3f\n',max(simMoms.max_countD));
     fprintf(' number of firms per yr     = %.3f\n',simMoms.agg_nfirm/(mm.tot_yrs - mm.burn));
     fprintf( '\r\n  '); 
-    
-      fileID2 = fopen('results/ga_fitlog_2Arv_2Scl.txt','a');
-      fprintf(fileID2,'\r\n fit metric = ');
-      dlmwrite('results/ga_fitlog_2Arv_2Scl.txt',D,'-append','precision',12);
-      fclose(fileID2);
+%     
+%       fileID2 = fopen('results/ga_fitlog_2Arv_2Scl.txt','a');
+%       fprintf(fileID2,'\r\n fit metrics, original and alternative:  ');
+%       dlmwrite('results/ga_fitlog_2Arv_2Scl.txt',[D D0],'-append','precision',12);
+%       fclose(fileID2);
  
 
       fileID1 = fopen('results/ga_running_output_2Arv_2Scl.txt','a');
-      fprintf(fileID1,'\r\n fit metrics (weighted and unweighted): ');
+      fprintf(fileID1,'\r\n original fit metric: ');
       dlmwrite('results/ga_running_output_2Arv_2Scl.txt',D,'-append','precision',12);
     
       fprintf(fileID1, '\r\n parameters: ');
@@ -47,7 +47,7 @@ fprintf('\r\n weighted metric:   %.15f\n', D);
       fprintf(fileID1, '\r\n%9.5f %9.5f %9.5f %9.5f %9.5f %9.5f',X(7:end));
       fprintf(fileID1, '\r\n  ');
   
-      fprintf(fileID1, '\r\n moments: ');   
+      fprintf(fileID1, '\r\n original moments: ');   
       fprintf(fileID1, '\r\n%6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f',full(mmm(1:10,:)));  
       fprintf(fileID1, '\r\n  ');
       fprintf(fileID1, '\r\n%6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f',full(mmm(11:20,:)));  

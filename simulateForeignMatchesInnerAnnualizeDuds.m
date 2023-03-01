@@ -14,5 +14,5 @@ cum_duds  = iter_in.cum_meets(:,yr_tlag:iter_in.t) - iter_in.cum_succ(:,yr_tlag:
 iter_out.cur_yr_duds  = ...
   cum_duds(:,2:mm.pd_per_yr+1)-(iter_in.new_firm(:,yr_tlag+1:iter_in.t)==0).*cum_duds(:,1:mm.pd_per_yr);
 
-iter_out.singletons = sum(sum(iter_out.cur_yr_duds));
+% iter_out.singletons = sum(sum(iter_out.cur_yr_duds));
 end

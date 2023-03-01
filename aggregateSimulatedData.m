@@ -46,7 +46,7 @@ sim_cum.agg_nmat_exit     = 0;
 sim_cum.agg_match_count  = zeros(1,mm.max_match);
 sim_cum.agg_match_countD = zeros(1,mm.max_match);
 
-sim_cum.singletons = 0;
+% sim_cum.singletons = 0;
 sim_cum.duds       = 0;
 sim_cum.agg_ln_ships = 0;
 
@@ -95,7 +95,7 @@ for pt_ndx = 1:1:mm.N_pt
         sim_cum.agg_nexptr     = sim_cum.agg_nexptr + sim_out{pt_ndx}.nexptr; % number of exporters
         sim_cum.agg_expt_rate  = [sim_cum.agg_expt_rate;sim_out{pt_ndx}.expt_rate]; %vector of shares of output exported, exporters only
 %       sim_cum.agg_exit_xx    = sim_cum.agg_exit_xx + squeeze(sim_out{pt_ndx}.exit_xx);
-        sim_cum.agg_exit_xy    = sim_cum.agg_exit_xy + squeeze(sim_out{pt_ndx}.exit_xy)'; %chekc direction
+        sim_cum.agg_exit_xy    = sim_cum.agg_exit_xy + squeeze(sim_out{pt_ndx}.exit_xy)'; %check direction
         
         sim_cum.agg_sum_succ_rate    = sim_cum.agg_sum_succ_rate + sim_out{pt_ndx}.sum_succ_rate;
         sim_cum.agg_exit_obs         = sim_cum.agg_exit_obs + sim_out{pt_ndx}.exit_obs;

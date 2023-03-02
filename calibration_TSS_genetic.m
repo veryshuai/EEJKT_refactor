@@ -6,19 +6,19 @@
 
 %% relation between parameters and the X vector:
     
-% mm.F_h       = exp(X(1)); % cost of maintaining a client- home 
-% mm.scale_h   = X(2);       % Profit function scale parameter, home
-% mm.scale_f   = X(2);       % Profit function scale parameter, foreign
-% mm.ah        = X(4)*X(3);  % Beta function, home and foreign success parameter
-% mm.bh        = X(4)*(1-X(3));% Beta function, home and foreign failure parameter
-% D_z          = X(5)/mm.pd_per_yr; % jump size, match profit shock
-% mm.L_bF      = X(6)/mm.pd_per_yr; % new shipment hazard, foreign market
+% mm.F_h       = exp(X(1));  % cost of maintaining a client- home 
+% mm.scale_h   = X(2);       % Domestic profit function scale parameter
+% mm.scale_f   = X(2);       % Export profit function scale parameter (same as home)
+% mm.ah        = X(4)*X(3);  % Beta function, home (theta1) success parameter
+% mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
+% D_z          = X(5)/mm.pd_per_yr; % Jump size, match productivity shock
+% mm.L_bF      = X(6)/mm.pd_per_yr; % Shipment order arrival hazard
 % mm.gam       = X(7);       % Network effect parameter
 % mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
 % mm.sig_p     = X(9);       %standard deviation of productivity distribution
 % mm.F_f       = exp(X(10)); % cost of maintaining a client- foreign
 % mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
-% mm.optimism  = 0;          %parameter on prior distribution (positive means optimistic, negative pessamisitic) 
+% mm.optimism  = X(12);      %parameter on prior distribution (positive means optimistic, negative pessamisitic)
 
 
 %%

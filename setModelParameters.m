@@ -143,7 +143,7 @@ mm.Q_h_d(1:size(Q_h,1)+1:end) = 0;
 
 mm.D_f          = D_f;      %size of jump in foreign macro shock
 mm.Q_f          = Q_f;      %intensity matrix for foreign macro shock
-mm.Q_f_d = Q_f;
+mm.Q_f_d        = Q_f;
 mm.Q_f_d(1:size(Q_f,1)+1:end) = 0;
 
 mm.erg_pp       = erg_pp;   %ergodic distribution of seller productivities

@@ -2,27 +2,24 @@ function sim_cum = aggregateSimulatedData(sim_out,mm)
 
 sim_cum = struct;
 
-sim_cum.agg_mat_yr_sales    = zeros(0,9); % for analysis of match dynamics
-sim_cum.agg_dud_matches     = zeros(0,9);
+sim_cum.agg_mat_yr_sales    = zeros(0,9); % obs. for analysis of match dynamics
+sim_cum.agg_dud_matches     = zeros(0,9); % obs. on dud matches
 sim_cum.agg_mat_ar1_x       = zeros(0,4); % for match ar1 regression residuals
 sim_cum.agg_mat_ar1_y       = zeros(0,1); % for match ar1 regression residuals
 sim_cum.agg_mat_exit_x      = zeros(0,5); % for match exit regression residuals
 sim_cum.agg_mat_exit_y      = zeros(0,1); % for match exit regression residuals
-% sim_cum.agg_mat_matur       = zeros(0,8); % for match maturation analysis
 sim_cum.agg_x_hf            = zeros(0,2); % for home-foreign sales regression residuals
 sim_cum.agg_y_hf            = zeros(0,1); % for home-foreign sales regression residuals
 sim_cum.agg_x_fsales_h      = zeros(0,2); % for firm-level home sales AR1 residuals
 sim_cum.agg_y_fsales_h      = zeros(0,1); % for firm-level home sales AR1 residuals
 sim_cum.agg_time_gaps       = zeros(0,7); % for match hazard analysis
-sim_cum.agg_moms_xx   = zeros(4,4);
-sim_cum.agg_moms_xy   = zeros(4,1);
-sim_cum.agg_ysum      = 0;
-sim_cum.agg_nobs      = 0;
-sim_cum.agg_ship_obs  = 0;
-sim_cum.agg_fmoms_xx = zeros(4,4);
-sim_cum.agg_fmoms_xy = zeros(4,1);
-sim_cum.agg_fmoms_h_xx = zeros(2,2);
-sim_cum.agg_fmoms_h_xy = zeros(2,1);
+sim_cum.agg_moms_xx   = zeros(4,4); % match autoregression
+sim_cum.agg_moms_xy   = zeros(4,1); % match autoregression
+sim_cum.agg_ysum      = 0; % match autoreg., sum of dep. var. (match sales)
+sim_cum.agg_nobs      = 0; % match autoreg., number of observations
+sim_cum.agg_ship_obs  = 0; % number of shipments
+sim_cum.agg_fmoms_h_xx = zeros(2,2); % home market firm sales autoreg.
+sim_cum.agg_fmoms_h_xy = zeros(2,1); % home market firm sales autoreg.
 sim_cum.agg_fysum    = 0;
 sim_cum.agg_fnobs    = 0;
 sim_cum.agg_fysum_h  = 0;
@@ -46,7 +43,6 @@ sim_cum.agg_nmat_exit     = 0;
 sim_cum.agg_match_count  = zeros(1,mm.max_match);
 sim_cum.agg_match_countD = zeros(1,mm.max_match);
 
-% sim_cum.singletons = 0;
 sim_cum.duds       = 0;
 sim_cum.agg_ln_ships = 0;
 
@@ -69,8 +65,6 @@ for pt_ndx = 1:1:mm.N_pt
         sim_cum.agg_nobs       = sim_cum.agg_nobs    + sim_out{pt_ndx}.nobs;
         sim_cum.agg_mat_ar1_x  = [sim_cum.agg_mat_ar1_x;sim_out{pt_ndx}.mat_ar1_x];
         sim_cum.agg_mat_ar1_y  = [sim_cum.agg_mat_ar1_y;sim_out{pt_ndx}.mat_ar1_y];
-        sim_cum.agg_fmoms_xx   = sim_cum.agg_fmoms_xx + squeeze(sim_out{pt_ndx}.fmoms_xx); 
-        sim_cum.agg_fmoms_xy   = sim_cum.agg_fmoms_xy + squeeze(sim_out{pt_ndx}.fmoms_xy);  %check direction
         sim_cum.agg_fysum      = sim_cum.agg_fysum + sim_out{pt_ndx}.fysum;
         sim_cum.agg_fnobs      = sim_cum.agg_fnobs + sim_out{pt_ndx}.fnobs;
         sim_cum.agg_fmoms_h_xx = sim_cum.agg_fmoms_h_xx + squeeze(sim_out{pt_ndx}.fmoms_h_xx); 
@@ -111,7 +105,6 @@ for pt_ndx = 1:1:mm.N_pt
         sim_cum.agg_ln_ships     = sim_cum.agg_ln_ships    + sim_out{pt_ndx}.ln_ships;
         sim_cum.agg_match_count  = sim_cum.agg_match_count + sim_out{pt_ndx}.match_count; 
         sim_cum.agg_match_countD = sim_cum.agg_match_countD + sim_out{pt_ndx}.match_countD; 
-%       sim_cum.singletons       = sim_cum.singletons + sim_out{pt_ndx}.singletons;
         sim_cum.duds             = sim_cum.duds + sim_out{pt_ndx}.duds;
     end
 

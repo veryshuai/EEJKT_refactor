@@ -20,7 +20,7 @@ sim_cum.agg_nobs      = 0;                % match autoregression
 sim_cum.agg_ship_obs  = 0;                % number of shipments
 sim_cum.agg_fmoms_h_xx = zeros(2,2); % home market firm sales autoreg.
 sim_cum.agg_fmoms_h_xy = zeros(2,1); % home market firm sales autoreg.
-sim_cum.agg_fysum_h  = 0; % cross-firm sum of domestic sales, firms in dom. sales autoreg.
+sim_cum.agg_fysum_h  = 0; % cross-firm sum of domestic sales, dom. sales autoreg.
 sim_cum.agg_fnobs_h  = 0;      % # firms in domestic sales autoreg.
 sim_cum.agg_sum_succ_rate = 0; % firm-level ratios, cum. succ to cum. meetings 
 sim_cum.agg_hfmoms_xx = zeros(2,2); % for firm-level home-foreign regression
@@ -34,8 +34,8 @@ sim_cum.agg_mat_exit_moms_xx  = zeros(5,5); % match death regression
 sim_cum.agg_mat_exit_moms_xy  = zeros(5,1); % match death regression
 sim_cum.agg_mat_obs       = 0;  % # matches used, match exit regression
 sim_cum.agg_nmat_exit     = 0;  % # match exits, match exit regression
-sim_cum.agg_match_count  = zeros(1,mm.max_match); % # matches for each firm, excl. duds
-sim_cum.agg_match_countD = zeros(1,mm.max_match); % # matches for each firm, incl. duds
+sim_cum.agg_match_hist  = zeros(1,mm.max_match); % # matches for each firm, excl. duds
+sim_cum.agg_match_histD = zeros(1,mm.max_match); % # matches for each firm, incl. duds
 
 sim_cum.duds       = 0;
 sim_cum.agg_ln_ships = 0;
@@ -83,8 +83,8 @@ for pt_ndx = 1:1:mm.N_pt
         sim_cum.agg_mat_exit_y   = [sim_cum.agg_mat_exit_y;sim_out{pt_ndx}.mat_exit_y];
         sim_cum.agg_ship_obs     = sim_cum.agg_ship_obs    + sim_out{pt_ndx}.ship_obs;
         sim_cum.agg_ln_ships     = sim_cum.agg_ln_ships    + sim_out{pt_ndx}.ln_ships;
-        sim_cum.agg_match_count  = sim_cum.agg_match_count + sim_out{pt_ndx}.match_count; 
-        sim_cum.agg_match_countD = sim_cum.agg_match_countD + sim_out{pt_ndx}.match_countD; 
+        sim_cum.agg_match_hist  = sim_cum.agg_match_hist + sim_out{pt_ndx}.match_hist; 
+        sim_cum.agg_match_histD = sim_cum.agg_match_histD + sim_out{pt_ndx}.match_histD; 
         sim_cum.duds             = sim_cum.duds + sim_out{pt_ndx}.duds;
     end
 

@@ -68,21 +68,21 @@ MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
 %% create variables for analysis of degree distribution
 
 % Degree distribution excluding duds
-        ff_sim_max      = find(cumsum(simMoms.agg_match_count)'./sum(simMoms.agg_match_count)<1);
-        log_compCDF     = log(1 - cumsum(simMoms.agg_match_count(ff_sim_max))'./sum(simMoms.agg_match_count));
+        ff_sim_max      = find(cumsum(simMoms.agg_match_hist)'./sum(simMoms.agg_match_hist)<1);
+        log_compCDF     = log(1 - cumsum(simMoms.agg_match_hist(ff_sim_max))'./sum(simMoms.agg_match_hist));
         log_matches     = log(1:1:length(ff_sim_max))';
         xmat            = [ones(length(ff_sim_max),1),log_matches,log_matches.^2];
                  
-        temp = cumsum(simMoms.agg_match_count(ff_sim_max)./sum(simMoms.agg_match_count(ff_sim_max)));
+        temp = cumsum(simMoms.agg_match_hist(ff_sim_max)./sum(simMoms.agg_match_hist(ff_sim_max)));
         ptemp = temp(1:length(ff_sim_max)) - [0,temp(1:length(ff_sim_max)-1)];
 
 % Degree distribution including duds        
-        ff_sim_maxD      = find(cumsum(simMoms.agg_match_countD)'./sum(simMoms.agg_match_countD)<1);
-        log_compCDF_D    = log(1 - cumsum(simMoms.agg_match_countD(ff_sim_maxD)')./sum(simMoms.agg_match_countD));
+        ff_sim_maxD      = find(cumsum(simMoms.agg_match_histD)'./sum(simMoms.agg_match_histD)<1);
+        log_compCDF_D    = log(1 - cumsum(simMoms.agg_match_histD(ff_sim_maxD)')./sum(simMoms.agg_match_histD));
         log_matchesD     = log(1:1:length(ff_sim_maxD))';
         xmatD            = [ones(length(ff_sim_maxD),1),log_matchesD,log_matchesD.^2];
         
-        tempD = cumsum(simMoms.agg_match_countD(ff_sim_maxD)./sum(simMoms.agg_match_countD(ff_sim_maxD)));
+        tempD = cumsum(simMoms.agg_match_histD(ff_sim_maxD)./sum(simMoms.agg_match_histD(ff_sim_maxD)));
         ptempD = tempD(1:length(ff_sim_maxD)) - [0,tempD(1:length(ff_sim_maxD)-1)];
         
 % degree distribution, not counting duds       

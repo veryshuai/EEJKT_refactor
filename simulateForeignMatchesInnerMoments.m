@@ -81,12 +81,12 @@ if iter_in.year >= mm.burn
    try
    if size(match_count,1)>0 % counts excluding duds
      match_histogram = sum(match_count*ones(1,mm.max_match) - ones(size(match_count,1),1)*(1:mm.max_match)==0,1);
-     iter_out.match_count = iter_out.match_count + match_histogram ;
+     iter_out.match_hist = iter_out.match_hist + match_histogram ;
    end
    
    if size(match_countD,1)>0 % counts including duds (alternative meaasure)
      match_histogramD = sum(match_countD*ones(1,mm.max_match) - ones(size(match_countD,1),1)*(1:mm.max_match)==0,1);
-     iter_out.match_countD = iter_out.match_countD + match_histogramD ;
+     iter_out.match_histD = iter_out.match_histD + match_histogramD ;
    end  
    
 %   iter_out.duds = iter_out.duds + sum(duds);

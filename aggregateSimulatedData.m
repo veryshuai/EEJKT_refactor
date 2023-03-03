@@ -20,12 +20,8 @@ sim_cum.agg_nobs      = 0; % match autoreg., number of observations
 sim_cum.agg_ship_obs  = 0; % number of shipments
 sim_cum.agg_fmoms_h_xx = zeros(2,2); % home market firm sales autoreg.
 sim_cum.agg_fmoms_h_xy = zeros(2,1); % home market firm sales autoreg.
-% sim_cum.agg_fysum    = 0;
-% sim_cum.agg_fnobs    = 0;
 sim_cum.agg_fysum_h  = 0;
 sim_cum.agg_fnobs_h  = 0;
-sim_cum.agg_exit_xx = zeros(6,6);
-sim_cum.agg_exit_xy = zeros(6,1);
 sim_cum.agg_sum_succ_rate = 0;
 sim_cum.agg_exit_obs = 0;
 sim_cum.agg_sum_exits = 0;
@@ -65,8 +61,6 @@ for pt_ndx = 1:1:mm.N_pt
         sim_cum.agg_nobs       = sim_cum.agg_nobs    + sim_out{pt_ndx}.nobs;
         sim_cum.agg_mat_ar1_x  = [sim_cum.agg_mat_ar1_x;sim_out{pt_ndx}.mat_ar1_x];
         sim_cum.agg_mat_ar1_y  = [sim_cum.agg_mat_ar1_y;sim_out{pt_ndx}.mat_ar1_y];
-%         sim_cum.agg_fysum      = sim_cum.agg_fysum + sim_out{pt_ndx}.fysum;
-%         sim_cum.agg_fnobs      = sim_cum.agg_fnobs + sim_out{pt_ndx}.fnobs;
         sim_cum.agg_fmoms_h_xx = sim_cum.agg_fmoms_h_xx + squeeze(sim_out{pt_ndx}.fmoms_h_xx); 
         sim_cum.agg_fmoms_h_xy = sim_cum.agg_fmoms_h_xy + squeeze(sim_out{pt_ndx}.fmoms_h_xy); %check direction
         sim_cum.agg_fysum_h    = sim_cum.agg_fysum_h + sim_out{pt_ndx}.fysum_h;
@@ -76,20 +70,10 @@ for pt_ndx = 1:1:mm.N_pt
         sim_cum.agg_hfmoms_xy  = sim_cum.agg_hfmoms_xy + squeeze(sim_out{pt_ndx}.hfmoms_xy); %check direction       
         sim_cum.agg_hfysum     = sim_cum.agg_hfysum    + sim_out{pt_ndx}.hfysum;
         sim_cum.agg_hf_nobs    = sim_cum.agg_hf_nobs   + sim_out{pt_ndx}.hf_nobs;              
-        
-  
-%         temp_agg_hfmoms_xx = sim_cum.agg_hfmoms_xx;
-%         temp_agg_hfmoms_xy = sim_cum.agg_hfmoms_xy; 
-%         temp_agg_hfysum  = sim_cum.agg_hfysum;
-%         temp_agg_hf_obs = sim_cum.agg_hf_nobs;       
-%         [pt_ndx,temp_agg_hfysum,temp_agg_hf_obs]
-%         [temp_agg_hfmoms_xx,temp_agg_hfmoms_xy ]
-            
+                    
         sim_cum.agg_nfirm      = sim_cum.agg_nfirm + sim_out{pt_ndx}.nfirm;   % number of firms
         sim_cum.agg_nexptr     = sim_cum.agg_nexptr + sim_out{pt_ndx}.nexptr; % number of exporters
         sim_cum.agg_expt_rate  = [sim_cum.agg_expt_rate;sim_out{pt_ndx}.expt_rate]; %vector of shares of output exported, exporters only
-%       sim_cum.agg_exit_xx    = sim_cum.agg_exit_xx + squeeze(sim_out{pt_ndx}.exit_xx);
-        sim_cum.agg_exit_xy    = sim_cum.agg_exit_xy + squeeze(sim_out{pt_ndx}.exit_xy)'; %check direction
         
         sim_cum.agg_sum_succ_rate    = sim_cum.agg_sum_succ_rate + sim_out{pt_ndx}.sum_succ_rate;
         sim_cum.agg_exit_obs         = sim_cum.agg_exit_obs + sim_out{pt_ndx}.exit_obs;

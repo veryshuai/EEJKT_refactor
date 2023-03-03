@@ -76,14 +76,14 @@ iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
          [iterH_in.mat_h_cont_2yr,iterH_in.mat_h_yr_sales,iterH_in.mat_h_yr_sales_lag,~] =...
             mat_yr_splice_v2(iterH_in,mm,iterH_in.year);  
    
-            [x,y,fmoms_h_xx,fmoms_h_xy,fysum,fn_obs] = firm_reg_h_moms(iterH_in,mm);
+            [x,y,fmoms_h_xx,fmoms_h_xy,fysum_h,fn_obs_h] = firm_reg_h_moms(iterH_in,mm);
 
             iter_out.x_fsales_h   = [iter_out.x_fsales_h;x];
             iter_out.y_fsales_h   = [iter_out.y_fsales_h;y];
             iter_out.fmoms_h_xx = iter_out.fmoms_h_xx + fmoms_h_xx; % cumulate moments for home sales AR1
             iter_out.fmoms_h_xy = iter_out.fmoms_h_xy + fmoms_h_xy; % cumulate moments for home sales AR1
-            iter_out.fysum_h    = iter_out.fysum_h + fysum;
-            iter_out.fnobs_h    = iter_out.fnobs_h + fn_obs ;
+            iter_out.fysum_h    = iter_out.fysum_h + fysum_h;
+            iter_out.fnobs_h    = iter_out.fnobs_h + fn_obs_h ;
 
         end   % year > mm.burn if statement
         iterH_in.firm_h_yr_sales_lag = iterH_in.firm_h_yr_sales; % stack data for firm regression

@@ -82,7 +82,7 @@ iterH_in.year = floor((iterH_in.t-1)/mm.pd_per_yr);
             iter_out.y_fsales_h   = [iter_out.y_fsales_h;y];
             iter_out.fmoms_h_xx = iter_out.fmoms_h_xx + fmoms_h_xx; % cumulate moments for home sales AR1
             iter_out.fmoms_h_xy = iter_out.fmoms_h_xy + fmoms_h_xy; % cumulate moments for home sales AR1
-            iter_out.fysum_h    = iter_out.fysum_h + fysum_h;
+            iter_out.fysum_h    = iter_out.fysum_h + fysum_h;   
             iter_out.fnobs_h    = iter_out.fnobs_h + fn_obs_h ;
 
         end   % year > mm.burn if statement

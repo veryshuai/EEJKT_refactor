@@ -131,6 +131,9 @@ else
   both_mkt = [theta_f, theta_h ,prod_f, f_bothmkt(:,2:end),h_bothmkt(:,2:end)];       
   % both_mkt: [(1) theta_f, (2) theta_h, (3) prod_h , (4-9) firm_h_yr_sales(:,2:end),
   %            (10-15) firm_f_yr_sales(:,2:end)]
+  
+  % firm_f_yr_sales(:,2:end): [t,type,firm_ID,exp. sales,exp. shipments, firm age in export mkt.]
+  % firm_h_yr_sales(:,2:end): [t,type,firm ID,dom. sales,dom. shipments, firm age in dom. mkt.]
   catch
    fprintf('\r Warning: dimension compatibility problem in splice_hf line 122');
   end
@@ -151,7 +154,7 @@ else
   sim_out_pt_ndx.hf_nobs = Nhf_firm_yrs; % load count, firms in both mkts.   
   
   % load vector of export shares among active exporters, including pure exporters
-  sim_out_pt_ndx.expt_rate = [both_mkt(:,7)./(both_mkt(:,7)+both_mkt(:,14)); ones(Nexprt_only,1)];
+  sim_out_pt_ndx.expt_rate = [both_mkt(:,7)./(both_mkt(:,7)+both_mkt(:,13)); ones(Nexprt_only,1)];
 
   % sim_out_pt_ndx.hffirms = Nhf_firm_yrs; 
   sim_out_pt_ndx.nexptr  = Nf_firm_yrs;

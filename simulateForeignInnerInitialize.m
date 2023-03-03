@@ -73,7 +73,7 @@ iter_out.duds     = 0;
 % firm level moment aggregators
 iter_out.fmoms_xx = zeros(4,4);
 iter_out.fmoms_xy = zeros(4,1);
-iter_out.fysum    = 0;
+% iter_out.fysum    = 0;
 iter_out.fnobs    = 0;
 
 iter_out.exit_xx       = zeros(6,6);

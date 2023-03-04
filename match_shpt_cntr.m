@@ -33,8 +33,9 @@ end
 ff1_obs = find((floor(matches(:,1))-matches(:,1)==0).*(matches(:,3) >0));
  % new firms with +0.5 IDs & shipments>0:
 ff2_obs = find((floor(matches(:,1))-matches(:,1)~=0).*(matches(:,3) >0));
-% number of matches w/ shipments > 0
+ % number of matches w/ shipments > 0
 nship_obs = length(ff1_obs)+length(ff2_obs); 
+ % sum of log shipment counts across matches
 ln_ships  = sum(log(matches(ff1_obs,3))) + sum(log(matches(ff2_obs,3)));
     
 %% match counts by frequency across firm_ID, excluding duds

@@ -38,9 +38,9 @@ fprintf('\r\n weighted metric:   %.15f\n', D);
 %       fclose(fileID2);
  
 
-      fileID1 = fopen('results/ga_running_output_2Arv_2Scl.txt','a');
+      fileID1 = fopen('results/ga_running_output_2Arv_1Scl_opt.txt','a');
       fprintf(fileID1,'\r\n original fit metric: ');
-      dlmwrite('results/ga_running_output_2Arv_2Scl.txt',D,'-append','precision',12);
+      dlmwrite('results/ga_running_output_2Arv_1Scl_opt.txt',D,'-append','precision',12);
     
       fprintf(fileID1, '\r\n parameters: ');
       fprintf(fileID1, '\r\n%9.5f %9.5f %9.5f %9.5f %9.5f %9.5f',X(1:6));

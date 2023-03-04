@@ -1,5 +1,11 @@
 function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
 
+%  time_gap2 (unit of obs. is new matches):
+    % (1) firm_ID, (2) period w/in interval, (3) gap size in periods 
+    % (4) # new meetings at t,(5) t (6) cum. meetings, (7) cum. succeses 
+% mktexit_data:
+    % (1) mkt. exit dummy, (2) cum. meetings, (3) cum. successes
+
           pd_per_yr = mm.pd_per_yr;
           t         = iter_in.t;
 

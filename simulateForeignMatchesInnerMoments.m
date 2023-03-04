@@ -64,7 +64,8 @@ if iter_in.year >= mm.burn
     [nship_obs,ln_ships,match_count,match_countD,dud_matches] = match_shpt_cntr(iter_in,mm);
   % dud matches: [firm_ID, sales at Zcut, shipments (1), bop Z = eop Z = match_age = 0, firm age]
   % match_count and match_countD are vectors of match counts for active firms w/out % w/ duds
-  % ln_ships is the sum of ln shipment values, all firms; nships_obs is #shipments, all firms
+  % ln_ships is the sum of ln # shipments across matches; nships_obs is
+  % number of matches with positive shipments.
   
     iter_out.ship_obs    = iter_out.ship_obs + nship_obs ;
     iter_out.ln_ships    = iter_out.ln_ships + ln_ships ;

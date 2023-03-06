@@ -18,17 +18,17 @@ else
     fprintf('\r Warning: singular matrix for match-level AR1. Rank: %.1f\n', rank_xx);
     inv_agg_moms_xx = [inv(sim_cum.agg_moms_xx(1:2,1:2)), zeros(2,2); zeros(2,4)];
 end
-simMoms.beta_match = inv_agg_moms_xx*sim_cum.agg_moms_xy;
-simMoms.ybar_match = sim_cum.agg_ysum/sim_cum.agg_nobs;
+simMoms.beta_match    = inv_agg_moms_xx*sim_cum.agg_moms_xy;
+simMoms.ybar_match    = sim_cum.agg_ysum/sim_cum.agg_nobs;
 simMoms.mse_match_ar1 = (sim_cum.agg_mat_ar1_y - sim_cum.agg_mat_ar1_x*simMoms.beta_match)'*...
     (sim_cum.agg_mat_ar1_y - sim_cum.agg_mat_ar1_x*simMoms.beta_match)/size(sim_cum.agg_mat_ar1_x,1);
 
-
 % firm-level home sales autoregression
 simMoms.beta_fsales_h = inv(sim_cum.agg_fmoms_h_xx)*sim_cum.agg_fmoms_h_xy;
+simMoms.ybar_fsales_h = sim_cum.agg_fysum_h/sim_cum.agg_fnobs_h ;
 simMoms.mse_h         = (sim_cum.agg_y_fsales_h - sim_cum.agg_x_fsales_h*simMoms.beta_fsales_h)'*...
     (sim_cum.agg_y_fsales_h - sim_cum.agg_x_fsales_h*simMoms.beta_fsales_h)/size(sim_cum.agg_y_fsales_h,1);
-simMoms.ybar_fsales_h = sim_cum.agg_fysum_h/sim_cum.agg_fnobs_h ;
+
 
 % home-foreign firm-level regression and export rates
 simMoms.beta_hfsales = inv(sim_cum.agg_hfmoms_xx)*sim_cum.agg_hfmoms_xy;

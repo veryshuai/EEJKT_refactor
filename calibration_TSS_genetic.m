@@ -23,16 +23,26 @@
 
 %%
 
- theta = [ -2.60396 -11.79477   0.20067   0.33092  0.40049  11.34734 ...
-            0.13289   2.08645   1.42886  -1.4001   9.46854  -7.96200];
+%  theta = [ -2.60396 -11.79477   0.20067   0.33092  0.40049  11.34734 ...
+%             0.13289   2.08645   1.42886  -1.4001   9.46854  -7.96200];
+
+fprintf('\r\n STARTING A NEW RUN: %s\n ', datestr(now,'yyyy_mmdd_HHMM'));
+fileID1 = fopen('results/ga_running_output_2Arv_1Scl_opt.txt','a');
+ fprintf(fileID1,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
+fclose(fileID1);  
+fileID2 = fopen('results/ga_fitlog_2Arv_1Scl_opt.txt','a');
+  fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
+fclose(fileID2);
+
+theta = [-1.46485 -15.17847   0.16604   0.11138   0.55247   9.48919...
+         0.12782   2.64956   1.89385  -1.59049  11.46407  -8.27451];
 
  % X = theta;     
 
-  D0 = distance(theta);
-
-  K = length(theta);
-        
+D0 = distance(theta);
+  
 % population size
+K = length(theta);
 PS = 2*K;
 disp(['Population size ' num2str(PS)])
 H = rand(PS,K);

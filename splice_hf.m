@@ -161,19 +161,13 @@ else
   sim_out_pt_ndx.nhfirms = Nh_firm_yrs;
 
 end
-  sim_out_pt_ndx.firm_h_yr_sales = firm_h_yr_sales;
-% sim_out_pt_ndx.firm_h_yr_sales: [t,type,firm ID,total dom. sales, total # dom. shipments,firm age in dom. mkt.]
-  sim_out_pt_ndx.firm_f_yr_sales = firm_f_yr_salesD;
-% sim_out_pt_ndx.firm_f_yr_sales: [t,type,firm ID,total exports,total # foreign shipments,firm age in export mkt.]
-
-% uncomment next 3 lines to view obs. used for regressions
-% sales_hf_temp     = sales_splice(same_firm,:);
-% eyeball           = sortrows(sales_hf_temp,[1 2 5 4 8]);
-% eyeball_expt_rate = [eyeball, eyeball(:,7)./(eyeball(:,6)+eyeball(:,7))];
 
 %% Load matrices into sim_out_pdx
   sim_out_pt_ndx.firm_f_yr_sales = firm_f_yr_salesD(:,2:end);
+% sim_out_pt_ndx.firm_f_yr_sales: [t,type,firm ID,total exports,total # foreign shipments,firm age in export mkt.]
   sim_out_pt_ndx.firm_h_yr_sales = firm_h_yr_sales(:,2:end);
+% sim_out_pt_ndx.firm_h_yr_sales: [t,type,firm ID,total dom. sales, total # dom. shipments,firm age in dom. mkt.]
+
 
 
 %% moments for regression of log foreign sales on log domestic sales

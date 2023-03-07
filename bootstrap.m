@@ -15,12 +15,13 @@ seed_crand(80085);
 runs = 20; %set number of runs to use in bootstrap
 
 %point estimates
- X =   [-1.46485 -15.17847   0.16604   0.11138   0.55247   9.48919
+ X =   [-1.46485 -15.17847   0.16604   0.11138   0.55247   9.48919 ...
   0.12782   2.64956   1.89385  -1.59049  11.46407  -8.27451];
 
 %set some other common parameters
 mm = setModelParameters(X);
-
+mm.check_type = 108;
+ 
 %solve the model 
 policy = generatePolicyAndValueFunctions(mm);
 

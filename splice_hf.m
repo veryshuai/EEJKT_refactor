@@ -162,14 +162,6 @@ else
 
 end
 
-%% Load matrices into sim_out_pdx
-  sim_out_pt_ndx.firm_f_yr_sales = firm_f_yr_salesD(:,2:end);
-% sim_out_pt_ndx.firm_f_yr_sales: [t,type,firm ID,total exports,total # foreign shipments,firm age in export mkt.]
-  sim_out_pt_ndx.firm_h_yr_sales = firm_h_yr_sales(:,2:end);
-% sim_out_pt_ndx.firm_h_yr_sales: [t,type,firm ID,total dom. sales, total # dom. shipments,firm age in dom. mkt.]
-
-
-
 %% moments for regression of log foreign sales on log domestic sales
 
 if size(both_mkt,1)>0

@@ -48,11 +48,11 @@ simMoms.avg_ln_ships = sim_cum.agg_ln_ships/sim_cum.agg_ship_obs;
 % create variables for analysis of degree distribution: excluding duds
 simMoms.ff_sim_max   = cumsum(sim_cum.agg_match_hist(1:mm.max_match)./sum(sim_cum.agg_match_hist));
 simMoms.max_count    = find(simMoms.ff_sim_max<.9999); 
-simMoms.log_compCDF = log(1 - simMoms.ff_sim_max(simMoms.max_count))';
+simMoms.log_compCDF  = log(1 - simMoms.ff_sim_max(simMoms.max_count))';
 simMoms.log_matches  = log(1:1:length(simMoms.max_count))';
 xmat                 = [ones(length(simMoms.log_matches),1),...
                         simMoms.log_matches,simMoms.log_matches.^2];
-simMoms.b_degree0      = regress(simMoms.log_compCDF,xmat);
+simMoms.b_degree0    = regress(simMoms.log_compCDF,xmat);
 
 match_pdf = sim_cum.agg_match_hist(1:mm.max_match)./sum(sim_cum.agg_match_hist);
 simMoms.model_share = [match_pdf(1:5),sum(match_pdf(6:10)),sum(match_pdf(11:end-1))]';

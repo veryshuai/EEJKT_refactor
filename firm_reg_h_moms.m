@@ -1,6 +1,10 @@
 function  [x,y,moms_xx,moms_xy,ysum,n_obs] = firm_reg_h_moms(iterH_in)
 
-% sales and sales_lag:[firm ID, total domestic sales,total domestic shipments,age]
+% iterH_in.mat_cont_2yr = [mat_yr_sales_lag, mat_yr_sales]
+
+% mat_yr_sales: [(1) firm ID, (2) match-specific sales, (3) shipments,   
+%  (4) boy Z, (5) eoy Z, (6) match age in periods, (7) firm age in periods]
+
 
     mat_h_cont_2yr = iterH_in.mat_h_cont_2yr;
     firm_ID        = sort(unique(floor(mat_h_cont_2yr(:,1))));

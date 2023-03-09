@@ -7,7 +7,7 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_lag,year_lag] =...
 % firm type with last year's records for the same firm type. Splicing is
 % done by firm ID and by matching last year's eoy Z with this year's boy Z.
 % Once the two years are spliced match age variables are
-% created. Note that the count of one-year olds does not include singletons
+% created. Note that the count of one-year olds does not include duds
 % that sent sample shipments but did not establish a successful match.
 
 %  mat_yr_sales: [(1) firm ID, (2) match-specific sales, (3) shipments,   
@@ -24,12 +24,10 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_lag,year_lag] =...
 % Find matches in current year that correspond to boy incumbents, and 
 % drop matches that correspond to post-flip periods.
    
-    incumb = mat_yr_sales(:,1)==(floor(mat_yr_sales(:,1))).*(mat_yr_sales(:,4)>Zcut_eoy_lag); % boy Z > Zcut_eoy_lag (used to be 0) this year
-%   contin = mat_yr_sales_lag(:,5)>0;  % eoy Z > 0 last year
+    incumb = mat_yr_sales(:,1)==(floor(mat_yr_sales(:,1))).*(mat_yr_sales(:,4)>Zcut_eoy_lag); % boy Z > Zcut_eoy_lag 
     contin = mat_yr_sales_lag(:,5)>Zcut_eoy_lag;
     tmp_tran = mat_yr_sales(incumb,:); 
-    tmp_tran_lag = mat_yr_sales_lag(contin,:);
-   
+    tmp_tran_lag = mat_yr_sales_lag(contin,:);   
 
 %% calculate match ages and deal with firm turnover
 try
@@ -37,8 +35,6 @@ try
 
     tmp_tran_lag = sortrows(tmp_tran_lag,[1,5,6]);  
     tmp_tran     = sortrows(tmp_tran,[1,4,6]);
-    
-%  fprintf('\rNow at mat_yr_splice_v2, line 44. Evaluating year %2.0f\n', year)   
 
     cont_find = tmp_tran(:,7) - tmp_tran_lag(:,7) >  0;  % firm is older this year (no flip)    
     tmp_tran(cont_find ,6) = tmp_tran_lag(cont_find ,6) + tmp_tran(cont_find,6);

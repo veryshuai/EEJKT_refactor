@@ -1,5 +1,7 @@
 function [mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence(mm, iterX_in)
 
+iterX_in.t
+
 % This function splices together monthly matches within a year, maintaining
 % Z transitions, for each firm_ID within a particular firm type. The
 % outputs are stacked annualized matches that are active at the end of

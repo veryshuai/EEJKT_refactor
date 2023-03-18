@@ -5,7 +5,9 @@ function [Data, Data_alt, W, W_alt] = target_stats()
     % match_death_coefs from CJ 5/12/15 p. 11, also in CJ spreadsheet of 3/29/16
     % match_ar1_coefs   from CJ 5/12/15 p. 11, also in CJ spreadsheet of 3/29/16
     % loglog_coefs      from CJ 5/12/15 p. 11, also in CJ spreadsheet of 3/29/16
-    % mavship           from CJ 6/11/15
+    %%
+    %% mavship           from CJ 6/11/15  [JT: I'M NOT FINDING THIS IN LOGS]
+    %%
     % ex_dom_coefs      from Marcela 6/22/17 except for mean of dep. var, which is in $ and from C.J.
     % dom_ar1_coefs     from Marcela 6/22/17 except for mean of dep. var*
     % ln_haz_coefs      from US customs records, disclosed 12-12-16 & 05-07-19
@@ -147,7 +149,7 @@ succ_rate_coefsCOV = ...  % based on RDC disclosure 2-3-17
     
  % weighting matrix for moment vector revised 12-17-16  
    
-        W = blkdiag(match_death_coefsCOV,...
+    W = blkdiag(match_death_coefsCOV,...
        match_ar1_coefsCOV,loglog_coefsCOV,mavshipCOV,exp_dom_coefsCOV,...
        dom_ar1_coefsCOV,match_lag_coefsCOV,...
        succ_rate_coefsCOV,sr_var_coefsCOV,for_sales_shrCOV,exp_fracCOV);

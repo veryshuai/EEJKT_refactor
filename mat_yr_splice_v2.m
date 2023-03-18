@@ -36,7 +36,8 @@ try
     tmp_tran_lag = sortrows(tmp_tran_lag,[1,5,6]);  
     tmp_tran     = sortrows(tmp_tran,[1,4,6]);
 
-    cont_find = tmp_tran(:,7) - tmp_tran_lag(:,7) >  0;  % firm is older this year (no flip)    
+    cont_find = tmp_tran(:,7) - tmp_tran_lag(:,7) >  0;  % firm is older this year (no flip) 
+    % cumulate match age
     tmp_tran(cont_find ,6) = tmp_tran_lag(cont_find ,6) + tmp_tran(cont_find,6);
 
 catch

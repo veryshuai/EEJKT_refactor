@@ -88,7 +88,7 @@ mm.l_opt_func_f = @(a,net,pi,V_succ,V_fail,V_orig)...
 %% Exogenous Jump Process Parameters
       
 gam_h = 1 - 0.8412593; %DJ: calculations from COL_AR1.do, reversion coef, use Euler-Maruyama discretization of OU  
-sig_h = 0.04688; %DJ: calculations from COL_AR1.do, root MSE, Euler-Maruyama discretization of OU 
+sig_h = 0.04688; % DJ: calculations from COL_AR1.do, root MSE, Euler-Maruyama discretization of OU 
 gam_f = 1 - 0.948018; %DJ: from Jim's email 2023/1/11, AR1 reversion coef, Euler-Maruyama discretization of OU
 sig_f = 0.11338; %DJ: from Jim's email 2023/1/11, AR1 root MSE, Euler-Maruyama discretization of OU
 

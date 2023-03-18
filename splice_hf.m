@@ -128,14 +128,14 @@ else
     
   try
 % Combine export and domestic sales records by firm type and year in both_mkt      
-  both_mkt = [theta_f, theta_h ,prod_f, f_bothmkt(:,2:end),h_bothmkt(:,2:end)];       
+  both_mkt = [theta_f, theta_h, prod_f, f_bothmkt(:,2:end),h_bothmkt(:,2:end)];       
   % both_mkt: [(1) theta_f, (2) theta_h, (3) prod_h , (4-9) firm_h_yr_sales(:,2:end),
   %            (10-15) firm_f_yr_sales(:,2:end)]
   
-  % firm_f_yr_sales(:,2:end): [t,type,firm_ID,exp. sales,exp. shipments, firm age in export mkt.]
-  % firm_h_yr_sales(:,2:end): [t,type,firm ID,dom. sales,dom. shipments, firm age in dom. mkt.]
+  % firm_f_yr_sales(:,2:end): [t,type,firm_ID, exp. sales, exp. shipments, firm age in export mkt.]
+  % firm_h_yr_sales(:,2:end): [t,type,firm ID, dom. sales, dom. shipments, firm age in dom. mkt.]
   catch
-   fprintf('\r Warning: dimension compatibility problem in splice_hf line 122');
+   fprintf('\r Warning: dimension compatibility problem in splice_hf line 131');
   end
   
 %% Count the number of distinct firm-yrs in the home and the foreign database
@@ -143,9 +143,9 @@ else
 % number of firms in both markets, aggregating over firms and years
   Nhf_firm_yrs = size(both_mkt,1);
   
- % number of firms with sales in at least one market
+% number of firms with sales in at least one market
   N_firm_yrs  = Nh_firm_yrs + Nf_firm_yrs - Nhf_firm_yrs;  
- % number of pure exportes 
+% number of pure exportes 
   Nexprt_only = Nf_firm_yrs - Nhf_firm_yrs;
  
   sim_out_pt_ndx.nfirm   = N_firm_yrs;   % load count, all active firms 
@@ -166,7 +166,7 @@ end
 
 if size(both_mkt,1)>0
    sim_out_pt_ndx.y_hf      = log(both_mkt(:,7));
-   sim_out_pt_ndx.x_hf      = [ones(sim_out_pt_ndx.hf_nobs,1),log(both_mkt(:,13))];
+   sim_out_pt_ndx.x_hf      = [ones(Nhf_firm_yrs,1),log(both_mkt(:,13))];
    sim_out_pt_ndx.hfmoms_xx = sim_out_pt_ndx.x_hf'*sim_out_pt_ndx.x_hf;
    sim_out_pt_ndx.hfmoms_xy = sim_out_pt_ndx.x_hf'*sim_out_pt_ndx.y_hf;
    sim_out_pt_ndx.hfysum    = sum(sim_out_pt_ndx.y_hf);    

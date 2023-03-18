@@ -10,7 +10,7 @@ simMoms.agg_match_histD  = sim_cum.agg_match_histD;
 simMoms.agg_nexptr       = sim_cum.agg_nexptr;
 simMoms.agg_nfirm        = sim_cum.agg_nfirm;
 
-% foreign match-level sales autoregression
+% foreign match-level sales autoregression  (JT: checked on 3/13/23)
 if rank(sim_cum.agg_moms_xx) == size(sim_cum.agg_moms_xx,2)
     inv_agg_moms_xx = inv(sim_cum.agg_moms_xx);
 else
@@ -23,14 +23,14 @@ simMoms.ybar_match    = sim_cum.agg_ysum/sim_cum.agg_nobs;
 simMoms.mse_match_ar1 = (sim_cum.agg_mat_ar1_y - sim_cum.agg_mat_ar1_x*simMoms.beta_match)'*...
     (sim_cum.agg_mat_ar1_y - sim_cum.agg_mat_ar1_x*simMoms.beta_match)/size(sim_cum.agg_mat_ar1_x,1);
 
-% firm-level home sales autoregression
+% firm-level home sales autoregression  (JT: checked on 3/13/23)
 simMoms.beta_fsales_h = inv(sim_cum.agg_fmoms_h_xx)*sim_cum.agg_fmoms_h_xy;
 simMoms.ybar_fsales_h = sim_cum.agg_fysum_h/sim_cum.agg_fnobs_h ;
 simMoms.mse_h         = (sim_cum.agg_y_fsales_h - sim_cum.agg_x_fsales_h*simMoms.beta_fsales_h)'*...
     (sim_cum.agg_y_fsales_h - sim_cum.agg_x_fsales_h*simMoms.beta_fsales_h)/size(sim_cum.agg_y_fsales_h,1);
 
 
-% home-foreign firm-level regression and export rates
+% home-foreign firm-level regression and export rates  (JT: checked on 3/15/23)
 simMoms.beta_hfsales = inv(sim_cum.agg_hfmoms_xx)*sim_cum.agg_hfmoms_xy;
 simMoms.mse_hf       = (sim_cum.agg_y_hf - sim_cum.agg_x_hf*simMoms.beta_hfsales)'*...
     (sim_cum.agg_y_hf - sim_cum.agg_x_hf*simMoms.beta_hfsales)/size(sim_cum.agg_x_hf,1);
@@ -38,11 +38,11 @@ simMoms.ybar_hfsales  = sim_cum.agg_hfysum/sim_cum.agg_hf_nobs;
 simMoms.avg_expt_rate = mean(sim_cum.agg_expt_rate);
 simMoms.share_exptr   = sim_cum.agg_nexptr/sim_cum.agg_nfirm;
 
-% foreign match exit regression
+% foreign match exit regression (JT: checked on 3/15/23) 
 simMoms.beta_match_exit = inv(sim_cum.agg_mat_exit_moms_xx)*sim_cum.agg_mat_exit_moms_xy; 
 simMoms.match_exit_rate = sim_cum.agg_nmat_exit/sim_cum.agg_mat_obs;
 
-% cross match average log(# shipments)
+% cross match average log(# shipments)  (JT: checked on 3/15/23, but need to confirm C.J.'s target stat.) 
 simMoms.avg_ln_ships = sim_cum.agg_ln_ships/sim_cum.agg_ship_obs;
 
 % create variables for analysis of degree distribution: excluding duds

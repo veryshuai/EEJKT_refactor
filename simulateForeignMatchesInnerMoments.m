@@ -34,7 +34,7 @@ if iter_in.year >= mm.burn
     
     %% match exit regression moments
     if iter_in.year_lag == iter_in.year
-        ff_mexit = iter_in.mat_yr_sales(:,2)>0; % positive lagged exports
+        ff_mexit = iter_in.mat_yr_sales(:,2)>0; % positive exports
         if sum(ff_mexit,1)>0 
             
             [mat_exit_x,mat_exit_y,mat_exit_moms_xx,mat_exit_moms_xy,mat_obs,nmat_exit]...

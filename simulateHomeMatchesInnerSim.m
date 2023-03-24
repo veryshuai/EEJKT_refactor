@@ -116,21 +116,21 @@ if t == mm.periods
     
     
 %% for checking only: rearrange count series in blocks, by firm t and firm #
-%     rooms =  iter_out.transH{pt_ndx,1};
-%     stackH = zeros(length(rooms),mm.periods+1); 
-%     for i=1:length(rooms)
-%     lb = (i-1)*4 + 1;
-%     ub = i*4;
-%     stackH(lb:ub,:) = ... 
-%     [rooms(i),iter_out.transH{pt_ndx,2}(i,:);...
-%     rooms(i),iter_out.transH{pt_ndx,3}(i,:);...
-%     rooms(i),iter_out.transH{pt_ndx,4}(i,:);... 
-%     rooms(i),iter_out.transH{pt_ndx,5}(i,:)];
-%     iter_out.stackH = stackH;
-%           
-%     end
-% 
-%    iter_out.domfirm_count = length(rooms);
+    rooms =  iter_out.transH{pt_ndx,1};
+    stackH = zeros(length(rooms),mm.periods+1); 
+    for i=1:length(rooms)
+    lb = (i-1)*4 + 1;
+    ub = i*4;
+    stackH(lb:ub,:) = ... 
+    [rooms(i),iter_out.transH{pt_ndx,2}(i,:);...
+    rooms(i),iter_out.transH{pt_ndx,3}(i,:);...
+    rooms(i),iter_out.transH{pt_ndx,4}(i,:);... 
+    rooms(i),iter_out.transH{pt_ndx,5}(i,:)];
+    iter_out.stackH = stackH;
+          
+    end
+
+   iter_out.domfirm_count = length(rooms);
  %% end checking block 
  
     iter_out.iterH_check = iterH_check;

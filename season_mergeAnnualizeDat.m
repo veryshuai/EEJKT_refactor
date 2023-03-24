@@ -60,8 +60,8 @@ function [mat_yr_sales,firm_yr_sales,iterX_in] = season_mergeAnnualizeDat(all_se
  z_a = zeros(length(a),mm.pd_per_yr);
  z_s = zeros(length(s),mm.pd_per_yr);
  for ss = 1:mm.pd_per_yr
-     z_a(:,ss) = (all_seas(a,10*ss-6)>0)*ss;
-     z_s(:,ss) = (som_seas(s,10*ss-6)>0)*ss;
+     z_a(:,ss) = (all_seas(a,10*ss-6)>0)*ss; % period with positive initial Z state
+     z_s(:,ss) = (som_seas(s,10*ss-6)>0)*ss; % period with positive initial Z state
  end
  
 
@@ -75,10 +75,10 @@ firmage_pick = zeros(mm.pd_per_yr*mat_cols,mat_cols);
   end
   
 if size(z_a,1) + size(z_s,1) > 0
-    mat_age_a = max(all_seas(a,:)*matage_pick,[],2);
-    mat_age_s = max(som_seas(s,:)*matage_pick,[],2);
-    firm_age_a = all_seas(a,mat_cols*mm.pd_per_yr-1);  % firm age at end of year (ongoing matches)
-    firm_age_s = max(som_seas(s,:)*firmage_pick,[],2); % firm age in match's final period (dying matches)
+    mat_age_a = max(all_seas(a,:)*matage_pick,[],2); % largest recorded w/in year match age, ongoing matches
+    mat_age_s = max(som_seas(s,:)*matage_pick,[],2); % largest recorded w/in year match age, dying matches
+    firm_age_a = all_seas(a,mat_cols*mm.pd_per_yr-1);  % firm age at end of year, ongoing matches
+    firm_age_s = max(som_seas(s,:)*firmage_pick,[],2); % firm age in match's final period, dying matches
      
  mat_yr_sales =...
      sortrows([[firm_a,mat_yr_sales_a,all_seas(a,4),all_seas(a,mat_cols*mm.pd_per_yr-4),...

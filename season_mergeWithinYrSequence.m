@@ -1,7 +1,5 @@
 function [mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence(mm, iterX_in)
 
-iterX_in.t
-
 % This function splices together monthly matches within a year, maintaining
 % Z transitions, for each firm_ID within a particular firm type. The
 % outputs are stacked annualized matches that are active at the end of
@@ -10,12 +8,14 @@ iterX_in.t
 %  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
 %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
 
+ fprintf('\r Diagnostic time print, line 11, season_mergeWithinYrSequence: %.0f\n',iterX_in.t)
+ 
   N_firms = mm.sim_firm_num_by_prod_succ_type(iterX_in.pt_ndx);
 
   if iterX_in.N_match > mm.MaxMatchMonth
    fprintf('\r Too many match-months: %.0f, firms: %.0f, firm type: %.0f, market: %.0f\n',...
            [iterX_in.N_match, N_firms, iterX_in.pt_ndx, iterX_in.mkt]) 
-       msg = 'Choking on more than 1,000,000 firm months: abort evaluation';
+       msg = 'Choking on more than 1,000,000 match-firm-months: abort evaluation';
        error(msg);
   end
   

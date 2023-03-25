@@ -10,4 +10,6 @@ function [iterH_in] = simulateHomeMatchesInnerSimKickDormant(iterH_in, mm)
         iterH_in.micro_state(dmt,t)  = 1;  % reset initial micro state to 1 (entrant)
         iterH_in.new_firm(dmt,t)     = 1;  % will mark firms that haven't had an active match in 2 yrs
         iterH_in.cum_succ(dmt,t)     = 0;  % cumulative number of successes
+%       iterH_in.cumage(dmt,t)       = 0;  % NEW: cumulative number of successes
+        iterH_in.cur_cli_zst(dmt,:)  = 0;  % NEW: client counts by Z type
     end

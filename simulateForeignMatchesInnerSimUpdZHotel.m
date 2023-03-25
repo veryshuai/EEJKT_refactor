@@ -40,6 +40,10 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
             iter_in.die_cli_zst(i,:) = createDieVec(iter_in.lag_cli_zst(i,:).*iter_in.keep_cli,iter_in.exog_deaths(i,iter_in.t-1),size(mm.Z,1));
         end
         
+%  if iter_in.t>=299 && i==3
+%    'pausing in simulateForeignMatchesInnerSimUpdZHotel'
+%  end
+        
         % get rid of all clients when firm dies      
         if iter_in.new_firm(i,iter_in.t)*(1-iter_in.new_firm(i,iter_in.t-1)) == 1 
              iter_in.die_cli_zst(i,:) = iter_in.lag_cli_zst(i,:);

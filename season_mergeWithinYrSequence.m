@@ -8,7 +8,7 @@ function [mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence
 %  (1) t, (2) season, (3) year, (4) initial state, (5) exporter id, (6) ending state,
 %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
 
- fprintf('\r Diagnostic time print, line 11, season_mergeWithinYrSequence: %.0f\n',iterX_in.t)
+% fprintf('\r Diagnostic time print, line 11, season_mergeWithinYrSequence: %.0f\n',iterX_in.t)
  
   N_firms = mm.sim_firm_num_by_prod_succ_type(iterX_in.pt_ndx);
 

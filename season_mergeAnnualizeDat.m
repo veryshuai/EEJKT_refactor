@@ -10,6 +10,10 @@ function [mat_yr_sales,firm_yr_sales,iterX_in] = season_mergeAnnualizeDat(all_se
  %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
 
  t = iterX_in.t;
+ 
+% if t>=588
+%     'pausing in season_mergeAnnualizeDat'
+% end
   
  a = find(sum(all_seas,2)>0); % non-zero rows of all_seas
  s = find(sum(som_seas,2)>0); % non-zero rows of som_seas
@@ -75,19 +79,29 @@ firmage_pick = zeros(mm.pd_per_yr*mat_cols,mat_cols);
   end
   
 if size(z_a,1) + size(z_s,1) > 0
-    mat_age_a = max(all_seas(a,:)*matage_pick,[],2); % largest recorded w/in year match age, ongoing matches
-    mat_age_s = max(som_seas(s,:)*matage_pick,[],2); % largest recorded w/in year match age, dying matches
+    mage_a_matrix = all_seas(a,:)*matage_pick;
+    mage_s_matrix = som_seas(s,:)*matage_pick;
+    mat_age_a = max(mage_a_matrix,[],2); % largest recorded w/in year match age, ongoing matches
+    mat_age_s = max(mage_s_matrix,[],2); % largest recorded w/in year match age, dying matches
+ 
+    % find within-year of match entry
+    mat_entry_a = 1 + sum(mage_a_matrix == 0,2);
+    mat_entry_s = 1 + ((mage_s_matrix(:,2:mm.pd_per_yr)>0).*(mage_s_matrix(:,1:mm.pd_per_yr-1)==0))*(1:mm.pd_per_yr-1)';
+    
     firm_age_a = all_seas(a,mat_cols*mm.pd_per_yr-1);  % firm age at end of year, ongoing matches
     firm_age_s = max(som_seas(s,:)*firmage_pick,[],2); % firm age in match's final period, dying matches
-     
- mat_yr_sales =...
+
+    mat_entry = sortrows([[firm_a,mat_age_a,firm_age_a,mat_entry_a];[firm_s,mat_age_s,firm_age_s,mat_entry_s]],[1 2]);
+    % mat_entry: [firmID, match_age, firm_age, match entry period]              
+    mat_yr_sales =...
      sortrows([[firm_a,mat_yr_sales_a,all_seas(a,4),all_seas(a,mat_cols*mm.pd_per_yr-4),...
                 mat_age_a ,firm_age_a];...
                [firm_s,mat_yr_sales_s,som_seas(s,4),som_seas(s,mat_cols*mm.pd_per_yr-4),...
-                mat_age_s,firm_age_s]]);
+                mat_age_s,firm_age_s]],[1 6]);
+            
+    assert(sum(abs(mat_yr_sales(:,1) - mat_entry(:,1)))==0)
           
 % mat_yr_sales: [firm ID, w/in yr sales, w/in yr shpmts., boy Z, eoy Z, w/in yr match age, firm age]
-
 
 %% Distinguish match of entering firms from matches of exiting firms  
 %  (Add 0.5 to the firm IDs associated with the former matches.)
@@ -96,13 +110,13 @@ if size(z_a,1) + size(z_s,1) > 0
   % OLD: entry_month = sortrows([[firm_a,entry_seas_a];[firm_s,entry_seas_s]],1);
 
 try
-  if sum(flip_firm)>0
+  if sum(flip_firm)>0 && t >=580
   for j=1:length(F_active)
      j_type = find(mat_yr_sales(:,1) == F_active(j));
 % adjust firm ID to distinguish post-flip matches
      mat_yr_sales(j_type,1) =...
               mat_yr_sales(j_type,1) + 0.5.*flip_firm(F_active(j))...
-           .*(entry_month(F_active(j))>iterX_in.flip_ndx(F_active(j)));
+           .*(mat_entry(j_type,4)>=iterX_in.flip_ndx(F_active(j)));
 
   end
   end
@@ -114,7 +128,14 @@ end
  % tenure  = mat_yr_sales(:,7)>mm.pd_per_yr; % matches with firm age > 1 year
  
   firm_yr_sales = double.empty(0,4);    
-  F_active2 = unique(mat_yr_sales(:,1)); % Now may include IDs with 0.5 added
+  F_active2 = unique(mat_yr_sales(:,1)); % Now may include IDs with 0.5 added 
+  
+% F_activeTest = max(mat_yr_sales(:,1)- floor(mat_yr_sales(:,1))); 
+% if F_activeTest ~=0
+%      'pause in season_mergeAnnualizeDat'
+%  end
+ 
+  
   for ff=1:length(F_active2)
       % incumbents
     select = find(mat_yr_sales(:,1)==F_active2(ff));

@@ -16,6 +16,7 @@ iterH_in.cum_succ     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.perio
 iterH_in.new_firm     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods);   % will mark first period of a new firm
 iterH_in.exog_deaths  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % number of exogenous match deaths
 iterH_in.micro_state  = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % scalar indices for #success/#meetings
+iterH_in.cur_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down current clients by z state
 iterH_in.lag_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down lagged clients by z state
 iterH_in.new_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down new client counts by z state
 iterH_in.die_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down client death counts by z state

@@ -10,11 +10,7 @@ function [mat_yr_sales,firm_yr_sales,iterX_in] = season_mergeAnnualizeDat(all_se
  %  (7) match revenue,(8) #shipments,(9) exporter age (#periods), (10) match age w/in year
 
  t = iterX_in.t;
- 
-% if t>=588
-%     'pausing in season_mergeAnnualizeDat'
-% end
-  
+   
  a = find(sum(all_seas,2)>0); % non-zero rows of all_seas
  s = find(sum(som_seas,2)>0); % non-zero rows of som_seas
  try

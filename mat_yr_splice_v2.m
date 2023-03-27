@@ -21,13 +21,17 @@ function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_lag,year_lag] =...
 
 %% find matches to splice, recognizing firm_ID slots that flip occupants
 
-% Find matches in current year that correspond to boy incumbents, and 
-% drop matches that correspond to post-flip periods.
-   
-    incumb = mat_yr_sales(:,1)==(floor(mat_yr_sales(:,1))).*(mat_yr_sales(:,4)>Zcut_eoy_lag); % boy Z > Zcut_eoy_lag 
-    contin = mat_yr_sales_lag(:,5)>Zcut_eoy_lag;
-    tmp_tran = mat_yr_sales(incumb,:); 
-    tmp_tran_lag = mat_yr_sales_lag(contin,:);   
+ % Find matches in current year that correspond to boy incumbents, and 
+ % drop matches that correspond to post-flip periods. Firms that flip in 
+ % period 1 of current year require extra attention
+    boy_noflip = iterX_in.new_firm(floor(mat_yr_sales(:,1)),iterX_in.t-11)==0;
+    incumb = logical((mat_yr_sales(:,1)==(floor(mat_yr_sales(:,1))).*(mat_yr_sales(:,4)>Zcut_eoy_lag)).*boy_noflip); % boy Z > Zcut_eoy_lag 
+    tmp_tran = mat_yr_sales(incumb,:);
+ 
+  % find matches that were active at the end of last year 
+    boy_noflip_lag = iterX_in.new_firm(floor(mat_yr_sales_lag(:,1)),iterX_in.t-11)==0;
+    contin = logical((mat_yr_sales_lag(:,5)>Zcut_eoy_lag).*boy_noflip_lag);
+    tmp_tran_lag  = mat_yr_sales_lag(contin,:);
 
 %% calculate match ages and deal with firm turnover
 try

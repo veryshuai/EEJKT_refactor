@@ -15,10 +15,10 @@
 % mm.L_bF      = X(6)/mm.pd_per_yr; % Shipment order arrival hazard
 % mm.gam       = X(7);       % Network effect parameter
 % mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
-% mm.sig_p     = X(9);       %standard deviation of productivity distribution
+% mm.sig_p     = X(9);       % standard deviation of productivity distribution
 % mm.F_f       = exp(X(10)); % cost of maintaining a client- foreign
 % mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
-% mm.optimism  = X(12);      %parameter on prior distribution (positive means optimistic, negative pessamisitic)
+% mm.optimism  = X(12);      % parameter on prior distribution (positive means optimistic, negative pessamisitic)
 
 
 %%

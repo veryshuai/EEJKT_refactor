@@ -16,7 +16,7 @@ try
     
     mm = setModelParameters(X);
     % choose the firm type to use for spot checking
-    mm.check_type = 101;
+    mm.check_type = 113;
     
     policy = generatePolicyAndValueFunctions(mm);
     simMoms = simulateMomentsMain(policy,mm);

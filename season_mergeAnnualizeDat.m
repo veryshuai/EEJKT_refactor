@@ -125,13 +125,7 @@ end
  
   firm_yr_sales = double.empty(0,4);    
   F_active2 = unique(mat_yr_sales(:,1)); % Now may include IDs with 0.5 added 
-  
-% F_activeTest = max(mat_yr_sales(:,1)- floor(mat_yr_sales(:,1))); 
-% if F_activeTest ~=0
-%      'pause in season_mergeAnnualizeDat'
-%  end
- 
-  
+   
   for ff=1:length(F_active2)
       % incumbents
     select = find(mat_yr_sales(:,1)==F_active2(ff));

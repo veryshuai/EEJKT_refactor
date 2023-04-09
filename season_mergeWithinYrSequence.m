@@ -148,7 +148,7 @@ for ss=2:mm.pd_per_yr
        rows2 = size(ff_all_active,1);
       fprintf('\r\n problem with splicing of matches across seasons: season_merge temp1 & temp2 \n')
       fprintf('\r\n rows of temp1 = %.2f, rows of temp2 = %.2f\n', [rows1 rows2]) 
-      fprintf('\r\n period = %.2f, firm type = %.2f, market = %.2f\n', [iterX_in.t iterX_in.pt_ndx iterX_in.mkt])
+      fprintf('\r\n period = %.2f, firm type = %.2f, market = %.2f,  month = %.2f\n', [iterX_in.t iterX_in.pt_ndx iterX_in.mkt ss])
 
         fileID4 = fopen('results/EEJKT_error_log.txt','a');
         fprintf(fileID4,'\r\n  ');

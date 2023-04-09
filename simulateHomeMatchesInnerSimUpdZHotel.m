@@ -22,11 +22,6 @@ function[iterH_in] = simulateHomeMatchesInnerSimUpdZHotel(iterH_in, mm, policy)
 t = iterH_in.t;
 pt_ndx = iterH_in.pt_ndx;
 
-%fprintf('\rIn SimulateHomeMatchesInnerSimUpdZHotel, t =%4.0f, pt_ndx = %4.0f\n', [t, pt_ndx] )
-% if t >= 469
-%     'pause in simulateHomeMatchesInnerSimUpdZHotel'
-% end
-
 % break down by buyer types (z)
 
     for i=1:mm.sim_firm_num_by_prod_succ_type(pt_ndx)

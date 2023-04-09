@@ -20,10 +20,6 @@ function [iter_in, mat_tran] = simulateForeignMatchesInnerSimMatchLevelData(iter
         iter_in.N_match = size(mat_tran,1);
     end
     
-%      if iter_in.year >= 16 && iter_in.season == 12
-%           'pause here'
-%       end
-
     iter_in.seas_tran{1,iter_in.season} = [[iter_in.t,iter_in.season,iter_in.year].*ones(size(mat_tran,1),1),mat_tran,ship_cur,age_vec];
     % iter_in.seas_tran: [t, season, year, initial state, exporter id, ending state, match revenue,
     %             # shipments, firm age (# periods)]

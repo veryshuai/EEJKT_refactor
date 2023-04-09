@@ -26,7 +26,7 @@ mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
 mm.sig_p     = X(9);       %standard deviation of productivity distribution
 mm.F_f       = exp(X(10)); % cost of maintaining a client- foreign
 mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
-mm.optimism  = X(12);      %parameter on prior distribution (positive means optimistic, negative pessamisitic)
+mm.optimism  = max(X(12),-mm.ah); %parameter on prior distribution (positive means optimistic, negative pessamisitic)
 
 
 %% Discretization of state-space

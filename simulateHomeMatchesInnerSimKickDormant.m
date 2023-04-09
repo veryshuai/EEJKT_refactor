@@ -1,7 +1,7 @@
 function [iterH_in] = simulateHomeMatchesInnerSimKickDormant(iterH_in, mm)
 
 %%              simulateHomeMatchesInnerSimKickDormant
-%    Deal with dormant firms: after two years with no clients, swap them out
+%    Deal with dormant firms: after one year with no clients, swap them out
 
    t = iterH_in.t;
 

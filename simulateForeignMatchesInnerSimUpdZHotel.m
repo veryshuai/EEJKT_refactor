@@ -18,6 +18,10 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
 
 % fprintf('\rIn SimulateHomeMatchesInnerSimUpdZHotel, t =%4.0f, pt_ndx = %4.0f\n', [ iter_in.t,  iter_in.pt_ndx] )
 
+if iter_in.t ==413
+    'pause insimulateForeignMatchesInnerSimUpdZHotel'
+end
+
     for i=1:mm.sim_firm_num_by_prod_succ_type(iter_in.pt_ndx)
         % break down new clients that occur between t-1 and t into e.o.p. z-types    
         

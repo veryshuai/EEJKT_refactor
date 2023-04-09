@@ -15,6 +15,11 @@ function [mat_tran,ship_cur,age_vec] = simulateMatchesInnerSimMatchSales(mkt,mm,
 %    col 4: match revenue 
 
 % create 0/1 matrix "new_st" to track transitions of each firm's individual matches.
+
+if iterX_in.t ==413
+    'pause in simulatMatchesInnerSimMatchSales.m'
+end
+
 [tot_cli, new_st] = simulateMatchesInnerSimMatchTrans(iterX_in.trans_count, mm);
 
 % construct match sales for foreign market (mkt=1) or home market (mkt=2)

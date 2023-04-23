@@ -61,10 +61,15 @@ pt_ndx = iterH_in.pt_ndx;
         maxed_meets = poissrnd(search_inten(maxed_out));
 %       maxed_succs = binornd(maxed_meets,mm.theta1(theta_record(maxed_out))');
         maxed_succs = my_binornd(maxed_meets,mm.theta1(theta_record(maxed_out))');
+        %iterH_in.add_cli_cnt(maxed_out,t) = maxed_succs;
         iterH_in.add_cli_cnt(maxed_out,t) = maxed_succs;
-        %iterH_in.add_cli_cnt(maxed_out,t) = min((mm.max_match_h-1) - iterH_in.cur_cli_cnt(maxed_out,t-1), iterH_in.add_cli_cnt(maxed_out,t)); %keep client count under limit
+        %display([maxed_succs,10000 - iterH_in.cur_cli_cnt(maxed_out,t-1)]);
+        %BUGGED CODE!: iterH_in.add_cli_cnt(maxed_out,t) = min((mm.max_match_h-1) - iterH_in.cur_cli_cnt(maxed_out,t-1), iterH_in.add_cli_cnt(maxed_out,t)); %keep client count under limit
     end
-
+    %iterH_in.add_cli_cnt_uncensored = iterH_in.add_cli_cnt(:,t);
+    iterH_in.add_cli_cnt(:,t) = min(mm.max_home_clients - iterH_in.cur_cli_cnt(:,t-1),iterH_in.add_cli_cnt(:,t)); %enforce client count limit
+ %   display([iterH_in.add_cli_cnt_uncensored,iterH_in.add_cli_cnt(:,t)]);
+    
     % identify periods in which a new firm is active in the home mkt., 
     % but hasn't made matches yet 
     iterH_in.new_firm(:,t) = iterH_in.micro_state(:,t) == 1;

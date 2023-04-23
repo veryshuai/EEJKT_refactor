@@ -32,7 +32,12 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
         else
             iter_in.new_cli_zst(i,:)= zeros(1,size(mm.Z,1));
         end        
-                       
+                     
+%         if i==2 && iter_in.t >=531
+%             'pause here in simulateForeignMatchesInnerSimUpdZHotel'
+%         end
+        
+        
        % break down exogenous deaths that occur between t-1 and t down by b.o.p. z state:
         if iter_in.exog_deaths(i,iter_in.t-1) > 0
             iter_in.die_cli_zst(i,:) = createDieVec(iter_in.lag_cli_zst(i,:).*iter_in.keep_cli,iter_in.exog_deaths(i,iter_in.t-1),size(mm.Z,1));

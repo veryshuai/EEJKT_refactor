@@ -47,6 +47,15 @@ try
 
 catch
         'problem in mat_yr_splice_v2, lines 42-46';
+        fileID4 = fopen('results/EEJKT_error_log.txt','a');
+        fprintf(fileID4,'\r\n  ');
+        fprintf(fileID4,'\r\n problem in mat_yr_splice_v2, lines 42-46');
+        fprintf(fileID4,'\r\n period = %.2f, firm type = %.2f, market = %.2f', [iterX_in.t iterX_in.pt_ndx iterX_in.mkt]);
+        fprintf(fileID4,'\r\n params = ');
+        fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
+        fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:12));
+        fprintf(fileID4, '\r\n  ');   
+        fclose(fileID4);
 end
  %%  
  try
@@ -85,6 +94,15 @@ year_lag = year;
 
  catch
      'problem in last block of mat_yr_splice_v2'
+     fileID4 = fopen('results/EEJKT_error_log.txt','a');
+     fprintf(fileID4,'\r\n  ');
+     fprintf(fileID4,'\r\n problem in last block of mat_yr_splice_v2');
+     fprintf(fileID4,'\r\n period = %.2f, firm type = %.2f, market = %.2f', [iterX_in.t iterX_in.pt_ndx iterX_in.mkt]);
+     fprintf(fileID4,'\r\n params = ');
+     fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
+     fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:12));
+     fprintf(fileID4, '\r\n  ');   
+     fclose(fileID4);
  end
 
 end

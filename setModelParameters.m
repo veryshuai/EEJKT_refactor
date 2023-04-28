@@ -72,7 +72,7 @@ mm.burn      = 10;       %number of burn-in years
 mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;     % Number of possible matches for domestic market
 mm.MaxMatchMonth = 1.5e+6; % Max number of match-months in any year for a given firm type
-mm.max_home_clients = 10000; %maximum number of active clients we allow firms to have at home
+mm.max_home_clients = 1000; %maximum number of active clients we allow firms to have at home
 
 %% Cost function
 

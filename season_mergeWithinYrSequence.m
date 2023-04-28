@@ -13,10 +13,22 @@ function [mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence
   N_firms = mm.sim_firm_num_by_prod_succ_type(iterX_in.pt_ndx);
 
   if iterX_in.N_match > mm.MaxMatchMonth
-   fprintf('\r Too many match-months: %.0f, firms: %.0f, firm type: %.0f, market: %.0f\n',...
+       
+     fileID5 = fopen('results/EEJKT_match-month_overflow.txt','a');
+     fprintf(fileID5,'\r\n  ');
+     fprintf(fileID5,'\r\n More than %.2f match-firm-months in season_mergeWithinYrSequence', mm.MaxMatchMonth);
+     fprintf(fileID5,'\r\n period = %.2f, firm type = %.2f, market = %.2f', [iterX_in.t iterX_in.pt_ndx iterX_in.mkt]);
+     fprintf(fileID5,'\r\n params = ');
+     fprintf(fileID5,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
+     fprintf(fileID5,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:12));
+     fprintf(fileID5, '\r\n  ');   
+     fclose(fileID5);
+     
+     fprintf('\r Too many match-months: %.0f, firms: %.0f, firm type: %.0f, market: %.0f\n',...
            [iterX_in.N_match, N_firms, iterX_in.pt_ndx, iterX_in.mkt]) 
-       msg = 'Choking on more than 1,000,000 match-firm-months: abort evaluation';
-       error(msg);
+     msg = 'Choking on more than 1,000,000 match-firm-months: abort evaluation';
+     error(msg);
+       
   end
   
     if isempty(iterX_in.seas_tran{1}) == 1

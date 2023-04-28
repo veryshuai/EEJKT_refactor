@@ -26,7 +26,8 @@
 fprintf('\r\n STARTING A NEW RUN: %s\n ', datestr(now,'yyyy_mmdd_HHMM'));
 fileID1 = fopen('results/ga_running_output_2Arv_1Scl_opt.txt','a');
  fprintf(fileID1,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
-fclose(fileID1);  
+fclose(fileID1);
+
 fileID2 = fopen('results/ga_fitlog_2Arv_1Scl_opt.txt','a');
   fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
 fclose(fileID2);
@@ -35,12 +36,20 @@ fclose(fileID2);
 %           0.08442559565245339	0.4545298559796027	18.158739974045748...
 %           0.0987957958239333	8.142865607800749	2.1197381632819923...
 %          -1.2954563783672066	15.04018516797048	8.193168397220097];
-          % fit metric:     11.9822086045
-          % alt fit metric: 13.6512043649
+%           % fit metric:     11.9822086045
+%           % alt fit metric: 13.6512043649
           
-theta= [-2.64932 -8.37901  0.22669  0.40983  0.46203 11.49061...
-         0.10570  4.12414  1.47248 -1.30165 11.23241  5.97199]; 
-       % problematic vector for firm type 113
+          
+%  theta= [-3.99058 -12.72495  0.13492  0.10615  0.55409 22.85375 ...
+%           0.07633  7.18586  2.26043 -1.60232 11.15809  8.93525]; 
+%        % too many match months for firm type 113
+       
+ theta = [-2.50324974845549,-23.1029750703462,0.231078097913458,...
+           0.137356512550959,0.270325421586466,21.4806944241873,...
+           0.0841653249301951,6.79639670533777,2.77823187398584,...
+          -1.50822705652675,15.3408494771016,9.72552040707838]; 
+          % fit metric:     12.2901372154  
+          % alt fit metric: 12.9585254145583
       
 % X = theta;     
 

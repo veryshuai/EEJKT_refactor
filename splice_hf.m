@@ -1,8 +1,10 @@
-function sim_out_pt_ndx = splice_hf(sim_out_pt_ndx,transF,transH,policy,mm,pt_ndx)
+function sim_out_pt_ndx = splice_hf(sim_out_pt_ndx,policy,mm,pt_ndx)
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 % This function takes panel of realizations on domestic and foreign sales
 % for a particular type (theta_f and phi), and splices them together to 
-% create synthetic firms
+% create synthetic firms. It also counts firms that service the export
+% market only, the home market only, or both, and constructs export to 
+% total sales ratios for each exporter.
 
 % transF contains records for populated rows of the following exporter transition variables from iter_in: 
  %   transF{pt_inx,1:6}: [find_xcli, cur_cli_cnt, cum_succ, cumage, new_firm, cum_meets]
@@ -12,174 +14,159 @@ function sim_out_pt_ndx = splice_hf(sim_out_pt_ndx,transF,transH,policy,mm,pt_nd
 
 % sim_out.firm_f_yr_sales: [t,type,firm ID, total exports,total # foreign shipments,firm age in export mkt.]
 % sim_out.firm_h_yr_sales: [t,type,firm ID, total dom. sales, total # dom. shipments,firm age in dom. mkt.]
+% sim_out.dud matches:     [t,type,firm_ID, shipment=1, sales, bop Z = eop Z = match_age = 0, firm age in export mkt.]
 
-% policy.firm_type_prod_succ_macro: [type, macro state index, theta index, productivity index]
+% policy.firm_type_macro_succ_prod: [type, macro state index, theta index, productivity index]
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-%% Get rid of obs. with 0 shipments, market by market
+%% Initialize counts
 
-some_shpmts_h = find(sim_out_pt_ndx.firm_h_yr_sales(:,5)>0);
-some_shpmts_f = find(sim_out_pt_ndx.firm_f_yr_sales(:,5)>0);
-
-Nh_firm_yrs = length(sim_out_pt_ndx.firm_h_yr_sales(some_shpmts_h,3));
-Nf_firm_yrs = length(sim_out_pt_ndx.firm_f_yr_sales(some_shpmts_f,3));
-
-sim_out_pt_ndx.firm_h_yr_sales = sim_out_pt_ndx.firm_h_yr_sales(some_shpmts_h,:);
-sim_out_pt_ndx.firm_f_yr_sales = sim_out_pt_ndx.firm_f_yr_sales(some_shpmts_f,:);
-
-%% Count the number of distinct firms in the home and the foreign database
-
-sim_out_pt_ndx.nfirm = Nh_firm_yrs;  % home mkt. firms 
-sim_out_pt_ndx.nexptr = Nf_firm_yrs; % foreign mkt. firms 
-
-if Nh_firm_yrs > 0
-  export_rate = Nf_firm_yrs/Nh_firm_yrs;
-  fprintf('pt_ndx =%2.0f, t=%3.0f\n',[pt_ndx, max(sim_out_pt_ndx.firm_h_yr_sales(:,1))])  
-  fprintf('%2.0f exporters and %3.0f firms, for export rate of %3.2f\n',[sim_out_pt_ndx.nexptr  sim_out_pt_ndx.nfirm export_rate])  
-end
-
-rowsH = size(transH{pt_ndx,5},1);
-rowsF = size(transF{pt_ndx,5},1);
-if rowsH*rowsF>0
-
-
-%% Extract observations on home and foreign sales with same firm_ID and date
-
-% create unique identifiers for each period/firm_ID pair
-obs_id_h = sim_out_pt_ndx.firm_h_yr_sales(:,3) + (1/mm.periods+1)*sim_out_pt_ndx.firm_h_yr_sales(:,1); % micro type and period
-obs_id_f = sim_out_pt_ndx.firm_f_yr_sales(:,3) + (1/mm.periods+1)*sim_out_pt_ndx.firm_f_yr_sales(:,1); % micro type and period
-
-% find double occurances of firm ID/year pairs (due to firm switching)
-
-type_h  = sim_out_pt_ndx.firm_h_yr_sales(:,2);
-type_f  = sim_out_pt_ndx.firm_f_yr_sales(:,2);
-theta_f = policy.firm_type_prod_succ_macro(type_f,3); % Each element of this vector is common to all firms
-theta_h = sim_out_pt_ndx.theta_h_firm(some_shpmts_h);      % This is a vector of random draws--one per firm
-prod_h  = policy.firm_type_prod_succ_macro(type_h,4);
-prod_f  = policy.firm_type_prod_succ_macro(type_f,4);
-
-sim_out_h_dat = sortrows([obs_id_h,sim_out_pt_ndx.firm_h_yr_sales,theta_h,prod_h],1);
-sim_out_f_dat = sortrows([obs_id_f,sim_out_pt_ndx.firm_f_yr_sales,theta_f,prod_f],1);
-find_same_h   = find([1;sim_out_h_dat(2:end,1)-sim_out_h_dat(1:end-1,1)==0]);
-find_same_f   = find([1;sim_out_f_dat(2:end,1)-sim_out_f_dat(1:end-1,1)==0]);
-
-%% when duplicate firm_ID/year pairs occur, drop the one with larger firm age
-
-keeper_h = ones(size(sim_out_h_dat(:,1),1),1);
-for jj = find_same_h(2:end)
-   drop = (sim_out_h_dat(jj,6)<=sim_out_h_dat(jj-1,6));
-   keeper_h(jj) = drop;
-   keeper_h(jj-1) = 1-drop;
-end
-
-keeper_f = ones(size(sim_out_f_dat(:,1),1),1);
-for jj = find_same_f(2:end)
-   drop = (sim_out_f_dat(jj,6)<=sim_out_f_dat(jj-1,6));
-   keeper_f(jj) = drop;
-   keeper_f(jj-1) = 1-drop;
-end
-
- dup_h  = length(find_same_h);
- ntot_h = length(sim_out_h_dat(:,1)); 
-
-%% unbundle sim_out_f_dat, now that it's variables are compatibly sorted
-obs_id_f                = sim_out_f_dat(logical(keeper_f),1);
-sim_out_pt_ndx.firm_f_yr_sales = sim_out_f_dat(logical(keeper_f),2:7);
-theta_f                 = sim_out_f_dat(logical(keeper_f),8); 
-prod_f                  = sim_out_f_dat(logical(keeper_f),9);
-
-obs_id_h                        = sim_out_h_dat(logical(keeper_h),1);
-sim_out_pt_ndx.firm_h_yr_sales = sim_out_h_dat(logical(keeper_h),2:7);
-theta_h                         = sim_out_h_dat(logical(keeper_h),8);      
-prod_h                          = sim_out_h_dat(logical(keeper_h),9);
-
-assert(length(obs_id_h)==length(unique((obs_id_h))));
-assert(length(obs_id_f)==length(unique((obs_id_f))));
-
-%% Merge home and foreign sales records by firm_ID and period (t)
-
-try % confirm domestic and foreign records are for the same firm productivity type
-    minobs = min(size(type_h,1),size(type_f,1));
-    assert(sum((prod_h(1:minobs)- prod_f(1:minobs)).^2)==0);
-catch
-     fprintf('Warning: productivity different in different markets \n');
-end
-
-aa = ismember(obs_id_h,obs_id_f);
-temp1 = obs_id_h(aa);
-
-% find foreign market obs. with identifiers that appear in home mkt.
-bb = ismember(obs_id_f,temp1);
-try
-  assert(sum(aa)==sum(bb))
-catch
-  fprintf('\r Warning: home-foreign merge discrepancy in spice_hf');
-end
-
-
-if sum(bb) == 0
-  temp3 = zeros(0,15);
-%  sim_out_pt_ndx.nexptr = 0;
-else
-    try
-       
-  temp3 = [theta_f(bb),theta_h(aa),prod_h(aa),sim_out_pt_ndx.firm_h_yr_sales(aa,:),...
-           sim_out_pt_ndx.firm_f_yr_sales(bb,:)];
-       
-  % temp3: (1) theta_f, (2) theta_h, (3) prod_h , (4-9) firm_h_yr_sales, (10-15) firm_f_yr_sales]
-  % where:
-  % firm_f_yr_sales: [t,type,firm ID, annual for. sales, # expt. shpmts, firm age in export mkt.]
-  % firm_h_yr_sales: [t,type,firm ID, annual dom. sales, # dom. shmts,   firm age in dom. mkt.]
+  sim_out_pt_ndx.nfirm   = 0;   % count, all active firms 
+  sim_out_pt_ndx.nhfirms = 0;   % count, home mkt. firms 
+  sim_out_pt_ndx.nexptr  = 0;   % count, foreign mkt. firms  
+  sim_out_pt_ndx.hf_nobs = 0;   % count, firm-yrs in both mkts.   
  
-    catch
-        'problem in splice_hf line 60'
-    end
+  sim_out_pt_ndx.expt_rate = double.empty(0,1); 
+
+  %% Sum duds within a year for each firm_ID after sorting by firm and period
+
+  dud_matches = [sim_out_pt_ndx.dud_matches(:,1:5),sim_out_pt_ndx.dud_matches(:,9)];
+  dud_firmyr        = dud_matches(:,1) + 0.000001*dud_matches(:,3);
+  dud_temp_matches  = sortrows([dud_firmyr,dud_matches],1);
+% dud_matches:                  [t, type, firm_ID, sales, shipments (1), firm age in export mkt.]
+% dud_temp_matches: [dud_firmyr, t, type, firm_ID, sales, shipments (1), firm age in export mkt.]
+
+  f_firmyr     = sim_out_pt_ndx.firm_f_yr_sales(:,1) + 0.000001*sim_out_pt_ndx.firm_f_yr_sales(:,3);
+  f_temp_firmyr = sortrows([f_firmyr,sim_out_pt_ndx.firm_f_yr_sales],1);
+% f_temp_firmyr contains non-dud export sales, aggregated to the annual level: 
+%     [f_firmyr, t, type, firm_ID, sales, shipments (1), firm age in export mkt.]
+
+% Aggregate dud sales to the annual level
+dud_yr_sales = double.empty(0,7);
+if ~isempty(dud_temp_matches)
     
-both_mkts       = logical((temp3(:,7)>0).*(temp3(:,13)>0));
-sim_out_pt_ndx.nhfirms = sum(both_mkts>0);
-sim_out_pt_ndx.hf_nobs = sum(aa);
+    dud_yr_sales(1,:) = dud_temp_matches(1,:);
+    for i = 2:size(dud_temp_matches,1)
+        if dud_temp_matches(i,1)-dud_temp_matches(i-1,1)==0
+            dud_yr_sales(end,5:6) = dud_yr_sales(end,5:6) + dud_temp_matches(i,5:6);
+        else
+           dud_yr_sales = [dud_yr_sales; dud_temp_matches(i,:)];
+        end
+    end
+%dud_yr_sales: [dud_firmyr, t, type, firm_ID, total dud sales, shipment count, firm age in export mkt.]
 
-sim_out_pt_ndx.nfirm = sim_out_pt_ndx.nhfirms + sim_out_pt_ndx.nexptr - sim_out_pt_ndx.hf_nobs; % number of firms with sales in at least one market
-
+%%  Consolidate annual dud sales with annual non-dud export sales, firm-year by firm-year
+   
+if size(unique(f_firmyr),1) - size(f_firmyr,1) ~= 0
+  fprintf('Warning: multiple records for same firm-yr in firm_f_yr_sales  \n');
 end
-% sim_out_pt_ndx.firm_h_yr_sales: [t,type,firm ID,total dom. sales, total # dom. shipments,firm age in dom. mkt.]
-% sim_out_pt_ndx.firm_f_yr_sales: [t,type,firm ID,total exports,total # foreign shipments,firm age in export mkt.]
 
-try % comfirm home and foreign records are for same period and firm ID
-assert(sum((temp3(:,4) - temp3(:,10)).^2)==0); % periods match?
-assert(sum((temp3(:,6) - temp3(:,12)).^2)==0); % firm ID's match?
-sales_splice = [temp3(:,1:4),temp3(:,6),temp3(:,7),temp3(:,13),temp3(:,9),temp3(:,15)];
+% Add dud records to successes when both are present for the same firm-yr.
+ hh = ismember(dud_yr_sales(:,1),f_firmyr);  
+ ff = ismember(f_firmyr,dud_yr_sales(:,1));  
+ assert(sum((f_temp_firmyr(ff,1)-dud_yr_sales(hh,1)).^2)==0) 
+ f_temp_firmyr(ff,5:6) = f_temp_firmyr(ff,5:6) + dud_yr_sales(hh,5:6);
+% Stack remaining dud records onto the end of firm_f_yr_sales
+ firm_f_yr_salesD = [f_temp_firmyr(ff,:); dud_yr_sales(logical(1-hh),:)]; 
+% The D indicates duds are included
 
-% sales splice contains records for firms with matched foreign and domestic sales: 
-%  [1) theta_f, 2) theta_h, 3) prod_h, 4) t, 5) firm ID, 
-%   6) total dom. sales, 7) total exports, 
-%   8) age in dom. mkt, 9) age in export mkt.]
+else
+ firm_f_yr_salesD = f_temp_firmyr;
+end
+% firm_f_yr_salesD: [f_firmyr, t, type, firm_ID, all sales (incl. duds), 
+%                    all shipments (incl. duds), firm age in export mkt.]
+
+
+%% Splice export sales records with domestic market sales records
+
+h_firmyr = sim_out_pt_ndx.firm_h_yr_sales(:,1) ...
+           + 0.000001*sim_out_pt_ndx.firm_h_yr_sales(:,3);
+firm_h_yr_sales = sortrows([h_firmyr,sim_out_pt_ndx.firm_h_yr_sales],1);
+% firm_f_yr_salesD: [h_firmyr, t, type, firm_ID, all sales (incl. duds), 
+%                    all shipments (incl. duds), firm age in export mkt.]
+
+some_shpmts_h = find(firm_h_yr_sales(:,6)>0);
+some_shpmts_f = find(firm_f_yr_salesD(:,6)>0);
+
+firm_h_yr_sales  = firm_h_yr_sales(some_shpmts_h,:);
+firm_f_yr_salesD = firm_f_yr_salesD(some_shpmts_f,:);
+Nh_firm_yrs      = size(firm_h_yr_sales,1);
+Nf_firm_yrs      = size(firm_f_yr_salesD,1);
+
+
+if size(unique(h_firmyr),1) - size(h_firmyr,1) ~= 0
+   fprintf('Warning: multiple records for same firm-yr in firm_h_yr_sales  \n');
+end
+
+ ff = ismember(firm_f_yr_salesD(:,1),firm_h_yr_sales(:,1));
+ hh = ismember(firm_h_yr_sales(:,1),firm_f_yr_salesD(:,1));
+
+ f_bothmkt = sortrows(firm_f_yr_salesD(ff,:),1);
+ h_bothmkt = sortrows(firm_h_yr_sales(hh,:),1);
+
+ type_f  = f_bothmkt(:,3);
+ theta_f = mm.pt_type(type_f,2); 
+ prod_f  = mm.pt_type(type_f,1); 
+
+ type_h  = h_bothmkt(:,3);
+ theta_h = policy.firm_type_macro_succ_prod(type_h,3); 
+ prod_h  = policy.firm_type_macro_succ_prod(type_h,4);
+
+try
+ assert(sum((f_bothmkt(:,1)-h_bothmkt(:,1)).^2)==0); % same firm-period?
+ assert(sum((prod_f-prod_h).^2)==0);                 % same productivity?
 catch
-   warning('time periods or firm IDs do not match for home versus foreign sales');
-   sales_splice = zeros(0,9);
+  fprintf('\r Warning: year, firm ID or productivity mismatch for home versus foreign sales');
 end
 
-% exiting firms are replaced by new ones with the same ID, so need to
-% exclude cases where the "firm" age in the export market exceeds the firm
-% age in the domestic market to avoid inherited foreign client bases
+%% 
 
-same_firm   = sales_splice(:,8) >= sales_splice(:,9);
-sales_hf    = sales_splice(same_firm,1:7);
+if sum(ff)*sum(hh) == 0
+   both_mkt    = double.empty(0,15);
+   export_rate = double.empty(0,1);
+   Nhf_firm_yrs = 0;
+else
+    
+  try
+% Combine export and domestic sales records by firm type and year in both_mkt      
+  both_mkt = [theta_f, theta_h, prod_f, f_bothmkt(:,2:end),h_bothmkt(:,2:end)];       
+  % both_mkt: [(1) theta_f, (2) theta_h, (3) prod_h , (4-9) firm_h_yr_sales(:,2:end),
+  %            (10-15) firm_f_yr_sales(:,2:end)]
+  
+  % firm_f_yr_sales(:,2:end): [t,type,firm_ID, exp. sales, exp. shipments, firm age in export mkt.]
+  % firm_h_yr_sales(:,2:end): [t,type,firm ID, dom. sales, dom. shipments, firm age in dom. mkt.]
+  catch
+   fprintf('\r Warning: dimension compatibility problem in splice_hf line 131');
+  end
+  
+%% Count the number of distinct firm-yrs in the home and the foreign database
 
-% uncomment next 3 lines to view obs. used for regressions
-% sales_hf_temp     = sales_splice(same_firm,:);
-% eyeball           = sortrows(sales_hf_temp,[1 2 5 4 8]);
-% eyeball_expt_rate = [eyeball, eyeball(:,7)./(eyeball(:,6)+eyeball(:,7))];
+% number of firms in both markets, aggregating over firms and years
+  Nhf_firm_yrs = size(both_mkt,1);
+  
+% number of firms with sales in at least one market
+  N_firm_yrs  = Nh_firm_yrs + Nf_firm_yrs - Nhf_firm_yrs;  
+% number of pure exportes 
+  Nexprt_only = Nf_firm_yrs - Nhf_firm_yrs;
+ 
+  sim_out_pt_ndx.nfirm   = N_firm_yrs;   % load count, all active firms 
+  sim_out_pt_ndx.nhfirms = Nh_firm_yrs;  % load count, home mkt. firms 
+  sim_out_pt_ndx.nexptr  = Nf_firm_yrs;  % load count, foreign mkt. firms  
+  sim_out_pt_ndx.hf_nobs = Nhf_firm_yrs; % load count, firms in both mkts.   
+  
+  % load vector of export shares among active exporters, including pure exporters
+  sim_out_pt_ndx.expt_rate = [both_mkt(:,7)./(both_mkt(:,7)+both_mkt(:,13)); ones(Nexprt_only,1)];
 
-% export_rate = [sales_hf(:,7)./(sales_hf(:,6)+sales_hf(:,7));ones(sum(ex_only,1),1)];
-% the vector of ones in export_rate accounts for firms that exclusively
+  % sim_out_pt_ndx.hffirms = Nhf_firm_yrs; 
+  sim_out_pt_ndx.nexptr  = Nf_firm_yrs;
+  sim_out_pt_ndx.nhfirms = Nh_firm_yrs;
 
-sim_out_pt_ndx.expt_rate = sales_hf(:,7)./(sales_hf(:,6)+sales_hf(:,7));
+end
 
 %% moments for regression of log foreign sales on log domestic sales
 
-   sim_out_pt_ndx.hf_nobs   = size(sales_hf,1);
-   sim_out_pt_ndx.y_hf      = log(sales_hf(:,7));
-   sim_out_pt_ndx.x_hf      = [ones(sim_out_pt_ndx.hf_nobs,1),log(sales_hf(:,6))];
+if size(both_mkt,1)>0
+   sim_out_pt_ndx.y_hf      = log(both_mkt(:,7));
+   sim_out_pt_ndx.x_hf      = [ones(Nhf_firm_yrs,1),log(both_mkt(:,13))];
    sim_out_pt_ndx.hfmoms_xx = sim_out_pt_ndx.x_hf'*sim_out_pt_ndx.x_hf;
    sim_out_pt_ndx.hfmoms_xy = sim_out_pt_ndx.x_hf'*sim_out_pt_ndx.y_hf;
    sim_out_pt_ndx.hfysum    = sum(sim_out_pt_ndx.y_hf);    

@@ -1,30 +1,37 @@
 % Called from SimulateForeignMatchesInnerAnnualize
 
 function [mat_cont_2yr,mat_yr_sales,mat_yr_sales_lag,year_lag] =...
-    mat_yr_splice_v2(mat_yr_sales,mat_yr_sales_lag,mm,year)
+    mat_yr_splice_v2(iterX_in,mm,year)
 
 % This function splices the current year's records on matches for a given
 % firm type with last year's records for the same firm type. Splicing is
 % done by firm ID and by matching last year's eoy Z with this year's boy Z.
 % Once the two years are spliced match age variables are
-% created. Note that the count of one-year olds does not include singletons
+% created. Note that the count of one-year olds does not include duds
 % that sent sample shipments but did not establish a successful match.
 
 %  mat_yr_sales: [(1) firm ID, (2) match-specific sales, (3) shipments,   
 %      (4) boy Z, (5) eoy Z, (6) match age in periods, (7) firm age in periods]
-   
-    mat_yr_sales = sortrows(mat_yr_sales,[1,4,6]);
+
+    mat_yr_sales     = iterX_in.mat_yr_sales;
+    mat_yr_sales_lag = iterX_in.mat_yr_sales_lag;
+    Zcut_eoy_lag     = iterX_in.Zcut_eoy_lag;   
+    
+    mat_yr_sales     = sortrows(mat_yr_sales,[1,4,6]);
 
 %% find matches to splice, recognizing firm_ID slots that flip occupants
 
-% Find matches in current year that correspond to boy incumbents, and 
-% drop matches that correspond to post-flip periods.
-   
-    incumb = mat_yr_sales(:,1)==(floor(mat_yr_sales(:,1))).*(mat_yr_sales(:,4)>0);
-    contin = mat_yr_sales_lag(:,5)>0;
+ % Find matches in current year that correspond to boy incumbents, and 
+ % drop matches that correspond to post-flip periods. Firms that flip in 
+ % period 1 of current year require extra attention
+    boy_noflip = iterX_in.new_firm(floor(mat_yr_sales(:,1)),iterX_in.t-11)==0;
+    incumb = logical((mat_yr_sales(:,1)==(floor(mat_yr_sales(:,1))).*(mat_yr_sales(:,4)>Zcut_eoy_lag)).*boy_noflip); % boy Z > Zcut_eoy_lag 
     tmp_tran = mat_yr_sales(incumb,:);
-    tmp_tran_lag = mat_yr_sales_lag(contin,:);
-   
+ 
+  % find matches that were active at the end of last year 
+    boy_noflip_lag = iterX_in.new_firm(floor(mat_yr_sales_lag(:,1)),iterX_in.t-11)==0;
+    contin = logical((mat_yr_sales_lag(:,5)>Zcut_eoy_lag).*boy_noflip_lag);
+    tmp_tran_lag  = mat_yr_sales_lag(contin,:);
 
 %% calculate match ages and deal with firm turnover
 try
@@ -32,26 +39,29 @@ try
 
     tmp_tran_lag = sortrows(tmp_tran_lag,[1,5,6]);  
     tmp_tran     = sortrows(tmp_tran,[1,4,6]);
-    
-%  fprintf('\rNow at mat_yr_splice_v2, line 44. Evaluating year %2.0f\n', year)   
 
-    cont_find = tmp_tran(:,7) - tmp_tran_lag(:,7) >  0;   
-    tmp_tran(cont_find ,6) = tmp_tran_lag(cont_find ,6)...
-                               + mm.pd_per_yr*ones(length(cont_find),1);
-                           
-% NOTE: this formulation gives a continuing match an entire year of additional 
-%  age, even if it only survives a fraction of the current year. It would 
-%  be better to use the # months survived in the current year, but this
-%  variable isn't readily added to the input set. This would be consistent 
-%  with the treatment of firm age.
+    % firm is older this year (no flip) 
+    cont_find = (tmp_tran_lag(:,7)>0).*(tmp_tran(:,7) - tmp_tran_lag(:,7)) >  0;  
+    % cumulate match age
+    tmp_tran(cont_find ,6) = tmp_tran_lag(cont_find ,6) + tmp_tran(cont_find,6);
 
 catch
         'problem in mat_yr_splice_v2, lines 42-46';
+        fileID4 = fopen('results/EEJKT_error_log.txt','a');
+        fprintf(fileID4,'\r\n  ');
+        fprintf(fileID4,'\r\n problem in mat_yr_splice_v2, lines 42-46');
+        fprintf(fileID4,'\r\n period = %.2f, firm type = %.2f, market = %.2f', [iterX_in.t iterX_in.pt_ndx iterX_in.mkt]);
+        fprintf(fileID4,'\r\n params = ');
+        fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
+        fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:12));
+        fprintf(fileID4, '\r\n  ');   
+        fclose(fileID4);
 end
  %%  
  try
- last_yr_exit = logical(ones(size(mat_yr_sales_lag,1),1)-contin);
- mat_lastyr_lag = mat_yr_sales_lag(last_yr_exit,:);
+    last_yr_exit = logical(ones(size(mat_yr_sales_lag,1),1)-contin);
+    % match was there last year but not this year
+    mat_lastyr_lag = mat_yr_sales_lag(last_yr_exit,:);
 
  if sum(contin,1)>0
 
@@ -84,6 +94,15 @@ year_lag = year;
 
  catch
      'problem in last block of mat_yr_splice_v2'
+     fileID4 = fopen('results/EEJKT_error_log.txt','a');
+     fprintf(fileID4,'\r\n  ');
+     fprintf(fileID4,'\r\n problem in last block of mat_yr_splice_v2');
+     fprintf(fileID4,'\r\n period = %.2f, firm type = %.2f, market = %.2f', [iterX_in.t iterX_in.pt_ndx iterX_in.mkt]);
+     fprintf(fileID4,'\r\n params = ');
+     fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
+     fprintf(fileID4,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:12));
+     fprintf(fileID4, '\r\n  ');   
+     fclose(fileID4);
  end
 
 end

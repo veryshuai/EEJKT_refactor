@@ -1,4 +1,4 @@
-function [stay, iter_in] = simulateForeignMatchesInnerSimLearners(learn, iter_in, policy, stay)
+function [iter_in] = simulateForeignMatchesInnerSimLearners(learn, iter_in, policy, stay)
     
     % Find N_learn randomly selected micro states next period, given
     % macro state (common to all firms), initial micro states, and pmat_cum.
@@ -10,5 +10,5 @@ function [stay, iter_in] = simulateForeignMatchesInnerSimLearners(learn, iter_in
         iter_in.cum_succ(learn,iter_in.t)    = policy.pmat_to_meets_succs(iter_in.micro_state(learn ,iter_in.t),3) - 1; % successes, new state, matrix for all firms starting (t+1)
     end
 
-    stay(learn)  = iter_in.micro_state(learn,iter_in.t-1) - iter_in.micro_state(learn,1) ~= 0; % wasn't in initial state last period
+%    stay(learn)  = iter_in.micro_state(learn,iter_in.t-1) - iter_in.micro_state(learn,1) ~= 0; % wasn't in initial state last period
 end

@@ -11,10 +11,12 @@ iterH_in.seas_Zcut = zeros(1,mm.pd_per_yr); % elements will hold season-specific
 
 iterH_in.cur_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % clients active in the current period
 iterH_in.add_cli_cnt  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % gross additions to client count
+iterH_in.actv_cli_cnt = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % active clients
 iterH_in.cum_succ     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % cumulative number of successes
 iterH_in.new_firm     = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods);   % will mark first period of a new firm
 iterH_in.exog_deaths  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % number of exogenous match deaths
 iterH_in.micro_state  = ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),mm.periods,1); % scalar indices for #success/#meetings
+iterH_in.cur_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down current clients by z state
 iterH_in.lag_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down lagged clients by z state
 iterH_in.new_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down new client counts by z state
 iterH_in.die_cli_zst  = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),size(mm.Z,1));  % breaks down client death counts by z state
@@ -28,7 +30,8 @@ iterH_in.trans_count    = zeros(size(mm.Z,1)+1,size(mm.Z,1)+1,mm.sim_firm_num_by
 % Exiting firms are considered to move to type 0 at the the end of the period.
 % columns: (1) initial z-state (2) new z-state (3) firm index, given type (4) firm type
 
-% create home theta draws
+% create home theta draws for each hotel room--these won't change when
+% occupant turns over
 theta_df = (size(mm.theta1,2)+1)*ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1) - ...
     sum(ones(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1)*mm.th1_cdf >...
     rand(mm.sim_firm_num_by_prod_succ_type(pt_ndx),1)*ones(1,size(mm.theta1,2)),2);
@@ -43,14 +46,20 @@ iterH_in.firm_h_yr_sales_lag = zeros(mm.sim_firm_num_by_prod_succ_type(pt_ndx),4
 iterH_in.mat_h_yr_sales_lag = double.empty(0,4);
 iterH_in.mat_h_yr_sales = double.empty(0,4);
 
-% initialize keep_cli for first period
-iterH_in.keep_cli = ones(1,size(mm.Z,1)); % applies to clients existing in period 1
+% initialize keep_cli and Zcut_eoy for first period
+iterH_in.keep_cli      = ones(1,size(mm.Z,1)); % applies to clients existing in period 1
+iterH_in.keep_cli_lag  = ones(1,size(mm.Z,1)); 
 iterH_in.keep_cli(1:5) =  zeros(1,5); % implying worst 5 client types from period 1 are dropped
+iterH_in.Zcut_eoy = 0;
+iterH_in.Zcut_eoy_lag = 0;
+
 iterH_in.year = 1;
 iterH_in.N_match = 0;
 iterH_in.season = 1;
 
-transH = cell(mm.N_pt,5);
+iter_out.tst    = cell(mm.N_pt);
+% iterH_tst cells consolidate data for testing only--comment them out for faster estimation
+iter_out.transH = cell(mm.N_pt,5);
 % to hold (1) firm_ID, (2) cur_cli_cnt, (3) cum_succ, (4) age, (5) new_firm 
 
 % create first observation on firm-year level aggregates (will concatenate below)

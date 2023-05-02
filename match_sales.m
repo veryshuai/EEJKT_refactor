@@ -3,16 +3,19 @@ function [mat_tran,ship_cur,age_vec] = match_sales(mkt,mm,trans_count,age,pt_ndx
 if     mkt==1 % foreign market
   scale     = mm.scale_f;
   macro_shk = mm.X_f(macro_state);
+  poisCDF_shipments = mm.poisCDF_shipmentsF;
+
 elseif mkt==2 % home market
   scale     = mm.scale_h;
   macro_shk = mm.X_h(macro_state);
+  poisCDF_shipments = mm.poisCDF_shipmentsH;
 end
 
 % This function constucts match transition counts, shipment counts and shipment 
 % sales for a specific type of exporter and a time period, t
 
 % mat_tran contains col 1: initial state, col 2: exporter id, 
-%       col 3: dest. state (Z index, or 0 for exit); col 4: match rev.
+% col 3: dest. state (Z index, or 0 for exit); col 4: match rev.
 % ship_cur contains number of shipments for each match
 % age_vec  contains exporter age for each match
 
@@ -86,7 +89,7 @@ n_cli1      = sum(n_cli2,1)';      % initial client counts, incl. entrants, by e
 
  % draw random shipment counts for new and continuing matches.
    rr = rand(tot_cli,1);
-   select  = ones(tot_cli,1).*mm.poisCDF_shipments > rr; 
+   select  = ones(tot_cli,1).*poisCDF_shipments > rr; 
    ship_cur = (mm.max_ships.*ones(tot_cli,1) - sum(select,2)).*(new_expZ>0); % shipments, t   
    
    %% modeling choice here

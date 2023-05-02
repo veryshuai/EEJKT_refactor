@@ -1,14 +1,25 @@
-function [D,W,error] = distance(X)
+function D = distance(X)
 
-format long;
+try
 
-% X = [-3.60529  -3.87941  0.23156  2.46487  1.88176  15.42634 0.38246  11.72211  1.88618  -1.21819  13.00238  -6.13506];
+    format long;
+ 
+    rng(80085,'twister');
+    seed_crand(80085);
+    
+    mm = setModelParameters(X);
+    % choose the firm type to use for spot checking
+    mm.check_type = 113;
+    
+    policy = generatePolicyAndValueFunctions(mm);
+    simMoms = simulateMomentsMain(policy,mm);
+    [D,D_alt,~] = calculateDistanceAndPrint(simMoms,mm,X);
 
-rng(80085,'twister');
-seed_crand(80085);
+    D = D_alt; %uncomment this line to use degree distrib. fit metric
 
-mm = setModelParameters(X);
-policy = generatePolicyAndValueFunctions(mm);
-simMoms = simulateMomentsMain(policy,mm);
+catch
 
-end  
+ fprintf('\r\n Failed to evaluate fit metric \n')
+ D = 1e12;
+
+end

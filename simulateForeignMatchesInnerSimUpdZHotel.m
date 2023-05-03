@@ -90,4 +90,20 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
 
     end
     iter_in.cur_cli_zst = iter_in.new_cli_zst + iter_in.trans_zst;
+    
+      if toc(mm.start_time) > mm.abort_time
+     fileID5 = fopen('results/EEJKT_maxtime_error.txt','a');
+     fprintf(fileID5,'\r\n  ');
+     fprintf(fileID5,'\r\n sim time exceeds %.0f in simulateForeignMatchesInnerSimUpdZHotel for firm type %.0f\n', [mm.abort_time,mm.pt_ndx] );
+ %   fprintf(fileID5,'\r\n firm type = %.2f', pt_ndx);
+     fprintf(fileID5,'\r\n parameters: ');
+     fprintf(fileID5,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
+     fprintf(fileID5,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:end));
+     fprintf(fileID5, '\r\n  ');  
+     fclose(fileID5);  
+     display(toc(mm.start_time));
+     disp('simulateHomeMatchesInnerSimUpdZHotel: Time limit reached in parameter evaluation');
+     err('Time limit reached')
+   end
+
 end

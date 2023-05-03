@@ -8,6 +8,7 @@ sim_out = cell(mm.N_pt,1);
 
 seeds = randi(1e6,size(mm.Phi,1),2);
 
+mm.start_time = tic;
 parfor pt_ndx = 1:mm.N_pt
 % for pt_ndx = 1:1:mm.N_pt 
 %for pt_ndx = 90
@@ -15,6 +16,21 @@ parfor pt_ndx = 1:mm.N_pt
 % for pt_ndx = 108
 % for pt_ndx = 101
 % for pt_ndx = 113
+
+   if toc(mm.start_time) > mm.abort_time
+     display(toc(mm.start_time));
+     disp('simulateMomentsMain: Time limit reached in parameter evaluation');
+     err('Time limit reached')
+     fileID5 = fopen('results/EEJKT_maxtime_error.txt','a');
+     fprintf(fileID5,'\r\n  ');
+     fprintf(fileID5,'\r\n sim time exceeds %.0f in simulateMomentsMain', mm.abort_time);
+     fprintf(fileID5,'\r\n firm type = %.2f', pt_ndx);
+     fprintf(fileID5,'\r\n params = ');
+     fprintf(fileID5,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
+     fprintf(fileID5,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:end));
+     fprintf(fileID5, '\r\n  ');  
+     fclose(fileID5);    
+   end
 
     rng(seeds(mm.pt_type(pt_ndx,1),1),'twister');
     seed_crand(seeds(mm.pt_type(pt_ndx,1),2));
@@ -30,6 +46,9 @@ parfor pt_ndx = 1:mm.N_pt
     end
 
 end
+ sim_time = toc(mm.start_time);
+ fprintf('\r Simulation time: %.0f seconds\n', sim_time);
+
 
 %% Uncomment commands below to generate data for spot checks
 % check_type = mm.check_type;

@@ -20,7 +20,7 @@ function [mat_cols, all_seas, som_seas, Zcut_eoy] = season_mergeWithinYrSequence
      fprintf(fileID5,'\r\n period = %.2f, firm type = %.2f, market = %.2f', [iterX_in.t iterX_in.pt_ndx iterX_in.mkt]);
      fprintf(fileID5,'\r\n params = ');
      fprintf(fileID5,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
-     fprintf(fileID5,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:12));
+     fprintf(fileID5,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:end));
      fprintf(fileID5, '\r\n  ');   
      fclose(fileID5);
      

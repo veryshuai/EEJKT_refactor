@@ -1,4 +1,4 @@
-function mm = setModelParameters(X,mm)
+function mm = bootstrap_setModelParametersNoHead(X,mm)
 
 %mm = struct();
 
@@ -24,9 +24,9 @@ mm.param_vec = X;      % carry along parameter vector for diagnostic checks
 % mm.gam       = X(7);       % Network effect parameter
 % mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
 % mm.sig_p     = X(9);       %standard deviation of productivity distribution
-% mm.F_f       = exp(X(10)); % cost of maintaining a client- foreign
-% mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
-% mm.optimism  = X(12);      %parameter on prior distribution (positive means optimistic, negative pessamisitic)
+% mm.F_f       = exp(X(1)); % cost of maintaining a client- foreign
+% mm.cs_f      = exp(X(10)); % Cost scaling parameter, foreign market
+% mm.optimism  = 0; %parameter on prior distribution (positive means optimistic, negative pessamisitic)
 
 
 %% Discretization of state-space
@@ -59,19 +59,21 @@ mm.th2_pdf = [mm.th2_cdf(1),mm.th2_cdf(2:mm.dim1)-mm.th2_cdf(1:mm.dim1-1)];
 
 
 %% Solution parameters
-mm.v_tolerance   = 1e-3;    % convergence tolerance, value function iterations (WAS 1e-3)
-mm.max_iter      = 5e4; % maximum number of value function iterations
-mm.pi_tolerance  = 1e-8;    % convergence tolerance, profit function (WAS .001)
-mm.T             = 50;      % horizon for calculating profit function
-mm.tot_yrs       = 50;     % years to simulate, including burn-in (mm.burn)
+mm.v_tolerance   = 1e-3; % convergence tolerance, value function iterations (WAS 1e-3)
+mm.max_iter      = 5e4;  % maximum number of value function iterations
+mm.pi_tolerance  = 1e-8; % convergence tolerance, profit function (WAS .001)
+mm.T             = 50;   % horizon for calculating profit function
+mm.tot_yrs       = 50;   % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
 
 mm.S         = 10000;    % number of potential exporting firms to simulate 
 mm.burn      = 10;       %number of burn-in years
-mm.max_match = 50;    % upper bound on number of matches to be counted for foreign market
-mm.max_match_h = 70;    % Number of possible matches for domestic market
-
+mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
+mm.max_match_h = 70;     % Number of possible matches for domestic market
+mm.MaxMatchMonth = 1.5e+6; % Max number of match-months in any year for a given firm type
+mm.max_home_clients = 500; %maximum number of active clients we allow firms to have at home
+mm.abort_time = 1500;    % number of seconds allowed before evaluation is aborted 
 %% Cost function
 
 mm.kappa1 = 2; %quadratic search costs 
@@ -87,7 +89,7 @@ mm.l_opt_func_f = @(a,net,pi,V_succ,V_fail,V_orig)...
 %% Exogenous Jump Process Parameters
       
 gam_h = 1 - 0.8412593; %DJ: calculations from COL_AR1.do, reversion coef, use Euler-Maruyama discretization of OU  
-sig_h = 0.04688; %DJ: calculations from COL_AR1.do, root MSE, Euler-Maruyama discretization of OU 
+sig_h = 0.04688; % DJ: calculations from COL_AR1.do, root MSE, Euler-Maruyama discretization of OU 
 gam_f = 1 - 0.948018; %DJ: from Jim's email 2023/1/11, AR1 reversion coef, Euler-Maruyama discretization of OU
 sig_f = 0.11338; %DJ: from Jim's email 2023/1/11, AR1 root MSE, Euler-Maruyama discretization of OU
 
@@ -149,7 +151,7 @@ mm.Q_f_d(1:size(Q_f,1)+1:end) = 0;
 mm.erg_pp       = erg_pp;   %ergodic distribution of seller productivities
 
 mm.L_z          = L_z;      %arrival rate for jumps in other firms productivity
-%mm.D_z          = D_z;      %size of jump in other firms productivity
+% mm.D_z          = D_z;      %size of jump in other firms productivity
 mm.Q_z          = Q_z;      %intensity matrix for demand shocks 
 mm.Q_z_d        = Q_z_d;    %with zeros on the diagonal
 mm.erg_pz       = erg_pz;   %ergodic distribution of demand shocks

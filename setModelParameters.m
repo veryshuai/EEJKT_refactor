@@ -24,9 +24,15 @@ mm.L_bF      = X(6)/mm.pd_per_yr; % Shipment order arrival hazard
 mm.gam       = X(7);       % Network effect parameter
 mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
 mm.sig_p     = X(9);       %standard deviation of productivity distribution
-mm.F_f       = exp(X(10)); % cost of maintaining a client- foreign
-mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
-mm.optimism  = max(X(12),-mm.ah); %parameter on prior distribution (positive means optimistic, negative pessamisitic)
+
+mm.F_f       = exp(X(1)); % cost of maintaining a client- foreign
+mm.cs_f      = exp(X(10)); % Cost scaling parameter, foreign market
+mm.optimism  = 0; %parameter on prior distribution (positive means optimistic, negative pessamisitic)
+
+
+% mm.F_f       = exp(X(10)); % cost of maintaining a client- foreign
+% mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
+% mm.optimism  = max(X(12),-mm.ah); %parameter on prior distribution (positive means optimistic, negative pessamisitic)
 
 
 %% Discretization of state-space
@@ -72,8 +78,8 @@ mm.burn      = 10;       %number of burn-in years
 mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;     % Number of possible matches for domestic market
 mm.MaxMatchMonth = 1.5e+6; % Max number of match-months in any year for a given firm type
-mm.max_home_clients = 1000; %maximum number of active clients we allow firms to have at home
-
+mm.max_home_clients = 500; %maximum number of active clients we allow firms to have at home
+mm.abort_time = 1500;    % number of seconds allowed before evaluation is aborted 
 %% Cost function
 
 mm.kappa1 = 2; %quadratic search costs 

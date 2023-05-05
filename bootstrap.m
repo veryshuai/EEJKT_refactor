@@ -15,8 +15,9 @@ seed_crand(80085);
 runs = 20; %20 %set number of runs to use in bootstrap
 
 %point estimates
- X =   [-1.46485 -17.57847   0.16604   0.11138   0.55247   9.48919 ...
-  0.12782   2.64956   1.89385  -1.59049  11.46407  -8.27451];
+ X = [-2.43530 -23.51281  0.12883  0.20217 0.35773 21.81408...
+       0.15694   6.09050  3.22829  13.12619 ];
+% alt fit metric: 12.96308          
 
 %set some other common parameters
 mm = setModelParameters(X);
@@ -74,9 +75,11 @@ save results/moment_var
 % (2) Now we need finite differences of parameters on moments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fin_diff_size = (1 + 1e-1); %percentage of parameter value 
+fin_diff_size = (1 + 0.6e-1); %percentage of parameter value 
 
-param_vec = [mm.F_h, mm.scale_h, mm.scale_f, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.F_f,  mm.cs_f, mm.optimism]';
+% param_vec = [mm.F_h, mm.scale_h, mm.scale_f, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p,mm.F,mm.cs_f,mm.optimism]';
+param_vec = [mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f]';
+
 pv_siz = size(param_vec,1);
 
 %each column is a finite differenced version of the parameter set
@@ -105,8 +108,14 @@ for iter =1:pv_siz + 1
     %point estimates
     mm = struct();
     cell_for_assignment = num2cell(fin_diff_param_mat(:,iter)); %need cell to unpack into multiple variables, matlab quirk
-    [mm.F_h, mm.scale_h, mm.scale_f, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.F_f,  mm.cs_f, mm.optimism] = cell_for_assignment{:};
+%   [mm.F_h, mm.scale_h, mm.scale_f, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p,mm.F_f,mm.cs_f,mm.optimism] = cell_for_assignment{:};
+    [mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f] = cell_for_assignment{:};
 
+%   set constrained parameters equal to their perturbed counterpart values    
+    mm.F_f = mm.F_h;
+    mm.scale_f= mm.scale_h;
+    mm.optimism = 0;
+ 
     rng(80085,'twister');% set the seed and the rng (default parallel rand generator)
     seed_crand(80085);
     mm = bootstrap_setModelParametersNoHead(X,mm);
@@ -133,7 +142,12 @@ end
 
 %Reset to baseline values
 cell_for_assignment = num2cell(fin_diff_param_mat(:,1)); %need cell to unpack into multiple variables
-[mm.F_h, mm.scale_h, mm.scale_f, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.F_f,  mm.cs_f, mm.optimism] = cell_for_assignment{:};
+[mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f] = cell_for_assignment{:};
+
+% (Probably don't need this block since we're not constructing std. errors for these parameters)
+ mm.F_f = mm.F_h;
+ mm.scale_f= mm.scale_h;
+ mm.optimism = 0;
 
 % (3) Construct moment covariance matrix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -200,7 +214,7 @@ AGS_elas = AGS_sens .* repmat((W_alt * fin_diff_mat(:,1))',size(AGS_sens,1),1) .
 
 % construct table for easy understanding of Gentzkow Shapiro weighting
 % method
-AGS_param_names = {'F_h', 'scale_h', 'scale_f', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'F_f',  'cs_f', 'optimism'};
+AGS_param_names = {'F_h', 'scale_h', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f'};
 varnames = {'match_death_coefs1','match_death_coefs2','match_death_coefs3','match_death_coefs4','match_death_coefs5','match_ar1_coefs1','match_ar1_coefs2','match_ar1_coefs3','match_ar1_coefs4','match_ar1_coefs5','mavship','exp_dom_coefs1','exp_dom_coefs2','exp_dom_coefs3','dom_ar1_coefs1','dom_ar1_coefs2','dom_ar1_coefs3','match_lag_coefs1','match_lag_coefs2','match_lag_coefs3','match_lag_coefs4','match_lag_coefs5','match_lag_coefs6','succ_rate_coefs1','succ_rate_coefs2','sr_var_coefs1','sr_var_coefs2','for_sales_shr','exp_frac','spb_1','spb_2','spb_3','spb_4','spb_5','spb_6','spb_7'};
 AGS_cell = mat2cell(AGS_elas,ones(pv_siz,1),ones(size(Data_alt,2),1));
 AGS_table = cell2table(AGS_cell);

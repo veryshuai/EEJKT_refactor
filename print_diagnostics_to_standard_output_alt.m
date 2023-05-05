@@ -33,20 +33,15 @@ fprintf('\r\n alternative fit metric: %.15f\n', D);
     fprintf( '\r\n  '); 
 
 
-      fileID2 = fopen('results/ga_fitlog_2Arv_1Scl_opt.txt','a');
-      fprintf(fileID2,'\r\n fit metrics, original and alternative:  ');
-      dlmwrite('results/ga_fitlog_2Arv_1Scl_opt.txt',[D0 D],'-append','precision',12);
+      fileID2 = fopen('results/ga_fitlog_restricted.txt','a');
+      fprintf(fileID2,'\r\n fit metrics, original and alternative: %6.3f, %6.3f', [D0 D]);
+%    dlmwrite('results/ga_fitlog_restricted.txt',[D0 D],'-append','precision',12);
       fclose(fileID2);
     
-%       fileID2 = fopen('results/ga_running_output_2Arv_2Scl.txt','a');
-%       fprintf(fileID2,'\r\n alternative fit metric = ');
-%       dlmwrite('results/ga_running_output_2Arv_2Scl.txt',D,'-append','precision',12);
-%       fclose(fileID2);
- 
 
-      fileID1 = fopen('results/ga_running_output_2Arv_1Scl_opt.txt','a');
+      fileID1 = fopen('results/ga_running_output_restricted.txt','a');
       fprintf(fileID1,'\r\n alternative fit metric: ');
-      dlmwrite('results/ga_running_output_2Arv_1Scl_opt.txt',D,'-append','precision',12);
+      dlmwrite('results/ga_running_output_restricted.txt',D,'-append','precision',12);
     
       fprintf(fileID1, '\r\n parameters: ');
       fprintf(fileID1, '\r\n%9.5f %9.5f %9.5f %9.5f %9.5f %9.5f',X(1:6));

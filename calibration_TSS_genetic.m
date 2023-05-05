@@ -15,42 +15,37 @@
 % mm.L_bF      = X(6)/mm.pd_per_yr; % Shipment order arrival hazard
 % mm.gam       = X(7);       % Network effect parameter
 % mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
-% mm.sig_p     = X(9);       % standard deviation of productivity distribution
-% mm.F_f       = exp(X(10)); % cost of maintaining a client- foreign
-% mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
-% mm.optimism  = X(12);      % parameter on prior distribution (positive means optimistic, negative pessamisitic)
+% mm.sig_p     = X(9);       %standard deviation of productivity distribution
+% mm.F_f       = exp(X(1)); % cost of maintaining a client- foreign
+% mm.cs_f      = exp(X(10)); % Cost scaling parameter, foreign market
+% mm.optimism  = 0; %parameter on prior distribution (positive means optimistic, negative pessamisitic)
 
 
 %%
 
 fprintf('\r\n STARTING A NEW RUN: %s\n ', datestr(now,'yyyy_mmdd_HHMM'));
-fileID1 = fopen('results/ga_running_output_2Arv_1Scl_opt.txt','a');
+fileID1 = fopen('results/ga_running_output_restricted.txt','a');
  fprintf(fileID1,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
 fclose(fileID1);
 
-fileID2 = fopen('results/ga_fitlog_2Arv_1Scl_opt.txt','a');
+fileID2 = fopen('results/ga_fitlog_restricted.txt','a');
   fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
 fclose(fileID2);
           
-% theta = [ -3.137934957534555	-15.231772611645656	0.17741933433289983	...
-%           0.08442559565245339	0.4545298559796027	18.158739974045748...
-%           0.0987957958239333	8.142865607800749	2.1197381632819923...
-%          -1.2954563783672066	15.04018516797048	8.193168397220097];
-%           % fit metric:     11.9822086045
-%           % alt fit metric: 13.6512043649
-          
-          
-%  theta= [-3.99058 -12.72495  0.13492  0.10615  0.55409 22.85375 ...
-%           0.07633  7.18586  2.26043 -1.60232 11.15809  8.93525]; 
-%        % too many match months for firm type 113
+
+%  theta = [ -2.88300 -18.24037   0.16754   0.14741   0.25041  27.46668...
+%   0.09661   6.40443   2.54228  11.83779];
+%  % alt fit metric: 13.137
+%  
+%  theta = [ -2.83343 -20.26304   0.17207   0.15619   0.29423  23.17569...
+%             0.09783   7.18610   2.96590  15.62184 ];
+ % alt fit = 12.873 on roar collab
+        
+ 
+ theta =[ -2.79107 -20.26304   0.18305   0.15619   0.29423  20.31397...
+           0.09783   7.18610   2.96590  15.62184 ];
+  % alt fit = 12.69404 on roar collab      
        
- theta = [-2.50324974845549,-23.1029750703462,0.231078097913458,...
-           0.137356512550959,0.270325421586466,21.4806944241873,...
-           0.0841653249301951,6.79639670533777,2.77823187398584,...
-          -1.50822705652675,15.3408494771016,9.72552040707838]; 
-          % fit metric:     12.2901372154  
-          % alt fit metric: 12.9585254145583
-      
 % X = theta;     
 
 D0 = distance(theta);

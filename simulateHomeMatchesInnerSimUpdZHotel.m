@@ -104,6 +104,24 @@ pt_ndx = iterH_in.pt_ndx;
         if sum(iterH_in.new_cli_zst(i,:),2)>0
             iterH_in.trans_count(1,2:size(mm.Z,1)+1,i) = iterH_in.new_cli_zst(i,:);
         end
+        
+       
+   if toc(mm.start_time) > mm.abort_time
+     fileID5 = fopen('results/EEJKT_maxtime_error.txt','a');
+     fprintf(fileID5,'\r\n  ');
+     fprintf(fileID5,'\r\n sim time > %.0f for firm type %.0f (simulateHomeMatchesInnerSimUpdZHotel)\n', [mm.abort_time,pt_ndx] );
+ %   fprintf(fileID5,'\r\n firm type = %.2f', pt_ndx);
+     fprintf(fileID5,'\r\n parameters: ');
+     fprintf(fileID5,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));
+     fprintf(fileID5,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(7:end));
+     fprintf(fileID5, '\r\n  ');  
+     fclose(fileID5);  
+     display(toc(mm.start_time));
+     disp('simulateHomeMatchesInnerSimUpdZHotel: Time limit reached in parameter evaluation');
+     err('Time limit reached')
+   end
+        
+        
     end
     
     iterH_in.cur_cli_zst = iterH_in.new_cli_zst + iterH_in.trans_zst;

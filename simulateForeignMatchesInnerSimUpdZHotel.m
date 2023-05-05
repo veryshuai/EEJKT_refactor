@@ -94,7 +94,7 @@ function iter_in = simulateForeignMatchesInnerSimUpdZHotel(mm, iter_in, policy)
       if toc(mm.start_time) > mm.abort_time
      fileID5 = fopen('results/EEJKT_maxtime_error.txt','a');
      fprintf(fileID5,'\r\n  ');
-     fprintf(fileID5,'\r\n sim time exceeds %.0f in simulateForeignMatchesInnerSimUpdZHotel for firm type %.0f\n', [mm.abort_time,mm.pt_ndx] );
+     fprintf(fileID5,'\r\n sim time > %.0f for firm type %.0f (simulateForeignMatchesInnerSimUpdZHotel)\n', [mm.abort_time,mm.pt_ndx] );
  %   fprintf(fileID5,'\r\n firm type = %.2f', pt_ndx);
      fprintf(fileID5,'\r\n parameters: ');
      fprintf(fileID5,'\r%8.5f %8.5f %8.5f %8.5f %8.5f %8.5f',mm.param_vec(1:6));

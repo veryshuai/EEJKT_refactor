@@ -79,7 +79,7 @@ mm.max_match = 50;       % upper bound on number of matches to be counted for fo
 mm.max_match_h = 70;     % Number of possible matches for domestic market
 mm.MaxMatchMonth = 1.5e+6; % Max number of match-months in any year for a given firm type
 mm.max_home_clients = 500; %maximum number of active clients we allow firms to have at home
-mm.abort_time = 1000;    % number of seconds allowed before evaluation is aborted 
+mm.abort_time = 1500;    % number of seconds allowed before evaluation is aborted 
 %% Cost function
 
 mm.kappa1 = 2; %quadratic search costs 

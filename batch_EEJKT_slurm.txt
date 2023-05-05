@@ -1,0 +1,36 @@
+#!/bin/bash -login
+
+###==== RESOURCES ====###
+
+### Set to run on RC
+#SBATCH -p open
+
+### Alternative: run on Grieco account
+### SBATCH --account=plg15_econ
+### SBATCH --partition=sla-prio
+
+### Request number of nodes:
+#SBATCH --nodes=3
+
+### Specify tasks per node:
+#SBATCH --ntasks-per-node=12
+
+### Number of processors needed for single task :
+#SBATCH --cpus-per-task=2
+
+### Wall clock limit:
+#SBATCH --time=48:00:00
+
+###==== SCRIPT BODY ====###
+
+### Unload any modules that get loaded by default to start with clean environment
+
+module purge
+module load matlab/R2022a
+
+cd $SLURM_SUBMIT_DIR
+
+### Call your executablemodule load matlab
+
+matlab -bin -nodisplay -nosplash < calibration_TSS_genetic.m > log.EEJKT_2arr2scl.txt
+

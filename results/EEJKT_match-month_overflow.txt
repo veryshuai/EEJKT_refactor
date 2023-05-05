@@ -1,0 +1,41 @@
+
+  
+ More than 1500000.00 match-firm-months in season_mergeWithinYrSequence
+ period = 24.00, firm type = 114.00, market = 1.00
+ params = -2.12749 -16.16061  0.18963  0.19488  0.36993 24.45098 0.11360  9.31984  3.47469 11.99858 
+  
+  
+ More than 1500000.00 match-firm-months in season_mergeWithinYrSequence
+ period = 24.00, firm type = 113.00, market = 1.00
+ params = -2.73664 -16.92818  0.15308  0.18651  0.23479 15.13918 0.11201  5.55204  3.47644 11.82378 
+  
+  
+ More than 1500000.00 match-firm-months in season_mergeWithinYrSequence
+ period = 24.00, firm type = 113.00, market = 1.00
+ params = -2.73664 -16.92818  0.14930  0.12166  0.35580 15.13918 0.11201  6.70414  3.47644 11.82378 
+  
+  
+ More than 1500000.00 match-firm-months in season_mergeWithinYrSequence
+ period = 24.00, firm type = 113.00, market = 1.00
+ params = -3.20470 -16.92818  0.23491  0.12166  0.23339 13.63178 0.11201  9.37595  3.47644 11.82378 
+  
+  
+ More than 1500000.00 match-firm-months in season_mergeWithinYrSequence
+ period = 72.00, firm type = 119.00, market = 1.00
+ params = -3.48026 -21.19828  0.24041  0.23371  0.28324 22.58463 0.11207  5.41093  3.48790 16.37303 
+  
+  
+ More than 1500000.00 match-firm-months in season_mergeWithinYrSequence
+ period = 24.00, firm type = 119.00, market = 1.00
+ params = -3.52930 -19.73213  0.26192  0.23097  0.19664 23.35906 0.08925  6.05073  3.40994 15.87202 
+  
+  
+ More than 1500000.00 match-firm-months in season_mergeWithinYrSequence
+ period = 24.00, firm type = 114.00, market = 1.00
+ params = -2.28405 -21.94253  0.15848  0.22423  0.37155 22.73333 0.15775  6.29259  3.53397 11.41499 
+  
+  
+ More than 1500000.00 match-firm-months in season_mergeWithinYrSequence
+ period = 36.00, firm type = 114.00, market = 1.00
+ params = -2.72168 -21.10149  0.14861  0.22431  0.36118 22.03113 0.14460  6.00784  3.42182 11.66784 
+  

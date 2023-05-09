@@ -15,14 +15,16 @@ seed_crand(80085);
 runs = 20; %20 %set number of runs to use in bootstrap
 
 %point estimates
- X = [-2.43530 -23.51281  0.12883  0.20217 0.35773 21.81408...
-       0.15694   6.09050  3.22829  13.12619 ];
-% alt fit metric: 12.96308          
+  X    = [-2.92217885480810 -21.7329307485543   0.163673081953874...
+  	       0.142896261678048   0.253189491294144 21.0101797166516...
+           0.119991356279124  7.54692070316604  3.14414508598657...
+           15.3219457708342];
+  %  alternative fit metric: 12.552725321879826        
 
 %set some other common parameters
 mm = setModelParameters(X);
 mm.check_type = 108;
- 
+
 %solve the model 
 policy = generatePolicyAndValueFunctions(mm);
 
@@ -69,13 +71,12 @@ for iter = 1:runs
     spb_boot_holder{iter}               = [simMoms.model_shareD]; % fraction of firms with 1 buyer, 2 buyers, etc.
 
 end
-
-save results/moment_var
+  save results/moment_var
 
 % (2) Now we need finite differences of parameters on moments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fin_diff_size = (1 + 0.6e-1); %percentage of parameter value 
+fin_diff_size = (1 + 0.05); %percentage of parameter value 
 
 % param_vec = [mm.F_h, mm.scale_h, mm.scale_f, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p,mm.F,mm.cs_f,mm.optimism]';
 param_vec = [mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f]';
@@ -229,7 +230,7 @@ std_error = Psd;
 parameter = param_vec;
 z_ratio = parameter./std_error;
 format short
-param_est = table(parameter,std_error,z_ratio,'Rownames',AGS_param_names);
+param_est = table(parameter,std_error,z_ratio,'Rownames',AGS_param_names)
 
 save results/bootstrap_results
        

@@ -1,7 +1,11 @@
 function summary_tables(simMoms,mm)
 
+ %% average log #shipments
+ % avg_ln_ships = agg_ln_ships/agg_ship_obs;
+   fprintf('\r\n Average log shipments: %.4f\n',simMoms.avg_ln_ships); 
+
 %% match maturation, by type 
-[bexit,brooks] = match_summary(simMoms.agg_mat_yr_sales,simMoms.agg_dud_matches,mm);
+[bexit,brooks] = match_summary(simMoms,mm);
 
 %  Data for Brooks table 2 include all generated matches. Data from Brooks table 1 
 %  only include types with matches in both the current and the previous year. 
@@ -61,9 +65,7 @@ MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
 %     title('Average Aggregates by Cohort Age')
 %     saveas(gcf,'results/pics/AverageAggregatesByCohortAgeFIT.png') 
 
-     %% average log #shipments
-      % avg_ln_ships = agg_ln_ships/agg_ship_obs;
-      display(simMoms.avg_ln_ships);  
+
       
 %% create variables for analysis of degree distribution
 

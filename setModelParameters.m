@@ -16,6 +16,7 @@ mm.param_vec = X;      % carry along parameter vector for diagnostic checks
 
 mm.F_h       = exp(X(1));  % cost of maintaining a client- home 
 mm.scale_h   = X(2);       % Domestic profit function scale parameter
+mm.scale_f   = X(2);       % Export profit function scale parameter (same as home)
 mm.ah        = X(4)*X(3);  % Beta function, home (theta1) success parameter
 mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
 D_z          = X(5)/mm.pd_per_yr; % Jump size, match productivity shock
@@ -25,7 +26,6 @@ mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
 mm.sig_p     = X(9);       %standard deviation of productivity distribution
 mm.F_f       = exp(X(1)); % cost of maintaining a client- foreign
 mm.cs_f      = exp(X(10)); % Cost scaling parameter, foreign market
-mm.scale_f   = X(11);       % Export profit function scale parameter (same as home)
 mm.optimism  = 0; %parameter on prior distribution (positive means optimistic, negative pessamisitic)
 
 % mm.F_f       = exp(X(10)); % cost of maintaining a client- foreign

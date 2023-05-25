@@ -17,17 +17,18 @@
 % mm.sig_p     = X(9);       %standard deviation of productivity distribution
 % mm.F_f       = exp(X(1)); % cost of maintaining a client- foreign
 % mm.cs_f      = exp(X(10)); % Cost scaling parameter, foreign market
-% mm.scale_f   = X(11);       % Export profit function scale parameter (same as home)
+% mm.scale_f   = X(2);       % Export profit function scale parameter (same as home)
 % mm.optimism  = 0; %parameter on prior distribution (positive means optimistic, negative pessamisitic)
 
 %%
 
-fprintf('\r\n STARTING A NEW RUN: %s\n ', datestr(now,'yyyy_mmdd_HHMM'));
-fileID1 = fopen('results/ga_running_output_2scale.txt','a');
- fprintf(fileID1,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
+fprintf('\r\n STARTING A NEW RUN (restricted model): %s\n ', datestr(now,'yyyy_mmdd_HHMM'));
+
+fileID1 = fopen('results/ga_running_output_restricted.txt','a');
+ fprintf(fileID1,'\r\n STARTING A NEW RUN (restricted model) %s\n', datestr(now,'yyyy_mmdd_HHMM') );
 fclose(fileID1);
 
-fileID2 = fopen('results/ga_fitlog_2scale.txt','a');
+fileID2 = fopen('results/ga_fitlog_restricted','a');
   fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
 fclose(fileID2);
           
@@ -40,16 +41,21 @@ fclose(fileID2);
 %             0.09783   7.18610   2.96590  15.62184 ];
  % alt fit = 12.873 on roar collab
         
- 
-theta = [-3.14093 -20.43686 0.16166 0.14616 0.16431 21.26086...
-          0.1133    9.65406 2.73574 13.46276 -23.79901];	
+%  
+% theta = [-3.14093 -20.43686 0.16166 0.14616 0.16431 21.26086...
+%           0.1133    9.65406 2.73574 13.46276 -23.79901];	
    
 
 %     theta =  [-2.92217885480810,-21.7329307485543,0.163673081953874,0.142896261678048,...
 %              0.253189491294144,21.0101797166516,0.119991356279124,7.54692070316604,...
 %              3.14414508598657,15.3219457708342 -21.7329307485543];
  %  alternative fit metric: 12.5579
-       
+ 
+ theta = [-2.92217885480810,-21.7329307485543,0.163673081953874,0.142896261678048,...
+         0.253189491294144,21.0101797166516,0.119991356279124,7.54692070316604,...
+         3.14414508598657,15.3219457708342];
+% theta for restricted model. Alternative fit metric: 12.5579
+     
 % X = theta;     
 
 D0 = distance(theta);

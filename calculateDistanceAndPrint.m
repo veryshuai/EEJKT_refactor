@@ -11,7 +11,7 @@ inv_W = W^-1;
 err_comp = @(sta,fin) error(sta:fin)' * inv_W(sta:fin,sta:fin) * error(sta:fin); 
 real_moms_and_sim_moms = cat(2,Data',Model);
 print_diagnostics_to_standard_output(D, X, real_moms_and_sim_moms, err_comp, simMoms,mm);
-% plots(simMoms); 
+plots_v2(simMoms); 
 % summary_tables(simMoms,mm); 
 
 %% Statistics using shares distribution of buyers per seller 

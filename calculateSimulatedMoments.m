@@ -9,6 +9,7 @@ simMoms.agg_match_hist   = sim_cum.agg_match_hist;
 simMoms.agg_match_histD  = sim_cum.agg_match_histD; 
 simMoms.agg_nexptr       = sim_cum.agg_nexptr;
 simMoms.agg_nfirm        = sim_cum.agg_nfirm;
+simMoms.agg_time_gaps    = sim_cum.agg_time_gaps;
 
 % foreign match-level sales autoregression  (JT: checked on 3/13/23)
 if rank(sim_cum.agg_moms_xx) == size(sim_cum.agg_moms_xx,2)

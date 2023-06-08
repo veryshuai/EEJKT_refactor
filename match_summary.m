@@ -1,135 +1,115 @@
-function [exit_by_age,brooks] =  match_summary(simMoms,mm)
+function [FirmCount,exit_by_age,brooks] =  match_summary_v3(simMoms,mm)
 
 % This function generates failure rates by initial sales and match age.
 % More precisely, by type group and match age, where types are classified
 % according to their initial sales.
 
-
-
 %%  Preliminary data preparation
-
-N_theta2 = size(mm.theta2',1);    % number of possible success rates (thetas)
-N_Phi    = size(mm.Phi,1);        % number of exporter productivities
-pt_type  = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')];
-% prod_ndx  = pt_type(pt_ndx,1); theta_ndx = pt_type(pt_ndx,2);
-
-%%   succ_matches, dud_matches: 
- 
      succ_matches = simMoms.agg_mat_yr_sales;
      dud_matches  = simMoms.agg_dud_matches;
-
-% succ_matches: [(1) t, (2) mic_type,(3) firm ID, (4) match-specific sales, (5) shipments,   
-%                 (6) boy Z, (7) eoy Z, (8) match age in periods,(9) firm age in periods]
-% dud matches: [(1) t, (2) mic_type, (3) firm_ID, (4) sales at Zcut, (5) shipment=1,
-%                (6) bop Z = (7) eop Z = (8) match_age = 0, (9) firm age]
-  
-     match_recs = [succ_matches;dud_matches]; % stack successful and dud matches   
-     
-     ff_ship = match_recs(:,5) > 0;                           % positive shipmments
-     match_recs = match_recs(ff_ship,:);                      % select matches with shipments>0
-     match_recs(:,1) = floor(match_recs(:,1)/mm.pd_per_yr);   % restate time in years
-     match_recs(:,8) = floor(match_recs(:,8)/mm.pd_per_yr)+1; % restate match age in years
-     match_recs(:,9) = floor(match_recs(:,9)/mm.pd_per_yr)+1; % restate firm age in years
-  %  match_recs: [year, type, firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age]   
-
-     all_matches = match_recs(match_recs(:,1)>5,:);           % throw out burn-in period
-   % all_matches = agg_mat_yr_sales(agg_mat_yr_sales(:,4)>0,:); % throw out matches with no sales
-     match_YTF  =  all_matches(:,1) + 0.001*all_matches(:,2) + 0.00001*all_matches(:,3);
-   
-     yr1 = all_matches(:,8)<=1; % pick matches in first year   
-     new_matches = all_matches(yr1,:); % matches in their 1st yr.
-     newMatchYTF   = match_YTF(yr1,:);
-   % new_matches: [year, type, firm_ID, sales, shipments, boy Z, eoy Z, match age<=1, firm age] 
+     match_recs = [succ_matches;dud_matches]; % stack successful and dud matches       
+%    match_recs = succ_matches; % exclude duds as a test
       
-%% Sort types into 4 groups by initial sales using the new_matches data   
-  
-     YTF_list = unique(newMatchYTF); % unique year-type-firm combinations
-     NumYTF = size(YTF_list,1);
-     xx_new = zeros(NumYTF,1); % mean sales by type and year
-     nx_new = zeros(NumYTF,1); % number of new matches by type and year
-     ag_new = zeros(NumYTF,1); % age
-     tp_new = zeros(NumYTF,1); % type
-     yr_new = zeros(NumYTF,1); % calendar year
-     frm_new = zeros(NumYTF,1); % firm ID
-     th_new = zeros(NumYTF,1); % theta index 
-     TF_new = zeros(NumYTF,1); % firm_type index
-     YTF_new = zeros(NumYTF,1); % firm_type-year index
-     
-   % means and sums by year-type-firm 
-     for jj=1:NumYTF
-        ff = newMatchYTF == ones(size(newMatchYTF,1),1).*YTF_list(jj); % pick off matches for year-type-firm jj
-        xx_new(jj)  = mean(new_matches(ff,4),1);      % mean year-type-firm specific sales
-        nx_new(jj)  = sum(ff);                        % number of matches in type-year category 
-        ag_new(jj)  = mean(floor(new_matches(ff,9))); % avg. age of new-match firms in type-year category
-        tp_new(jj)  = mean(new_matches(ff,2));        % type index  
-        frm_new(jj) = mean(new_matches(ff,3));        % firm_ID
-        yr_new(jj)  = mean(new_matches(ff,1));        % calendar year (net of burn-in)
-        TF_new(jj)  = tp_new(jj) + 0.01*frm_new(jj);  % firm-type ID
-       YTF_new(jj) = yr_new(jj) + 0.001*tp_new(jj) + 0.00001*frm_new(jj); % year-type-firm ID
-        th_new(jj)  = mm.theta2(pt_type(tp_new(jj),2)); % theta index 
-     end
-       
-     % find mean initial (new match) sales by type
-%      new_sales     = [tp_new,yr_new,nx_new,xx_new];
-%      type_list     = unique(new_sales(:,1)); %list of active types, pooling years
-%      active_typ    = size(type_list,1);
-%      th_typ        = zeros(active_typ,1);
-%      new_typ_sales = zeros(active_typ,1);
-%      new_type      = zeros(active_typ,1);
-%      new_cnt       = zeros(active_typ,1);
+  %  match_recs: [year, type, firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age]       
 
-    
-%      new_sales     = [TF_new,yr_new,nx_new,xx_new]; % [type-firm,year,matches,sales per match]
-%      type_list     = unique(TF_new); %list of active TypFirm, pooling years
-%      NumTF         = size(type_list,1);
-%      new_TF_th     = zeros(NumTF,1);
-%      new_TF_sales  = zeros(NumTF,1);
-%      new_TF        = zeros(NumTF,1);
-%      new_TF_cnt    = zeros(NumTF,1);
-%        
-
-%      for jj=1:active_typ % get mean sales and counts for new matches, by type
-%         ff2 = new_sales(:,1) == ones(size(new_sales,1),1).*type_list(jj);
-%         th_typ(jj)        = mean(th_new(ff2,1),1);   % thetas, by type
-%         new_type(jj)      = mean(new_sales(ff2,1));  % type index
-%         new_cnt(jj)       = sum(new_sales(ff2,3),1); % sum # matches across years, by type
-%         new_typ_sales(jj) = mean(new_sales(ff2,4));  % average match sales across years, by type
-%      end
-%      
-%      
-%      for jj=1:NumTF % get mean sales and counts for new matches, by type
-%         ff2 = new_sales(:,1) == ones(size(new_sales,1),1).*type_list(jj);
-%         new_TF_th(jj)    = mean(th_new(ff2,1),1);   % thetas, by type-firm
-%         new_TF(jj)       = mean(new_sales(ff2,1));  % type-firm index
-%         new_TF_cnt(jj)   = sum(new_sales(ff2,3),1); % sum # matches across years, by type-firm
-%         new_TF_sales(jj) = mean(new_sales(ff2,4));  % average match sales across years, by type-firm
-%      end
-       
-%%    group types according to mean initial sales quartile    
-%      new_sales2 = sort([new_TF_sales,new_TF,new_type],1); % sort type-firms by mean sales of new matches
-%      cum_cnt = cumsum(new_sales2(:,2))./sum(new_sales2(:,2)); % cum distrib. of # matches, sorted by avg. sales
-%      ndx_q = cell(4,1);
-%      typ_q = cell(4,1);
-%      mean_q = zeros(4,1);
-%      match_cnt_q = zeros(4,1);
-%      upb = 0.25;
-%      lowb = 0;
-%      for ii = 1:4
-%         ndx_q{ii}  = cum_cnt>lowb & cum_cnt<=upb; % vector of row identifiers for types in sales quartile ii
-%         lowb = upb;
-%         upb = upb + 0.25;
-%         % quartile-wide avg. sales:
-%         mean_q(ii) = sum(new_sales2(ndx_q{ii},1).*new_sales2(ndx_q{ii},2))/sum(new_sales2(ndx_q{ii},2));
-%         match_cnt_q(ii) = sum(new_sales2(ndx_q{ii},2),1);
-%         typ_q{ii}  = new_sales2(ndx_q{ii},3); % vector of types in quartile i      
-%      end
+     ff_ship         = match_recs(:,5) > 0;    % positive shipmments
+     match_recs      = match_recs(ff_ship,:);  % select matches with shipments>0
+     match_recs(:,1) = floor(match_recs(:,1)/mm.pd_per_yr);   % restate time in years
+     match_recs(:,8) = floor(match_recs(:,8)/(mm.pd_per_yr+1e-6))+1; % restate match age in years
+     match_recs(:,9) = floor(match_recs(:,9)/mm.pd_per_yr+1e-6)+1; % restate firm age in years
+     max_age         = max(match_recs(:,8));
  
-     new_sales2 = sort([xx_new,nx_new,YTF_new,TF_new],1); % sort year-type-firms by mean sales of new matches
-     cum_cnt = cumsum(new_sales2(:,2))./sum(new_sales2(:,2)); % cum distrib. of # matches, sorted by avg. sales
+     all_matches = match_recs;        
+     match_TF    = all_matches(:,2) + 0.0001*floor(all_matches(:,3)); % firm type by firmID identifier
+     TF_list     = unique(match_TF);
+     NumTF       = size(TF_list,1);    
+     TF_matdat   = cell(NumTF,1);
+     firstYrCount = zeros(NumTF,1);
+     
+     % pick off new matches for year-type-firm jj 
+    for firmID=1:NumTF
+      ff = match_TF == ones(size(all_matches,1),1).*TF_list(firmID);
+      TF_matdat{firmID} = all_matches(ff,:);
+      firstYrCount(firmID,1) = sum(TF_matdat{firmID}(:,4)==1);
+    end
+   
+    agg_mat_lifecycle = double.empty(0,5*max_age+1);
+    
+%    for firmID = 4
+      for firmID=1:NumTF
+      fprintf('\r firm ID = %0.0f\n',firmID);  
+      all_age = TF_matdat{firmID};
+      new_mat = all_age(:,8)<=1;
+      max_age_jj = max(all_age(:,8));
+      NN = sum(new_mat);
+      mat_lifecycle = zeros(NN,5*max_age);
+      mat_lifecycle(:,1:5) = [all_age(new_mat,1),all_age(new_mat,8),...
+               all_age(new_mat,6:7),all_age(new_mat,4)];         
+    % all_age: 1) year, 2) type, 3) firm_ID, 4) sales, 5) shipments, 6) boy Z, 7) eoy Z, 8) match age, 9) firm age] 
+    % mat_lifecycle(:,1:4): [year, match age, boy Z, eoy Z, sales]
+     
+      for aa = 2:max_age_jj
+          % grab the aa-year-old matches  
+           aa_yr_old = all_age(:,8) == aa;
+           aa_cohort = all_age(aa_yr_old,:);
+
+     exitloop = 1;      
+          while exitloop > 0 && size(aa_cohort,1) > 0
+              
+           if firstYrCount(firmID,1)==0 
+           fprintf('\r firm ID = %0.0f, number of 1st year matches = %0.0f\n',[firmID,firstYrCount(firmID,1)]);
+           exitloop = 0;               
+           end
+              
+              ii =1; 
+              while ii <= NN
+              fprintf('\r firm ID = %0.0f, match age = %0.0f, match number = %0.0f\n',[firmID,aa,ii]);
+              lag_yr  = mat_lifecycle(ii,5*(aa-2)+1);
+              lag_age = mat_lifecycle(ii,5*(aa-2)+2);
+              lag_eopZ = mat_lifecycle(ii,5*(aa-2)+4);
+
+              % find a current year match to splice with last year's match ii
+                flg = (lag_eopZ>0).*(aa_cohort(:,6)==lag_eopZ).*...
+                      (aa_cohort(:,8)==lag_age + 1).*(aa_cohort(:,1)==lag_yr + 1);
+                  
+
+              if sum(flg)>0
+                  mat_cont = find(flg==1,1);
+                  lb = 5*(aa-1)+1;
+                  ub = 5*(aa-1)+5;
+                  mat_lifecycle(ii,lb:ub) = [aa_cohort(mat_cont,1),aa_cohort(mat_cont,8),...
+                       aa_cohort(mat_cont,6:7),aa_cohort(mat_cont,4)]; 
+              
+                  % remove matched record from matchable subset 
+                  keepers = ones(size(aa_cohort,1),1);
+                  keepers(mat_cont,1) = 0;
+                  exitloop = sum(keepers)>0;
+                  aa_cohort = aa_cohort(logical(keepers),:); 
+              else
+                  exitloop = 0;
+              end
+ %          end
+              ii = ii + 1;
+              end
+ %            aa
+         end
+      end
+       agg_mat_lifecycle = [agg_mat_lifecycle; [firmID*ones(size(mat_lifecycle,1),1), mat_lifecycle]];
+    end       
+  
+%% Construct match survival table
+
+% Find sales quartiles for new matches
+     yr1 = all_matches(:,8)<=1; % pick matches in first year   
+     new_matches = all_matches(yr1,:); % matches in their 1st yr.    
+     new_sales   = sort(new_matches(:,4),1); % sort year-type-firms by mean sales of new matches
+     Nrows       = size(new_sales,1);
+%    cum_cnt     = cumsum(new_sales./sum(new_sales)); % cum distrib. of # matches, sorted by avg. sales
+     cum_cnt = cumsum(ones(Nrows,1)./Nrows);    
      ndx_q = cell(4,1); % set of dummy variables for match count quartiles
-     typ_q = cell(4,1);
      mean_q = zeros(4,1);
      match_cnt_q = zeros(4,1);
+     size_cutoff = zeros(4,1);
      upb = 0.25;
      lowb = 0;
      for ii = 1:4
@@ -137,89 +117,75 @@ pt_type  = [kron((1:N_Phi)',ones(N_theta2,1)),kron(ones(N_Phi,1),(1:N_theta2)')]
         lowb = upb;
         upb = upb + 0.25;
         % quartile-wide avg. sales per match:
-        mean_q(ii) = sum(new_sales2(ndx_q{ii},1).*new_sales2(ndx_q{ii},2))/sum(new_sales2(ndx_q{ii},2));
-        match_cnt_q(ii) = sum(new_sales2(ndx_q{ii},2),1);
-        typ_q{ii}  = new_sales2(ndx_q{ii},3); % vector of types in quartile i      
+        mean_q(ii) =mean(new_sales(ndx_q{ii},1));
+        match_cnt_q(ii) = size(new_sales(ndx_q{ii},1),1);
+        size_cutoff(ii) = max(new_sales(ndx_q{ii}));  
      end
      
-     
-     
-     
-     
-%% Reorganize columns in all_matches (holdover from earlier version of code)
-
- % all_matches: [year, type, firm ID, sales, shipments, boy Z, eoy Z, match age, firm age] 
-%   match_YTF  =  all_matches(:,1) + 0.001*all_matches(:,2) + 0.00001*all_matches(:,3);
-   splicedat  = [match_YTF,all_matches(:,4),all_matches(:,6:9),...
-                 all_matches(:,3),all_matches(:,1)];    
-  % splicedat: [year-type-firm, sales, boy Z, eoy Z, match age (yrs), firm age (yrs), firm_ID, year]
-
- % Create match-level data sets for each initial size quartile; include new and continuing matches.
-     matdat_q = cell(4,1);
-     for qq = 1:4
-     aggdat_q = zeros(0,8); 
-         for jj=1:size(typ_q{qq},1)     
-         ndx_q    = splicedat(:,1)==typ_q{qq}(jj);
-         aggdat_q = [aggdat_q;splicedat(ndx_q,:)];
-         end
-         matdat_q{qq} = aggdat_q;
-     end
-%% match survival and age 
-
-   max_mat_age = max(splicedat(:,5));   
-   exit_rate = zeros(max_mat_age,4);
+% label matches by initial size quartiles   
+     initial_size = 1 ...
+     + 1*((agg_mat_lifecycle(:,6) > size_cutoff(1)).*(agg_mat_lifecycle(:,6) <= size_cutoff(2)))...    
+     + 2*((agg_mat_lifecycle(:,6) > size_cutoff(2)).*(agg_mat_lifecycle(:,6) <= size_cutoff(3)))...
+     + 3*(agg_mat_lifecycle(:,6) > size_cutoff(3));
+ 
+ 
+% match survival and age 
+   maxAge = 10;   
+   survive = zeros(maxAge,4);
+   meanSale = zeros(maxAge,4);
+   matchCount  = zeros(maxAge,4);
       for qq=1:4
-      ff_age = unique(matdat_q{qq}(matdat_q{qq}(:,5)>0,5)); % ignore matches yielding zero sales
-      matdat_qs = matdat_q{qq}(:,4:5); % eoy Z and match age, all matches in quantile qq
-      age_types = size(ff_age,1);
-          for aa = 1:age_types
-          gg = find(matdat_qs(:,2) == ff_age(aa));  % pick off matches with age of interest
-          exit_rate(aa,qq) = sum(matdat_qs(gg,1)==0)/size(matdat_qs(gg,:),1);
+          group = initial_size==qq;
+          matchBySize = agg_mat_lifecycle(group,:);
+
+          for aa = 1:maxAge
+              currSale = (aa-1)*5 + 5;
+              nextYrSale =  aa*5 + 5;
+              meanSale(aa,qq)   = mean(matchBySize(matchBySize(:,1+currSale)>0,1+currSale));
+              matchCount(aa,qq) = sum(matchBySize(:,1+currSale)>0);
+              if aa > 1
+              survive(aa,qq) = matchCount(aa,qq)/matchCount(aa-1,qq);
+              end
           end
+          
       end
-     exit_by_age = exit_rate(1:5,:);
+ 
+      exit_by_age = 1 - survive;
+      
+%%  Construct brooks table
+BrooksYrs =10;
+maxAge   = 50;
+firmMatchCount = zeros(maxAge,NumTF); 
+firmCount      = zeros(maxAge,NumTF); 
+firmTotSales   = zeros(maxAge,NumTF); 
 
-%% Brooks tables 
+   for firmID = 1:NumTF 
+   firmMatches = TF_matdat{firmID};  
+      for aa=1:maxAge
+      firmCount(aa,firmID)      = size(firmMatches(firmMatches(:,9)==aa,:),1)>0;
+      firmMatchCount(aa,firmID) = sum(firmMatches(firmMatches(:,9)==aa,4)>0);
+      firmTotSales(aa,firmID)   = sum(firmMatches(firmMatches(:,9)==aa,4));
+      end    
+   end
+   
+MatchCount = sum(firmMatchCount,2);
+TotFirms   = sum(firmCount,2);
+TotSales   = sum(firmTotSales,2); 
+AvgSales   = TotSales./MatchCount;
 
-%all_matches: [year, type, firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age] 
+brooks = [TotFirms,TotSales,AvgSales];
+brooks = brooks(1:BrooksYrs,:);
+%% Construct degree distribution (This version not used)
 
-% Pooling all matches through time, find total sales (xx) for each type/firm-ID/year/firm_age
-% combination. Need this stage to avoid averaging over different firms with
-% the same type, firm-ID, and age.
-    firm_ndx =  match_YTF + 100000*floor(all_matches(:,9));
-  
-    big_id_list = unique(firm_ndx);
-    ntypes = size(big_id_list,1);
-    xx = zeros(ntypes,1);
-    nx = zeros(ntypes,1);
-    ag = zeros(ntypes,1);
-    tp = zeros(ntypes,1);
-    id =zeros(ntypes,1);
-    for jj=1:ntypes
-        ff = firm_ndx == ones(size(firm_ndx,1),1).*big_id_list(jj);
-        xx(jj) = sum(all_matches(ff,4),1); % sales
-        nx(jj) = sum(ff);                  % # obs for firm_ndx1
-        ag(jj) = ceil(mean(floor(all_matches(ff,9)))); % firm age, current yr
-        tp(jj) = mean(all_matches(ff,2));  % firm type
-        id(jj) = mean(all_matches(ff,3));  % firm ID
+maxMatches=50;
+FirmFreq   = zeros(maxMatches,maxAge);
+maxMatches = max(max(firmMatchCount));
+    for Nmatch = 1:maxMatches
+       for aa = 1:maxAge
+       ff = find(firmMatchCount(aa,:) == Nmatch);
+       FirmFreq(Nmatch,aa) = sum(firmMatchCount(aa,ff)>0);
     end
-    
- % now ignore type and firm_ID; just distinguish by firm age 
-    age_list = unique(ag);
-    n_age = size(age_list,1);
-    nx_age = zeros(n_age,1); 
-    ag_age = zeros(n_age,1);
-    mx_age = zeros(n_age,1);
-    xx_age = zeros(n_age,1);
-    for jj=1:n_age
-        ff = ag == ones(size(ag,1),1).*age_list(jj);
-        nx_age(jj) = sum(ff); 
-        ag_age(jj) = mean(ag(ff));
-        mx_age(jj) = mean(xx(ff));
-        xx_age(jj) = sum(xx(ff));
-    end
-    
-    brooks = [nx_age,xx_age,mx_age];
+    end         
+ FirmCount = sum(FirmFreq,2);
+ %FirmFreq  = FirmCount./FirmCount(1);
 
-
-end

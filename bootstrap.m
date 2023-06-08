@@ -127,13 +127,13 @@ for iter =1:pv_siz + 1
     simMoms = simulateMomentsMain(policy,mm);
 
     %Put the _boot_holderulated runs into their particular cells
-    match_death_coefs_fd{iter} =  [simMoms.match_exit_rate;simMoms.beta_match_exit(2:5)]; % [match exit rate, 1st yr. dummy, lnXf(ijt), ln(match age), ln(exporter age),mse]
-    match_ar1_coefs_fd{iter}   =  [simMoms.ybar_match;simMoms.beta_match(2:4);simMoms.mse_match_ar1]; % [mean ln Xf(ijt), ln Xf(ijt-1), R(ijt-1), ln(exporter age)]   
+    match_death_coefs_fd{iter} = [simMoms.match_exit_rate;simMoms.beta_match_exit(2:5)]; % [match exit rate, 1st yr. dummy, lnXf(ijt), ln(match age), ln(exporter age),mse]
+    match_ar1_coefs_fd{iter}   = [simMoms.ybar_match;simMoms.beta_match(2:4);simMoms.mse_match_ar1]; % [mean ln Xf(ijt), ln Xf(ijt-1), R(ijt-1), ln(exporter age)]   
     loglog_coefs_fd{iter}      = [simMoms.b_degree]; % [intercept, slope, quadratic term]
     mavship_fd{iter}           = [simMoms.avg_ln_ships]; % average ln(# shipments) 
     exp_dom_coefs_fd{iter}     = [simMoms.ybar_hfsales;simMoms.beta_hfsales(2);simMoms.mse_hf]; % [mean dep var.,coef,MSE]  
     dom_ar1_coefs_fd{iter}     = [simMoms.ybar_fsales_h;simMoms.beta_fsales_h(2);simMoms.mse_h]; % [mean dep var.,coef,MSE] 
-    match_lag_coefs_fd{iter}  = [simMoms.mean_ln_haz;simMoms.b_haz(2:6)]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)] 
+    match_lag_coefs_fd{iter}   = [simMoms.mean_ln_haz;simMoms.b_haz(2:6)]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)] 
     succ_rate_coefs_fd{iter}   = [simMoms.mean_succ_rate;simMoms.b_succ_rate(2)]; % [mean succ rate, ln(1+meetings)]
     sr_var_coefs_fd{iter}      = [simMoms.mean_usq_succ;simMoms.b_usq_succ(2)]; % [mean dep. var, ln(1+meetings)]
     for_sales_shr_fd{iter}     = [simMoms.avg_expt_rate]; % mean share of exports to U.S. in total sales 
@@ -216,6 +216,7 @@ AGS_elas = AGS_sens .* repmat((W_alt * fin_diff_mat(:,1))',size(AGS_sens,1),1) .
 
 % construct table for easy understanding of Gentzkow Shapiro weighting
 % method
+
 AGS_param_names = {'F', 'scale', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f'};
 varnames = {'match_death_coefs1','match_death_coefs2','match_death_coefs3','match_death_coefs4','match_death_coefs5','match_ar1_coefs1','match_ar1_coefs2','match_ar1_coefs3','match_ar1_coefs4','match_ar1_coefs5','mavship','exp_dom_coefs1','exp_dom_coefs2','exp_dom_coefs3','dom_ar1_coefs1','dom_ar1_coefs2','dom_ar1_coefs3','match_lag_coefs1','match_lag_coefs2','match_lag_coefs3','match_lag_coefs4','match_lag_coefs5','match_lag_coefs6','succ_rate_coefs1','succ_rate_coefs2','sr_var_coefs1','sr_var_coefs2','for_sales_shr','exp_frac','spb_1','spb_2','spb_3','spb_4','spb_5','spb_6','spb_7'};
 AGS_cell = mat2cell(AGS_elas,ones(pv_siz,1),ones(size(Data_alt,2),1));

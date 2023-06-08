@@ -70,36 +70,18 @@ MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
       
 %% create variables for analysis of degree distribution
 
-% Degree distribution excluding duds
-        ff_sim_max      = find(cumsum(simMoms.agg_match_hist)'./sum(simMoms.agg_match_hist)<1);
-        log_compCDF     = log(1 - cumsum(simMoms.agg_match_hist(ff_sim_max))'./sum(simMoms.agg_match_hist));
-        log_matches     = log(1:1:length(ff_sim_max))';
-        xmat            = [ones(length(ff_sim_max),1),log_matches,log_matches.^2];
-                 
-        temp = cumsum(simMoms.agg_match_hist(ff_sim_max)./sum(simMoms.agg_match_hist(ff_sim_max)));
-        ptemp = temp(1:length(ff_sim_max)) - [0,temp(1:length(ff_sim_max)-1)];
-
-% Degree distribution including duds        
-        ff_sim_maxD      = find(cumsum(simMoms.agg_match_histD)'./sum(simMoms.agg_match_histD)<1);
-        log_compCDF_D    = log(1 - cumsum(simMoms.agg_match_histD(ff_sim_maxD)')./sum(simMoms.agg_match_histD));
-        log_matchesD     = log(1:1:length(ff_sim_maxD))';
-        xmatD            = [ones(length(ff_sim_maxD),1),log_matchesD,log_matchesD.^2];
+        Ntrunc           = 100;
+        degreeCDF       = cumsum(FirmCount)'./sum(FirmCount);
+        ff_sim_max      = find(degreeCDF <1);
+        Nmatches        = length(ff_sim_max);
+        Nmatches        = min(Ntrunc,Nmatches);
+        log_compCDF     = log(1 - degreeCDF(ff_sim_max(1:Nmatches)))';
+        log_matches     = log(1:1:Nmatches)';
+        degreeDat       = [log_matches,log_compCDF];
         
-        tempD = cumsum(simMoms.agg_match_histD(ff_sim_maxD)./sum(simMoms.agg_match_histD(ff_sim_maxD)));
-        ptempD = tempD(1:length(ff_sim_maxD)) - [0,tempD(1:length(ff_sim_maxD)-1)];
-        
-% degree distribution, not counting duds       
-        format short
-        Category = {'1 buyer','2 buyers','3 buyers','4 buyers','5 buyers','6-10 buyers','11+ buyers'};
-        model_share = [ptemp(1:5),sum(ptemp(6:10)),sum(ptemp(11:end-1))]';
-        data_share = [0.792,0.112,0.031,0.016,0.009,0.022,0.016]';
-        Ergodic_Dist = table(data_share,model_share,'RowNames',Category)
-        
-% degree distribution, counting duds        
-        format short
-        Category = {'1 buyer','2 buyers','3 buyers','4 buyers','5 buyers','6-10 buyers','11+ buyers'};
-        model_shareD = [ptempD(1:5),sum(ptempD(6:10)),sum(ptempD(11:end-1))]';
-        data_shareD = [0.792,0.112,0.031,0.016,0.009,0.022,0.016]';
-        Ergodic_Dist = table(data_shareD,model_shareD,'RowNames',Category)
-        
+      figure(3);
+      scatter(log_matches,log_compCDF,'filled',"blue");
+      xlabel('log # matches')
+      ylabel('log(1-CDF)')
+      title('Buyers per Seller degree distribution')
         

@@ -9,7 +9,7 @@ function summary_tables(simMoms,mm)
 
 %  Data for Brooks table 2 include all generated matches. Data from Brooks table 1 
 %  only include types with matches in both the current and the previous year. 
-%  Thus the data 1 for table miss some of the marginal firm types, though the discrepanc is minor.
+%  Thus the data for table 1 miss some of the marginal firm types, though the discrepancy is minor.
 
 bexit = bexit(1:5,:);
 MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};

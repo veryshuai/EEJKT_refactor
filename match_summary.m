@@ -1,10 +1,6 @@
 function [FirmCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
 
 % This function generates failure rates by initial sales and match age.
-% More precisely, by type group and match age, where types are classified
-% according to their initial sales.
-
-
 
 %%  Preliminary data preparation
      succ_matches = simMoms.agg_mat_yr_sales;
@@ -16,9 +12,9 @@ function [FirmCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
 
      ff_ship         = match_recs(:,5) > 0;    % positive shipmments
      match_recs      = match_recs(ff_ship,:);  % select matches with shipments>0
-     match_recs(:,1) = floor(match_recs(:,1)/mm.pd_per_yr);   % restate time in years
+     match_recs(:,1) = floor(match_recs(:,1)/mm.pd_per_yr);          % restate time in years
      match_recs(:,8) = floor(match_recs(:,8)/(mm.pd_per_yr+1e-6))+1; % restate match age in years
-     match_recs(:,9) = floor(match_recs(:,9)/mm.pd_per_yr+1e-6)+1; % restate firm age in years
+     match_recs(:,9) = floor(match_recs(:,9)/mm.pd_per_yr+1e-6)+1;   % restate firm age in years
      max_age         = max(match_recs(:,8));
  
      all_matches = match_recs;        
@@ -68,7 +64,7 @@ function [FirmCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
               
               ii =1; 
               while ii <= NN %looping over matches of age aa for firm-type TF_id
-              fprintf('\r type-firm ID = %0.0f, match age = %0.0f, match number = %0.0f\n',[TF_id,aa,ii]);
+              fprintf('\r type-firm ID = %0.0f, match age = %0.0f, match number = %0.0f',[TF_id,aa,ii]);
               lag_yr   = mat_lifecycle(ii,5*(aa-2)+1);
               lag_age  = mat_lifecycle(ii,5*(aa-2)+2);
               lag_eopZ = mat_lifecycle(ii,5*(aa-2)+4);
@@ -106,8 +102,8 @@ function [FirmCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
 
 % Find sales quartiles for new matches
      yr1         = all_matches(:,8)<=1; % pick matches in first year   
-     new_matches = all_matches(yr1,:); % matches in their 1st yr.    
-     new_sales   = sort(new_matches(:,4),1); % sort year-type-firms by mean sales of new matches
+     new_matches = all_matches(yr1,:);  % matches in their 1st yr.    
+     new_sales   = sort(new_matches(:,4),1); % sort by sales of new matches
      Nrows       = size(new_sales,1);
      cum_cnt     = cumsum(ones(Nrows,1)./Nrows);    
      mean_q      = zeros(4,1);
@@ -128,16 +124,17 @@ function [FirmCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
      end
      
 % create dummies for initial size quartiles   
-     agg_mat_lifecycle = sortrows(agg_mat_lifecycle,6);
+     agg_mat_lifecycle = sortrows(agg_mat_lifecycle,6); % sort by 1st yr sales
      Nquartile         = floor(size(agg_mat_lifecycle,1)/4);
      sizedum           = logical(kron(eye(4),ones(Nquartile,1)));
+   % even up size categories if necessary
      resid             = size(agg_mat_lifecycle,1) - 4*Nquartile;
-     sizdum            = sizedum(resid+1:4*Nquartile,:);
+     sizdum            = sizedum(resid+1:4*Nquartile,:); 
 
 % Find match survival by initial size quartile and age 
      maxAge = 10;   
      survive = zeros(maxAge,4);
-     meanSale = zeros(maxAge,4);
+     meanSale    = zeros(maxAge,4);
      matchCount  = zeros(maxAge,4);
      for qq=1:4
           matchBySize = agg_mat_lifecycle(sizedum(:,qq),:);
@@ -150,9 +147,8 @@ function [FirmCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
                 survive(aa,qq) = matchCount(aa,qq)/matchCount(aa-1,qq);
               end
           end          
-      end
- 
-      exit_by_age = 1 - survive;
+     end 
+     exit_by_age = 1 - survive;
       
 %%  Construct brooks table
 BrooksYrs =10;
@@ -177,7 +173,7 @@ AvgSales   = TotSales./MatchCount;
 
 brooks = [TotFirms,TotSales,AvgSales];
 brooks = brooks(1:BrooksYrs,:);
-%% Construct degree distribution (This version not used)
+%% Construct degree distribution (used for graph by summary_table)
 
 maxMatches=50;
 FirmFreq   = zeros(maxMatches,maxAge);

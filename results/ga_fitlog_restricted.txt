@@ -1,0 +1,7 @@
+
+ fit metrics, original and alternative: 11.813, 12.558
+ fit metrics, original and alternative: 12.988, 13.995
+ fit metrics, original and alternative: 11.813, 12.558
+ fit metrics, original and alternative: 11.813, 12.558
+ fit metrics, original and alternative: 11.813, 12.558
+ fit metrics, original and alternative: 13.470, 13.853

@@ -1,13 +1,11 @@
-function [FirmCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
+function [DegreeDistCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
 
 % This function generates failure rates by initial sales and match age.
 
 %%  Preliminary data preparation
      succ_matches = simMoms.agg_mat_yr_sales;
      dud_matches  = simMoms.agg_dud_matches;
-     match_recs = [succ_matches;dud_matches]; % stack successful and dud matches       
-%    match_recs = succ_matches; % exclude duds as a test
-      
+     match_recs = [succ_matches;dud_matches]; % stack successful and dud matches            
   %  match_recs: [period, type, firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age]       
 
      ff_ship         = match_recs(:,5) > 0;    % positive shipmments
@@ -175,15 +173,6 @@ brooks = [TotFirms,TotSales,AvgSales];
 brooks = brooks(1:BrooksYrs,:);
 %% Construct degree distribution (used for graph by summary_table)
 
-maxMatches=50;
-FirmFreq   = zeros(maxMatches,maxAge);
-maxMatches = max(max(firmMatchCount));
-    for Nmatch = 1:maxMatches
-       for aa = 1:maxAge
-       ff = find(firmMatchCount(aa,:) == Nmatch);
-       FirmFreq(Nmatch,aa) = sum(firmMatchCount(aa,ff)>0);
-    end
-    end         
- FirmCount = sum(FirmFreq,2);
- %FirmFreq  = FirmCount./FirmCount(1);
+DegreeDistCount = degree_dist(match_recs,mm);
 
+end

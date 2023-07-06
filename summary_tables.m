@@ -5,7 +5,7 @@ function summary_tables(simMoms,mm)
    fprintf('\r\n Average log shipments: %.4f\n',simMoms.avg_ln_ships); 
 
 %% match maturation, by type 
-[FirmCount,bexit,brooks] = match_summary(simMoms,mm);
+[DegreeDistCount,bexit,brooks] = match_summary(simMoms,mm);
 
 %  Data for Brooks table 2 include all generated matches. Data from Brooks table 1 
 %  only include types with matches in both the current and the previous year. 
@@ -33,7 +33,7 @@ MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
 %% create variables for analysis of degree distribution
 
      Ntrunc           = 100;
-     degreeCDF       = cumsum(FirmCount)'./sum(FirmCount);
+     degreeCDF       = cumsum(DegreeDistCount)'./sum(DegreeDistCount);
      ff_sim_max      = find(degreeCDF <1);
      Nmatches        = length(ff_sim_max);
      Nmatches        = min(Ntrunc,Nmatches);
@@ -45,4 +45,13 @@ MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
      xlabel('log # matches')
      ylabel('log(1-CDF)')
      title('Buyers per Seller degree distribution')
+     
+     FirmFrac = [DegreeDistCount(1:5)./sum(DegreeDistCount);...
+                 sum(DegreeDistCount(6:10))/sum(DegreeDistCount);...
+                 sum(DegreeDistCount(11:end))/sum(DegreeDistCount)];
+     CumFrac = [degreeCDF(1:5)';degreeCDF(10);degreeCDF(end)];
+                 
+     FirmFreq = {'1 match','2 match','3 matches','4 matches','5 matches',...
+                  '6-10 matches','>10 matches'};
+     DegreeDist = table(FirmFrac,CumFrac,'RowNames',FirmFreq) 
         

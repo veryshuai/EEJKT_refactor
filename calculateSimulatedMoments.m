@@ -70,6 +70,9 @@ xmat                  = [ones(length(simMoms.log_matchesD),1),...
 simMoms.b_degree      = regress(simMoms.log_compCDF_D,xmat);
 simMoms.duds          = sim_cum.duds;
 
+
+
+
 % elements of degree distribution
 match_pdfD = sim_cum.agg_match_histD(1:mm.max_match)./sum(sim_cum.agg_match_histD);
 simMoms.model_shareD = [match_pdfD(1:5),sum(match_pdfD(6:10)),sum(match_pdfD(11:end-1))]';

@@ -92,10 +92,10 @@ mm.l_opt_func_f = @(a,net,pi,V_succ,V_fail,V_orig)...
 
 %% Exogenous Jump Process Parameters
       
-gam_h = 1 - 0.8412593; %DJ: calculations from COL_AR1.do, reversion coef, use Euler-Maruyama discretization of OU  
-sig_h = 0.04688; % DJ: calculations from COL_AR1.do, root MSE, Euler-Maruyama discretization of OU 
-gam_f = 1 - 0.948018; %DJ: from Jim's email 2023/1/11, AR1 reversion coef, Euler-Maruyama discretization of OU
-sig_f = 0.11338; %DJ: from Jim's email 2023/1/11, AR1 root MSE, Euler-Maruyama discretization of OU
+gam_h = 1 - 0.875; %DJ: calculations from COL_AR1.do, reversion coef, use Euler-Maruyama discretization of OU  JT: updated 7-8-23
+sig_h = 0.0469; % DJ: calculations from COL_AR1.do, root MSE, Euler-Maruyama discretization of OU  JT: updated 7-8-23
+gam_f = 1 - 0.639; %DJ: from Jim's email 2023/1/11, AR1 reversion coef, Euler-Maruyama discretization of OU  JT: updated 7-8-23
+sig_f = 0.1101; %DJ: from Jim's email 2023/1/11, AR1 root MSE, Euler-Maruyama discretization of OU  JT: updated 7-8-23
 
 L_h = gam_h * mm.x_size; %lambda, arrival rate of shock
 D_h = sig_h*L_h^(-.5); %delta, size of jump states
@@ -110,7 +110,7 @@ D_f = sig_f*L_f^(-.5);   % delta, size of jump states
 % Shipment orders in home market are twice as frequent 
 % (Alessandria, Kaboski, and Midrigan, AER, 2010)
 
-mm.L_bH = 2*mm.L_bF;  % Impose that domestic shipments are twice as frequent as exports
+mm.L_bH = 3.4*mm.L_bF;  % Impose that domestic shipments are 3.4 times as frequent as exports
 
 mm.max_shipsF = 3*round(mm.L_bF); % maximum within-period shipments is triple expected number
 mm.poisCDF_shipmentsF   = poisscdf(1:1:mm.max_shipsF,mm.L_bF);

@@ -43,7 +43,7 @@ function [Data, W] = target_stats_alt()
 %   last_match_coefsDAT  = [0.635,-0.6290,0.1205,0.0211,0.5976,-0.1290]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)]            
     succ_rate_coefsDAT   = [0.413,0.093];  % [mean succ rate, ln(1+meetings)]
     sr_var_coefsDAT      = [0.0912,-0.060]; % [mean succ rate, ln(1+meetings)]
-    for_sales_shrDAT     =  0.1270; % mean share of exports to U.S. in total sales 
+    for_sales_shrDAT     =  0.137; % mean share of exports to U.S. in total sales (Marcela revised stat 7-8-23)
     exp_fracDAT          =  0.1023; % fraction of firms that export to U.S.
     
    Data = [match_death_coefsDAT,match_ar1_coefsDAT,loglog_coefsDAT,mavshipDAT,exp_dom_coefsDAT,...

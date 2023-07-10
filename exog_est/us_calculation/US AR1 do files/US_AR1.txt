@@ -1,0 +1,84 @@
+-----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /home/veryshuai/Dropbox (CBS)/EEJKT/EEJKT_refactor/exog_est/us_calculation/US AR1 
+> do files/US_AR1.txt
+  log type:  text
+ opened on:   6 Jul 2023, 23:56:47
+
+. 
+. cd  "../US AR1 data files"
+/home/veryshuai/Dropbox (CBS)/EEJKT/EEJKT_refactor/exog_est/us_calculation/US AR1 data files
+
+. 
+. use US_AR1_data
+
+. keep if (year > 1990) & (year < 2008)
+(46 observations deleted)
+
+. 
+. gen US_mkt   = peso_dollar_xr*(US_manuf_sales + imports - exports)/COL_PPI
+
+. gen lnUS_mkt = log(US_mkt)
+
+. reg lnUS_mkt year
+
+      Source |       SS           df       MS      Number of obs   =        17
+-------------+----------------------------------   F(1, 15)        =    101.01
+       Model |  1.97492982         1  1.97492982   Prob > F        =    0.0000
+    Residual |  .293287815        15  .019552521   R-squared       =    0.8707
+-------------+----------------------------------   Adj R-squared   =    0.8621
+       Total |  2.26821764        16  .141763602   Root MSE        =    .13983
+
+------------------------------------------------------------------------------
+    lnUS_mkt | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        year |   .0695738   .0069226    10.05   0.000     .0548186     .084329
+       _cons |  -105.1089   13.83838    -7.60   0.000    -134.6047   -75.61308
+------------------------------------------------------------------------------
+
+. predict lnUS_mkt_detr, resid
+
+. 
+. tsset year
+
+Time variable: year, 1991 to 2007
+        Delta: 1 unit
+
+. 
+. twoway (tsline lnUS_mkt_detr), ytitle(log real manuf. Spending) title(Log US market size)
+
+. 
+. regress lnUS_mkt_detr l.lnUS_mkt_detr
+
+      Source |       SS           df       MS      Number of obs   =        16
+-------------+----------------------------------   F(1, 14)        =      8.40
+       Model |  .094671846         1  .094671846   Prob > F        =    0.0117
+    Residual |  .157816394        14    .0112726   R-squared       =    0.3750
+-------------+----------------------------------   Adj R-squared   =    0.3303
+       Total |   .25248824        15  .016832549   Root MSE        =    .10617
+
+-------------------------------------------------------------------------------
+lnUS_mkt_detr | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+--------------+----------------------------------------------------------------
+lnUS_mkt_detr |
+          L1. |   .6476445   .2234798     2.90   0.012      .168328    1.126961
+              |
+        _cons |  -.0224558   .0267758    -0.84   0.416    -.0798843    .0349726
+-------------------------------------------------------------------------------
+
+. 
+. cd  "../US AR1 do files"
+/home/veryshuai/Dropbox (CBS)/EEJKT/EEJKT_refactor/exog_est/us_calculation/US AR1 do files
+
+. 
+. 
+end of do-file
+
+. exit
+no; dataset in memory has changed since last saved
+    Save the data or specify option clear to exit anyway.
+r(4);
+
+. clear
+
+. exit

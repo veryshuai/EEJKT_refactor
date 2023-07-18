@@ -28,15 +28,16 @@ fileID1 = fopen('results/ga_running_output_restricted.txt','a');
  fprintf(fileID1,'\r\n STARTING A NEW RUN (restricted model) %s\n', datestr(now,'yyyy_mmdd_HHMM') );
 fclose(fileID1);
 
-fileID2 = fopen('results/ga_fitlog_restricted','a');
+fileID2 = fopen('results/ga_fitlog_restricted.txt','a');
   fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
 fclose(fileID2);
-          
  
- theta = [-2.92217885480810,-21.7329307485543,0.163673081953874,0.142896261678048,...
-         0.253189491294144,21.0101797166516,0.119991356279124,7.54692070316604,...
-         3.14414508598657,15.3219457708342];
-% theta for restricted model. Alternative fit metric: 12.5579
+theta = [-3.53829669295503,-23.7275175821939,0.162347111353210,...
+         0.137250436139937,0.335022112243344,20.7537387258677,...
+         0.116260102242350,6.81183629825217,3.25858952466154,...
+         14.0186166864836];
+% alt fit:      12.4280491662457
+% original fit: 11.7900746483
      
 % X = theta;     
 

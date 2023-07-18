@@ -92,10 +92,10 @@ mm.l_opt_func_f = @(a,net,pi,V_succ,V_fail,V_orig)...
 
 %% Exogenous Jump Process Parameters
       
-gam_h = 1 - 0.875; %DJ: calculations from COL_AR1.do, reversion coef, use Euler-Maruyama discretization of OU  JT: updated 7-8-23
-sig_h = 0.0469; % DJ: calculations from COL_AR1.do, root MSE, Euler-Maruyama discretization of OU  JT: updated 7-8-23
-gam_f = 1 - 0.639; %DJ: from Jim's email 2023/1/11, AR1 reversion coef, Euler-Maruyama discretization of OU  JT: updated 7-8-23
-sig_f = 0.1101; %DJ: from Jim's email 2023/1/11, AR1 root MSE, Euler-Maruyama discretization of OU  JT: updated 7-8-23
+gam_h = 1 - 0.875; %DJ: reversion coef, use Euler-Maruyama discretization of OU  JT: updated 7-8-23
+sig_h = 0.0469; % DJ: AR1 root MSE, Euler-Maruyama discretization of OU  JT: updated 7-8-23
+gam_f = 1 - 0.639; %DJ: Euler-Maruyama discretization of OU  JT: updated 7-8-23
+sig_f = 0.1101; %DJ: AR1 root MSE, Euler-Maruyama discretization of OU  JT: updated 7-8-23
 
 L_h = gam_h * mm.x_size; %lambda, arrival rate of shock
 D_h = sig_h*L_h^(-.5); %delta, size of jump states

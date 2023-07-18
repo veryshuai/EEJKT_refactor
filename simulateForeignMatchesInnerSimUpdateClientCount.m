@@ -36,8 +36,11 @@ function [iter_in, drop_Zcut] = simulateForeignMatchesInnerSimUpdateClientCount(
     
   % exog. firm death can't apply to firms adding clients--this messes   
   % up reset of match records in seas_tran
-    firm_died = ~stay & iter_in.add_cli_cnt(:,iter_in.t) == 0;
-%   firm_died = ~stay;
+  
+%   firm_died = ~stay & iter_in.add_cli_cnt(:,iter_in.t) == 0;   
+    firm_died = ~stay;
+    iter_in.add_cli_cnt(firm_died,iter_in.t) = 0;
+    
     iter_in.new_firm(:,iter_in.t)    = firm_died ; 
     iter_in.exit_firm(:,iter_in.t-1) = firm_died & iter_in.cum_meets(:,iter_in.t-1) ~= 0;  
     iter_in.cur_cli_cnt(firm_died,iter_in.t) = 0;

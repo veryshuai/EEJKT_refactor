@@ -175,4 +175,6 @@ brooks = brooks(1:BrooksYrs,:);
 
 DegreeDistCount = degree_dist(match_recs,mm);
 
+save('match_summary_out');
+
 end

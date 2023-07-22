@@ -14,17 +14,11 @@ seed_crand(80085);
 
 runs = 20; %20 %set number of runs to use in bootstrap
 
-%point estimates
-%   X    = [-2.92217885480810 -21.7329307485543   0.163673081953874...
-%   	       0.142896261678048   0.253189491294144 21.0101797166516...
-%            0.119991356279124  7.54692070316604  3.14414508598657...
-%            15.3219457708342];
-  %  alternative fit metric: 12.552725321879826       
-  
-  X  = [-3.53829669295503,-23.7275175821939,0.162347111353210,...
-         0.137250436139937,0.335022112243344,20.7537387258677,...
-         0.116260102242350,6.81183629825217,3.25858952466154,...
-         14.0186166864836];
+     
+X = [-4.92444290760212,-27.9412276522655,0.173719817766680,...
+     0.149174564820941,0.435666463937585,14.6171833559373,...
+    0.131787405862920,8.81158882786645,3.37967374928709,10.6400808158221];
+% alt fit metric: 11.969925590604335
 
 
 %set some other common parameters
@@ -63,13 +57,13 @@ for iter = 1:runs
     simMoms = simulateMomentsMain(policy,mm);
 
     %Put the _boot_holderulated runs into their particular cells
-    match_death_coefs_boot_holder{iter} =  [simMoms.match_exit_rate;simMoms.beta_match_exit(2:5)]; % [match exit rate, 1st yr. dummy, lnXf(ijt), ln(match age), ln(exporter age),mse]
-    match_ar1_coefs_boot_holder{iter}   =  [simMoms.ybar_match;simMoms.beta_match(2:4);simMoms.mse_match_ar1]; % [mean ln Xf(ijt), ln Xf(ijt-1), R(ijt-1), ln(exporter age)]   
+    match_death_coefs_boot_holder{iter} = [simMoms.match_exit_rate;simMoms.beta_match_exit(2:5)]; % [match exit rate, 1st yr. dummy, lnXf(ijt), ln(match age), ln(exporter age),mse]
+    match_ar1_coefs_boot_holder{iter}   = [simMoms.ybar_match;simMoms.beta_match(2:4);simMoms.mse_match_ar1]; % [mean ln Xf(ijt), ln Xf(ijt-1), R(ijt-1), ln(exporter age)]   
     loglog_coefs_boot_holder{iter}      = [simMoms.b_degree]; % [intercept, slope, quadratic term]
     mavship_boot_holder{iter}           = [simMoms.avg_ln_ships]; % average ln(# shipments) 
     exp_dom_coefs_boot_holder{iter}     = [simMoms.ybar_hfsales;simMoms.beta_hfsales(2);simMoms.mse_hf]; % [mean dep var.,coef,MSE]  
     dom_ar1_coefs_boot_holder{iter}     = [simMoms.ybar_fsales_h;simMoms.beta_fsales_h(2);simMoms.mse_h]; % [mean dep var.,coef,MSE] 
-    match_lag_coefs_boot_holder{iter}  = [simMoms.mean_ln_haz;simMoms.b_haz(2:6)]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)] 
+    match_lag_coefs_boot_holder{iter}   = [simMoms.mean_ln_haz;simMoms.b_haz(2:6)]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)] 
     succ_rate_coefs_boot_holder{iter}   = [simMoms.mean_succ_rate;simMoms.b_succ_rate(2)]; % [mean succ rate, ln(1+meetings)]
     sr_var_coefs_boot_holder{iter}      = [simMoms.mean_usq_succ;simMoms.b_usq_succ(2)]; % [mean dep. var, ln(1+meetings)]
     for_sales_shr_boot_holder{iter}     = [simMoms.avg_expt_rate]; % mean share of exports to U.S. in total sales 
@@ -82,7 +76,7 @@ end
 % (2) Now we need finite differences of parameters on moments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fin_diff_size = (1 + 0.05); %percentage of parameter value 
+fin_diff_size = (1 + 0.08); %percentage of parameter value 
 
 % param_vec = [mm.F_h, mm.scale_h, mm.scale_f, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p,mm.F,mm.cs_f,mm.optimism]';
 param_vec = [mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f]';
@@ -131,7 +125,7 @@ for iter =1:pv_siz + 1
     rng(80085,'twister');% set the seed and the rng (default parallel rand generator)
     simMoms = simulateMomentsMain(policy,mm);
 
-    %Put the _boot_holderulated runs into their particular cells
+    %Put the _boot_holder runs into their particular cells
     match_death_coefs_fd{iter} = [simMoms.match_exit_rate;simMoms.beta_match_exit(2:5)]; % [match exit rate, 1st yr. dummy, lnXf(ijt), ln(match age), ln(exporter age),mse]
     match_ar1_coefs_fd{iter}   = [simMoms.ybar_match;simMoms.beta_match(2:4);simMoms.mse_match_ar1]; % [mean ln Xf(ijt), ln Xf(ijt-1), R(ijt-1), ln(exporter age)]   
     loglog_coefs_fd{iter}      = [simMoms.b_degree]; % [intercept, slope, quadratic term]
@@ -240,4 +234,24 @@ format short
 param_est = table(parameter,std_error,z_ratio,'Rownames',AGS_param_names)
 
 save results/bootstrap_results
-       
+
+%% The following block handles the case where F is essentially 0 and shows no variation 
+
+G2 = -dMdP(:,2:end); % drop first column, since no variation in F 
+
+V2 = inv(G2' * W_alt * G2) * G2' * W_alt * Mcov * W_alt * G2 * inv(G2' * W_alt * G2);
+AGS_param_names2 = {'scale', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f'};
+Psd2 = diag(V2).^0.5;
+std_error2 = Psd2;
+param_vec2 = param_vec(2:end);
+parameter2 = param_vec2;
+z_ratio2 = parameter2./std_error2;
+format short
+param_est = table(parameter2,std_error2,z_ratio2,'Rownames',AGS_param_names2)
+
+
+
+AGS_sens = -inv(G' * W_alt * G) * G' * W_alt;
+
+AGS_elas = AGS_sens .* repmat((W_alt * fin_diff_mat(:,1))',size(AGS_sens,1),1) ./ repmat(param_vec,1,size(AGS_sens,2));
+

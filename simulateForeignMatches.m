@@ -11,7 +11,12 @@ iterF_check.mat_yr_sales  = cell(mm.tot_yrs,1);
 iterF_check.firm_yr_sales = cell(mm.tot_yrs,1);
 %% ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 for t = 2:1:mm.periods
-   
+
+    %EXCHANGE RATE SHOCK HAPPENS IN THE 25TH YEAR
+    if t == 25*mm.pd_per_yr
+        policy = switch_to_exchange_rate_shock_policy(policy);
+    end
+
     iter_in.t = t;
     if mod(iter_in.t-1,mm.pd_per_yr) == 0
         iter_in.season = 1; % reset season when previous period completes a year

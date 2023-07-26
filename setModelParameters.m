@@ -2,6 +2,9 @@ function mm = setModelParameters(X)
 
 mm = struct();
 
+%% Exchange rate shock parameters
+mm.exchange_rate_shock_multiplier = 1.2;
+
 %% technology parameters
 
 mm.pd_per_yr = 12;        % number of periods per year

@@ -9,7 +9,7 @@ function policy = solvePolicyMain(mm)
 
     tic
     [policy.value_h,policy.lambda_h] = solvePolicyHome(policy,mm);  
-    [policy.value_f,policy.lambda_f] = solvePolicyForeign(policy,mm); 
+    [policy.value_f,policy.lambda_f] = solvePolicyForeign_nolearning(policy,mm); 
     toc
 
     %shouldHaveMonotonicPolicyFunctions(policy,mm);

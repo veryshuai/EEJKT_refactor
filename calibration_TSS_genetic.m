@@ -22,21 +22,23 @@
 
 %%
 
-fprintf('\r\n STARTING A NEW RUN (restricted model): %s\n ', datestr(now,'yyyy_mmdd_HHMM'));
+fprintf('\r\n STARTING A NEW RUN (No learning): %s\n ', datestr(now,'yyyy_mmdd_HHMM'));
 
-fileID1 = fopen('results/ga_running_output_restricted.txt','a');
- fprintf(fileID1,'\r\n STARTING A NEW RUN (restricted model) %s\n', datestr(now,'yyyy_mmdd_HHMM') );
+fileID1 = fopen('results/ga_running_output_nolearning.txt','a');
+ fprintf(fileID1,'\r\n STARTING A NEW RUN (no learning) %s\n', datestr(now,'yyyy_mmdd_HHMM') );
 fclose(fileID1);
 
-fileID2 = fopen('results/ga_fitlog_restricted.txt','a');
+fileID2 = fopen('results/ga_fitlog_nolearning.txt','a');
   fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
 fclose(fileID2);
  
      
-theta = [-4.92444290760212,-27.9412276522655,0.173719817766680,...
-         0.149174564820941,0.435666463937585,14.6171833559373,...
-    0.131787405862920,8.81158882786645,3.37967374928709,10.6400808158221];
-% alt fit metric: 11.969925590604335
+%theta = [-4.92444290760212,-27.9412276522655,0.173719817766680,...
+%         0.149174564820941,0.435666463937585,14.6171833559373,...
+%    0.131787405862920,8.81158882786645,3.37967374928709,10.6400808158221];
+%% alt fit metric: 11.969925590604335
+theta = [-5.73671 -21.90125  0.14539  0.15452  0.31729 15.10867 ...
+ 0.14963 10.62915  2.39118  8.71896 ];
      
 % X = theta;     
 

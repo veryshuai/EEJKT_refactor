@@ -9,7 +9,7 @@ for prod_ind = 1:size(mm.Phi)
     for k = 1:mm.dim1
         for succ = 1:mm.n_size+1
 
-            l_opt(succ,mm.n_size+1,1,mm.net_size+1,prod_ind,:) = mm.l_opt_func_h(mm.theta1(k),mm.net_size+1,policy.pi_f(prod_ind,:),0,0,0);
+            l_opt(succ,mm.n_size+1,1,mm.net_size+1,prod_ind,:) = mm.l_opt_func_f(mm.theta1(k),mm.net_size+1,policy.pi_f(prod_ind,:),0,0,0);
             Q0_diag = -mm.Q_f_d;
             Q0_diag(1:size(mm.Q_f_d,1)+1:end) = mm.r+abs(diag(mm.Q_f));
             perm_flow = mm.theta1(k)*squeeze(l_opt(succ,mm.n_size+1,1,mm.net_size+1,prod_ind,:)).*policy.pi_f(prod_ind,:)'-mm.cost_f(squeeze(l_opt(succ,mm.n_size+1,1,mm.net_size+1,prod_ind,:)),mm.net_size+1);
@@ -33,7 +33,7 @@ for prod_ind = 1:size(mm.Phi)
 
                 new_v = val_func_iter('no_learning',squeeze(V(succ,curr_trys+1,1,succ,prod_ind,:)),squeeze(V(succ+1,curr_trys+1,1,succ+1,prod_ind,:)),squeeze(V(succ,curr_trys+1,1,succ,prod_ind,:)),mm.theta1(k),policy.pi_f(prod_ind,:),succ,mm,policy,'foreign');
                 V(succ,curr_trys,1,succ,prod_ind,:) = new_v;
-                [~,l_opt(succ,curr_trys,1,succ,prod_ind,:)] = iterationError_h(squeeze(V(succ,curr_trys,1,succ,prod_ind,:)),mm.theta1(k),policy.pi_f(prod_ind,:),succ,squeeze(V(succ,curr_trys+1,1,succ,prod_ind,:)),mm,policy,'foreign');
+                [~,l_opt(succ,curr_trys,1,succ,prod_ind,:)] = iterationError_h(squeeze(V(succ,curr_trys,1,succ,prod_ind,:)),mm.theta1(k),policy.pi_f(prod_ind,:),succ,squeeze(V(succ+1,curr_trys+1,1,succ+1,prod_ind,:)),mm,policy,'foreign');
 
             end
         end

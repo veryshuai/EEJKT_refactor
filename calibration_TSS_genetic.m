@@ -17,8 +17,8 @@
 % mm.sig_p     = X(9);       %standard deviation of productivity distribution
 % mm.F_f       = exp(X(1)); % cost of maintaining a client- foreign
 % mm.cs_f      = exp(X(10)); % Cost scaling parameter, foreign market
-% mm.scale_f   = X(2);       % Export profit function scale parameter (same as home)
-% mm.optimism  = 0; %parameter on prior distribution (positive means optimistic, negative pessamisitic)
+% mm.scale_f   = X(11);       % Export profit function scale parameter (same as home)
+% mm.optimism  = 0 ; %parameter on prior distribution 
 
 %%
 
@@ -32,12 +32,22 @@ fileID2 = fopen('results/ga_fitlog_restricted.txt','a');
   fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
 fclose(fileID2);
  
-     
-theta = [-4.92444290760212,-27.9412276522655,0.173719817766680,...
-         0.149174564820941,0.435666463937585,14.6171833559373,...
-    0.131787405862920,8.81158882786645,3.37967374928709,10.6400808158221];
-% alt fit metric: 11.969925590604335
-     
+ 
+% theta = [-4.92444290760212,-27.9412276522655,0.173719817766680,...
+%          0.149174564820941,0.435666463937585,14.6171833559373,...
+%     0.131787405862920,8.81158882786645,3.37967374928709,10.6400808158221,0.149174564820941];
+% alt fit metric: 11.969925590604335 (with quadratic search costs and S=10000)
+
+% theta = [-5.54845801486006,-27.9276029273286,0.183454179425287,0.134091994275606,...
+%     0.312956304422016,13.0826080407669,0.115310320152066,9.69219215273992,...
+%     3.45209285533265,11.7866318512518,0.118246569286443];
+% alt fit metric: 11.650 with optimism parameter estimated
+
+
+theta = [-5.54845801486006,-27.9276029273286,0.183454179425287,0.134091994275606,...
+    0.312956304422016,13.0826080407669,0.115310320152066,9.69219215273992,...
+    3.45209285533265,11.7866318512518,-27.9276029273286];
+
 % X = theta;     
 
 D0 = distance(theta);

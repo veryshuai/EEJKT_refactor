@@ -13,7 +13,7 @@ real_moms_and_sim_moms = cat(2,Data',Model);
 print_diagnostics_to_standard_output(D, X, real_moms_and_sim_moms, err_comp, simMoms,mm);
 
 % plots_v2(simMoms); 
-% summary_tables(simMoms,mm); 
+ summary_tables(simMoms,mm); 
 
 %% Statistics using shares distribution of buyers per seller 
 error_alt = Data_alt' - Model_alt;

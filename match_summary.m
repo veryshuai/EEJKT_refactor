@@ -46,7 +46,7 @@ function [DegreeDistCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
     dormant = logical((agg_mat_lifecycle(:,6)==0).*(agg_mat_lifecycle(:,7)>0)); 
     shift_lifecycle(dormant,2:end-5) = agg_mat_lifecycle(dormant,7:end); 
     for ndx = 3:5:(5*max_age+1)
-          shift_lifecycle(:,ndx) = max(shift_lifecycle(:,ndx) - dormant, 0);
+          shift_lifecycle(:,ndx) = max(shift_lifecycle(:,ndx) - dormant, 0); %adjust age of match
     end
      
  % When next year has 0 sales, 0 zero out remaining match-years 
@@ -124,7 +124,7 @@ cohortAvgSales = zeros(maxAge,1);
     % Note: need to keep track of year because same hotel room can be
     % occupied by different firms in different years  
       match_YTF  = 0.0001*matchByAge(:,1) + matchByAge(:,2)... 
-                 + 0.0000001*matchByAge(:,3); % year-type-firmID identifier                    
+                 + 0.0000001*matchByAge(:,3); % year-type-firmID identifier (in future, suggest Cantor pairing function)                    
       YTF_list      = unique(match_YTF);
       firmCount(aa) = size(YTF_list,1); 
       

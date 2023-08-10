@@ -19,12 +19,12 @@ function FirmCount = degree_dist(match_list,mm)
  % convert to frequency counts of # firms with each possible match count
    MatFreq = zeros(maxMatch,maxYear);  
    for yr=1:maxYear
-     if sum(firmMatchCount(:,yr))>0 % counts excluding duds
+     if sum(firmMatchCount(:,yr))>0 % counts including duds
      MatFreq(:,yr) = sum(firmMatchCount(:,yr)*ones(1,mm.max_match) - ones(size(firmMatchCount(:,yr),1),1)*(1:mm.max_match)==0,1);
      end
    end 
    
-  FirmCount = sum(MatFreq(:,1:end),2); % including burn-in years
-%  FirmCount = sum(MatFreq(:,mm.burn+1:end),2); % excluding burn-in years
+% FirmCount = sum(MatFreq(:,1:end),2); % including burn-in years
+  FirmCount = sum(MatFreq(:,mm.burn+1:end),2); % excluding burn-in years
 
 end

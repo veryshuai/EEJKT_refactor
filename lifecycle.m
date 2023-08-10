@@ -1,6 +1,6 @@
 % Build life cycle for each new match
 
-function [mat_lifecycle_TF,orphan_matches_TF] = lifecycle(NumTF,TF_matdat,max_age)
+function [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,max_age)
 
   orphan_matches_TF = cell(NumTF,1);
   mat_lifecycle_TF = cell(NumTF,1);
@@ -78,4 +78,16 @@ function [mat_lifecycle_TF,orphan_matches_TF] = lifecycle(NumTF,TF_matdat,max_ag
       end   
     orphan_matches_TF{TF_id} = orphan_matches;
     mat_lifecycle_TF{TF_id} = [TF_id*ones(size(mat_lifecycle,1),1), mat_lifecycle];
-  end    
+  end  
+  
+    % Stack match histories for firm-types, putting firm-type ID in col. 1
+    agg_mat_lifecycle = double.empty(0,5*max_age+1);
+  %  mat_lifecycle(:,1:6): [TF_id, year, match age, boy Z, eoy Z, sales]    
+    agg_orphan_matches = double.empty(0,9);
+    for TF_id = 1:NumTF
+       agg_mat_lifecycle = [agg_mat_lifecycle; mat_lifecycle_TF{TF_id}];
+       agg_orphan_matches =  [agg_orphan_matches;orphan_matches_TF{TF_id}]; 
+    end
+    
+    lifecycle_TF =  agg_mat_lifecycle(:,2) + 0.0001*floor(agg_mat_lifecycle(:,3));
+  

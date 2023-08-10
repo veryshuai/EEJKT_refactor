@@ -30,16 +30,16 @@ function [DegreeDistCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
       TF_matdat{TF_id} = match_recs(ff,:);
     end
 
-    [mat_lifecycle_TF,orphan_matches_TF] = lifecycle(NumTF,TF_matdat,max_age);
+    [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,max_age);
       
-  % Stack match histories for firm-types, putting firm-type ID in col. 1
-    agg_mat_lifecycle = double.empty(0,5*max_age+1);
-  %  mat_lifecycle(:,1:6): [TF_id, year, match age, boy Z, eoy Z, sales]    
-    agg_orphan_matches = double.empty(0,9);
-    for TF_id = 1:NumTF
-       agg_mat_lifecycle = [agg_mat_lifecycle; mat_lifecycle_TF{TF_id}];
-       agg_orphan_matches =  [agg_orphan_matches;orphan_matches_TF{TF_id}]; 
-    end
+%   % Stack match histories for firm-types, putting firm-type ID in col. 1
+%     agg_mat_lifecycle = double.empty(0,5*max_age+1);
+%   %  mat_lifecycle(:,1:6): [TF_id, year, match age, boy Z, eoy Z, sales]    
+%     agg_orphan_matches = double.empty(0,9);
+%     for TF_id = 1:NumTF
+%        agg_mat_lifecycle = [agg_mat_lifecycle; mat_lifecycle_TF{TF_id}];
+%        agg_orphan_matches =  [agg_orphan_matches;orphan_matches_TF{TF_id}]; 
+%     end
 
  %  Adjust multi-year life cycles if zero shipments in first year 
     shift_lifecycle =  agg_mat_lifecycle;
@@ -147,5 +147,5 @@ brooks = brooks(1:BrooksYrs,:);
 %% Construct degree distribution (used for graph by summary_table)
 DegreeDistCount = degree_dist(match_recs,mm);
 
- save('match_summary_out_8-7-23');
+% save('match_summary_out_8-7-23');
 end

@@ -17,6 +17,7 @@ function [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,max_
       new_match_TF = all_age(:,8)<=1;
       max_age_TF = max(all_age(:,8));
       N_TF = sum(new_match_TF); % number of new matches for this firm
+      firstYrCount(TF_id,1) = N_TF;
       mat_lifecycle = zeros(N_TF,5*max_age);
       mat_lifecycle(:,1:5) = [all_age(new_match_TF,1),all_age(new_match_TF,8),...
                all_age(new_match_TF,6:7),all_age(new_match_TF,4)]; 
@@ -78,6 +79,14 @@ function [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,max_
       end   
     orphan_matches_TF{TF_id} = orphan_matches;
     mat_lifecycle_TF{TF_id} = [TF_id*ones(size(mat_lifecycle,1),1), mat_lifecycle];
+    
+%     N_orphan = size(orphan_matches_TF{TF_id},1);
+%     N_matched = size(mat_lifecycle_TF{TF_id},1);   
+%     if N_orphan*N_matched > 0
+%         [orphan_matches_TF{TF_id},mat_lifecycle_TF{TF_id}] =...
+%             lifeCycleOrphanAdd(orphan_matches_TF{TF_id},mat_lifecycle_TF{TF_id},N_orphan,N_matched)
+%     end
+    
   end  
   
     % Stack match histories for firm-types, putting firm-type ID in col. 1
@@ -89,5 +98,6 @@ function [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,max_
        agg_orphan_matches =  [agg_orphan_matches;orphan_matches_TF{TF_id}]; 
     end
     
-    lifecycle_TF =  agg_mat_lifecycle(:,2) + 0.0001*floor(agg_mat_lifecycle(:,3));
+    
+    
   

@@ -142,8 +142,8 @@ succ_rate_coefsCOV = ...  % based on RDC disclosure 2-3-17
      [0.000265^2  0.00000000;
       0.00000000  0.00000012];
   
- for_sales_shrCOV = (.2433645^2)/12512;   % from Marcela's eam_moms_out.pdf  
- exp_fracCOV      = (.3030042^2)/11930;  % from Marcela's eam_moms_out.pdf
+ for_sales_shrCOV = (.2409052 ^2)/10838;   % from Marcela's eam_moms_out.pdf 8-7-23
+ exp_fracCOV = (.293701^2)/113656;  % from Marcela's eam_moms_out.pdf 8-7-23
 %%
 
     

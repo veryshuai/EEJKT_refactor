@@ -12,9 +12,9 @@ function [DegreeDistCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
 
      after_burn      = match_recs(:,8) <= match_recs(:,1) - (mm.burn*mm.pd_per_yr); 
      match_recs      = match_recs(after_burn,:); % drop matches that started during burn-in period
-     match_recs(:,1) = floor(match_recs(:,1)/(mm.pd_per_yr+1e-6)) + 1;   % restate time in years
-     match_recs(:,8) = floor(match_recs(:,8)/(mm.pd_per_yr+1e-6)) + 1;   % restate match age in years
-     match_recs(:,9) = floor(match_recs(:,9)/(mm.pd_per_yr+1e-6))+1;  % restate firm age in years        
+%      match_recs(:,1) = floor(match_recs(:,1)/(mm.pd_per_yr+1e-6)) + 1;   % restate time in years
+%      match_recs(:,8) = floor(match_recs(:,8)/(mm.pd_per_yr+1e-6)) + 1;   % restate match age in years
+%      match_recs(:,9) = floor(match_recs(:,9)/(mm.pd_per_yr+1e-6))+1;  % restate firm age in years        
      max_age         = max(match_recs(:,8));
 
      match_TF    = match_recs(:,2) + 0.0001*floor(match_recs(:,3)); % firm type by firmID identifier
@@ -30,27 +30,18 @@ function [DegreeDistCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
       TF_matdat{TF_id} = match_recs(ff,:);
     end
 
-    [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,max_age);
+    [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,mm,max_age);
       
-%   % Stack match histories for firm-types, putting firm-type ID in col. 1
-%     agg_mat_lifecycle = double.empty(0,5*max_age+1);
-%   %  mat_lifecycle(:,1:6): [TF_id, year, match age, boy Z, eoy Z, sales]    
-%     agg_orphan_matches = double.empty(0,9);
-%     for TF_id = 1:NumTF
-%        agg_mat_lifecycle = [agg_mat_lifecycle; mat_lifecycle_TF{TF_id}];
-%        agg_orphan_matches =  [agg_orphan_matches;orphan_matches_TF{TF_id}]; 
-%     end
-
  %  Adjust multi-year life cycles if zero shipments in first year 
     shift_lifecycle =  agg_mat_lifecycle;
     dormant = logical((agg_mat_lifecycle(:,6)==0).*(agg_mat_lifecycle(:,7)>0)); 
     shift_lifecycle(dormant,2:end-5) = agg_mat_lifecycle(dormant,7:end); 
-    for ndx = 3:5:(5*max_age+1)
+    for ndx = 3:5:(5*ceil(max_age/mm.pd_per_yr)+1)
           shift_lifecycle(:,ndx) = max(shift_lifecycle(:,ndx) - dormant, 0);
     end
      
  % When next year has 0 sales, 0 zero out remaining match-years 
-   for ndx = 6:5:(5*(max_age-1)+1)
+   for ndx = 6:5:(5*ceil(max_age/mm.pd_per_yr))
      lastYr = logical((shift_lifecycle(:,ndx)>0).*(shift_lifecycle(:,ndx+5)==0));
      shift_lifecycle(lastYr,ndx+1:end) = 0;
    end
@@ -91,7 +82,7 @@ function [DegreeDistCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
      sizedum     = [sizedum;logical(ones(resid,1)*[0 0 0 1])]; 
 
 % Find match survival by initial size quartile and age 
-     maxAge = 11;   
+     maxAge = 11; % now expressed in years  
      survive    = zeros(maxAge,4);
      meanSale   = zeros(maxAge,4);
      matchCount = zeros(maxAge,4);
@@ -116,9 +107,11 @@ maxAge   = 50;
 firmCount      = zeros(maxAge,1); 
 cohortSales    = zeros(maxAge,1); 
 cohortAvgSales = zeros(maxAge,1); 
- 
-   for aa=1:maxAge
-  
+% restate match age in years
+match_recs(:,9) = floor(match_recs(:,9)/(mm.pd_per_yr+1e-6))+1;
+
+    for aa=1:maxAge
+
     % identify and count aa-yr-old firms in export mkt., by year
       matchByAge = match_recs(match_recs(:,9)==aa,:); % matches for aa-yr-old firms
     % Note: need to keep track of year because same hotel room can be
@@ -147,5 +140,5 @@ brooks = brooks(1:BrooksYrs,:);
 %% Construct degree distribution (used for graph by summary_table)
 DegreeDistCount = degree_dist(match_recs,mm);
 
-% save('match_summary_out_8-10-23');
+% save('match_summary_out_8-14-23');
 end

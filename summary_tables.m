@@ -5,7 +5,7 @@ function summary_tables(simMoms,mm)
    fprintf('\r\n Average log shipments: %.4f\n',simMoms.avg_ln_ships); 
 
 %% match maturation, by type 
-[DegreeDistCount,exit_by_age,brooks] = match_summary_v2(simMoms,mm);
+[DegreeDistCount,exit_by_age,brooks] = match_summary(simMoms,mm);
 %[DegreeDistCount,bexit,brooks] = match_summary_v1(simMoms,mm);
 
 %  Data for Brooks table 2 include all generated matches. Data from Brooks table 1 

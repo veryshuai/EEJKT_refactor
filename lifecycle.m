@@ -1,13 +1,11 @@
-% Build life cycle for each new match
 function [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,mm,max_age)
+
+% This function splices together match lifecycles
 
   orphan_matches_TF = cell(NumTF,1);
   mat_lifecycle_TF = cell(NumTF,1);
 
-  % Build life cycle for each new match
-
-parfor TF_id=1:NumTF  
-% for TF_id=234
+ parfor TF_id=1:NumTF  
     % fprintf('\r firm ID = %0.0f\n',TF_id);  
       all_age = TF_matdat{TF_id};
     % all_age: (1) year, (2) type, (3) firm_ID, (4) sales, (5) shipments, 
@@ -46,9 +44,7 @@ parfor TF_id=1:NumTF
            fprintf('\r type-firm ID = %0.0f, number of 1st year matches = %0.0f\n',[TF_id,N_TF]);
            stayInLoop = 0;               
            end
-
-           
-           
+      
               ii = 1; 
               while ii <= N_TFC %looping over matches of age aa for firm-type TF_id
               fprintf('\r type-firm ID = %0.0f, match age = %0.0f, match number = %0.0f',[TF_id,aa,ii]);
@@ -85,15 +81,12 @@ parfor TF_id=1:NumTF
               ii = ii + 1;
               end
           end     
-      end   
-             
+      end               
     orphan_matches_TF{TF_id} = [TF_id*ones(size(residMatch,1),1),residMatch];
-    mat_lifecycle_TF{TF_id}  = [TF_id*ones(size(mat_lifecycle,1),1), [mat_lifecycleC;mat_lifecycleS]];
-    
-    
+    mat_lifecycle_TF{TF_id}  = [TF_id*ones(size(mat_lifecycle,1),1), [mat_lifecycleC;mat_lifecycleS]];  
   end  
   
-    % Stack match histories for firm-types, putting firm-type ID in col. 1
+  % Stack match histories for firm-types, putting firm-type ID in col. 1
     agg_mat_lifecycle = double.empty(0,5*ceil(max_age./mm.pd_per_yr)+1);
   %  mat_lifecycle(:,1:6): [TF_id, year, match age, boy Z, eoy Z, sales]    
     agg_orphan_matches = double.empty(0,10);
@@ -112,9 +105,13 @@ parfor TF_id=1:NumTF
    logical((agg_orphan_matches(:,9)>1).*(agg_orphan_matches(:,9)<mm.pd_per_yr)==1);
  K2   = size(agg_mat_lifecycle,2);
  temp = [agg_orphan_matches(newDud,1),agg_orphan_matches(newDud,2),agg_orphan_matches(newDud,9),...
-               agg_orphan_matches(newDud,7:8),agg_orphan_matches(newDud,5)];
-           
+               agg_orphan_matches(newDud,7:8),agg_orphan_matches(newDud,5)];          
  agg_mat_lifecycle  = [agg_mat_lifecycle;[temp,zeros(sum(newDud),K2-6)]];
+ 
+ % put remaining orphans in agg_orphan_matches. There should be just a few (<0.1%).
+ % They could in principle be matched to the newly identified first-yr
+ % matches. Doesn't seem worth the extra code.
+ 
  realOrphan         = logical(1-newDud); 
  agg_orphan_matches = agg_orphan_matches(realOrphan,:);
  %  agg_orphan_matches: (1) TF_id (2) year, (3) type, (4) firm_ID, (5) sales, 

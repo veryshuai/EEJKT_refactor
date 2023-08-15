@@ -12,9 +12,6 @@ function [DegreeDistCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
 
      after_burn      = match_recs(:,8) <= match_recs(:,1) - (mm.burn*mm.pd_per_yr); 
      match_recs      = match_recs(after_burn,:); % drop matches that started during burn-in period
-%      match_recs(:,1) = floor(match_recs(:,1)/(mm.pd_per_yr+1e-6)) + 1;   % restate time in years
-%      match_recs(:,8) = floor(match_recs(:,8)/(mm.pd_per_yr+1e-6)) + 1;   % restate match age in years
-%      match_recs(:,9) = floor(match_recs(:,9)/(mm.pd_per_yr+1e-6))+1;  % restate firm age in years        
      max_age         = max(match_recs(:,8));
 
      match_TF    = match_recs(:,2) + 0.0001*floor(match_recs(:,3)); % firm type by firmID identifier

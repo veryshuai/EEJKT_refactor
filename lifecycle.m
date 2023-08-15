@@ -97,15 +97,15 @@ function [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,mm,m
 %% Refinements
     
 % Drop matches with 0 sales from orphan list
- PosSale = agg_orphan_matches(:,6)>0; % No sales and not first yr.
+ PosSale            = agg_orphan_matches(:,6)>0; % No sales and not first yr.
  agg_orphan_matches = agg_orphan_matches(logical(PosSale),:);
  
 % Move orphans revealed to be dying new matches to agg_mat_lifecycle
  newDud =...
-   logical((agg_orphan_matches(:,9)>1).*(agg_orphan_matches(:,9)<mm.pd_per_yr)==1);
+        logical((agg_orphan_matches(:,9)>1).*(agg_orphan_matches(:,9)<mm.pd_per_yr)==1);
  K2   = size(agg_mat_lifecycle,2);
  temp = [agg_orphan_matches(newDud,1),agg_orphan_matches(newDud,2),agg_orphan_matches(newDud,9),...
-               agg_orphan_matches(newDud,7:8),agg_orphan_matches(newDud,5)];          
+         agg_orphan_matches(newDud,7:8),agg_orphan_matches(newDud,5)];          
  agg_mat_lifecycle  = [agg_mat_lifecycle;[temp,zeros(sum(newDud),K2-6)]];
  
  % put remaining orphans in agg_orphan_matches. There should be just a few (<0.1%).
@@ -115,7 +115,7 @@ function [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,mm,m
  realOrphan         = logical(1-newDud); 
  agg_orphan_matches = agg_orphan_matches(realOrphan,:);
  %  agg_orphan_matches: (1) TF_id (2) year, (3) type, (4) firm_ID, (5) sales, 
- %    (6) shipments, (7) boy Z,(8) eoy Z,(9) match age,(10) firm age 
+ %           (6) shipments, (7) boy Z,(8) eoy Z,(9) match age,(10) firm age 
     
 end  
     

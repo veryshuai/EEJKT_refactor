@@ -4,12 +4,11 @@ mm = struct();
 
 %% technology parameters
 
-mm.pd_per_yr = 12;        % number of periods per year
-mm.r         = 0.13/mm.pd_per_yr;   % Rate of time preference per period
-mm.firm_death_haz = 0.08/mm.pd_per_yr;   % Component of time preference due to exogenous death
-mm.delta     = 0.326/mm.pd_per_yr;  % Exogenous match separation rate 
-% mm.delta     = 2/mm.pd_per_yr;  % Exogenous match separation rate 
-mm.eta       = 5;          % Demand elasticity 
+mm.pd_per_yr     = 12;                  % number of periods per year
+mm.r              = 0.13/mm.pd_per_yr;  % Rate of time preference per period
+mm.delta          = 0.326/mm.pd_per_yr; % Exogenous match separation rate 
+mm.eta            = 5;                  % Demand elasticity 
+mm.firm_death_haz = 0.08/mm.pd_per_yr; % Component of time preference due to exogenous death
 
 %% Estimated parameters
 
@@ -72,7 +71,7 @@ mm.tot_yrs       = 50;   % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
 
-mm.S         = 50000;    % number of potential exporting firms to simulate 
+mm.S         = 10000;    % number of potential exporting firms to simulate 
 mm.burn      = 10;       %number of burn-in years
 mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;     % Number of possible matches for domestic market

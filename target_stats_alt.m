@@ -134,9 +134,9 @@ succ_rate_coefsCOV = ...  % based on RDC disclosure 2-3-17
  sr_var_coefsCOV = ...    % based on RDC disclosure 2-3-17 & 5-07-19
      [0.000265^2  0.00000000;
       0.00000000  0.00000012];
-   
- for_sales_shrCOV = (.2409052 ^2)/10838;  % updated eam_out from 6/22/23
- exp_fracCOV      = (.293701^2)/113656;   % updated eam_out from 6/22/23
+    
+ for_sales_shrCOV = (.277419^2)/10838; % updated eam_out from Marcela 8/14/23
+ exp_fracCOV     = (.293701^2)/113656; % updated eam_out from Marcela 8/14/23
 %%
 
     

@@ -110,8 +110,7 @@ D_f = sig_f*L_f^(-.5);   % delta, size of jump states
 % Shipment orders in home market are twice as frequent 
 % (Alessandria, Kaboski, and Midrigan, AER, 2010)
 
- mm.L_bH = 3.4*mm.L_bF;  % Impose that domestic shipments are 3.4 times as frequent as exports
-% mm.L_bH = 10*mm.L_bF;   % EXPERIMENT: 10x more shipments at home
+mm.L_bH = 2*mm.L_bF;  % Impose that domestic shipments are 3 times as frequent as exports
 
 mm.max_shipsF = 3*round(mm.L_bF); % maximum within-period shipments is triple expected number
 mm.poisCDF_shipmentsF   = poisscdf(1:1:mm.max_shipsF,mm.L_bF);

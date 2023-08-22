@@ -42,7 +42,7 @@ function [Data, Data_alt, W, W_alt] = target_stats()
 %   last_match_coefsDAT  = [0.635,-0.6290,0.1205,0.0211,0.5976,-0.1290]; % [mean dep. var, ln(1+a), ln(1+a)^2, ln(1+r), ln(1+r)^2, ln(1+a)*ln(1+r)]            
     succ_rate_coefsDAT   = [0.413,0.093];  % [mean succ rate, ln(1+meetings)]
     sr_var_coefsDAT      = [0.0912,-0.060]; % [mean succ rate, ln(1+meetings)]
-    for_sales_shrDAT     =  0.137; % mean share of exports to U.S. in total sales (Marcela revised stat 7-8-23)
+    for_sales_shrDAT     =  0.155; % mean share of exports to U.S. in total sales (Marcela revised stat 7-8-23)
     exp_fracDAT          =  0.1023; % fraction of firms that export to U.S.
     
    Data = [match_death_coefsDAT,match_ar1_coefsDAT,loglog_coefsDAT,mavshipDAT,exp_dom_coefsDAT,...
@@ -142,8 +142,8 @@ succ_rate_coefsCOV = ...  % based on RDC disclosure 2-3-17
      [0.000265^2  0.00000000;
       0.00000000  0.00000012];
   
- for_sales_shrCOV = (.2433645^2)/12512;   % from Marcela's eam_moms_out.pdf  
- exp_fracCOV      = (.3030042^2)/11930;  % from Marcela's eam_moms_out.pdf
+for_sales_shrCOV = (.277419^2)/10838; % updated eam_out from Marcela 8/14/23
+ exp_fracCOV     = (.293701^2)/113656; % updated eam_out from Marcela 8/14/23
 %%
 
     

@@ -1,9 +1,13 @@
 function [iter_in,iter_out] = simulateForeignMatchesInnerMoments(iter_in,iter_out,mm)
 if iter_in.year > mm.burn  % don't start building simulated data set until burn-in finished
+    
+        tt =  ones(size(iter_in.mat_yr_sales,1),1).*[iter_in.t,iter_in.mic_type]; % add cols 1 and 2: t, firm type
+        iter_out.mat_yr_sales  = [iter_out.mat_yr_sales;[tt,iter_in.mat_yr_sales]];    
+    
     if size(iter_in.mat_cont_2yr)>0
 
-        tt =  ones(size(iter_in.mat_yr_sales,1),1).*[iter_in.t,iter_in.mic_type]; % add cols 1 and 2: t, firm type
-        iter_out.mat_yr_sales  = [iter_out.mat_yr_sales;[tt,iter_in.mat_yr_sales]];
+%        tt =  ones(size(iter_in.mat_yr_sales,1),1).*[iter_in.t,iter_in.mic_type]; % add cols 1 and 2: t, firm type
+%        iter_out.mat_yr_sales  = [iter_out.mat_yr_sales;[tt,iter_in.mat_yr_sales]];
        % mat_yr_sales: [t,type,firm ID, match sales, shipments, boy Z, eoy Z, match age, firm age]
 
          ttt = ones(size(iter_in.firm_yr_sales,1),1).*[iter_in.t,iter_in.mic_type];

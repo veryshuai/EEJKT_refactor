@@ -4,11 +4,12 @@ mm = struct();
 
 %% technology parameters
 
-mm.pd_per_yr     = 12;                  % number of periods per year
-mm.r              = 0.13/mm.pd_per_yr;  % Rate of time preference per period
-mm.delta          = 0.326/mm.pd_per_yr; % Exogenous match separation rate 
-mm.eta            = 5;                  % Demand elasticity 
-mm.firm_death_haz = 0.08/mm.pd_per_yr; % Component of time preference due to exogenous death
+mm.pd_per_yr = 12;        % number of periods per year
+mm.r         = 0.13/mm.pd_per_yr;   % Rate of time preference per period
+mm.firm_death_haz = 0.08/mm.pd_per_yr;   % Component of time preference due to exogenous death
+mm.delta     = 0.326/mm.pd_per_yr;  % Exogenous match separation rate 
+% mm.delta     = 2/mm.pd_per_yr;  % Exogenous match separation rate 
+mm.eta       = 5;          % Demand elasticity 
 
 %% Estimated parameters
 
@@ -16,7 +17,7 @@ mm.param_vec = X;      % carry along parameter vector for diagnostic checks
 
 mm.F_h       = exp(X(1));  % cost of maintaining a client- home 
 mm.scale_h   = X(2);       % Domestic profit function scale parameter
-mm.scale_f   = X(2);       % Export profit function scale parameter (same as home)
+mm.scale_f   = X(2)+1;     % Export profit function scale parameter 
 mm.ah        = X(4)*X(3);  % Beta function, home (theta1) success parameter
 mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
 D_z          = X(5)/mm.pd_per_yr; % Jump size, match productivity shock
@@ -24,9 +25,9 @@ mm.L_bF      = X(6)/mm.pd_per_yr; % Shipment order arrival hazard
 mm.gam       = X(7);       % Network effect parameter
 mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
 mm.sig_p     = X(9);       %standard deviation of productivity distribution
-mm.F_f       = exp(X(1)); % cost of maintaining a client- foreign
+mm.F_f       = exp(X(1));  % cost of maintaining a client- foreign
 mm.cs_f      = exp(X(10)); % Cost scaling parameter, foreign market
-mm.optimism  = 0;  %parameter on prior distribution (bounded at -X(4) to keep parameters feasible)
+mm.optimism  = 0;          %parameter on prior distribution 
 
 % mm.F_f       = exp(X(10)); % cost of maintaining a client- foreign
 % mm.cs_f      = exp(X(11)); % Cost scaling parameter, foreign market
@@ -110,7 +111,7 @@ D_f = sig_f*L_f^(-.5);   % delta, size of jump states
 % Shipment orders in home market are twice as frequent 
 % (Alessandria, Kaboski, and Midrigan, AER, 2010)
 
-mm.L_bH = 2*mm.L_bF;  % Impose that domestic shipments are 3 times as frequent as exports
+mm.L_bH = 2*mm.L_bF;  % Impose that domestic shipments are twice as frequent as exports
 
 mm.max_shipsF = 3*round(mm.L_bF); % maximum within-period shipments is triple expected number
 mm.poisCDF_shipmentsF   = poisscdf(1:1:mm.max_shipsF,mm.L_bF);

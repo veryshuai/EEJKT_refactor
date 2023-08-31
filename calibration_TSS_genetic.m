@@ -15,9 +15,9 @@
 % mm.gam       = X(7);       % Network effect parameter
 % mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
 % mm.sig_p     = X(9);       %standard deviation of productivity distribution
-% mm.F_f       = exp(X(1)); % cost of maintaining a client- foreign
+% mm.F_f       = exp(X(1));  % cost of maintaining a client- foreign
 % mm.cs_f      = exp(X(10)); % Cost scaling parameter, foreign market
-% mm.scale_f   = X(2);       % Export profit function scale parameter (same as home)
+% mm.scale_f   = X(2)+1;     % Export profit function scale parameter (same as home)
 % mm.optimism  = 0 ; %parameter on prior distribution 
 
 %%
@@ -30,27 +30,15 @@ fclose(fileID1);
 
 fileID2 = fopen('results/ga_fitlog_nolearning.txt','a');
   fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
+  fprintf(fileID2,'\n Foreign profit scaler set to twice home market profit scaler \r');
+  fprintf(fileID2,'\n Degree distribution not targeted, minimizing original D \r');
 fclose(fileID2);
- 
-%theta = [-4.92444290760212,-27.9412276522655,0.173719817766680,...
-%         0.149174564820941,0.435666463937585,14.6171833559373,...
-%    0.131787405862920,8.81158882786645,3.37967374928709,10.6400808158221];
-% BASELINE alt fit metric: 11.969925590604335
 
-% theta = [-4.74060620625034	-46.4781761953731	0.0831810159195763	0.174061271943099	0.407684805092889	12.5014876279670 ...
-%     0.200733646668880	9.28932144380271	4.68302354232828	15.2292368534740];
-% % NO LEARNING alt fit metric: 12.2925255086572
+theta = [-7.36860635010041,-20.6466017575077,0.0705689663149828,0.182537998345310,...
+    0.434516092398813,11.6676402703387,0.0563370713452114,4.14266745807416,...
+    2.87257237464644,13.3244805739937];
 
-theta = [-4.74336931061665	-39.3774942028084	0.102488335719205	0.124887701160301	0.365998047325849	13.0817977607945 ...
-    0.180101053434558	9.89876415078752	4.00833277085712	13.6171487940690];
-% NO LEARNING alt fit metric: 12.1572058735029
-
-% theta = [...
-%   -6.48373445693280,-27.1116388656176,0.119431181295694,0.0976175374467408,...
-%    0.247110496961648,14.2241812754387,0.0630667418995650,8.80568820896566,...
-%    3.36769544702316,12.9980245788823,-24.9408986889662];
-% % alt fit metric: 12.42 with shipment hazard at home 3 X hazard abroad
-% % alt fit metric: 13.13 with shipment hazard at home 2 X hazard abroad
+% X = theta;     
 
 D0 = distance(theta);
   
@@ -72,6 +60,7 @@ X0 = lb + rng.*H;
 clear lb ub rng
 % initial population
 population = X0;
+population(1,:) = theta;
 
 cf = 0.30;          % crossover fraction
 EC = 4;             % elite count

@@ -14,10 +14,11 @@ seed_crand(80085);
 
 runs = 20; %20 %set number of runs to use in bootstrap
      
-X = [-5.51055707725502,-22.9820628073306,0.152309883146146,0.150717626933370,...
-    0.197929034960503,11.9969904367609,0.0853512405334382,7.75034563017993,...
-     3.32790809640092,11.3087581117842,-26.9147671844486];
-% alt fit metric: 11.8773 with no optimism parameter, separate profit and cost scalars
+X = [-7.18316880382057,-26.3540116409019,0.109886808294302,0.121780079917892,...
+    0.139187763181924,17.4548988650076,0.0551783713735285,9.88014302009032,...
+    3.38160294138473,12.6790901142734];
+% alt fit metric: 12.3701 with separate cost parameters, lambda_h =
+% 2*lambda_f, and same profit function scalars.
 
 %set some other common parameters
 mm = setModelParameters(X);
@@ -108,10 +109,12 @@ for iter =1:pv_siz + 1
     mm = struct();
     cell_for_assignment = num2cell(fin_diff_param_mat(:,iter)); %need cell to unpack into multiple variables, matlab quirk
 %   [mm.F_h, mm.scale_h, mm.scale_f, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p,mm.F_f,mm.cs_f,mm.optimism] = cell_for_assignment{:};
-    [mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f, mm.scale_f] = cell_for_assignment{:};
-
+%   [mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f, mm.scale_f] = cell_for_assignment{:};
+    [mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f] = cell_for_assignment{:};
+    
 %   set constrained parameters equal to their perturbed counterpart values    
     mm.F_f = mm.F_h;
+    mm.scale_f =  mm.scale_h;
     mm.optimism = 0;
  
     rng(80085,'twister');% set the seed and the rng (default parallel rand generator)
@@ -140,7 +143,9 @@ end
 
 %Reset to baseline values
 cell_for_assignment = num2cell(fin_diff_param_mat(:,1)); %need cell to unpack into multiple variables
-[mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f, mm.scale_f] = cell_for_assignment{:};
+%[mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f, mm.scale_f] = cell_for_assignment{:};
+[mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f] = cell_for_assignment{:};
+
 
 % (Probably don't need this block since we're not constructing std. errors for these parameters)
  mm.F_f = mm.F_h;
@@ -210,10 +215,11 @@ AGS_sens = -inv(G' * W_alt * G) * G' * W_alt;
 
 AGS_elas = AGS_sens .* repmat((W_alt * fin_diff_mat(:,1))',size(AGS_sens,1),1) ./ repmat(param_vec,1,size(AGS_sens,2));
 
-% construct table for easy understanding of Gentzkow Shapiro weighting
-% method
+% construct table for easy understanding of Gentzkow Shapiro weighting method
 
-AGS_param_names = {'F', 'scale_h', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f', 'scale_f'};
+% AGS_param_names = {'F', 'scale_h', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f', 'scale_f'};
+AGS_param_names = {'F', 'scale_h', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f'};
+
 varnames = {'match_death_coefs1','match_death_coefs2','match_death_coefs3','match_death_coefs4','match_death_coefs5','match_ar1_coefs1','match_ar1_coefs2','match_ar1_coefs3','match_ar1_coefs4','match_ar1_coefs5','mavship','exp_dom_coefs1','exp_dom_coefs2','exp_dom_coefs3','dom_ar1_coefs1','dom_ar1_coefs2','dom_ar1_coefs3','match_lag_coefs1','match_lag_coefs2','match_lag_coefs3','match_lag_coefs4','match_lag_coefs5','match_lag_coefs6','succ_rate_coefs1','succ_rate_coefs2','sr_var_coefs1','sr_var_coefs2','for_sales_shr','exp_frac','spb_1','spb_2','spb_3','spb_4','spb_5','spb_6','spb_7'};
 AGS_cell = mat2cell(AGS_elas,ones(pv_siz,1),ones(size(Data_alt,2),1));
 AGS_table = cell2table(AGS_cell);
@@ -237,7 +243,9 @@ save results/bootstrap_results
 G2 = -dMdP(:,2:end); % drop first column, since no variation in F 
 
 V2 = inv(G2' * W_alt * G2) * G2' * W_alt * Mcov * W_alt * G2 * inv(G2' * W_alt * G2);
-AGS_param_names2 = {'scale_h', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f', 'scale_f'};
+% AGS_param_names2 = {'scale_h', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f', 'scale_f'};
+AGS_param_names2 = {'scale_h', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f'};
+
 Psd2 = diag(V2).^0.5;
 std_error2 = Psd2;
 param_vec2 = param_vec(2:end);

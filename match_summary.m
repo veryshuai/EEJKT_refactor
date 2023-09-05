@@ -138,5 +138,8 @@ brooks = brooks(1:BrooksYrs,:);
 %% Construct degree distribution (used for graph by summary_table)
 DegreeDistCount = degree_dist(match_recs,mm);
 
+%save results/val_dat;
+full_save_path = "results/exch_shock_plots/" + mm.save_name;
+save(char(full_save_path));
 % save('match_summary_out_8-14-23');
 end

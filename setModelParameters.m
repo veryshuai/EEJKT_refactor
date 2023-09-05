@@ -3,7 +3,9 @@ function mm = setModelParameters(X)
 mm = struct();
 
 %% Exchange rate shock parameters
-mm.exchange_rate_shock_multiplier = 1.2;
+mm.exchange_rate_shock_multiplier = 0.8;
+mm.save_name = "baseline_down_shk";
+mm.S         = 100000;    % number of potential exporting firms to simulate (10000 in estimation)
 
 %% technology parameters
 
@@ -75,13 +77,12 @@ mm.tot_yrs       = 50;   % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
 
-mm.S         = 10000;    % number of potential exporting firms to simulate 
 mm.burn      = 10;       %number of burn-in years
 mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;     % Number of possible matches for domestic market
 mm.MaxMatchMonth = 1.5e+6; % Max number of match-months in any year for a given firm type
 mm.max_home_clients = 500; %maximum number of active clients we allow firms to have at home
-mm.abort_time = 1500;    % number of seconds allowed before evaluation is aborted 
+mm.abort_time = 150000;    % number of seconds allowed before evaluation is aborted 
 %% Cost function
 
 mm.kappa1 = 2;  

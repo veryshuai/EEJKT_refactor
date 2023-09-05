@@ -56,3 +56,4 @@ MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
                   '6-10 matches','>10 matches'};
      DegreeDist = table(FirmFrac,CumFrac,'RowNames',FirmFreq) 
         
+

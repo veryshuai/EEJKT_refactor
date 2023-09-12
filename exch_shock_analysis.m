@@ -132,7 +132,7 @@ end
 % mean_value_before_shock = mean(mean(squeeze(value_per_firm(25:50,:,2)),2)) + 1704000
 % median_value_before_shock = mean(mean(squeeze(value_per_firm_med(25:50,:,2)),2)) + 289695
 % immediate_mean_value_jump_depreciation = (mean(squeeze(value_per_firm(51,:,2)),2) + 1.2 * 1704000) / (mean(squeeze(value_per_firm(50,:,2)),2) + 1704000)
-% value_net_of_discounted_sales_current_clients = mean(squeeze(value_per_firm(25:75,:,2)),2)
+% value_net_of_discounted_sales_current_clients = mean(squeeze(value_per_firm(25:50,2)),2)
 % 
 % %Value added per firm
 % hold off
@@ -276,13 +276,13 @@ hold on
 plot(mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
 plot(mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
 plot(mean(squeeze(total_old_firm_old_sales(11:40,1)),2) + mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
-ylim([0.0 2e7])
+%ylim([0.0 2e7])
 set(gca,'FontSize',18) 
 legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
 title("Total sales");
-xlim([1,50])
-xticks([5 10 15 20 25 30 35 40 45 50])
-xticklabels({'-20','-15','-10','-5','0','5','10','15','20','25'})
+xlim([1,30])
+xticks([5 10 15 20 25 30])
+xticklabels({'-10','-5','0','5','10','15'})
 hold off
 saveas(gcf,'results/exch_shock_plots/decomp_plots/total_sales_unf.png')
 
@@ -296,9 +296,9 @@ set(gca,'FontSize',18)
 legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
 title("Total sales");
 ylim([0.0 1.0])
-xlim([1,50])
-xticks([5 10 15 20 25 30 35 40 45 50])
-xticklabels({'-20','-15','-10','-5','0','5','10','15','20','25'})
+xlim([1,30])
+xticks([5 10 15 20 25 30])
+xticklabels({'-10','-5','0','5','10','15'})
 hold off
 saveas(gcf,'results/exch_shock_plots/decomp_plots/total_sales_pct.png')
 
@@ -317,9 +317,9 @@ set(gca,'FontSize',18)
 legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
 title("Total sales");
 ylim([0.0 1.0])
-xlim([1,50])
-xticks([5 10 15 20 25 30 35 40 45 50])
-xticklabels({'-20','-15','-10','-5','0','5','10','15','20','25'})
+xlim([1,30])
+xticks([5 10 15 20 25 30])
+xticklabels({'-10','-5','0','5','10','15'})
 hold off
 saveas(gcf,'results/exch_shock_plots/decomp_plots/total_sales_pct_unf.png')
 
@@ -332,9 +332,9 @@ plot(mean(squeeze(total_firms(11:40,1)),2),'LineWidth',2)
 set(gca,'FontSize',18) 
 %legend({'New exporter','Incumbent exporter'},'location','SouthWest','FontSize',20)
 %title("Total exporters");
-xlim([1,50])
-xticks([5 10 15 20 25 30 35 40 45 50])
-xticklabels({'-20','-15','-10','-5','0','5','10','15','20','25'})
+xlim([1,30])
+xticks([5 10 15 20 25 30])
+xticklabels({'-10','-5','0','5','10','15'})
 hold off
 saveas(gcf,'results/exch_shock_plots/decomp_plots/total_firms.png')
 
@@ -343,13 +343,13 @@ area([mean(squeeze(total_new_firms(11:40,3)),2),mean(squeeze(total_firms(11:40,3
 hold on
 plot(mean(squeeze(total_new_firms(11:40,1)),2),'LineWidth',2)
 plot(mean(squeeze(total_firms(11:40,1)),2),'LineWidth',2)
-ylim([0 45])
+%ylim([0 45])
 set(gca,'FontSize',18) 
 legend({'New exporter','Incumbent exporter'},'location','SouthWest','FontSize',20)
 title("Total exporters");
-xlim([1,50])
-xticks([5 10 15 20 25 30 35 40 45 50])
-xticklabels({'-20','-15','-10','-5','0','5','10','15','20','25'})
+xlim([1,30])
+xticks([5 10 15 20 25 30])
+xticklabels({'-10','-5','0','5','10','15'})
 hold off
 saveas(gcf,'results/exch_shock_plots/decomp_plots/total_firms_unf.png')
 
@@ -362,9 +362,9 @@ set(gca,'FontSize',18)
 legend({'New exporter','Incumbent exporter'},'location','SouthWest','FontSize',20)
 title("Total exporters");
 ylim([0.0 1.0])
-xlim([1,50])
-xticks([5 10 15 20 25 30 35 40 45 50])
-xticklabels({'-20','-15','-10','-5','0','5','10','15','20','25'})
+xlim([1,30])
+xticks([5 10 15 20 25 30])
+xticklabels({'-10','-5','0','5','10','15'})
 hold off
 saveas(gcf,'results/exch_shock_plots/decomp_plots/total_firms_pct.png')
 
@@ -381,9 +381,9 @@ set(gca,'FontSize',18)
 legend({'New exporter','Incumbent exporter'},'location','SouthWest','FontSize',20)
 title("Total exporters");
 ylim([0.0 1.0])
-xlim([1,50])
-xticks([5 10 15 20 25 30 35 40 45 50])
-xticklabels({'-20','-15','-10','-5','0','5','10','15','20','25'})
+xlim([1,30])
+xticks([5 10 15 20 25 30])
+xticklabels({'-10','-5','0','5','10','15'})
 hold off
 saveas(gcf,'results/exch_shock_plots/decomp_plots/total_firms_pct_unf.png')
 
@@ -392,77 +392,59 @@ elas_var = @(new,base,cov_mat,log_arg) [1 / (log(log_arg)); -1 / (log(log_arg))]
 %elasticities (favorable)
 display('Favorable elasticities (Std Err)')
 display('SALES');
-display([((mean(squeeze(log(total_sales(51,:,2))),2)) - mean(squeeze(log(total_sales(51,:,1))),2))/(log(1.2) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_sales(51,:,2))),2),mean(squeeze(log(total_sales(51,:,1))),2),cov([squeeze(log(total_sales(51,:,2)));squeeze(log(total_sales(51,:,1)))]'),1.2))/sqrt(2000),...
-((mean(squeeze(log(total_sales(55,:,2))),2)) - mean(squeeze(log(total_sales(55,:,1))),2))/(log(1.2) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_sales(55,:,2))),2),mean(squeeze(log(total_sales(55,:,1))),2),cov([squeeze(log(total_sales(55,:,2)));squeeze(log(total_sales(55,:,1)))]'),1.2))/sqrt(2000),...
-((mean(squeeze(log(total_sales(75,:,2))),2)) - mean(squeeze(log(total_sales(75,:,1))),2))/(log(1.2) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_sales(75,:,2))),2),mean(squeeze(log(total_sales(75,:,1))),2),cov([squeeze(log(total_sales(75,:,2)));squeeze(log(total_sales(75,:,1)))]'),1.2))/sqrt(2000)]) %,...
+display([(log(total_sales(26,2)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
+(log(total_sales(30,2)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
+(log(total_sales(50,2)) - log(total_sales(24,1)))/(log(1.2) - log(1))]);
 
 display('MATCHES');
-display([((mean(squeeze(log(total_matches(51,:,2))),2)) - mean(squeeze(log(total_matches(51,:,1))),2))/(log(1.2) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_matches(51,:,2))),2),mean(squeeze(log(total_matches(51,:,1))),2),cov([squeeze(log(total_matches(51,:,2)));squeeze(log(total_matches(51,:,1)))]'),1.2))/sqrt(2000),...
-((mean(squeeze(log(total_matches(55,:,2))),2)) - mean(squeeze(log(total_matches(55,:,1))),2))/(log(1.2) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_matches(55,:,2))),2),mean(squeeze(log(total_matches(55,:,1))),2),cov([squeeze(log(total_matches(55,:,2)));squeeze(log(total_matches(55,:,1)))]'),1.2))/sqrt(2000),...
-((mean(squeeze(log(total_matches(75,:,2))),2)) - mean(squeeze(log(total_matches(75,:,1))),2))/(log(1.2) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_matches(75,:,2))),2),mean(squeeze(log(total_matches(75,:,1))),2),cov([squeeze(log(total_matches(75,:,2)));squeeze(log(total_matches(75,:,1)))]'),1.2))/sqrt(2000)]) %,...
+display([(log(total_matches(26,2)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
+(log(total_matches(30,2)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
+(log(total_matches(50,2)) - log(total_matches(24,1)))/(log(1.2) - log(1))]);
 
 display('FIRMS');
-display([((mean(squeeze(log(total_firms(51,:,2))),2)) - mean(squeeze(log(total_firms(51,:,1))),2))/(log(1.2) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_firms(51,:,2))),2),mean(squeeze(log(total_firms(51,:,1))),2),cov([squeeze(log(total_firms(51,:,2)));squeeze(log(total_firms(51,:,1)))]'),1.2))/sqrt(2000),...
-((mean(squeeze(log(total_firms(55,:,2))),2)) - mean(squeeze(log(total_firms(55,:,1))),2))/(log(1.2) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_firms(55,:,2))),2),mean(squeeze(log(total_firms(55,:,1))),2),cov([squeeze(log(total_firms(55,:,2)));squeeze(log(total_firms(55,:,1)))]'),1.2))/sqrt(2000),...
-((mean(squeeze(log(total_firms(75,:,2))),2)) - mean(squeeze(log(total_firms(75,:,1))),2))/(log(1.2) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_firms(75,:,2))),2),mean(squeeze(log(total_firms(75,:,1))),2),cov([squeeze(log(total_firms(75,:,2)));squeeze(log(total_firms(75,:,1)))]'),1.2))/sqrt(2000)]) %,...
+display([(log(total_firms(26,2)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
+(log(total_firms(30,2)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
+(log(total_firms(50,2)) - log(total_firms(24,1)))/(log(1.2) - log(1))]);
 
 display('Unfavorable elasticities')
-display('SALES');
-display([((mean(squeeze(log(total_sales(51,:,3))),2)) - mean(squeeze(log(total_sales(51,:,1))),2))/(log(0.8) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_sales(51,:,3))),2),mean(squeeze(log(total_sales(51,:,1))),2),cov([squeeze(log(total_sales(51,:,3)));squeeze(log(total_sales(51,:,1)))]'),0.8))/sqrt(2000),...
-((mean(squeeze(log(total_sales(55,:,3))),2)) - mean(squeeze(log(total_sales(55,:,1))),2))/(log(0.8) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_sales(55,:,3))),2),mean(squeeze(log(total_sales(55,:,1))),2),cov([squeeze(log(total_sales(55,:,3)));squeeze(log(total_sales(55,:,1)))]'),0.8))/sqrt(2000),...
-((mean(squeeze(log(total_sales(75,:,3))),2)) - mean(squeeze(log(total_sales(75,:,1))),2))/(log(0.8) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_sales(75,:,3))),2),mean(squeeze(log(total_sales(75,:,1))),2),cov([squeeze(log(total_sales(75,:,3)));squeeze(log(total_sales(75,:,1)))]'),0.8))/sqrt(2000)]) %,...
+display('SALES')
+display([(log(total_sales(26,3)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
+(log(total_sales(30,3)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
+(log(total_sales(50,3)) - log(total_sales(24,1)))/(log(1.2) - log(1))]);
 
 display('MATCHES');
-display([((mean(squeeze(log(total_matches(51,:,3))),2)) - mean(squeeze(log(total_matches(51,:,1))),2))/(log(0.8) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_matches(51,:,3))),2),mean(squeeze(log(total_matches(51,:,1))),2),cov([squeeze(log(total_matches(51,:,3)));squeeze(log(total_matches(51,:,1)))]'),0.8))/sqrt(2000),...
-((mean(squeeze(log(total_matches(55,:,3))),2)) - mean(squeeze(log(total_matches(55,:,1))),2))/(log(0.8) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_matches(55,:,3))),2),mean(squeeze(log(total_matches(55,:,1))),2),cov([squeeze(log(total_matches(55,:,3)));squeeze(log(total_matches(55,:,1)))]'),0.8))/sqrt(2000),...
-((mean(squeeze(log(total_matches(75,:,3))),2)) - mean(squeeze(log(total_matches(75,:,1))),2))/(log(0.8) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_matches(75,:,3))),2),mean(squeeze(log(total_matches(75,:,1))),2),cov([squeeze(log(total_matches(75,:,3)));squeeze(log(total_matches(75,:,1)))]'),0.8))/sqrt(2000)]) %,...
+display([(log(total_matches(26,3)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
+(log(total_matches(30,3)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
+(log(total_matches(50,3)) - log(total_matches(24,1)))/(log(1.2) - log(1))]);
 
 display('FIRMS');
-display([((mean(squeeze(log(total_firms(51,:,3))),2)) - mean(squeeze(log(total_firms(51,:,1))),2))/(log(0.8) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_firms(51,:,3))),2),mean(squeeze(log(total_firms(51,:,1))),2),cov([squeeze(log(total_firms(51,:,3)));squeeze(log(total_firms(51,:,1)))]'),0.8))/sqrt(2000),...
-((mean(squeeze(log(total_firms(55,:,3))),2)) - mean(squeeze(log(total_firms(55,:,1))),2))/(log(0.8) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_firms(55,:,3))),2),mean(squeeze(log(total_firms(55,:,1))),2),cov([squeeze(log(total_firms(55,:,3)));squeeze(log(total_firms(55,:,1)))]'),0.8))/sqrt(2000),...
-((mean(squeeze(log(total_firms(75,:,3))),2)) - mean(squeeze(log(total_firms(75,:,1))),2))/(log(0.8) - log(1)),...
-sqrt(elas_var(mean(squeeze(log(total_firms(75,:,3))),2),mean(squeeze(log(total_firms(75,:,1))),2),cov([squeeze(log(total_firms(75,:,3)));squeeze(log(total_firms(75,:,1)))]'),0.8))/sqrt(2000)]) %,...
+display([(log(total_firms(26,3)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
+(log(total_firms(30,3)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
+(log(total_firms(50,3)) - log(total_firms(24,1)))/(log(1.2) - log(1))]);
 
-display('No shock growth (50-75)?')
-display('SALES');
-display([((mean(squeeze(total_sales(75,:,1)),2) - mean(squeeze(total_sales(50,:,1)),2)) / mean(squeeze(total_sales(50,:,1)),2))])
-display('MATCHES');
-display([((mean(squeeze(total_matches(75,:,1)),2) - mean(squeeze(total_matches(50,:,1)),2)) / mean(squeeze(total_matches(50,:,1)),2))])
-display('FIRMS');
-display([((mean(squeeze(total_firms(75,:,1)),2) - mean(squeeze(total_firms(50,:,1)),2)) / mean(squeeze(total_firms(50,:,1)),2))])
-
-display('No shock growth (25-75)?')
-display('SALES');
-display([((mean(squeeze(total_sales(75,:,1)),2) - mean(squeeze(total_sales(25,:,1)),2)) / mean(squeeze(total_sales(25,:,1)),2))])
-display('MATCHES');
-display([((mean(squeeze(total_matches(75,:,1)),2) - mean(squeeze(total_matches(25,:,1)),2)) / mean(squeeze(total_matches(25,:,1)),2))])
-display('FIRMS');
-display([((mean(squeeze(total_firms(75,:,1)),2) - mean(squeeze(total_firms(25,:,1)),2)) / mean(squeeze(total_firms(25,:,1)),2))])
-
-display('No shock growth (50-99)?')
-display('SALES');
-display([((mean(squeeze(total_sales(99,:,1)),2) - mean(squeeze(total_sales(50,:,1)),2)) / mean(squeeze(total_sales(50,:,1)),2))])
-display('MATCHES');
-display([((mean(squeeze(total_matches(99,:,1)),2) - mean(squeeze(total_matches(50,:,1)),2)) / mean(squeeze(total_matches(50,:,1)),2))])
-display('FIRMS');
-display([((mean(squeeze(total_firms(99,:,1)),2) - mean(squeeze(total_firms(50,:,1)),2)) / mean(squeeze(total_firms(50,:,1)),2))])
+% display('No shock growth (50-75)?')
+% display('SALES');
+% display([((mean(squeeze(total_sales(50,1)),2) - mean(squeeze(total_sales(50,:,1)),2)) / mean(squeeze(total_sales(50,:,1)),2))])
+% display('MATCHES');
+% display([((mean(squeeze(total_matches(50,1)),2) - mean(squeeze(total_matches(50,:,1)),2)) / mean(squeeze(total_matches(50,:,1)),2))])
+% display('FIRMS');
+% display([((mean(squeeze(total_firms(50,1)),2) - mean(squeeze(total_firms(50,:,1)),2)) / mean(squeeze(total_firms(50,:,1)),2))])
+% 
+% display('No shock growth (25-75)?')
+% display('SALES');
+% display([((mean(squeeze(total_sales(50,1)),2) - mean(squeeze(total_sales(25,:,1)),2)) / mean(squeeze(total_sales(25,:,1)),2))])
+% display('MATCHES');
+% display([((mean(squeeze(total_matches(50,1)),2) - mean(squeeze(total_matches(25,:,1)),2)) / mean(squeeze(total_matches(25,:,1)),2))])
+% display('FIRMS');
+% display([((mean(squeeze(total_firms(50,1)),2) - mean(squeeze(total_firms(25,:,1)),2)) / mean(squeeze(total_firms(25,:,1)),2))])
+% 
+% display('No shock growth (50-99)?')
+% display('SALES');
+% display([((mean(squeeze(total_sales(99,:,1)),2) - mean(squeeze(total_sales(50,:,1)),2)) / mean(squeeze(total_sales(50,:,1)),2))])
+% display('MATCHES');
+% display([((mean(squeeze(total_matches(99,:,1)),2) - mean(squeeze(total_matches(50,:,1)),2)) / mean(squeeze(total_matches(50,:,1)),2))])
+% display('FIRMS');
+% display([((mean(squeeze(total_firms(99,:,1)),2) - mean(squeeze(total_firms(50,:,1)),2)) / mean(squeeze(total_firms(50,:,1)),2))])
 
 % area([mean(total_first_yr_matches(11:40),2),mean(total_non_first_yr_matches(11:40),2)])
 % legend({'First year matches','Other matches'},'location','NorthWest','FontSize',14)

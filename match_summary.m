@@ -18,16 +18,16 @@ function [DegreeDistCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
 %     TF_list     = unique(match_TF);
 %     NumTF       = size(TF_list,1);    
 %     TF_matdat   = cell(NumTF,1);
- 
-%% Create matrix of match life cycles, one row per match
-
-  % collect matches into cells by firm type and firmID 
-    for TF_id = 1:NumTF
-      ff = match_TF == ones(size(match_TF,1),1).*TF_list(TF_id);
-      TF_matdat{TF_id} = match_recs(ff,:);
-    end
-
-%     [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,mm,max_age);
+%  
+% %% Create matrix of match life cycles, one row per match
+% 
+%   % collect matches into cells by firm type and firmID 
+%     for TF_id = 1:NumTF
+%       ff = match_TF == ones(size(match_TF,1),1).*TF_list(TF_id);
+%       TF_matdat{TF_id} = match_recs(ff,:);
+%     end
+% 
+% %     [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,mm,max_age);
 %       
 %  %  Adjust multi-year life cycles if zero shipments in first year 
 %     shift_lifecycle =  agg_mat_lifecycle;
@@ -142,4 +142,8 @@ function [DegreeDistCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
 full_save_path = "results/exch_shock_plots/" + mm.save_name;
 save(char(full_save_path));
 % save('match_summary_out_8-14-23');
+
+DegreeDistCount = [];
+exit_by_age = [];
+brooks = [];
 end

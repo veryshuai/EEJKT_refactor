@@ -1,6 +1,6 @@
 function D = distance(X)
 
-try
+%try
 
     format long;
  
@@ -17,9 +17,9 @@ try
 
 %   D = D_alt; %uncomment this line to use degree distrib. fit metric
 
-catch
+%catch
 
- fprintf('\r\n Failed to evaluate fit metric \n')
- D = 1e12;
+% fprintf('\r\n Failed to evaluate fit metric \n')
+% D = 1e12;
 
-end
+%end

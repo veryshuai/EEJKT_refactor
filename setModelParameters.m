@@ -3,7 +3,7 @@ function mm = setModelParameters(X)
 mm = struct();
 
 %% Exchange rate shock parameters
-mm.exchange_rate_shock_multiplier = 0.8;
+mm.exchange_rate_shock_multiplier = -ln(0.2); %actual multiplier in code: exp(mm.F + exchange_rate_shock_multiplier)
 mm.save_name = "baseline_down_shk";
 mm.S         = 100000;    % number of potential exporting firms to simulate (10000 in estimation)
 

@@ -1,9 +1,9 @@
 function [Data, error, Model] = do_not_match_some_moments(Data, error, Model)
-% To exclude intercept of log-log regression, allow next block
+% To exclude log-log regression, allow next block
 
-    Data(11) = 0;
+    Data(11:13) = 0;
 %   Model(11) = 0;
-    error(11) = 0;
+    error(11:13) = 0;
     
 
 % To exclude avg. log exports from DANE-based X-D regression, allow next block

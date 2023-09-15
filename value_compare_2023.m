@@ -25,23 +25,23 @@ all_exporters = sortrows(all_exporters,3); %sort based on sales
 
 median_prod = [10,floor(prctile(all_exporters(:,4),10));50,floor(prctile(all_exporters(:,4),50));90,floor(prctile(all_exporters(:,4),90))]
 median_succ = [10,floor(prctile(all_exporters(:,5),10));50,floor(prctile(all_exporters(:,5),50));90,floor(prctile(all_exporters(:,5),90))]
-
+%DJ NOTE: median_succ does not seem right -- should not be 1.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Now we have both the median productivity and success probabilities in hand
 %simulate value for these different types and plot
 
-X = [-7.18316880382057	-26.3540116409019	0.109886808294302	0.121780079917892	... 
-    0.139187763181924	17.4548988650076	0.0551783713735285	9.88014302009032	... 
-    3.38160294138473	12.6790901142734];
+theta = [-7.36860635010041,-20.6466017575077,0.0705689663149828,0.182537998345310,...
+    0.434516092398813,11.6676402703387,0.0563370713452114,4.14266745807416,...
+    2.87257237464644,13.3244805739937];
     
 % %USE FOREIGN PARAMETERS FOR HOME
 % %This way we can use value functions to learn about the importance of learning vs network
 % X(8) = X(10);
 %     
-% mm = setModelParameters(X);
-% policy = generatePolicyAndValueFunctions(mm);
+mm = setModelParameters(X);
+policy = generatePolicyAndValueFunctions(mm);
 
 % Key to value functions
 % value_f (succ, trial, common succ rate (defunct), network size, prod of firm, F macro shock) 
@@ -188,15 +188,15 @@ for start_yr = 1:6
     succ_seq(start_yr:start_yr + 4) = 1;
     
     cum_years = 0;
-    succs = 1;
-    trials = 1;
+    succs = 1; %first index is zero
+    trials = 1; %first index is zero
     for match_no = 0:9
-        trials = trials + 1;
-        succs = succs + succ_seq(match_no + 1);
         theta_guess = (mm.af + succs - 1) / (mm.af + mm.bf + trials - 1);
         theta_evolution(match_no+1,1,start_yr) = cum_years;
         theta_evolution(match_no+1,2,start_yr) = theta_guess;
-        cum_years = cum_years + 1 / (12 * policy.lambda_f(succs,trials,1,succs,median_prod(2,2),7));
+        cum_years = cum_years + 1 / policy.lambda_f(succs,trials,1,succs,median_prod(2,2),7);
+        trials = trials + 1;
+        succs = succs + succ_seq(match_no + 1);
     end
     
     cum_year_mat(start_yr) = cum_years;

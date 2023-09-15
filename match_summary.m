@@ -138,5 +138,6 @@ brooks = brooks(1:BrooksYrs,:);
 %% Construct degree distribution (used for graph by summary_table)
 DegreeDistCount = degree_dist(match_recs,mm);
 
+save results/val_dat_nolearning;
 % save('match_summary_out_8-14-23');
 end

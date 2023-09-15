@@ -18,18 +18,18 @@ function FirmCount = degree_dist(match_list,mm)
 
    maxMatch  = min(mm.max_match, max(max(firmMatchCount)));     
  % convert to frequency counts of # firms with each possible match count
-   MatFreq = zeros(maxMatch,maxYear);  
-   for yr=1:maxYear
-     if sum(firmMatchCount(:,yr))>0 % counts excluding duds
-     %the next line replicates firmMatchCount(:,yr) across columns up to
-     %max match.  The next term makes a matrix where each row contains the
-     %integers from 1 to maxMatch.  Finally, the difference is taken, and
-     %the logical is true when the difference is zero.  Finally the sum is
-     %taken to make a histogram of firm counts with each possible number of
-     %matches. This histogram is created seperately for each year.
-
-     MatFreq(:,yr) = sum(firmMatchCount(:,yr)*ones(1,mm.max_match) - ones(size(firmMatchCount(:,yr),1),1)*(1:mm.max_match)==0,1);
-     end
+%    MatFreq = zeros(maxMatch,maxYear);  
+%    for yr=1:maxYear
+%      if sum(firmMatchCount(:,yr))>0 % counts excluding duds
+%      %the next line replicates firmMatchCount(:,yr) across columns up to
+%      %max match.  The next term makes a matrix where each row contains the
+%      %integers from 1 to maxMatch.  Finally, the difference is taken, and
+%      %the logical is true when the difference is zero.  Finally the sum is
+%      %taken to make a histogram of firm counts with each possible number of
+%      %matches. This histogram is created seperately for each year.
+% 
+%      MatFreq(:,yr) = sum(firmMatchCount(:,yr)*ones(1,mm.max_match) - ones(size(firmMatchCount(:,yr),1),1)*(1:mm.max_match)==0,1);
+%      end
    end 
    
 % FirmCount = sum(MatFreq(:,1:end),2); % including burn-in years

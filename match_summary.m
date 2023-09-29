@@ -139,8 +139,8 @@ function [DegreeDistCount,exit_by_age,brooks] =  match_summary(simMoms,mm)
 % DegreeDistCount = degree_dist(match_recs,mm);
 
 %save results/val_dat;
-full_save_path = "results/exch_shock_plots/" + mm.save_name;
-save(char(full_save_path));
+full_save_path = "results/exch_shock_plots/" + mm.save_name + mm.boot_iter_num;
+save(char(full_save_path),'match_recs');
 % save('match_summary_out_8-14-23');
 
 DegreeDistCount = [];

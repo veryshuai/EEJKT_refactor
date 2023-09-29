@@ -1,4 +1,4 @@
-clear;
+%clear;
 rng(80085);
 
 load results/val_dat
@@ -9,28 +9,39 @@ files = {'results/exch_shock_plots/baseline_no_shk', ...
     'results/exch_shock_plots/baseline_down_shk'};
 
 for pol_k = 1:3
-    load(files{pol_k});
-    match_recs(:,10) = match_recs(:,1)/12; %years rather than months
+    match_recs_appended = [];
+    for m=1:200
+        filename = sprintf('%d.mat', m);
+        load([files{pol_k},filename], 'match_recs');
+        %  match_recs: [period, type, firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age]       
+        match_recs(:,3) = match_recs(:,3) + 10000 * m; %make firm ids unique across files
+        match_recs_appended = [match_recs_appended;match_recs];
+    end
+    match_recs = match_recs_appended;
 
-    for t=11:max(match_recs(:,10))
+    match_recs(:,10) = match_recs(:,1)/mm.pd_per_yr; %years rather than months
+
+    for t=10:max(match_recs(:,10)-1)
+
+
 
         match_recs_one_year = match_recs(match_recs(:,10) == t,:);
 
         new_id = 0.5*(match_recs_one_year(:,2)+match_recs_one_year(:,3)).*(match_recs_one_year(:,2)+match_recs_one_year(:,3)+1)+match_recs_one_year(:,3);
         [unique_firms,~,~] = unique(new_id);
         total_firms(t,pol_k) = size(unique_firms,1);
-        only_new_firms = match_recs_one_year(:,9) <= t-25;
-        only_first_yr_firms = match_recs_one_year(:,9) <= 1;
-        [new_firms,~,~] = unique(match_recs_one_year(only_new_firms,3));
-        [first_yr_firms,~,~] = unique(match_recs_one_year(only_first_yr_firms,3));
+        only_new_firms = match_recs_one_year(:,9)/mm.pd_per_yr < t-25;
+        only_first_yr_firms = match_recs_one_year(:,9)/mm.pd_per_yr < 1;
+        [new_firms,~,~] = unique(new_id(only_new_firms));
+        [first_yr_firms,~,~] = unique(new_id(only_first_yr_firms));
         [non_first_yr_firms,~,~] = unique(match_recs_one_year(~only_first_yr_firms,3));
         total_new_firms(t,pol_k) = size(new_firms,1);
         total_first_yr_firms(t,pol_k) = size(first_yr_firms,1);
         total_non_first_yr_firms(t,pol_k) = size(non_first_yr_firms,1);
 
         total_matches(t,pol_k) = size(match_recs_one_year,1);
-        only_new_matches = match_recs_one_year(:,8) <= t-25;
-        only_first_yr_matches = match_recs_one_year(:,8) <= 1;
+        only_new_matches = match_recs_one_year(:,8)/mm.pd_per_yr < t-25;
+        only_first_yr_matches = match_recs_one_year(:,8)/mm.pd_per_yr < 1;
         total_new_matches(t,pol_k) = size(match_recs_one_year(only_new_firms,:),1);
         total_old_firm_new_matches(t,pol_k) = size(match_recs_one_year(~only_new_firms & only_new_matches,:),1);
         total_old_firm_old_matches(t,pol_k) = size(match_recs_one_year(~only_new_firms & ~only_new_matches,:),1);

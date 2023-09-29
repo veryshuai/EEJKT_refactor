@@ -12,13 +12,11 @@ clear all;
 rng(80085,'twister');% set the seed and the rng (default parallel rand generator)
 seed_crand(80085);
 
-runs = 20; %20 %set number of runs to use in bootstrap
+runs = 200; %20 %set number of runs to use in bootstrap
      
-X = [-7.18316880382057,-26.3540116409019,0.109886808294302,0.121780079917892,...
-    0.139187763181924,17.4548988650076,0.0551783713735285,9.88014302009032,...
-    3.38160294138473,12.6790901142734];
-% alt fit metric: 12.3701 with separate cost parameters, lambda_h =
-% 2*lambda_f, and same profit function scalars.
+X = [-7.36860635010041,-20.6466017575077,0.0705689663149828,0.182537998345310,...
+    0.434516092398813,11.6676402703387,0.0563370713452114,4.14266745807416,...
+    2.87257237464644,13.3244805739937];
 
 %set some other common parameters
 mm = setModelParameters(X);
@@ -46,11 +44,13 @@ boot_rand_list = floor(rand(runs,1) * 1e6); %set the random seed differently for
 %data moments (use these for sizing later)
 [~, Data_alt, ~, W_alt] = target_stats();
 
-for iter = 1:runs
+for iter = 101:runs
     
     display(iter)
     
     rng(boot_rand_list(iter),'combRecursive');
+
+    mm.boot_iter_num = iter;
 
     %%calculated moments to match from model (DONT FORGET TO COMMENT THE SEED AT THE TOP)
     simMoms = simulateMomentsMain(policy,mm);
@@ -68,6 +68,8 @@ for iter = 1:runs
     for_sales_shr_boot_holder{iter}     = [simMoms.avg_expt_rate]; % mean share of exports to U.S. in total sales 
     exp_frac_boot_holder{iter}          = [simMoms.share_exptr]; % fraction of firms exporting to U.S.  
     spb_boot_holder{iter}               = [simMoms.model_shareD]; % fraction of firms with 1 buyer, 2 buyers, etc.
+
+    calculateDistanceAndPrint(simMoms,mm,X);
 
 end
   save results/moment_var
@@ -200,7 +202,7 @@ end
 
 dMdP = zeros(size(Data_alt,2),pv_siz);
 for iter = 1:pv_siz
-    dMdP(:,iter) = (fin_diff_mat(:,iter+1) - fin_diff_mat(:,1)) / ((fin_diff_size - 1) * param_vec(iter)); %this is our derivative approximation
+    dMsdP(:,iter) = (fin_diff_mat(:,iter+1) - fin_diff_mat(:,1)) / ((fin_diff_size - 1) * param_vec(iter)); %this is our derivative approximation
 end
 
 % (5) Delta method to get each parameters variance

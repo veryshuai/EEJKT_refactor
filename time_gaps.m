@@ -3,7 +3,7 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
 %  time_gap2 (unit of obs. is new matches):
     % (1) firm_ID, (2) period w/in interval, (3) gap size in periods 
     % (4) # new meetings at t,(5) t (6) cum. meetings, (7) cum. succeses 
-% mktexit_data:
+%  mktexit_data:
     % (1) mkt. exit dummy, (2) cum. meetings, (3) cum. successes
 
           pd_per_yr = mm.pd_per_yr;
@@ -18,7 +18,7 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
           new_meets  = cum_meets(:,2:end) - cum_meets(:,1:end-1);
           firm_flip  = new_meets(:,1:end)<0; 
           
-%% create variables for firm exit regression
+%% create variables for firm exit regression (not used)
           yr_lag       = 2*pd_per_yr; % end of year period, last year          
           exit         = logical((min(new_meets(:,yr_lag+1:end),[],2) < 0).*(cur_cli_cnt(:,yr_lag)>0));  % flags firm_IDs that flip ownership during year
           no_exit      = logical((min(new_meets(:,yr_lag+1:end),[],2) >= 0).*(cur_cli_cnt(:,yr_lag)>0)); % flags firm IDs that don't flip during previous yr
@@ -60,31 +60,41 @@ function [time_gap2,mktexit_data] = time_gaps(iter_in,mm)
           new_meets_add = temp(:,3);
           cum_meet_add  = temp(:,4);
           cum_succ_add  = temp(:,5);
-          firm_flip_add = temp(:,6:end);
+          firm_flip_add = temp(:,6:end); 
 
           % measure gap length and identify gaps that span a flipping period
            nnn = length(rr);
-           gap = zeros(nnn-1,1);
-           same_firm = false(nnn,1);
-           for j=2:nnn
-               gap(j,1) = cc(j) - cc(j-1);
+           gap = zeros(nnn,1);
+           same_firm = false(nnn,1); % will flag matches followed by others of same firm
+           diff_firm = false(nnn,1); % will flag firms' last recorded match in the interval
+           for j=1:nnn-1
+               gap(j,1) = cc(j+1) - cc(j);
                same_firm(j) = ...
-               logical(rr(j)-rr(j-1)==0 && sum(firm_flip_add(j,cc(j-1):cc(j)))==0) ;
+               logical(rr(j+1)-rr(j)==0 && sum(firm_flip_add(j,cc(j):cc(j+1)))==0) ;
+               diff_firm(j) = logical(1 - same_firm(j));
            end
            
            %  temp2 contains observations on all firm-period pairs in which new meetings take place. 
            temp2 = [rr, cc, gap, new_meets_add, same_firm, cum_meet_add, cum_succ_add];
+        
            % (1) firm_ID, (2) period w/in interval, (3) gap (4) # new meetings,(5)same firm
            % (6) cum. meetings, (7) cum succeses
           
+           % Last row of temp2 must have a gap of at least 2 years once if
+           % it clears the current year filter below
+           temp2(end,3) = 24;
+           
           catch
           fprintf('\r\n problem in time gaps line 44-65, firm type  = %.3f\n',iter_in.pt_ndx);
            end
           time_gap = temp2(same_firm,:); 
+          time_gap_last = temp2(diff_firm,:); % These are matches with firm flips before next match
+          time_gap_last(:,3) = 36; % Assign them a very low match hazard (1 match per 3 years)
+          time_gap = [time_gap; time_gap_last];
 
           
           % only keep matches that happen in the current year
-          time_gap = time_gap(time_gap(:,2)>2*pd_per_yr,:)  ;        
+          time_gap = time_gap(time_gap(:,2)<=pd_per_yr,:)  ;        
            % (1) firm_ID, (2) period w/in interval, (3) gap (4) # new meetings,(5)same firm
            % (6) cum. meetings, (7) cum succeses   
            

@@ -5,17 +5,18 @@ function summary_tables(simMoms,mm)
    fprintf('\r\n Average log shipments: %.4f\n',simMoms.avg_ln_ships); 
 
 %% match maturation, by type 
-[DegreeDistCount,bexit,brooks] = match_summary(simMoms,mm);
+[DegreeDistCount,exit_by_age,brooks] = match_summary(simMoms,mm);
+%[DegreeDistCount,bexit,brooks] = match_summary_v1(simMoms,mm);
 
 %  Data for Brooks table 2 include all generated matches. Data from Brooks table 1 
 %  only include types with matches in both the current and the previous year. 
 %  Thus the data for table 1 miss some of the marginal firm types, though the discrepancy is minor.
 
-bexit = bexit(2:6,:);
+exit_by_age = exit_by_age(2:6,:);
 MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
     format shortG
-    quantile_1 = bexit(:,1); quantile_2 = bexit(:,2); quantile_3 = bexit(:,3);
-    quantile_4 = bexit(:,4);    
+    quantile_1 = exit_by_age(:,1); quantile_2 = exit_by_age(:,2); quantile_3 = exit_by_age(:,3);
+    quantile_4 = exit_by_age(:,4);    
    Match_exit_rates = table(quantile_1,quantile_2,quantile_3,quantile_4,'RowNames',MatchAge)             
 
  CohortAge = {'1-yr old','2-yr old','3-yr old','4-yr old','5-yr old',...

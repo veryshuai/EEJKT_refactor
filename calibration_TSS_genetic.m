@@ -8,6 +8,7 @@
     
 % mm.F_h       = exp(X(1));  % cost of maintaining a client- home 
 % mm.scale_h   = X(2);       % Domestic profit function scale parameter
+% mm.scale_f   = X(2)+1;     % Export profit function scale parameter 
 % mm.ah        = X(4)*X(3);  % Beta function, home (theta1) success parameter
 % mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
 % D_z          = X(5)/mm.pd_per_yr; % Jump size, match productivity shock
@@ -15,38 +16,59 @@
 % mm.gam       = X(7);       % Network effect parameter
 % mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
 % mm.sig_p     = X(9);       %standard deviation of productivity distribution
-% mm.F_f       = exp(X(1)); % cost of maintaining a client- foreign
+% mm.F_f       = exp(X(1));  % cost of maintaining a client- foreign
 % mm.cs_f      = exp(X(10)); % Cost scaling parameter, foreign market
-% mm.scale_f   = X(11);       % Export profit function scale parameter (same as home)
-% mm.optimism  = 0 ; %parameter on prior distribution 
+% mm.optimism  = 0;          %parameter on prior distribution 
 
 %%
 
-fprintf('\r\n STARTING A NEW RUN (restricted model): %s\n ', datestr(now,'yyyy_mmdd_HHMM'));
+fprintf('\r\n STARTING A NEW RUN: %s\r ', datestr(now,'yyyy_mmdd_HHMM'));
+fprintf('\n Unconstrained profit function scalars\r');
+fprintf('\n Degree distribution not targeted, minimizing original D \r');
+fprintf('\n Updated hazard measure and hazard regression targeted \r');
+fprintf('\n S = 50000 potential firms\r');
 
-fileID1 = fopen('results/ga_running_output_restricted.txt','a');
- fprintf(fileID1,'\r\n STARTING A NEW RUN (restricted model) %s\n', datestr(now,'yyyy_mmdd_HHMM') );
+
+
+fileID1 = fopen('results/ga_running_output_2sclNewHaz.txt','a');
+  fprintf(fileID1,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
+  fprintf(fileID1,'\n Unconstrained profit function scalars\r');
+  fprintf(fileID1,'\n Degree distribution not targeted, minimizing original D \r');
+  fprintf(fileID1,'\n Updated hazard measure and hazard regression targeted \r');
+  fprintf(fileID1,'\n Unconstrained profit function scalars\r');
+  fprintf(fileID1,'\n S = 50000 potential firms \r');
 fclose(fileID1);
 
-fileID2 = fopen('results/ga_fitlog_restricted.txt','a');
+fileID2 = fopen('results/ga_fitlog_2sclNewHaz.txt','a');
   fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
+  fprintf(fileID2,'\n Unconstrained profit function scalars\r');
+  fprintf(fileID2,'\n Degree distribution not targeted, minimizing original D \r');
+  fprintf(fileID2,'\n Updated hazard measure and hazard regression targeted \r');
+  fprintf(fileID2,'\n S = 50000 potential firms \r');
 fclose(fileID2);
  
- 
-% theta = [-4.92444290760212,-27.9412276522655,0.173719817766680,...
-%          0.149174564820941,0.435666463937585,14.6171833559373,...
-%     0.131787405862920,8.81158882786645,3.37967374928709,10.6400808158221,0.149174564820941];
-% alt fit metric: 11.969925590604335 (with quadratic search costs and S=10000)
 
-% theta = [-5.54845801486006,-27.9276029273286,0.183454179425287,0.134091994275606,...
-%     0.312956304422016,13.0826080407669,0.115310320152066,9.69219215273992,...
-%     3.45209285533265,11.7866318512518,0.118246569286443];
-% alt fit metric: 11.650 with optimism parameter estimated
-
-
-theta = [-5.54845801486006,-27.9276029273286,0.183454179425287,0.134091994275606,...
-    0.312956304422016,13.0826080407669,0.115310320152066,9.69219215273992,...
-    3.45209285533265,11.7866318512518,-27.9276029273286];
+% theta =...
+%     [ -6.52390 -19.91885   0.07778   0.22093   0.50050  11.43869...
+%        0.05174   3.89969   2.63658  11.02215]; % fit = 11.3765
+% 
+% theta =[-5.73144888007375	-16.1844310171305    0.109738437680579...
+%          0.242942844550223    0.605350029387283 11.0996895678257...
+%          0.0467130185363216   3.07428217391970	 2.20454924542622...
+%         11.1042769087445]; % fit = 10.9807
+    
+% theta = [-7.73724 -12.76932   0.11799   0.24781   0.46288   8.34401...
+%           0.05868   4.17410   1.68781  12.07565 -11.76932];  % fit = 10.75460
+      
+% theta = [-6.13067795576060	-14.7878140561022	0.116104623271765...
+%          0.287168108117947	0.551351332778652	9.70261839734432...
+%          0.0646865540473156	3.90851546299691	1.93735060502043...
+%          14.1444949193409	-12.9121281421765];  % fit = 10.4748
+     
+theta = [-5.44086676636325,-19.4382242330205,0.158825726539545,0.367383665973718,...
+    0.483330444401690,10.6297324206023,0.0469201052969252,5.20915076877990,...
+    2.18909944116805,11.7998950817073]; % fit = 10.4266     
+      
 
 % X = theta;     
 
@@ -70,6 +92,7 @@ X0 = lb + rng.*H;
 clear lb ub rng
 % initial population
 population = X0;
+population(1,:) = theta;
 
 cf = 0.30;          % crossover fraction
 EC = 4;             % elite count

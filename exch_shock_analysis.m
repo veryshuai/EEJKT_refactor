@@ -23,8 +23,6 @@ for pol_k = 1:3
 
     for t=10:max(match_recs(:,10)-1)
 
-
-
         match_recs_one_year = match_recs(match_recs(:,10) == t,:);
 
         new_id = 0.5*(match_recs_one_year(:,2)+match_recs_one_year(:,3)).*(match_recs_one_year(:,2)+match_recs_one_year(:,3)+1)+match_recs_one_year(:,3);
@@ -34,7 +32,7 @@ for pol_k = 1:3
         only_first_yr_firms = match_recs_one_year(:,9)/mm.pd_per_yr < 1;
         [new_firms,~,~] = unique(new_id(only_new_firms));
         [first_yr_firms,~,~] = unique(new_id(only_first_yr_firms));
-        [non_first_yr_firms,~,~] = unique(match_recs_one_year(~only_first_yr_firms,3));
+        [non_first_yr_firms,~,~] = unique(new_id(~only_first_yr_firms));
         total_new_firms(t,pol_k) = size(new_firms,1);
         total_first_yr_firms(t,pol_k) = size(first_yr_firms,1);
         total_non_first_yr_firms(t,pol_k) = size(non_first_yr_firms,1);

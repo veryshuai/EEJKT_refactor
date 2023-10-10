@@ -231,17 +231,17 @@ param_est = table(parameter,std_error,z_ratio,'Rownames',AGS_param_names)
 save results/bootstrap_results
 
 %% The following block handles the case where F is essentially 0 and shows no variation 
-% 
-% G2 = -dMdP(:,2:end); % drop first column, since no variation in F 
-% 
-% V2 = inv(G2' * W_alt * G2) * G2' * W_alt * Mcov * W_alt * G2 * inv(G2' * W_alt * G2);
-% 
-% AGS_param_names2 = {'scale_h', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f'};
-% Psd2 = diag(V2).^0.5;
-% std_error2 = Psd2;
-% param_vec2 = param_vec(2:end);
-% parameter2 = param_vec2;
-% z_ratio2 = parameter2./std_error2;
-% format short
-% param_est2 = table(parameter2,std_error2,z_ratio2,'Rownames',AGS_param_names2)
+
+G2 = -dMdP(:,2:end); % drop first column, since no variation in F 
+
+V2 = inv(G2' * W_alt * G2) * G2' * W_alt * Mcov * W_alt * G2 * inv(G2' * W_alt * G2);
+
+AGS_param_names2 = {'scale_h', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f'};
+Psd2 = diag(V2).^0.5;
+std_error2 = Psd2;
+param_vec2 = param_vec(2:end);
+parameter2 = param_vec2;
+z_ratio2 = parameter2./std_error2;
+format short
+param_est2 = table(parameter2,std_error2,z_ratio2,'Rownames',AGS_param_names2)
 

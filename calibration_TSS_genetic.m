@@ -8,6 +8,7 @@
     
 % mm.F_h       = exp(X(1));  % cost of maintaining a client- home 
 % mm.scale_h   = X(2);       % Domestic profit function scale parameter
+% mm.scale_f   = X(2)+1;     % Export profit function scale parameter 
 % mm.ah        = X(4)*X(3);  % Beta function, home (theta1) success parameter
 % mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
 % D_z          = X(5)/mm.pd_per_yr; % Jump size, match productivity shock
@@ -17,8 +18,7 @@
 % mm.sig_p     = X(9);       %standard deviation of productivity distribution
 % mm.F_f       = exp(X(1));  % cost of maintaining a client- foreign
 % mm.cs_f      = exp(X(10)); % Cost scaling parameter, foreign market
-% mm.scale_f   = X(2)+1;     % Export profit function scale parameter (same as home)
-% mm.optimism  = 0 ; %parameter on prior distribution 
+% mm.optimism  = 0;          %parameter on prior distribution 
 
 %%
 
@@ -29,10 +29,6 @@ fileID1 = fopen('results/ga_running_output_nolearning.txt','a');
 fclose(fileID1);
 
 fileID2 = fopen('results/ga_fitlog_nolearning.txt','a');
-  fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
-  fprintf(fileID2,'\n Foreign profit scaler set to twice home market profit scaler \r');
-  fprintf(fileID2,'\n Degree distribution not targeted, minimizing original D \r');
-fclose(fileID2);
 
 %theta = [-7.36860635010041,-20.6466017575077,0.0705689663149828,0.182537998345310,...
 %    0.434516092398813,11.6676402703387,0.0563370713452114,4.14266745807416,...
@@ -42,6 +38,10 @@ theta = [-6.45612526146465	-24.8597549465442	0.0641132001252187	0.12408202550784
     2.75085781160114	14.4951685743077];
 % No learning: fit is 11.7367794603627 on Windows (11.735753755320403 in
 % linux)
+     
+theta = [-5.44086676636325,-19.4382242330205,0.158825726539545,0.367383665973718,...
+    0.483330444401690,10.6297324206023,0.0469201052969252,5.20915076877990,...
+    2.18909944116805,11.7998950817073]; % fit = 10.4266     
 
 % X = theta;     
 

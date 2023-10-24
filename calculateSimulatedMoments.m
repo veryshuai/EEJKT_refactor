@@ -94,6 +94,8 @@ simMoms.b_usq_succ = regress(usq_succ,[const, ln_meet]);
 % translog meeting hazard regression
 X_haz = [const, simMoms.ln_csucc, simMoms.ln_csucc.^2, simMoms.ln_succ_rate, simMoms.ln_succ_rate.^2, simMoms.ln_succ_rate.*simMoms.ln_csucc];
 simMoms.b_haz = regress(ln_haz,X_haz);
+X_hazNew = [const,ln_meet];
+simMoms.b_hazNew = regress(ln_haz,X_hazNew);
 
 % means of log hazard rate, success rate, and squared residuals from succ rate
 means_vec = mean([ln_haz,simMoms.succ_rate,usq_succ]);

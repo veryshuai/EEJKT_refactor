@@ -47,7 +47,7 @@ function [agg_mat_lifecycle,agg_orphan_matches] = lifecycle(NumTF,TF_matdat,mm,m
       
               ii = 1; 
               while ii <= N_TFC %looping over matches of age aa for firm-type TF_id
-              fprintf('\r type-firm ID = %0.0f, match age = %0.0f, match number = %0.0f',[TF_id,aa,ii]);
+              % fprintf('\r type-firm ID = %0.0f, match age = %0.0f, match number = %0.0f',[TF_id,aa,ii]);
               lagFmAge = mat_lifecycleC(ii,5*(aa-2)+1);
               lagMaAge = mat_lifecycleC(ii,5*(aa-2)+2);
               lag_eoyZ = mat_lifecycleC(ii,5*(aa-2)+4);

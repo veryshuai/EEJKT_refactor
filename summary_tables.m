@@ -47,12 +47,12 @@ MatchAge={'1-yr old','2-yr old','3-yr old','4-yr old','5+ yr old'};
      ylabel('log(1-CDF)')
      title('Buyers per Seller degree distribution')
      
-     FirmFrac = [DegreeDistCount(1:5)./sum(DegreeDistCount);...
-                 sum(DegreeDistCount(6:10))/sum(DegreeDistCount);...
-                 sum(DegreeDistCount(11:end))/sum(DegreeDistCount)];
-     CumFrac = [degreeCDF(1:5)';degreeCDF(10);degreeCDF(end)];
-                 
-     FirmFreq = {'1 match','2 match','3 matches','4 matches','5 matches',...
-                  '6-10 matches','>10 matches'};
-     DegreeDist = table(FirmFrac,CumFrac,'RowNames',FirmFreq) 
-        
+%      FirmFrac = [DegreeDistCount(1:5)./sum(DegreeDistCount);...
+%                  sum(DegreeDistCount(6:10))/sum(DegreeDistCount);...
+%                  sum(DegreeDistCount(11:end))/sum(DegreeDistCount)];
+%      CumFrac = [degreeCDF(1:5)';degreeCDF(10);degreeCDF(end)];
+%                  
+%      FirmFreq = {'1 match','2 match','3 matches','4 matches','5 matches',...
+%                   '6-10 matches','>10 matches'};
+%      DegreeDist = table(FirmFrac,CumFrac,'RowNames',FirmFreq) 
+%         

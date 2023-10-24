@@ -44,7 +44,7 @@ function [Data, W] = target_stats()
 %   moments 23-24
     succ_rate_coefsDAT   = [0.413,0.093];  % [mean succ rate, ln(1+meetings)]
 %   moments 25-26    
-    sr_var_coefsDAT      = [0.0912,-0.060]; % [mean succ rate, ln(1+meetings)]
+    sr_var_coefsDAT      = [0.0912,-0.060]; % [mean variance of succ rate, ln(1+meetings)]
 %   moment 27
     for_sales_shrDAT     =  0.1616; % mean share of exports to U.S. in total sales (Marcela revised stat 9-15-23)
 %   moment 28    

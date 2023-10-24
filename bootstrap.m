@@ -6,7 +6,6 @@
 % (4) Generate gradients for moments on parameters
 % (5) Use delta method to get variance for parameters
 
-
 clear all;
 
 rng(80085,'twister');% set the seed and the rng (default parallel rand generator)
@@ -14,14 +13,14 @@ seed_crand(80085);
 
 runs = 20; %20 %set number of runs to use in bootstrap
      
-X =[-5.73144888007375	-16.1844310171305    0.109738437680579...
-     0.242942844550223    0.605350029387283 11.0996895678257...
-     0.0467130185363216   3.07428217391970	 2.20454924542622...
-    11.1042769087445]; % fit = 10.9807
+X = [-5.44086676636325,-19.4382242330205,0.158825726539545,0.367383665973718,...
+    0.483330444401690,10.6297324206023,0.0469201052969252,5.20915076877990,...
+    2.18909944116805,11.7998950817073]; % fit = 10.4266    
 %  separate cost parameters, lambda_h = 2*lambda_f, same profit function scalars.
 
 mm = setModelParameters(X);
-mm.check_type = 108;
+% mm.check_type = 108;
+fin_diff_size = (1 + 0.12); % percentage deviation for parameter value derivatives 
 
 %solve the model 
 policy = generatePolicyAndValueFunctions(mm);
@@ -78,8 +77,6 @@ end
 % (2) Now we need finite differences of parameters on moments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fin_diff_size = (1 + 0.08); %percentage of parameter value 
-
 param_vec = [mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f]';
 pv_siz    = size(param_vec,1);
 
@@ -119,7 +116,7 @@ for iter =1:pv_siz + 1
     rng(80085,'twister');% set the seed and the rng (default parallel rand generator)
     seed_crand(80085);
     mm = bootstrap_setModelParametersNoHead(X,mm);
-    mm.check_type = 108;
+%   mm.check_type = 108;
     policy = generatePolicyAndValueFunctions(mm);
     rng(80085,'twister');% set the seed and the rng (default parallel rand generator)
     simMoms = simulateMomentsMain(policy,mm);
@@ -231,17 +228,18 @@ param_est = table(parameter,std_error,z_ratio,'Rownames',AGS_param_names)
 save results/bootstrap_results
 
 %% The following block handles the case where F is essentially 0 and shows no variation 
+% 
+% G2 = -dMdP(:,2:end); % drop first column, since no variation in F 
+% V2 = inv(G2' * W * G2) * G2' * W * Mcov * W * G2 * inv(G2' * W * G2);
+% 
+% AGS_param_names2 = {'scale_h', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f'};
+% Psd2 = diag(V2).^0.5;
+% std_error2 = Psd2;
+% param_vec2 = param_vec(2:end);
+% parameter2 = param_vec2;
+% z_ratio2 = parameter2./std_error2;
+% format short
+% param_est2 = table(parameter2,std_error2,z_ratio2,'Rownames',AGS_param_names2)
 
-G2 = -dMdP(:,2:end); % drop first column, since no variation in F 
-
-V2 = inv(G2' * W_alt * G2) * G2' * W_alt * Mcov * W_alt * G2 * inv(G2' * W_alt * G2);
-
-AGS_param_names2 = {'scale_h', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'cs_h', 'sig_p', 'cs_f'};
-Psd2 = diag(V2).^0.5;
-std_error2 = Psd2;
-param_vec2 = param_vec(2:end);
-parameter2 = param_vec2;
-z_ratio2 = parameter2./std_error2;
-format short
-param_est2 = table(parameter2,std_error2,z_ratio2,'Rownames',AGS_param_names2)
-
+FileName = ['Output/' 'Std errors and AGS matrices','_',datestr(now,'yyyy_mmdd_HHMM')];
+    save(FileName,'X','param_est','fin_diff_size','AGS_table')

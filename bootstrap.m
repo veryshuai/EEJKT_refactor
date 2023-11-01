@@ -51,7 +51,7 @@ Data            = Data(:,MomsUsed);
 temp            = W(MomsUsed,:);
 W               = temp(:,MomsUsed);
 
-for iter = 101:runs
+for iter = 1:runs
     
     display(iter)
     

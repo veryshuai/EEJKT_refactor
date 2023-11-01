@@ -5,7 +5,7 @@ mm = struct();
 %% Exchange rate shock parameters
 mm.exchange_rate_shock_multiplier = log(0.8); %actual multiplier in code: exp(mm.F + exchange_rate_shock_multiplier)
 mm.save_name = "baseline_down_shk";
-mm.S         = 10000;    % number of potential exporting firms to simulate (10000 in estimation)
+mm.S         = 50000;    % number of potential exporting firms to simulate (10000 in estimation)
 
 %% technology parameters
 
@@ -77,7 +77,6 @@ mm.tot_yrs       = 50;   % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
 
-mm.S         = 50000;    % number of potential exporting firms to simulate 
 mm.burn      = 10;       %number of burn-in years
 mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;     % Number of possible matches for domestic market

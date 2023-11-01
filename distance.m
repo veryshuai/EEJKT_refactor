@@ -13,9 +13,13 @@ function D = distance(X)
     
     policy = generatePolicyAndValueFunctions(mm);
     simMoms = simulateMomentsMain(policy,mm);
+<<<<<<< HEAD
+    [D,~] = calculateDistanceAndPrint(simMoms,mm,X);
+=======
     [D,D_alt,~] = calculateDistanceAndPrint(simMoms,mm,X);
 
 %   D = D_alt; %uncomment this line to use degree distrib. fit metric
+>>>>>>> 1637ac0c13d8501e086a471e35fede732074e79c
 
 %catch
 

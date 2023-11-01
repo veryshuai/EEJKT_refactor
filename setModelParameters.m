@@ -22,7 +22,7 @@ mm.param_vec = X;      % carry along parameter vector for diagnostic checks
 
 mm.F_h       = exp(X(1));  % cost of maintaining a client- home 
 mm.scale_h   = X(2);       % Domestic profit function scale parameter
-mm.scale_f   = X(2)+1;     % Export profit function scale parameter 
+mm.scale_f   = X(2)+1;    % Export profit function scale parameter 
 mm.ah        = X(4)*X(3);  % Beta function, home (theta1) success parameter
 mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
 D_z          = X(5)/mm.pd_per_yr; % Jump size, match productivity shock
@@ -77,12 +77,13 @@ mm.tot_yrs       = 50;   % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
 
+mm.S         = 50000;    % number of potential exporting firms to simulate 
 mm.burn      = 10;       %number of burn-in years
 mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;     % Number of possible matches for domestic market
-mm.MaxMatchMonth = 1.5e+6; % Max number of match-months in any year for a given firm type
+mm.MaxMatchMonth = 1e+7; % Max number of match-months in any year for a given firm type
 mm.max_home_clients = 500; %maximum number of active clients we allow firms to have at home
-mm.abort_time = 150000;    % number of seconds allowed before evaluation is aborted 
+mm.abort_time = 5000;    % number of seconds allowed before evaluation is aborted 
 %% Cost function
 
 mm.kappa1 = 2;  

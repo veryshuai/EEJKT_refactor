@@ -38,7 +38,7 @@ function [Data, W] = target_stats()
 %   moments 18-20    
     dom_ar1_coefsDAT     = [14.29349,0.9764422,0.46207^2]; % [mean dep var.,coef,MSE] 
 %   moments 21-22
-    ln_hazNew_coefsDAT      = [-3.05, 0.84]; % [mean dep. var, ln(1+a)]     
+    ln_hazNew_coefsDAT      = [-3.051, 0.837]; % [mean dep. var, ln(1+a)]     
 %   moments 23-24
     succ_rate_coefsDAT   = [0.413,0.093];  % [mean succ rate, ln(1+meetings)]
 %   moments 25-26    

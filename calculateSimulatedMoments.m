@@ -92,7 +92,8 @@ usq_succ = uu.^2;
 simMoms.b_usq_succ = regress(usq_succ,[const, ln_meet]);
 
 % translog meeting hazard regression
-X_haz = [const, simMoms.ln_csucc, simMoms.ln_csucc.^2, simMoms.ln_succ_rate, simMoms.ln_succ_rate.^2, simMoms.ln_succ_rate.*simMoms.ln_csucc];
+% X_haz = [const, simMoms.ln_csucc, simMoms.ln_csucc.^2, simMoms.ln_succ_rate, simMoms.ln_succ_rate.^2, simMoms.ln_succ_rate.*simMoms.ln_csucc];
+X_haz = [const, ln_meet];
 simMoms.b_haz = regress(ln_haz,X_haz);
 X_hazNew = [const,ln_meet];
 simMoms.b_hazNew = regress(ln_haz,X_hazNew);

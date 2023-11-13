@@ -5,17 +5,15 @@ function [Data, W] = target_stats()
     % match_death_coefs from CJ 5/12/15 p. 11, also in CJ spreadsheet of 3/29/16
     % match_ar1_coefs   from CJ 5/12/15 p. 11, also in CJ spreadsheet of 3/29/16
     % loglog_coefs      from CJ 5/12/15 p. 11, also in CJ spreadsheet of 3/29/16
-    %%
-    %% mavship           from CJ 6/11/15  [JT: I'M NOT FINDING THIS IN LOGS]
-    %%
+    % mavship           from RDC disclosure 11045_20231109
     % ex_dom_coefs      from Marcela 6/22/17 except for mean of dep. var, which is in $ and from C.J.
     % dom_ar1_coefs     from Marcela 6/22/17 except for mean of dep. var*
-    % ln_haz_coefs      BASED ON DIAN DATA FOR NOW 9/20/23
+    % ln_haz_coefs      from RDC disclosure 11045_20231109
     % last_match_coefs  from US customs records, disclosed 12-12-16 & 05-07-19 
     % succ_rate_coefs   from RDC disclosure 2-3-17 & 05-07-19
     % sr_var_coefs      from RDC disclosure 2-3-17 & 05-07-19
-    % for_sales_shr     from Marcela 9/15/23
-    % exp_frac          from Marcela 9/15/23
+    % for_sales_shr     from Marcela Outputs_EAM_moms_aug2023.xlsx
+    % exp_frac          from Marcela Outputs_EAM_moms_aug2023.xlsx
     
     % *avg. ln(exports|#matches>0) = 
     %  avg. ln(match sales) + avg. ln(#matches) +var(match sales)/2 
@@ -34,21 +32,21 @@ function [Data, W] = target_stats()
 %   moments 11-13 (not used)
     loglog_coefsDAT      = [-5.9731 -1.88130 -0.05446];  % [intercept, slope, quadratic term]
 %   moment 14
-    mavshipDAT           = 0.9706402010; % average ln(# shipments) 
+    mavshipDAT           = 1.176; % average ln(# shipments) 
 %   moments 15-17    
     exp_dom_coefsDAT     = [11.0399,0.3228142,2.606^2]; % [mean dep var.,coef,MSE]  
 %   moments 18-20    
     dom_ar1_coefsDAT     = [14.29349,0.9764422,0.46207^2]; % [mean dep var.,coef,MSE] 
 %   moments 21-22
-    ln_hazNew_coefsDAT      = [-1.85 ,0.96]; % [mean dep. var, ln(1+a)]     
+    ln_hazNew_coefsDAT      = [-3.051, 0.837]; % [mean dep. var, ln(1+a)]     
 %   moments 23-24
     succ_rate_coefsDAT   = [0.413,0.093];  % [mean succ rate, ln(1+meetings)]
 %   moments 25-26    
     sr_var_coefsDAT      = [0.0912,-0.060]; % [mean succ rate, ln(1+meetings)]
 %   moment 27
-    for_sales_shrDAT     =  0.1616; % mean share of exports to U.S. in total sales (Marcela revised stat 9-15-23)
+    for_sales_shrDAT     =  0.1616; % mean share of exports to U.S. in total sales (Marcela revised stat august 2023)
 %   moment 28    
-    exp_fracDAT          =  0.0954; % fraction of firms that export to U.S. (Marcela revised stat 9-15-23)
+    exp_fracDAT          =  0.0954; % fraction of firms that export to U.S. (Marcela revised stat august 2023)
     
 
  Data = [match_death_coefsDAT,match_ar1_coefsDAT,loglog_coefsDAT,mavshipDAT,exp_dom_coefsDAT,...
@@ -85,8 +83,7 @@ loglog_coefsCOV = ...
    
 %    BPS_distCOV = cum_cov(cdf_BPS,N_exptr); 
    
-
-    mavshipCOV = 0.00415553^2;  % note that I squared the standard error here
+    mavshipCOV = 0.001422^2;  % from RDC disclosure 11045_20231109
 
  % The following two matrices come from Marcela's printout (DIAN only 21 Feb. 2013)
 
@@ -103,10 +100,10 @@ loglog_coefsCOV = ...
     
 % The following matrices are based on U.S. customs records. 
 
-% New match hazard regression (BASED ON DIAN DATA FOR NOW)
- match_haz_coefsCOV = ...
-    [0.01201    0;
-     0       0.00914].^2 ; % second number is made-up as a place-holder 
+% New match hazard regression 
+ match_haz_coefsCOV = ...  % from RDC disclosure 11045_20231109
+    [0.0053    0;
+     0       0.0082].^2 ;  
 
 
 %   lst_match_coefsCOV = ...

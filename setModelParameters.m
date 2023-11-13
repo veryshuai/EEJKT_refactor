@@ -3,9 +3,9 @@ function mm = setModelParameters(X)
 mm = struct();
 
 %% Exchange rate shock parameters
-mm.exchange_rate_shock_multiplier = log(0.8); %actual multiplier in code: exp(mm.F + exchange_rate_shock_multiplier)
-mm.save_name = "baseline_down_shk";
-mm.S         = 50000;    % number of potential exporting firms to simulate (10000 in estimation)
+mm.exchange_rate_shock_multiplier = log(1); %actual multiplier in code: exp(mm.F + exchange_rate_shock_multiplier)
+mm.save_name = "baseline_no_shk";
+mm.S         = 10000;    % number of potential exporting firms to simulate (10000 in estimation)
 
 %% technology parameters
 
@@ -22,7 +22,7 @@ mm.param_vec = X;      % carry along parameter vector for diagnostic checks
 
 mm.F_h       = exp(X(1));  % cost of maintaining a client- home 
 mm.scale_h   = X(2);       % Domestic profit function scale parameter
-mm.scale_f   = X(2)+1;    % Export profit function scale parameter 
+mm.scale_f   = X(2)+1;     % Export profit function scale parameter 
 mm.ah        = X(4)*X(3);  % Beta function, home (theta1) success parameter
 mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
 D_z          = X(5)/mm.pd_per_yr; % Jump size, match productivity shock
@@ -80,7 +80,7 @@ mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simula
 mm.burn      = 10;       %number of burn-in years
 mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;     % Number of possible matches for domestic market
-mm.MaxMatchMonth = 1e+7; % Max number of match-months in any year for a given firm type
+mm.MaxMatchMonth = 1.5e+7; % Max number of match-months in any year for a given firm type
 mm.max_home_clients = 500; %maximum number of active clients we allow firms to have at home
 mm.abort_time = 5000;    % number of seconds allowed before evaluation is aborted 
 %% Cost function
@@ -168,4 +168,3 @@ mm.erg_pz       = erg_pz;   %ergodic distribution of demand shocks
 mm.N_pt          = size(mm.Phi,1)*size(mm.theta2,2);
 mm.pt_type = [kron((1:size(mm.Phi,1))',ones(size(mm.theta2,2),1)),kron(ones(size(mm.Phi,1),1),(1:size(mm.theta2,2))')];
 mm.sim_firm_num_by_prod_succ_type = round(mm.erg_pp(mm.pt_type(:,1)).*mm.th2_pdf(mm.pt_type(:,2))'*mm.S);
-

@@ -22,53 +22,34 @@
 
 %%
 
-fprintf('\r\n STARTING A NEW RUN: %s\r ', datestr(now,'yyyy_mmdd_HHMM'));
-fprintf('\n Unconstrained profit function scalars\r');
+fprintf('\r\n STARTING A NEW RUN (restricted model): %s\r ', datestr(now,'yyyy_mmdd_HHMM'));
+fprintf('\n Foreign profit scale set to twice home market profit scaler ');
 fprintf('\n Degree distribution not targeted, minimizing original D \r');
 fprintf('\n Updated hazard measure and hazard regression targeted \r');
 fprintf('\n S = 50000 potential firms\r');
 
 
-
 fileID1 = fopen('results/ga_running_output_2sclNewHaz.txt','a');
-  fprintf(fileID1,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
-  fprintf(fileID1,'\n Unconstrained profit function scalars\r');
+  fprintf(fileID1,'\r\n STARTING A NEW RUN (restricted model) %s\n', datestr(now,'yyyy_mmdd_HHMM') );
+  fprintf(fileID1,'\n Foreign profit scaler set to twice home market profit scaler \r');
   fprintf(fileID1,'\n Degree distribution not targeted, minimizing original D \r');
   fprintf(fileID1,'\n Updated hazard measure and hazard regression targeted \r');
-  fprintf(fileID1,'\n Unconstrained profit function scalars\r');
   fprintf(fileID1,'\n S = 50000 potential firms \r');
 fclose(fileID1);
 
 fileID2 = fopen('results/ga_fitlog_2sclNewHaz.txt','a');
   fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
-  fprintf(fileID2,'\n Unconstrained profit function scalars\r');
+  fprintf(fileID2,'\n Foreign profit scaler set to twice home market profit scaler \r');
   fprintf(fileID2,'\n Degree distribution not targeted, minimizing original D \r');
   fprintf(fileID2,'\n Updated hazard measure and hazard regression targeted \r');
   fprintf(fileID2,'\n S = 50000 potential firms \r');
 fclose(fileID2);
- 
 
-% theta =...
-%     [ -6.52390 -19.91885   0.07778   0.22093   0.50050  11.43869...
-%        0.05174   3.89969   2.63658  11.02215]; % fit = 11.3765
-% 
-% theta =[-5.73144888007375	-16.1844310171305    0.109738437680579...
-%          0.242942844550223    0.605350029387283 11.0996895678257...
-%          0.0467130185363216   3.07428217391970	 2.20454924542622...
-%         11.1042769087445]; % fit = 10.9807
-    
-% theta = [-7.73724 -12.76932   0.11799   0.24781   0.46288   8.34401...
-%           0.05868   4.17410   1.68781  12.07565 -11.76932];  % fit = 10.75460
-      
-% theta = [-6.13067795576060	-14.7878140561022	0.116104623271765...
-%          0.287168108117947	0.551351332778652	9.70261839734432...
-%          0.0646865540473156	3.90851546299691	1.93735060502043...
-%          14.1444949193409	-12.9121281421765];  % fit = 10.4748
-     
-theta = [-5.44086676636325,-19.4382242330205,0.158825726539545,0.367383665973718,...
-    0.483330444401690,10.6297324206023,0.0469201052969252,5.20915076877990,...
-    2.18909944116805,11.7998950817073]; % fit = 10.4266     
-      
+
+theta = [-3.83253579377554	-19.6106680040131	0.137001306401593	0.282020343033900...
+         0.577076334796007	12.1194036685043	0.0492572810194975	4.88922911109957...
+         2.38047698896763	15.1377391760052]; % fit PC: 11.84319  unix: 11.84574
+
 
 % X = theta;     
 

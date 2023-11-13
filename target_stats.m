@@ -12,8 +12,8 @@ function [Data, W] = target_stats()
     % last_match_coefs  from US customs records, disclosed 12-12-16 & 05-07-19 
     % succ_rate_coefs   from RDC disclosure 2-3-17 & 05-07-19
     % sr_var_coefs      from RDC disclosure 2-3-17 & 05-07-19
-    % for_sales_shr     from Marcela 6/22/17
-    % exp_frac          from Marcela 6/22/17
+    % for_sales_shr     from Marcela Outputs_EAM_moms_aug2023.xlsx
+    % exp_frac          from Marcela Outputs_EAM_moms_aug2023.xlsx
     
     % *avg. ln(exports|#matches>0) = 
     %  avg. ln(match sales) + avg. ln(#matches) +var(match sales)/2 
@@ -44,9 +44,9 @@ function [Data, W] = target_stats()
 %   moments 25-26    
     sr_var_coefsDAT      = [0.0912,-0.060]; % [mean succ rate, ln(1+meetings)]
 %   moment 27
-    for_sales_shrDAT     =  0.155; % mean share of exports to U.S. in total sales (Marcela revised stat 7-8-23)
+    for_sales_shrDAT     =  0.1616; % mean share of exports to U.S. in total sales (Marcela revised stat august 2023)
 %   moment 28    
-    exp_fracDAT          =  0.1023; % fraction of firms that export to U.S.
+    exp_fracDAT          =  0.0954; % fraction of firms that export to U.S. (Marcela revised stat august 2023)
     
 
  Data = [match_death_coefsDAT,match_ar1_coefsDAT,loglog_coefsDAT,mavshipDAT,exp_dom_coefsDAT,...

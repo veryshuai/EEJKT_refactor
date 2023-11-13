@@ -13,10 +13,15 @@ rng(80085,'twister');% set the seed and the rng (default parallel rand generator
 seed_crand(80085);
 
 runs = 20; %20 %set number of runs to use in bootstrap
-
-X = [-3.84856595690155,-19.6507323165926,0.137095551436060,0.283174883410539,...
-      0.574476212931893,12.0224286499768,0.0494381874453607,4.87592549089832,...
-      2.38517796052932,15.1344721052573]; % fit: 11.8568 (clusters) 11.8619 (PC)
+% 
+% X = [-3.84856595690155,-19.6507323165926,0.137095551436060,0.283174883410539,...
+%       0.574476212931893,12.0224286499768,0.0494381874453607,4.87592549089832,...
+%       2.38517796052932,15.1344721052573]; % fit: 11.8568 (clusters) 11.8619 (PC)
+  
+    
+X = [-3.83253579377554	-19.6106680040131	0.137001306401593	0.282020343033900...
+     0.577076334796007	12.1194036685043	0.0492572810194975	4.88922911109957...
+     2.38047698896763	15.1377391760052];  % fit PC: 11.84319  unix: 11.84574
 
 mm = setModelParameters(X);
 mm.check_type = 108;
@@ -76,7 +81,7 @@ end
 % (2) Now we need finite differences of parameters on moments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fin_diff_size = (1 + 0.05); %percentage of parameter value 
+fin_diff_size = (1 + 0.08); %percentage of parameter value 
 
 % NOTE: expressing cost function scalars in logs before generating differences
 param_vec = [mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, log(mm.cs_h), mm.sig_p, log(mm.cs_f)]';
@@ -231,6 +236,14 @@ parameter = param_vec;
 z_ratio = parameter./std_error;
 format short
 param_est = table(parameter,std_error,z_ratio,'Rownames',AGS_param_names)
+
+V_alt = inv(G' * inv(W) * G);
+Psd = diag(V_alt).^0.5;
+std_error = Psd;
+parameter = param_vec;
+z_ratio = parameter./std_error;
+format short
+param_est_alt = table(parameter,std_error,z_ratio,'Rownames',AGS_param_names)
 
 save results/bootstrap_results
 

@@ -1,253 +1,0 @@
-
-                            < M A T L A B (R) >
-                  Copyright 1984-2021 The MathWorks, Inc.
-                  R2021a (9.10.0.1602886) 64-bit (glnxa64)
-                             February 17, 2021
-
- 
-To get started, type doc.
-For product information, visit www.mathworks.com.
- 
-Elapsed time is 10.087854 seconds.
-Elapsed time is 47.440427 seconds.
-
-iter =
-
-     1
-
-Starting parallel pool (parpool) using the 'local' profile ...
-Connected to the parallel pool (number of workers: 12).
- Simulation time: 168 seconds
-
-iter =
-
-     2
-
- Simulation time: 125 seconds
-
-iter =
-
-     3
-
- Simulation time: 124 seconds
-
-iter =
-
-     4
-
- Simulation time: 118 seconds
-
-iter =
-
-     5
-
- Simulation time: 121 seconds
-
-iter =
-
-     6
-
- Simulation time: 116 seconds
-
-iter =
-
-     7
-
- Simulation time: 109 seconds
-
-iter =
-
-     8
-
- Simulation time: 120 seconds
-
-iter =
-
-     9
-
- Simulation time: 120 seconds
-
-iter =
-
-    10
-
- Simulation time: 117 seconds
-
-iter =
-
-    11
-
- Simulation time: 120 seconds
-
-iter =
-
-    12
-
- Simulation time: 120 seconds
-
-iter =
-
-    13
-
- Simulation time: 118 seconds
-
-iter =
-
-    14
-
- Simulation time: 118 seconds
-
-iter =
-
-    15
-
- Simulation time: 118 seconds
-
-iter =
-
-    16
-
- Simulation time: 119 seconds
-
-iter =
-
-    17
-
- Simulation time: 118 seconds
-
-iter =
-
-    18
-
- Simulation time: 115 seconds
-
-iter =
-
-    19
-
- Simulation time: 108 seconds
-
-iter =
-
-    20
-
- Simulation time: 120 seconds
-
-iter =
-
-     1
-
-Elapsed time is 10.590609 seconds.
-Elapsed time is 48.379101 seconds.
- Simulation time: 119 seconds
-
-iter =
-
-     2
-
-Elapsed time is 10.510796 seconds.
-Elapsed time is 49.616156 seconds.
- Simulation time: 165 seconds
-
-iter =
-
-     3
-
-Elapsed time is 8.146959 seconds.
-Elapsed time is 41.753398 seconds.
- Simulation time: 110 seconds
-
-iter =
-
-     4
-
-Elapsed time is 10.548160 seconds.
-Elapsed time is 49.755303 seconds.
- Simulation time: 119 seconds
-
-iter =
-
-     5
-
-Elapsed time is 10.423649 seconds.
-Elapsed time is 49.757410 seconds.
- Simulation time: 120 seconds
-
-iter =
-
-     6
-
-Elapsed time is 10.497673 seconds.
-Elapsed time is 49.521664 seconds.
- Simulation time: 114 seconds
-
-iter =
-
-     7
-
-Elapsed time is 10.364393 seconds.
-Elapsed time is 49.304591 seconds.
- Simulation time: 116 seconds
-
-iter =
-
-     8
-
-Elapsed time is 10.545115 seconds.
-Elapsed time is 49.423272 seconds.
- Simulation time: 115 seconds
-
-iter =
-
-     9
-
-Elapsed time is 10.222696 seconds.
-Elapsed time is 48.090369 seconds.
- Simulation time: 114 seconds
-
-iter =
-
-    10
-
-Elapsed time is 12.543304 seconds.
-Elapsed time is 57.385259 seconds.
- Simulation time: 187 seconds
-
-iter =
-
-    11
-
-Elapsed time is 10.354264 seconds.
-Elapsed time is 48.486013 seconds.
- Simulation time: 160 seconds
-[Warning: Matrix is close to singular or badly scaled. Results may be
-inaccurate. RCOND =  6.091984e-20.] 
-[> In bootstrap (line 223)
-] 
-[Warning: Matrix is close to singular or badly scaled. Results may be
-inaccurate. RCOND =  6.091984e-20.] 
-[> In bootstrap (line 223)
-] 
-[Warning: Matrix is close to singular or badly scaled. Results may be
-inaccurate. RCOND =  6.091984e-20.] 
-[> In bootstrap (line 225)
-] 
-
-param_est =
-
-  10x3 table
-
-             parameter     std_error    z_ratio
-             __________    _________    _______
-
-    F          0.087571     0.052207     1.6774
-    scale       -23.513      0.47713    -49.279
-    ah         0.026046    0.0029963     8.6926
-    bh          0.17612     0.036761     4.7911
-    D_z        0.029811    0.0027187     10.965
-    L_bF         1.8178     0.032928     55.206
-    gam         0.15694    0.0076934     20.399
-    cs_h         441.64       112.51     3.9253
-    sig_p        3.2283     0.021127     152.81
-    cs_f     5.0192e+05        62597     8.0183
-

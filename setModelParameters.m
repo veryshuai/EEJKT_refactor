@@ -72,13 +72,13 @@ mm.tot_yrs       = 50;   % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
 
-mm.S         = 10000;    % number of potential exporting firms to simulate 
+mm.S         = 50000;   % number of potential exporting firms to simulate 
 mm.burn      = 10;       %number of burn-in years
 mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;     % Number of possible matches for domestic market
-mm.MaxMatchMonth = 1.5e+6; % Max number of match-months in any year for a given firm type
+mm.MaxMatchMonth = 1.5e+7; % Max number of match-months in any year for a given firm type
 mm.max_home_clients = 500; %maximum number of active clients we allow firms to have at home
-mm.abort_time = 1500;    % number of seconds allowed before evaluation is aborted 
+mm.abort_time = 5000;    % number of seconds allowed before evaluation is aborted 
 %% Cost function
 
 mm.kappa1 = 2;  
@@ -164,4 +164,3 @@ mm.erg_pz       = erg_pz;   %ergodic distribution of demand shocks
 mm.N_pt          = size(mm.Phi,1)*size(mm.theta2,2);
 mm.pt_type = [kron((1:size(mm.Phi,1))',ones(size(mm.theta2,2),1)),kron(ones(size(mm.Phi,1),1),(1:size(mm.theta2,2))')];
 mm.sim_firm_num_by_prod_succ_type = round(mm.erg_pp(mm.pt_type(:,1)).*mm.th2_pdf(mm.pt_type(:,2))'*mm.S);
-

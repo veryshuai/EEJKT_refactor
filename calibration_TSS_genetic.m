@@ -8,6 +8,7 @@
     
 % mm.F_h       = exp(X(1));  % cost of maintaining a client- home 
 % mm.scale_h   = X(2);       % Domestic profit function scale parameter
+% mm.scale_f   = X(2)+1;     % Export profit function scale parameter 
 % mm.ah        = X(4)*X(3);  % Beta function, home (theta1) success parameter
 % mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
 % D_z          = X(5)/mm.pd_per_yr; % Jump size, match productivity shock
@@ -17,36 +18,38 @@
 % mm.sig_p     = X(9);       %standard deviation of productivity distribution
 % mm.F_f       = exp(X(1));  % cost of maintaining a client- foreign
 % mm.cs_f      = exp(X(10)); % Cost scaling parameter, foreign market
-% mm.scale_f   = X(2)+1;     % Export profit function scale parameter (same as home)
-% mm.optimism  = 0 ; %parameter on prior distribution 
+% mm.optimism  = 0;          %parameter on prior distribution 
 
 %%
 
 fprintf('\r\n STARTING A NEW RUN (restricted model): %s\r ', datestr(now,'yyyy_mmdd_HHMM'));
 fprintf('\n Foreign profit scale set to twice home market profit scaler ');
 fprintf('\n Degree distribution not targeted, minimizing original D \r');
+fprintf('\n Updated hazard measure and hazard regression targeted \r');
+fprintf('\n S = 50000 potential firms\r');
 
-fileID1 = fopen('results/ga_running_output_restricted.txt','a');
+
+fileID1 = fopen('results/ga_running_output_2sclNewHaz.txt','a');
   fprintf(fileID1,'\r\n STARTING A NEW RUN (restricted model) %s\n', datestr(now,'yyyy_mmdd_HHMM') );
   fprintf(fileID1,'\n Foreign profit scaler set to twice home market profit scaler \r');
   fprintf(fileID1,'\n Degree distribution not targeted, minimizing original D \r');
+  fprintf(fileID1,'\n Updated hazard measure and hazard regression targeted \r');
+  fprintf(fileID1,'\n S = 50000 potential firms \r');
 fclose(fileID1);
 
-fileID2 = fopen('results/ga_fitlog_restricted.txt','a');
+fileID2 = fopen('results/ga_fitlog_2sclNewHaz.txt','a');
   fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
   fprintf(fileID2,'\n Foreign profit scaler set to twice home market profit scaler \r');
   fprintf(fileID2,'\n Degree distribution not targeted, minimizing original D \r');
+  fprintf(fileID2,'\n Updated hazard measure and hazard regression targeted \r');
+  fprintf(fileID2,'\n S = 50000 potential firms \r');
 fclose(fileID2);
- 
 
-% theta =...
-%   [-7.36860635010041	-20.6466017575077	0.0705689663149828	0.182537998345310...
-%     0.434516092398813	11.6676402703387	0.0563370713452114	4.66302833335923...
-%     2.87257237464644	13.3244805739937];
 
-theta = [-7.36860635010041,-20.6466017575077,0.0705689663149828,0.182537998345310,...
-    0.434516092398813,11.6676402703387,0.0563370713452114,4.14266745807416,...
-    2.87257237464644,13.3244805739937];
+theta = [-3.83253579377554	-19.6106680040131	0.137001306401593	0.282020343033900...
+         0.577076334796007	12.1194036685043	0.0492572810194975	4.88922911109957...
+         2.38047698896763	15.1377391760052]; % fit PC: 11.84319  unix: 11.84574
+
 
 % X = theta;     
 

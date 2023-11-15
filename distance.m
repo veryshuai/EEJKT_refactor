@@ -13,9 +13,7 @@ try
     
     policy = generatePolicyAndValueFunctions(mm);
     simMoms = simulateMomentsMain(policy,mm);
-    [D,D_alt,~] = calculateDistanceAndPrint(simMoms,mm,X);
-
-%   D = D_alt; %uncomment this line to use degree distrib. fit metric
+    [D,~] = calculateDistanceAndPrint(simMoms,mm,X);
 
 catch
 

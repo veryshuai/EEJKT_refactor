@@ -340,33 +340,33 @@ display('Favorable elasticities (Std Err)')
 display('SALES');
 display([(log(total_sales(26,2)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
     (log(total_sales(30,2)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
-    (log(total_sales(50,2)) - log(total_sales(24,1)))/(log(1.2) - log(1))]);
+    (log(total_sales(49,2)) - log(total_sales(24,1)))/(log(1.2) - log(1))]);
 
 display('MATCHES');
 display([(log(total_matches(26,2)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
     (log(total_matches(30,2)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
-    (log(total_matches(50,2)) - log(total_matches(24,1)))/(log(1.2) - log(1))]);
+    (log(total_matches(49,2)) - log(total_matches(24,1)))/(log(1.2) - log(1))]);
 
 display('FIRMS');
 display([(log(total_firms(26,2)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
     (log(total_firms(30,2)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
-    (log(total_firms(50,2)) - log(total_firms(24,1)))/(log(1.2) - log(1))]);
+    (log(total_firms(49,2)) - log(total_firms(24,1)))/(log(1.2) - log(1))]);
 
 display('Unfavorable elasticities')
 display('SALES')
 display([(log(total_sales(26,3)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
     (log(total_sales(30,3)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
-    (log(total_sales(50,3)) - log(total_sales(24,1)))/(log(1.2) - log(1))]);
+    (log(total_sales(49,3)) - log(total_sales(24,1)))/(log(1.2) - log(1))]);
 
 display('MATCHES');
 display([(log(total_matches(26,3)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
     (log(total_matches(30,3)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
-    (log(total_matches(50,3)) - log(total_matches(24,1)))/(log(1.2) - log(1))]);
+    (log(total_matches(49,3)) - log(total_matches(24,1)))/(log(1.2) - log(1))]);
 
 display('FIRMS');
 display([(log(total_firms(26,3)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
     (log(total_firms(30,3)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
-    (log(total_firms(50,3)) - log(total_firms(24,1)))/(log(1.2) - log(1))]);
+    (log(total_firms(49,3)) - log(total_firms(24,1)))/(log(1.2) - log(1))]);
 
 % display('No shock growth (50-75)?')
 % display('SALES');

@@ -26,16 +26,32 @@ all_exporters = sortrows(all_exporters,3); %sort based on sales
 median_prod = [10,floor(prctile(all_exporters(:,4),10));50,floor(prctile(all_exporters(:,4),50));90,floor(prctile(all_exporters(:,4),90))]
 median_succ = [10,floor(prctile(all_exporters(:,5),10));50,floor(prctile(all_exporters(:,5),50));90,floor(prctile(all_exporters(:,5),90))]
 %DJ NOTE: median_succ does not seem right -- should not be 1.
+median_prod = [10,15;50,16;90,17];
+median_succ = [10,6;50,6;90,6];
 
+%Generate some figures used in the text
+%average sales per shipment
+avg_shipment_sales = mean(match_recs(match_recs(:,5)~=0,4)./match_recs(match_recs(:,5)~=0,5))
+sd_shipment_sales = (var(match_recs(match_recs(:,5)~=0,4)./match_recs(match_recs(:,5)~=0,5)))^0.5
+
+%Cost function calculations in the paper
+cost_one_match_ten_yrs_no_exp = mm.cost_f(0.1,1)
+cost_one_match_two_yrs_no_exp = mm.cost_f(0.5,1)
+cost_one_match_ten_yrs_two_exp = mm.cost_f(0.1,3)
+ratio_cost_two_vs_zero = mm.cost_f(0.1,3)/mm.cost_f(0.1,1)
+
+%theta stuff
+theta_exp = mm.af / (mm.af + mm.bf)
+theta_var = mm.af * mm.bf /((mm.af + mm.bf)^2 *(mm.af + mm.bf + 1))
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Now we have both the median productivity and success probabilities in hand
 %simulate value for these different types and plot
 
-theta = [-7.36860635010041,-20.6466017575077,0.0705689663149828,0.182537998345310,...
-    0.434516092398813,11.6676402703387,0.0563370713452114,4.14266745807416,...
-    2.87257237464644,13.3244805739937];
-    
+X = [-3.83253579377554	-19.6106680040131	0.137001306401593	0.282020343033900...
+         0.577076334796007	12.1194036685043	0.0492572810194975	4.88922911109957...
+         2.38047698896763	15.1377391760052]; % fit PC: 11.84319  unix: 11.84574
+
 % %USE FOREIGN PARAMETERS FOR HOME
 % %This way we can use value functions to learn about the importance of learning vs network
 % X(8) = X(10);
@@ -180,41 +196,41 @@ saveas(gcf,"results/value_plots/marg_val_h_percent.png");
 % successes arrive.  Just so we have a simple ordering, we assume that the
 % successes all arrive consecutively, but start in different years.
 
-cum_year_mat = zeros(6,1);
-theta_evolution = zeros(10,2,6); % [match_no, [time, value], first_yr]
-for start_yr = 1:6
+cum_year_mat = zeros(7,1);
+theta_evolution = zeros(7,2,6); % [match_no, [time, value], first_yr]
+for fail_yr = 1:6
 
-    succ_seq = zeros(10);
-    succ_seq(start_yr:start_yr + 4) = 1;
+    succ_seq = ones(7,1);
+    succ_seq(fail_yr) = 0;
     
     cum_years = 0;
     succs = 1; %first index is zero
     trials = 1; %first index is zero
-    for match_no = 0:9
+    for match_no = 0:6
         theta_guess = (mm.af + succs - 1) / (mm.af + mm.bf + trials - 1);
-        theta_evolution(match_no+1,1,start_yr) = cum_years;
-        theta_evolution(match_no+1,2,start_yr) = theta_guess;
-        cum_years = cum_years + 1 / policy.lambda_f(succs,trials,1,succs,median_prod(2,2),7);
+        theta_evolution(match_no+1,1,fail_yr) = cum_years;
+        theta_evolution(match_no+1,2,fail_yr) = theta_guess;
+        cum_years = cum_years + 1 / policy.lambda_f(succs,trials,1,succs,median_prod(3,2),7);
         trials = trials + 1;
         succs = succs + succ_seq(match_no + 1);
     end
     
-    cum_year_mat(start_yr) = cum_years;
+    cum_year_mat(fail_yr) = cum_years;
 end
     
 bar(cum_year_mat);
-xlabel('Year of first success');
-ylabel('Years to ten trials');
-title('Five successes in ten trials');
+xlabel('Year of failure');
+ylabel('Years to six trials');
+title('One failure in six trials');
 saveas(gcf,"results/value_plots/success_order.png");
 
-plot(theta_evolution(:,1,1),theta_evolution(:,2,1));
-hold on
 plot(theta_evolution(:,1,6),theta_evolution(:,2,6));
+hold on
+plot(theta_evolution(:,1,1),theta_evolution(:,2,1));
 xlabel('Years')
 ylabel('Success probability belief')
-title('Five successes in ten trials');
-legend({'Successes first','Successes last'},'Location','northeast')
+title('Effect of Early Discouragement');
+legend({'Only last match failure','Only first match failure'},'Location','northeast')
 hold off
 saveas(gcf,"results/value_plots/success_beliefs.png");
 

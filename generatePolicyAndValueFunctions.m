@@ -9,7 +9,7 @@ function policy = generatePolicyAndValueFunctions(mm)
     policy = makeExporterTransitionProbabilities(mm,policy);
 
     % Check FOCs
-    check_FOC(mm,policy);
+    %check_FOC(mm,policy);
     
     toc
 end

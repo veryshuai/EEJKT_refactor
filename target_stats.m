@@ -105,6 +105,11 @@ loglog_coefsCOV = ...
     [0.0053    0;
      0       0.0082].^2 ;  
 
+ % OLD FIGURES LOADED HERE AS A TEST--NEED TO DELETE THEM
+%  match_haz_coefsCOV = ...
+%     [0.0053    0;
+%      0       0.008].^2 ; % second number is made-up as a place-holder  
+%  
 
 %   lst_match_coefsCOV = ...
 %    [0.00253 0      0      0      0      0        ;

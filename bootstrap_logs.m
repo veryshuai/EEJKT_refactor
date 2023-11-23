@@ -19,9 +19,13 @@ runs = 20; %20 %set number of runs to use in bootstrap
 %       2.38517796052932,15.1344721052573]; % fit: 11.8568 (clusters) 11.8619 (PC)
   
     
-X = [-3.83253579377554	-19.6106680040131	0.137001306401593	0.282020343033900...
-     0.577076334796007	12.1194036685043	0.0492572810194975	4.88922911109957...
-     2.38047698896763	15.1377391760052];  % fit PC: 11.84319  unix: 11.84574
+% X = [-3.83253579377554	-19.6106680040131	0.137001306401593	0.282020343033900...
+%      0.577076334796007	12.1194036685043	0.0492572810194975	4.88922911109957...
+%      2.38047698896763	15.1377391760052];  % fit PC: 11.84319  unix: 11.84574
+ 
+X = [-3.87377400411704,-19.6350579745564,0.141131266607483,0.224048944147957,...
+    0.527541658446327,12.1673847502223,0.0462420845261331,5.13239605341601,...
+    2.38418049835969,15.1614775287665]; % fit unix: 11.6935
 
 mm = setModelParameters(X);
 mm.check_type = 108;
@@ -81,7 +85,7 @@ end
 % (2) Now we need finite differences of parameters on moments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fin_diff_size = (1 + 0.08); %percentage of parameter value 
+fin_diff_size = (1 + 0.05); %percentage of parameter value 
 
 % NOTE: expressing cost function scalars in logs before generating differences
 param_vec = [mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, log(mm.cs_h), mm.sig_p, log(mm.cs_f)]';

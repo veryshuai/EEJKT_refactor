@@ -196,41 +196,41 @@ saveas(gcf,"results/value_plots/marg_val_h_percent.png");
 % successes arrive.  Just so we have a simple ordering, we assume that the
 % successes all arrive consecutively, but start in different years.
 
-cum_year_mat = zeros(7,1);
-theta_evolution = zeros(7,2,6); % [match_no, [time, value], first_yr]
-for fail_yr = 1:6
+cum_year_mat = zeros(4,1);
+theta_evolution = zeros(9,1,4); % [match_no, [time, value], first_yr]
+for first_succ_yr = 1:4
 
-    succ_seq = ones(7,1);
-    succ_seq(fail_yr) = 0;
+    succ_seq = zeros(9,1);
+    succ_seq(first_succ_yr:first_succ_yr+4) = 1;
     
     cum_years = 0;
     succs = 1; %first index is zero
     trials = 1; %first index is zero
-    for match_no = 0:6
+    for match_no = 0:8
         theta_guess = (mm.af + succs - 1) / (mm.af + mm.bf + trials - 1);
-        theta_evolution(match_no+1,1,fail_yr) = cum_years;
-        theta_evolution(match_no+1,2,fail_yr) = theta_guess;
-        cum_years = cum_years + 1 / policy.lambda_f(succs,trials,1,succs,median_prod(3,2),7);
+        theta_evolution(match_no+1,1,first_succ_yr) = cum_years;
+        theta_evolution(match_no+1,2,first_succ_yr) = theta_guess;
+        cum_years = cum_years + 1 /(mm.pd_per_yr * policy.lambda_f(succs,trials,1,succs,median_prod(3,2),7));
         trials = trials + 1;
-        succs = succs + succ_seq(match_no + 1);
+        succs = succs + succ_seq(match_no+1);
     end
     
-    cum_year_mat(fail_yr) = cum_years;
+    cum_year_mat(first_succ_yr) = cum_years;
 end
     
 bar(cum_year_mat);
-xlabel('Year of failure');
-ylabel('Years to six trials');
-title('One failure in six trials');
+xlabel('Year of first success');
+ylabel('Years to eight trials');
+title('four consecutive success in eight trials');
 saveas(gcf,"results/value_plots/success_order.png");
 
-plot(theta_evolution(:,1,6),theta_evolution(:,2,6));
+plot(theta_evolution(:,1,4),theta_evolution(:,2,4));
 hold on
 plot(theta_evolution(:,1,1),theta_evolution(:,2,1));
 xlabel('Years')
 ylabel('Success probability belief')
 title('Effect of Early Discouragement');
-legend({'Only last match failure','Only first match failure'},'Location','northeast')
+legend({'Success first','Success last'},'Location','northeast')
 hold off
 saveas(gcf,"results/value_plots/success_beliefs.png");
 

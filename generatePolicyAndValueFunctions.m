@@ -10,5 +10,8 @@ function policy = generatePolicyAndValueFunctions(mm)
     policy = makeExporterTransitionProbabilities(mm,policy);
     policy = makeExporterTransitionProbabilitiesExchangeRateShock(mm,policy);
 
+    % Check FOCs
+    %check_FOC(mm,policy);
+    
     toc
 end

@@ -52,7 +52,7 @@ mm.tot_yrs       = 50;   % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
 
-mm.S         = 200000;   % number of potential exporting firms to simulate (SET BIG)
+mm.S         = 150000;   % number of potential exporting firms to simulate (SET BIG)
 mm.burn      = 10;       % number of burn-in years
 mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;     % Number of possible matches for domestic market

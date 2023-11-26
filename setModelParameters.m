@@ -80,7 +80,7 @@ mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simula
 mm.burn      = 10;       %number of burn-in years
 mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;     % Number of possible matches for domestic market
-mm.MaxMatchMonth = 1.5e+7; % Max number of match-months in any year for a given firm type
+mm.MaxMatchMonth = 1e+7; % Max number of match-months in any year for a given firm type
 mm.max_home_clients = 500; %maximum number of active clients we allow firms to have at home
 mm.abort_time = 5000;    % number of seconds allowed before evaluation is aborted 
 %% Cost function

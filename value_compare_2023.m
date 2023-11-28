@@ -15,11 +15,13 @@ load results/val_dat
 %create data set containing only variables we need (no information about counterparty)
 % all_exporters = [agg_type,firmID,annual_sales,prod_type,theta_type]
 %  match_recs: [period, type, firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age]       
-all_matches_one_year = match_recs(match_recs(:,1) >= 240 & match_recs(:,1) <= 243,1:4);
+positive_sales = match_recs(:,4) > 0; %matches which die during the year sometimes have zero sales
+all_matches_one_year = match_recs(match_recs(:,1) >= 588 & match_recs(:,1) < 600 & positive_sales,1:4);
 all_matches_one_year(:,3) = all_matches_one_year(:,3) * 2; %some firm IDs are X.5, accumarray does not like this
 [unique_firms,uniq_ind,~] = unique(all_matches_one_year(:,3));
 annual_sales = accumarray(all_matches_one_year(:,3),all_matches_one_year(:,4));
-all_exporters = [unique_firms,all_matches_one_year(uniq_ind,2),annual_sales(annual_sales>0)];
+annual_sales = annual_sales(annual_sales(:,1)>0); %delete zero row for ids which are missing in all_matches_one_year(:,3)
+all_exporters = [unique_firms,all_matches_one_year(uniq_ind,2),annual_sales];
 all_exporters(:,4:5) = mm.pt_type(all_exporters(:,2),:);
 all_exporters = sortrows(all_exporters,3); %sort based on sales
 
@@ -35,22 +37,24 @@ avg_shipment_sales = mean(match_recs(match_recs(:,5)~=0,4)./match_recs(match_rec
 sd_shipment_sales = (var(match_recs(match_recs(:,5)~=0,4)./match_recs(match_recs(:,5)~=0,5)))^0.5
 
 %Cost function calculations in the paper
-cost_one_match_ten_yrs_no_exp = mm.cost_f(0.1,1)
-cost_one_match_two_yrs_no_exp = mm.cost_f(0.5,1)
-cost_one_match_ten_yrs_two_exp = mm.cost_f(0.1,3)
-ratio_cost_two_vs_zero = mm.cost_f(0.1,3)/mm.cost_f(0.1,1)
+cost_one_match_per_yr_no_exp = mm.cost_f(1/12,1)
+cost_one_match_two_yrs_no_exp = mm.cost_f(1/24,1)
+cost_one_match_per_yr_ten_exp = mm.cost_f(1/12,11)
+ratio_cost_one_vs_zero = (mm.cost_f(1/12,11)-mm.cost_f(1/12,1))/mm.cost_f(1/12,1)
 
 %theta stuff
 theta_exp = mm.af / (mm.af + mm.bf)
 theta_var = mm.af * mm.bf /((mm.af + mm.bf)^2 *(mm.af + mm.bf + 1))
+theta_sd = sqrt(theta_var)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Now we have both the median productivity and success probabilities in hand
 %simulate value for these different types and plot
 
-X = [-3.83253579377554	-19.6106680040131	0.137001306401593	0.282020343033900...
-         0.577076334796007	12.1194036685043	0.0492572810194975	4.88922911109957...
-         2.38047698896763	15.1377391760052]; % fit PC: 11.84319  unix: 11.84574
+
+X = [-3.87377400411704,-19.6350579745564,0.141131266607483,0.224048944147957,...
+         0.527541658446327,12.1673847502223,0.0462420845261331,5.13239605341601,...
+         2.38418049835969,15.1614775287665]; % fit PC 11.6912  unix: 11.6935
 
 % %USE FOREIGN PARAMETERS FOR HOME
 % %This way we can use value functions to learn about the importance of learning vs network
@@ -196,17 +200,17 @@ saveas(gcf,"results/value_plots/marg_val_h_percent.png");
 % successes arrive.  Just so we have a simple ordering, we assume that the
 % successes all arrive consecutively, but start in different years.
 
-cum_year_mat = zeros(4,1);
-theta_evolution = zeros(9,1,4); % [match_no, [time, value], first_yr]
-for first_succ_yr = 1:4
+cum_year_mat = zeros(3,1);
+theta_evolution = zeros(7,1,3); % [match_no, [time, value], first_yr]
+for first_succ_yr = 1:3
 
-    succ_seq = zeros(9,1);
-    succ_seq(first_succ_yr:first_succ_yr+4) = 1;
+    succ_seq = zeros(7,1);
+    succ_seq(first_succ_yr:first_succ_yr+3) = 1;
     
     cum_years = 0;
     succs = 1; %first index is zero
     trials = 1; %first index is zero
-    for match_no = 0:8
+    for match_no = 0:6
         theta_guess = (mm.af + succs - 1) / (mm.af + mm.bf + trials - 1);
         theta_evolution(match_no+1,1,first_succ_yr) = cum_years;
         theta_evolution(match_no+1,2,first_succ_yr) = theta_guess;
@@ -220,17 +224,17 @@ end
     
 bar(cum_year_mat);
 xlabel('Year of first success');
-ylabel('Years to eight trials');
-title('four consecutive success in eight trials');
+ylabel('Years to six trials');
+title('three consecutive success in six trials');
 saveas(gcf,"results/value_plots/success_order.png");
 
-plot(theta_evolution(:,1,4),theta_evolution(:,2,4));
+plot(theta_evolution(:,1,3),theta_evolution(:,2,3));
 hold on
 plot(theta_evolution(:,1,1),theta_evolution(:,2,1));
 xlabel('Years')
 ylabel('Success probability belief')
 title('Effect of Early Discouragement');
-legend({'Success first','Success last'},'Location','northeast')
+legend({'Success last','Success first'},'Location','northeast')
 hold off
 saveas(gcf,"results/value_plots/success_beliefs.png");
 

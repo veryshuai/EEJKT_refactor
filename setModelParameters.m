@@ -6,7 +6,6 @@ mm = struct();
 mm.exchange_rate_shock_multiplier = log(1); %actual multiplier in code: exp(mm.F + exchange_rate_shock_multiplier)
 mm.save_name = "baseline_no_shk";
 mm.S         = 10000;    % number of potential exporting firms to simulate (10000 in estimation)
-
 %% technology parameters
 
 mm.pd_per_yr = 12;        % number of periods per year

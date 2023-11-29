@@ -13,5 +13,8 @@ function policy = generatePolicyAndValueFunctions(mm)
     % Check FOCs
     %check_FOC(mm,policy);
     
+    full_save_path = "results/policy_" + mm.save_name;
+    save(char(full_save_path));
+
     toc
 end

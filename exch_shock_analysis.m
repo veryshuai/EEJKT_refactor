@@ -1,7 +1,8 @@
 %clear;
 rng(80085);
 
-load results/val_dat
+load results/policy_baseline_no_shk
+%load results/val_dat
 %load lambdas_temp
 
 files = {'results/exch_shock_plots/baseline_no_shk', ...
@@ -42,7 +43,7 @@ for pol_k = 1:3
     dud_matches = [dud_matches,new_id_dud];
 
     for t=10:max(match_recs(:,10)-1)
-        t = 25;
+        
         match_recs_one_year = match_recs(match_recs(:,10) == t,:);
 
 %        new_id = 0.5*(match_recs_one_year(:,2)+match_recs_one_year(:,3)).*(match_recs_one_year(:,2)+match_recs_one_year(:,3)+1)+match_recs_one_year(:,3);
@@ -118,37 +119,26 @@ for pol_k = 1:3
         %cost_slope = @(x,y) ((1 + x)^(mm.kappa1 - 1) - 1)/(1 + log(y))^mm.gam;
         %cost_slope_firm = [];
         %cost_slope_no_match = [];
-        trials = val_imp(:,12) + val_imp(j,13);
+        trials = val_imp(:,12) + val_imp(:,13);
         net_effects = min(val_imp(:,12),40)+1;
         for j = 1:size(val_imp,1)
             % correct for the fact that learning stops at 20 matches
-            net_effects = min(val_imp(j,12),40)+1;
             if val_imp(j,12) > 20
                 val_imp(j,12) = floor(val_imp(j,12)/ trials(j) * 20);
             end
-            %if t>50 && pol_k > 1
-                %value_firm(j) = value_f_post(val_imp(j,12)+1,min(trials(j),11),20)+1,1,net_effects,pt_type(val_imp(j,3)),macro_state(1 + 12*(t-1)));
-                %value_firm_no_match(j) = value_f_post(1,1,1,1,pt_type(val_imp(j,3)),macro_state(1 + 12*(t-1)));
-                %policy_firm(j) = lambda_f_post(val_imp(j,12)+1,min(val_imp(j,11),20)+1,1,net_effects,pt_type(val_imp(j,3)),macro_state(1 + 12*(t-1)));
-                %policy_firm_no_match(j) = lambda_f_post(1,1,1,1,pt_type(val_imp(j,3)),macro_state(1 + 12*(t-1)));
-            %else
-                value_firm(j) = policy.value_f(val_imp(j,12)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),7);
-                value_firm_no_match(j) = policy.value_f(1,1,1,1,mm.pt_type(val_imp(j,2)),7);
-                policy_firm(j) = policy.lambda_f(val_imp(j,12)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),7);
-                policy_firm_no_match(j) = policy.lambda_f(1,1,1,1,mm.pt_type(val_imp(j,2)),7);
-            %end
-         %   cost_slope_firm(j) = cost_slope(policy_firm(j),net_effects);
-         %   cost_slope_firm_no_match(j) = cost_slope(policy_firm_no_match(j),1);
+            value_firm(j) = policy.value_f(val_imp(j,12)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),7);
+            value_firm_no_match(j) = policy.value_f(1,1,1,1,mm.pt_type(val_imp(j,2)),7);
+            policy_firm(j) = policy.lambda_f(val_imp(j,12)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),7);
+            policy_firm_no_match(j) = policy.lambda_f(1,1,1,1,mm.pt_type(val_imp(j,2)),7);
         end
-        total_value(t,sim_i,pol_k) = sum(value_firm);
-        total_value_no_match(t,sim_i,pol_k) = sum(value_firm_no_match);
-        value_per_firm(t,sim_i,pol_k) = mean(value_firm);
-        value_per_firm_med(t,sim_i,pol_k) = median(value_firm); 
-        value_per_firm_no_match(t,sim_i,pol_k) = mean(value_firm_no_match);
-        cost_slope_mean(t,sim_i,pol_k) = mean(cost_slope_firm);
-        value_per_firm_va(t,sim_i,pol_k) = mean(value_firm - value_firm_no_match);
-        value_per_firm_va_med(t,sim_i,pol_k) = median(value_firm - value_firm_no_match);
-        value_per_firm_pct(t,sim_i,pol_k) = mean((value_firm - value_firm_no_match) ./ value_firm);
+        total_value(t,pol_k) = sum(value_firm);
+        total_value_no_match(t,pol_k) = sum(value_firm_no_match);
+        value_per_firm(t,pol_k) = mean(value_firm);
+        value_per_firm_med(t,pol_k) = median(value_firm); 
+        value_per_firm_no_match(t,pol_k) = mean(value_firm_no_match);
+        value_per_firm_va(t,pol_k) = mean(value_firm - value_firm_no_match);
+        value_per_firm_va_med(t,pol_k) = median(value_firm - value_firm_no_match);
+        value_per_firm_pct(t,pol_k) = mean((value_firm - value_firm_no_match) ./ value_firm);
 
     end
     sales_per_firm(:,pol_k)   = total_sales(:,pol_k) ./ total_firms(:,pol_k);

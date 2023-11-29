@@ -10,22 +10,43 @@ files = {'results/exch_shock_plots/baseline_no_shk', ...
 
 for pol_k = 1:3
     match_recs_appended = [];
-    for m=1:200
+    dud_matches_appended = [];
+    succ_matches_appended = [];
+    for m=1:400
         filename = sprintf('%d.mat', m);
-        load([files{pol_k},filename], 'match_recs');
+        load([files{pol_k},filename], 'match_recs', 'succ_matches');
         %  match_recs: [period, type, firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age]       
+        %  succ matches the same, but only successes
+        %  dud matches the same, but only failures
+        succ_matches = match_recs;
+        dud_matches = match_recs;
         match_recs(:,3) = match_recs(:,3) + 10000 * m; %make firm ids unique across files
+        succ_matches(:,3) = succ_matches(:,3) + 10000 * m; %make firm ids unique across files
+        dud_matches(:,3) = dud_matches(:,3) + 10000 * m; %make firm ids unique across files
         match_recs_appended = [match_recs_appended;match_recs];
+        succ_matches_appended = [succ_matches_appended;succ_matches];
+        dud_matches_appended = [dud_matches_appended;dud_matches];
     end
-    match_recs = match_recs_appended;
 
+    match_recs = match_recs_appended;
+    succ_matches = succ_matches_appended;
+    dud_matches = dud_matches_appended;
     match_recs(:,10) = match_recs(:,1)/mm.pd_per_yr; %years rather than months
+    succ_matches(:,10) = succ_matches(:,1)/mm.pd_per_yr; %years rather than months
+    dud_matches(:,10) = dud_matches(:,1)/mm.pd_per_yr; %years rather than months
+    new_id = 0.5*(match_recs(:,2)+match_recs(:,3)).*(match_recs(:,2)+match_recs(:,3)+1)+match_recs(:,3);
+    new_id_succ = 0.5*(succ_matches(:,2)+succ_matches(:,3)).*(succ_matches(:,2)+succ_matches(:,3)+1)+succ_matches(:,3);
+    new_id_dud = 0.5*(dud_matches(:,2)+dud_matches(:,3)).*(dud_matches(:,2)+dud_matches(:,3)+1)+dud_matches(:,3);
+    match_recs = [match_recs,new_id];
+    succ_matches = [succ_matches,new_id_succ];
+    dud_matches = [dud_matches,new_id_dud];
 
     for t=10:max(match_recs(:,10)-1)
-
+        t = 25;
         match_recs_one_year = match_recs(match_recs(:,10) == t,:);
 
-        new_id = 0.5*(match_recs_one_year(:,2)+match_recs_one_year(:,3)).*(match_recs_one_year(:,2)+match_recs_one_year(:,3)+1)+match_recs_one_year(:,3);
+%        new_id = 0.5*(match_recs_one_year(:,2)+match_recs_one_year(:,3)).*(match_recs_one_year(:,2)+match_recs_one_year(:,3)+1)+match_recs_one_year(:,3);
+        new_id = match_recs_one_year(:,11);
         [unique_firms,~,~] = unique(new_id);
         total_firms(t,pol_k) = size(unique_firms,1);
         only_new_firms = match_recs_one_year(:,9)/mm.pd_per_yr < t-25;
@@ -62,6 +83,72 @@ for pol_k = 1:3
         total_non_first_yr_match_sales(t,pol_k) = sum(haircut * match_recs_one_year(~only_first_yr_matches,4),1);
         total_first_yr_firm_sales(t,pol_k) = sum(haircut * match_recs_one_year(only_first_yr_firms,4),1);
         total_non_first_yr_firm_sales(t,pol_k) = sum(haircut * match_recs_one_year(~only_first_yr_firms,4),1);
+
+        %Value calculations (up to current year, looking forward of course)
+        
+        duds_up_to_t = dud_matches(dud_matches(:,10) <= t,:);
+        uniq_dud_ids = sort(unique(duds_up_to_t(:,end)));
+        dud_cnts_by_id = histc(duds_up_to_t(:,11),uniq_dud_ids);
+        all_duds = [uniq_dud_ids,dud_cnts_by_id];
+        
+        success_up_to_t = succ_matches(succ_matches(:,10) <= t,:);
+        uniq_succ_ids = sort(unique(success_up_to_t(:,end)));
+        succ_cnts_by_id = histc(success_up_to_t(:,11),uniq_succ_ids);
+        all_succ = [uniq_succ_ids,succ_cnts_by_id];
+        
+        all_matches_sort = sortrows(match_recs_one_year,[11 -4]);
+        
+        % Append success and failures up to t
+        [u,ia,ib] = intersect(all_matches_sort(:,11),all_succ(:,1));
+        all_matches_sort = horzcat(all_matches_sort(ia,:),all_succ(ib,2));
+        [u,ia,ib] = intersect(all_matches_sort(:,11),all_duds(:,1));
+        all_matches_sort = horzcat(all_matches_sort(ia,:),all_duds(ib,2));
+        
+        [uniq_firm_ids,ii] = unique(all_matches_sort(:,11));
+        curr_match_cnts_by_id_and_dem_shk = zeros(size(uniq_firm_ids,1),mm.z_size*2+1);
+        for dem_shk = 1:mm.z_size*2+1
+            curr_match_cnts_by_id_and_dem_shk(:,dem_shk) = histc(all_matches_sort(all_matches_sort(:,7)==dem_shk,11),uniq_firm_ids);
+        end
+        
+        val_imp = all_matches_sort(ii,:);
+        value_firm = [];
+        value_firm_no_match = [];
+        policy_firm = [];
+        policy_firm_no_match = [];
+        %cost_slope = @(x,y) ((1 + x)^(mm.kappa1 - 1) - 1)/(1 + log(y))^mm.gam;
+        %cost_slope_firm = [];
+        %cost_slope_no_match = [];
+        trials = val_imp(:,12) + val_imp(j,13);
+        net_effects = min(val_imp(:,12),40)+1;
+        for j = 1:size(val_imp,1)
+            % correct for the fact that learning stops at 20 matches
+            net_effects = min(val_imp(j,12),40)+1;
+            if val_imp(j,12) > 20
+                val_imp(j,12) = floor(val_imp(j,12)/ trials(j) * 20);
+            end
+            %if t>50 && pol_k > 1
+                %value_firm(j) = value_f_post(val_imp(j,12)+1,min(trials(j),11),20)+1,1,net_effects,pt_type(val_imp(j,3)),macro_state(1 + 12*(t-1)));
+                %value_firm_no_match(j) = value_f_post(1,1,1,1,pt_type(val_imp(j,3)),macro_state(1 + 12*(t-1)));
+                %policy_firm(j) = lambda_f_post(val_imp(j,12)+1,min(val_imp(j,11),20)+1,1,net_effects,pt_type(val_imp(j,3)),macro_state(1 + 12*(t-1)));
+                %policy_firm_no_match(j) = lambda_f_post(1,1,1,1,pt_type(val_imp(j,3)),macro_state(1 + 12*(t-1)));
+            %else
+                value_firm(j) = policy.value_f(val_imp(j,12)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),7);
+                value_firm_no_match(j) = policy.value_f(1,1,1,1,mm.pt_type(val_imp(j,2)),7);
+                policy_firm(j) = policy.lambda_f(val_imp(j,12)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),7);
+                policy_firm_no_match(j) = policy.lambda_f(1,1,1,1,mm.pt_type(val_imp(j,2)),7);
+            %end
+         %   cost_slope_firm(j) = cost_slope(policy_firm(j),net_effects);
+         %   cost_slope_firm_no_match(j) = cost_slope(policy_firm_no_match(j),1);
+        end
+        total_value(t,sim_i,pol_k) = sum(value_firm);
+        total_value_no_match(t,sim_i,pol_k) = sum(value_firm_no_match);
+        value_per_firm(t,sim_i,pol_k) = mean(value_firm);
+        value_per_firm_med(t,sim_i,pol_k) = median(value_firm); 
+        value_per_firm_no_match(t,sim_i,pol_k) = mean(value_firm_no_match);
+        cost_slope_mean(t,sim_i,pol_k) = mean(cost_slope_firm);
+        value_per_firm_va(t,sim_i,pol_k) = mean(value_firm - value_firm_no_match);
+        value_per_firm_va_med(t,sim_i,pol_k) = median(value_firm - value_firm_no_match);
+        value_per_firm_pct(t,sim_i,pol_k) = mean((value_firm - value_firm_no_match) ./ value_firm);
 
     end
     sales_per_firm(:,pol_k)   = total_sales(:,pol_k) ./ total_firms(:,pol_k);

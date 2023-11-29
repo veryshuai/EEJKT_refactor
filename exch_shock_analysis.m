@@ -9,18 +9,20 @@ files = {'results/exch_shock_plots/baseline_no_shk', ...
     'results/exch_shock_plots/baseline_up_shk', ...
     'results/exch_shock_plots/baseline_down_shk'};
 
-for pol_k = 1:3
+%for pol_k = 1:3
+for pol_k = 1
     match_recs_appended = [];
     dud_matches_appended = [];
     succ_matches_appended = [];
-    for m=1:400
+    %for m=1:400
+    for m = 1:175
         filename = sprintf('%d.mat', m);
-        load([files{pol_k},filename], 'match_recs', 'succ_matches');
+        load([files{pol_k},filename]);
         %  match_recs: [period, type, firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age]       
         %  succ matches the same, but only successes
         %  dud matches the same, but only failures
-        succ_matches = match_recs;
-        dud_matches = match_recs;
+        %succ_matches = match_recs;
+        %dud_matches = match_recs;
         match_recs(:,3) = match_recs(:,3) + 10000 * m; %make firm ids unique across files
         succ_matches(:,3) = succ_matches(:,3) + 10000 * m; %make firm ids unique across files
         dud_matches(:,3) = dud_matches(:,3) + 10000 * m; %make firm ids unique across files
@@ -42,7 +44,7 @@ for pol_k = 1:3
     succ_matches = [succ_matches,new_id_succ];
     dud_matches = [dud_matches,new_id_dud];
 
-    for t=10:max(match_recs(:,10)-1)
+    for t=11:max(match_recs(:,10)-1)
         
         match_recs_one_year = match_recs(match_recs(:,10) == t,:);
 
@@ -130,16 +132,23 @@ for pol_k = 1:3
             value_firm_no_match(j) = policy.value_f(1,1,1,1,mm.pt_type(val_imp(j,2)),7);
             policy_firm(j) = policy.lambda_f(val_imp(j,12)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),7);
             policy_firm_no_match(j) = policy.lambda_f(1,1,1,1,mm.pt_type(val_imp(j,2)),7);
+            net_continuation_value_clients(j) = 0;
+            for dem_shk=1:mm.z_size*2+1
+                net_continuation_value_clients(j) = ...
+                    net_continuation_value_clients(j)...
+                    + curr_match_cnts_by_id_and_dem_shk(j,dem_shk) ...
+                    * policy.c_val_f(dem_shk,mm.pt_type(val_imp(j,2)),7);
+            end
         end
-        total_value(t,pol_k) = sum(value_firm);
-        total_value_no_match(t,pol_k) = sum(value_firm_no_match);
-        value_per_firm(t,pol_k) = mean(value_firm);
-        value_per_firm_med(t,pol_k) = median(value_firm); 
-        value_per_firm_no_match(t,pol_k) = mean(value_firm_no_match);
-        value_per_firm_va(t,pol_k) = mean(value_firm - value_firm_no_match);
-        value_per_firm_va_med(t,pol_k) = median(value_firm - value_firm_no_match);
-        value_per_firm_pct(t,pol_k) = mean((value_firm - value_firm_no_match) ./ value_firm);
-
+        total_value(t,pol_k) = sum(nonzeros(value_firm));
+        total_value_no_match(t,pol_k) = sum(nonzeros(value_firm_no_match));
+        value_per_firm(t,pol_k) = mean(nonzeros(value_firm));
+        value_per_firm_med(t,pol_k) = median(nonzeros(value_firm)); 
+        value_per_firm_no_match(t,pol_k) = mean(nonzeros(value_firm_no_match));
+        value_per_firm_va(t,pol_k) = mean(nonzeros(value_firm - value_firm_no_match));
+        value_per_firm_va_med(t,pol_k) = median(nonzeros(value_firm - value_firm_no_match));
+        value_per_firm_pct(t,pol_k) = mean(nonzeros((value_firm - value_firm_no_match) ./ value_firm));
+        current_clients_cont_value_mean(t,pol_k) = mm.F_f + mean(nonzeros(net_continuation_value_clients)); %add the fixed cost because cont value in code is net of it
     end
     sales_per_firm(:,pol_k)   = total_sales(:,pol_k) ./ total_firms(:,pol_k);
     sales_per_match(:,pol_k)  = total_sales(:,pol_k) ./ total_matches(:,pol_k);

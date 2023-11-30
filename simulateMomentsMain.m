@@ -2,9 +2,9 @@ function simMoms = simulateMomentsMain(policy,mm)
 
 % rng(80085,'twister');
 
-[macro_state_f, macro_state_h] = simulateMacroTrajectories(mm, policy);
-
 sim_out = cell(mm.N_pt,1);
+
+[macro_state_f, macro_state_h] = simulateMacroTrajectories(mm, policy);
 
 seeds = randi(1e6,size(mm.Phi,1),2);
 
@@ -68,3 +68,5 @@ end
 %%
 sim_cum = aggregateSimulatedData(sim_out,mm);
 simMoms = calculateSimulatedMoments(sim_cum,mm);
+simMoms.macro_state_f = macro_state_f;
+simMoms.macro_state_h = macro_state_h;

@@ -201,16 +201,16 @@ saveas(gcf,"results/value_plots/marg_val_h_percent.png");
 % successes all arrive consecutively, but start in different years.
 
 cum_year_mat = zeros(3,1);
-theta_evolution = zeros(7,1,3); % [match_no, [time, value], first_yr]
+theta_evolution = zeros(6,1,3); % [match_no, [time, value], first_yr]
 for first_succ_yr = 1:3
 
-    succ_seq = zeros(7,1);
-    succ_seq(first_succ_yr:first_succ_yr+3) = 1;
+    succ_seq = zeros(6,1);
+    succ_seq(first_succ_yr:first_succ_yr+2) = 1;
     
     cum_years = 0;
     succs = 1; %first index is zero
     trials = 1; %first index is zero
-    for match_no = 0:6
+    for match_no = 0:5
         theta_guess = (mm.af + succs - 1) / (mm.af + mm.bf + trials - 1);
         theta_evolution(match_no+1,1,first_succ_yr) = cum_years;
         theta_evolution(match_no+1,2,first_succ_yr) = theta_guess;
@@ -224,8 +224,8 @@ end
     
 bar(cum_year_mat);
 xlabel('Year of first success');
-ylabel('Years to six trials');
-title('three consecutive success in six trials');
+ylabel('Years to five trials');
+title('three consecutive success in five trials');
 saveas(gcf,"results/value_plots/success_order.png");
 
 plot(theta_evolution(:,1,3),theta_evolution(:,2,3));

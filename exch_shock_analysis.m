@@ -52,20 +52,25 @@ for pol_k = 1:3
     match_recs = [match_recs,new_id];
     succ_matches = [succ_matches,new_id_succ];
     dud_matches = [dud_matches,new_id_dud];
-
+    
+    match_recs = exch_shock_analysis_alt_age_calc(match_recs);
+    succ_matches = exch_shock_analysis_alt_age_calc(succ_matches);
+    dud_matches = exch_shock_analysis_alt_age_calc(dud_matches);
+    
     for t=11:max(match_recs(:,11)-1)
         
         match_recs_one_year = match_recs(match_recs(:,11) == t,:);
+        %match_recs_one_year = succ_matches(succ_matches(:,11) == t,:);
 
-%        new_id = 0.5*(match_recs_one_year(:,2)+match_recs_one_year(:,3)).*(match_recs_one_year(:,2)+match_recs_one_year(:,3)+1)+match_recs_one_year(:,3);
-        new_id = match_recs_one_year(:,12);
-        [unique_firms,~,~] = unique(new_id);
+        new_id_one_year = match_recs_one_year(:,12);
+        [unique_firms,~,~] = unique(new_id_one_year);
         total_firms(t,pol_k) = size(unique_firms,1);
+        %only_new_firms = match_recs_one_year(:,9)/mm.pd_per_yr < t-25;
         only_new_firms = match_recs_one_year(:,9)/mm.pd_per_yr < t-25;
         only_first_yr_firms = match_recs_one_year(:,9)/mm.pd_per_yr < 1;
-        [new_firms,~,~] = unique(new_id(only_new_firms));
-        [first_yr_firms,~,~] = unique(new_id(only_first_yr_firms));
-        [non_first_yr_firms,~,~] = unique(new_id(~only_first_yr_firms));
+        [new_firms,~,~] = unique(new_id_one_year(only_new_firms));
+        [first_yr_firms,~,~] = unique(new_id_one_year(only_first_yr_firms));
+        [non_first_yr_firms,~,~] = unique(new_id_one_year(~only_first_yr_firms));
         total_new_firms(t,pol_k) = size(new_firms,1);
         total_first_yr_firms(t,pol_k) = size(first_yr_firms,1);
         total_non_first_yr_firms(t,pol_k) = size(non_first_yr_firms,1);

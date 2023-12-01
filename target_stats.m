@@ -34,7 +34,8 @@ function [Data, W] = target_stats()
 %   moment 14
     mavshipDAT           = 1.176; % average ln(# shipments) 
 %   moments 15-17    
-    exp_dom_coefsDAT     = [11.0399,0.3228142,2.606^2]; % [mean dep var.,coef,MSE]  
+    exp_dom_coefsDAT     = [11.0399,0.3228142,2.606^2]; % [mean dep var.,coef,MSE] 
+%   exp_dom_coefsDAT     = [11.0399,0.3439815,2.477^2]; % Marcela's updated figures 9-15-23
 %   moments 18-20    
     dom_ar1_coefsDAT     = [14.29349,0.9764422,0.46207^2]; % [mean dep var.,coef,MSE] 
 %   moments 21-22
@@ -104,12 +105,6 @@ loglog_coefsCOV = ...
  match_haz_coefsCOV = ...  % from RDC disclosure 11045_20231109
     [0.0053    0;
      0       0.0082].^2 ;  
-
- % OLD FIGURES LOADED HERE AS A TEST--NEED TO DELETE THEM
-%  match_haz_coefsCOV = ...
-%     [0.0053    0;
-%      0       0.008].^2 ; % second number is made-up as a place-holder  
-%  
 
 %   lst_match_coefsCOV = ...
 %    [0.00253 0      0      0      0      0        ;

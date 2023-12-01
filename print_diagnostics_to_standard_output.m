@@ -30,12 +30,12 @@ fprintf('\r\n weighted metric:   %.15f\n', D);
     fprintf(' number of firms per yr     = %.3f\n',simMoms.agg_nfirm/(mm.tot_yrs - mm.burn));
     fprintf( '\r\n  '); 
     
-      fileID2 = fopen('results/ga_fitlog_2sclNewHaz.txt','a');
+      fileID2 = fopen('results/ga_fitlog_NoLearning.txt','a');
       fprintf(fileID2,'\r\n fit metric:  %9.5f', D);
       fclose(fileID2);
  
 
-      fileID1 = fopen('results/ga_running_output_2sclNewHaz.txt','a');
+      fileID1 = fopen('results/ga_running_output_NoLearning.txt','a');
       fprintf(fileID1,'\r\n original fit metric: %9.5f', D);
 %       dlmwrite('results/ga_running_output_restricted.txt',D,'-append','precision',12);
     

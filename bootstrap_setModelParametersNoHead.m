@@ -13,21 +13,6 @@ mm.eta       = 5;          % Demand elasticity
 %% Estimated parameters
 
 mm.param_vec = X;      % carry along parameter vector for diagnostic checks
-% 
-% mm.F_h       = exp(X(1));  % cost of maintaining a client- home 
-% mm.scale_h   = X(2);       % Domestic profit function scale parameter
-% mm.scale_f   = X(2);       % Export profit function scale parameter (same as home)
-% mm.ah        = X(4)*X(3);  % Beta function, home (theta1) success parameter
-% mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
-% D_z          = X(5)/mm.pd_per_yr; % Jump size, match productivity shock
-% mm.L_bF      = X(6)/mm.pd_per_yr; % Shipment order arrival hazard
-% mm.gam       = X(7);       % Network effect parameter
-% mm.cs_h      = exp(X(8));  % Cost scaling parameter, home market
-% mm.sig_p     = X(9);       %standard deviation of productivity distribution
-% mm.F_f       = exp(X(1)); % cost of maintaining a client- foreign
-% mm.cs_f      = exp(X(10)); % Cost scaling parameter, foreign market
-% mm.optimism  = 0; %parameter on prior distribution (positive means optimistic, negative pessamisitic)
-
 
 %% Discretization of state-space
 
@@ -67,8 +52,8 @@ mm.tot_yrs       = 50;   % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
 
-mm.S         = 10000;    % number of potential exporting firms to simulate 
-mm.burn      = 10;       %number of burn-in years
+mm.S         = 150000;   % number of potential exporting firms to simulate (SET BIG)
+mm.burn      = 10;       % number of burn-in years
 mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;     % Number of possible matches for domestic market
 mm.MaxMatchMonth = 1.5e+6; % Max number of match-months in any year for a given firm type

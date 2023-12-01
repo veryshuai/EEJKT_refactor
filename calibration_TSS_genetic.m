@@ -22,30 +22,48 @@
 
 %%
 
-fprintf('\r\n STARTING A NEW RUN (No learning): %s\n ', datestr(now,'yyyy_mmdd_HHMM'));
+fprintf('\r\n STARTING A NEW RUN (known theta model): %s\r ', datestr(now,'yyyy_mmdd_HHMM'));
+fprintf('\n Foreign profit scale set to twice home market profit scaler ');
+fprintf('\n Degree distribution not targeted, minimizing original D \r');
+fprintf('\n Updated hazard measure and hazard regression targeted \r');
+fprintf('\n S = 50000 potential firms\r');
 
-fileID1 = fopen('results/ga_running_output_nolearning.txt','a');
- fprintf(fileID1,'\r\n STARTING A NEW RUN (no learning) %s\n', datestr(now,'yyyy_mmdd_HHMM') );
+
+fileID1 = fopen('results/ga_running_output_NoLearning.txt','a');
+  fprintf(fileID1,'\r\n STARTING A NEW RUN (known theta model) %s\n', datestr(now,'yyyy_mmdd_HHMM') );
+  fprintf(fileID1,'\n Foreign profit scaler set to twice home market profit scaler \r');
+  fprintf(fileID1,'\n Degree distribution not targeted, minimizing original D \r');
+  fprintf(fileID1,'\n Updated hazard measure and hazard regression targeted \r');
+  fprintf(fileID1,'\n S = 50000 potential firms \r');
 fclose(fileID1);
 
-fileID2 = fopen('results/ga_fitlog_nolearning.txt','a');
+fileID2 = fopen('results/ga_fitlog_NoLearning.txt','a');
+  fprintf(fileID2,'\r\n STARTING A NEW RUN %s\n', datestr(now,'yyyy_mmdd_HHMM') );
+  fprintf(fileID2,'\n Foreign profit scaler set to twice home market profit scaler \r');
+  fprintf(fileID2,'\n Degree distribution not targeted, minimizing original D \r');
+  fprintf(fileID2,'\n Updated hazard measure and hazard regression targeted \r');
+  fprintf(fileID2,'\n S = 50000 potential firms \r');
+fclose(fileID2);
+ 
 
-%theta = [-7.36860635010041,-20.6466017575077,0.0705689663149828,0.182537998345310,...
-%    0.434516092398813,11.6676402703387,0.0563370713452114,4.14266745807416,...
-%    2.87257237464644,13.3244805739937];
-theta = [-6.45612526146465	-24.8597549465442	0.0641132001252187	0.124082025507849...
-    0.386927069697788	11.5504381998602	0.0831426517751923	1.74959996396178...
-    2.75085781160114	14.4951685743077];
-% No learning: fit is 11.7367794603627 on Windows (11.735753755320403 in
-% linux)
-     
-theta = [-5.44086676636325,-19.4382242330205,0.158825726539545,0.367383665973718,...
-    0.483330444401690,10.6297324206023,0.0469201052969252,5.20915076877990,...
-    2.18909944116805,11.7998950817073]; % fit = 10.4266     
+% 
+% theta = [-3.83253579377554	-19.6106680040131	0.137001306401593	0.282020343033900...
+%          0.577076334796007	12.1194036685043	0.0492572810194975	4.88922911109957...
+%          2.38047698896763	15.1377391760052]; % fit: 11.8453
+
+% theta = [-3.76611438037509	-20.6927217338684	0.135477287531201	0.190633236901937...
+%         0.579471364487730	11.3347872095937	0.0548954805115267	3.69372770061689...
+%     	2.38225965393168	14.5381611202662];
+    
+theta = [-3.76116192399808,-20.6895982589584,0.135370129020534,0.190590913233594,...
+         0.579716151164831,11.3358135590897,0.0549090370215977,3.69546573177355,...
+         2.38182383061842,14.5364287106547];    
 
 % X = theta;     
 
 D0 = distance(theta);
+
+load('/storage/work/jxt32/EEJKT-codes/EEJKT_refactor_nolearn_11-2-23/Output/Optimization_2023_1108_0659_Run9of15.mat')
   
 % population size
 K = length(theta);
@@ -114,3 +132,8 @@ while t<=R
     t = t + 1;
 end
 theta = x';
+
+
+
+
+

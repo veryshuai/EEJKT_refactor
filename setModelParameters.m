@@ -17,7 +17,7 @@ mm.param_vec = X;      % carry along parameter vector for diagnostic checks
 
 mm.F_h       = exp(X(1));  % cost of maintaining a client- home 
 mm.scale_h   = X(2);       % Domestic profit function scale parameter
-mm.scale_f   = X(2)+1;    % Export profit function scale parameter 
+mm.scale_f   = X(2)+1;     % Export profit function scale parameter 
 mm.ah        = X(4)*X(3);  % Beta function, home (theta1) success parameter
 mm.bh        = X(4)*(1-X(3));% Beta function, home (theta1) failure parameter
 D_z          = X(5)/mm.pd_per_yr; % Jump size, match productivity shock
@@ -164,4 +164,3 @@ mm.erg_pz       = erg_pz;   %ergodic distribution of demand shocks
 mm.N_pt          = size(mm.Phi,1)*size(mm.theta2,2);
 mm.pt_type = [kron((1:size(mm.Phi,1))',ones(size(mm.theta2,2),1)),kron(ones(size(mm.Phi,1),1),(1:size(mm.theta2,2))')];
 mm.sim_firm_num_by_prod_succ_type = round(mm.erg_pp(mm.pt_type(:,1)).*mm.th2_pdf(mm.pt_type(:,2))'*mm.S);
-

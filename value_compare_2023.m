@@ -15,6 +15,7 @@ load results/val_dat
 %create data set containing only variables we need (no information about counterparty)
 % all_exporters = [agg_type,firmID,annual_sales,prod_type,theta_type]
 %  match_recs: [period, type, firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age]       
+match_recs = succ_matches;
 positive_sales = match_recs(:,4) > 0; %matches which die during the year sometimes have zero sales
 all_matches_one_year = match_recs(match_recs(:,1) >= 588 & match_recs(:,1) < 600 & positive_sales,1:4);
 all_matches_one_year(:,3) = all_matches_one_year(:,3) * 2; %some firm IDs are X.5, accumarray does not like this

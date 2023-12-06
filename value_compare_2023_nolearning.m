@@ -129,7 +129,9 @@ for type = 1:3
 
 end
 
-%Plots
+%Plots (TO CREATE THIS PLOT, CHANGE setModelParameters.m:  
+%mm.v_tolerance   = 1e-6; % convergence tolerance, value function iterations (WAS 1e-3)
+%Important because due to numerical error, there is a slight upward drift in the value of failure.  This is (nearly) eliminated with a lower v_tolerance.
 plot(log(val_succ_f(:,3)));
 hold on
 plot(log(val_alt_f(:,3)));

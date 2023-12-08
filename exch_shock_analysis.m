@@ -7,22 +7,20 @@ load results/policy_baseline_no_shk
 
 files = {'results/exch_shock_plots/baseline_no_shk', ...
     'results/exch_shock_plots/baseline_up_shk', ...
-    'results/exch_shock_plots/baseline_down_shk'};
-
+    'results/exch_shock_plots/baseline_up_shk'};
+%'results/exch_shock_plots/baseline_down_shk'};
+    
 for pol_k = 1:3
     match_recs_appended = [];
     dud_matches_appended = [];
     succ_matches_appended = [];
-    for m = 1:400
+    for m = 1:1000
         filename = sprintf('%d.mat', m);
         load([files{pol_k},filename]);
         %  match_recs: [period, type, firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age]       
         %  succ matches the same, but only successes
         %  dud matches the same, but only failures
-        if pol_k>1
-            succ_matches = match_recs;
-            dud_matches = match_recs;
-        end
+
         %Fix firm ids
         match_recs(:,3) = match_recs(:,3) + 10000 * m; %make firm ids unique across files
         succ_matches(:,3) = succ_matches(:,3) + 10000 * m; %make firm ids unique across files
@@ -314,8 +312,8 @@ plot(mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
 plot(mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
 plot(mean(squeeze(total_old_firm_old_sales(11:40,1)),2) + mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
 set(gca,'FontSize',18)
-%legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
-%title("Total sales");
+legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
+title("Total sales");
 xlim([1,30])
 xticks([5 10 15 20 25 30])
 xticklabels({'-10','-5','0','5','10','15'})

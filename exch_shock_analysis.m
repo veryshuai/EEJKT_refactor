@@ -14,7 +14,7 @@ for pol_k = 1:3
     match_recs_appended = [];
     dud_matches_appended = [];
     succ_matches_appended = [];
-    for m = 1:1000
+    for m = 1:2000
         filename = sprintf('%d.mat', m);
         load([files{pol_k},filename]);
         %  match_recs: [period, type, firm_ID, sales, shipments, boy Z, eoy Z, match age, firm age]       

@@ -32,15 +32,17 @@ median_succ = [10,floor(prctile(all_exporters(:,5),10));50,floor(prctile(all_exp
 median_prod = [10,15;50,16;90,17];
 median_succ = [10,6;50,6;90,6];
 
+deflator = 260.227 / 115.6;
+
 %Generate some figures used in the text
 %average sales per shipment
-avg_shipment_sales = mean(match_recs(match_recs(:,5)~=0,4)./match_recs(match_recs(:,5)~=0,5))
-sd_shipment_sales = (var(match_recs(match_recs(:,5)~=0,4)./match_recs(match_recs(:,5)~=0,5)))^0.5
+avg_shipment_sales = deflator * mean(match_recs(match_recs(:,5)~=0,4)./match_recs(match_recs(:,5)~=0,5))
+sd_shipment_sales = deflator * (var(match_recs(match_recs(:,5)~=0,4)./match_recs(match_recs(:,5)~=0,5)))^0.5
 
 %Cost function calculations in the paper
-cost_one_match_per_yr_no_exp = mm.cost_f(1/12,1)
-cost_one_match_two_yrs_no_exp = mm.cost_f(1/24,1)
-cost_one_match_per_yr_ten_exp = mm.cost_f(1/12,11)
+cost_one_match_per_yr_no_exp = deflator *  mm.cost_f(1/12,1)
+cost_one_match_two_yrs_no_exp = deflator * mm.cost_f(1/24,1)
+cost_one_match_per_yr_ten_exp = deflator * mm.cost_f(1/12,11)
 ratio_cost_one_vs_zero = (mm.cost_f(1/12,11)-mm.cost_f(1/12,1))/mm.cost_f(1/12,1)
 
 %theta stuff
@@ -93,33 +95,33 @@ marg_val_alt_f_percent = zeros(20,3);
 for type = 1:3
 
     for k = 1:20
-        val_succ_f(k,type) = policy.value_f(k,k,1,k,median_prod(type,2),7); 
-        marg_val_succ_f(k,type)  = policy.value_f(k+1,k+1,1,k+1,median_prod(type,2),7) - policy.value_f(k,k,1,k,median_prod(type,2),7);
+        val_succ_f(k,type) = deflator * policy.value_f(k,k,1,k,median_prod(type,2),7); 
+        marg_val_succ_f(k,type)  = deflator * policy.value_f(k+1,k+1,1,k+1,median_prod(type,2),7) - policy.value_f(k,k,1,k,median_prod(type,2),7);
         marg_val_succ_f_percent(k,type) = (policy.value_f(k+1,k+1,1,k+1,median_prod(type,2),7) - policy.value_f(k,k,1,k,median_prod(type,2),7))/policy.value_f(k,k,1,k,median_prod(type,2),7);
     end
     
     for k = 1:20
-        val_fail_f(k,type) = policy.value_f(1,k,1,1,median_prod(type,2),7);
-        marg_val_fail_f(k,type)  = policy.value_f(1,k+1,1,1,median_prod(type,2),7) - policy.value_f(1,k,1,1,median_prod(type,2),7);
+        val_fail_f(k,type) = deflator * policy.value_f(1,k,1,1,median_prod(type,2),7);
+        marg_val_fail_f(k,type)  = deflator * policy.value_f(1,k+1,1,1,median_prod(type,2),7) - policy.value_f(1,k,1,1,median_prod(type,2),7);
         marg_val_fail_f_percent(k,type) = (policy.value_f(1,k+1,1,1,median_prod(type,2),7) - policy.value_f(1,k,1,1,median_prod(type,2),7))/policy.value_f(1,k,1,1,median_prod(type,2),7);
     end
     
     for k = 1:20
-        val_succ_h(k,type) = policy.value_h(1,7,k,median_prod(type,2),7);
-        marg_val_succ_h(k,type)  = policy.value_h(1,7,k+1,median_prod(type,2),7) - policy.value_h(1,7,k,median_prod(type,2),7);
+        val_succ_h(k,type) = deflator * policy.value_h(1,7,k,median_prod(type,2),7);
+        marg_val_succ_h(k,type)  = deflator * policy.value_h(1,7,k+1,median_prod(type,2),7) - policy.value_h(1,7,k,median_prod(type,2),7);
         marg_val_succ_h_percent(k,type) = (policy.value_h(1,7,k+1,median_prod(type,2),7) - policy.value_h(1,7,k,median_prod(type,2),7))/policy.value_h(1,7,k,median_prod(type,2),7);
     end
 
     for k = 1:20
-        val_alt_h(k,type) = policy.value_h(1,7,k,median_prod(type,2),7);
-        marg_val_alt_h(k,type)  = policy.value_h(1,7,k+1,median_prod(type,2),7) - policy.value_h(1,7,k,median_prod(type,2),7);
+        val_alt_h(k,type) = deflator * policy.value_h(1,7,k,median_prod(type,2),7);
+        marg_val_alt_h(k,type)  = deflator * policy.value_h(1,7,k+1,median_prod(type,2),7) - policy.value_h(1,7,k,median_prod(type,2),7);
         marg_val_alt_h_percent(k,type) = (policy.value_h(1,7,k+1,median_prod(type,2),7) - policy.value_h(1,7,k,median_prod(type,2),7))/policy.value_h(1,7,k,median_prod(type,2),7);
     end
 
     for k = 1:20
         succs = floor(k/2) + 1;
-        val_alt_f(k,type) = policy.value_f(succs,k,1,succs,median_prod(type,2),7); 
-        marg_val_alt_f(k,type)  = policy.value_f(succs-mod(k,2)+1,k+1,1,succs-mod(k,2)+1,median_prod(type,2),7) - policy.value_f(succs,k,1,succs,median_prod(type,2),7);
+        val_alt_f(k,type) = deflator * policy.value_f(succs,k,1,succs,median_prod(type,2),7); 
+        marg_val_alt_f(k,type)  = deflator * policy.value_f(succs-mod(k,2)+1,k+1,1,succs-mod(k,2)+1,median_prod(type,2),7) - policy.value_f(succs,k,1,succs,median_prod(type,2),7);
         marg_val_alt_f_percent(k,type) = (policy.value_f(succs-mod(k,2)+1,k+1,1,succs-mod(k,2)+1,median_prod(type,2),7) - policy.value_f(succs,k,1,succs,median_prod(type,2),7))/policy.value_f(succs,k,1,succs,median_prod(type,2),7);
     end
 
@@ -132,10 +134,21 @@ plot(log(val_alt_f));
 hold on
 plot(log(val_fail_f));
 xlabel('Matches')
-ylabel('1992 USD')
-title({'Log value in foreign market','Excludes profit flow from current relationships'})
+ylabel('2023 USD (log scale)')
+title({'Value in foreign market','Excludes profit flow from current relationships'})
 hold off
+ax = gca();
+ax.YTickLabel = compose('%0.2g', exp(ax.YTick)');
 saveas(gcf,"results/value_plots/val_f_three_types.png");
+
+%Perceived values quoted in paper:
+format long
+val_succ_f(1,3)
+val_succ_f(1,2)
+val_succ_f(1,1)
+val_succ_f(2,3)
+val_succ_f(2,2)
+val_fail_f(3,3)
 
 plot(val_succ_f(:,2));
 hold on

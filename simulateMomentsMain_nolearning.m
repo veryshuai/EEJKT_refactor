@@ -16,6 +16,8 @@ parfor pt_ndx = 1:mm.N_pt
 % for pt_ndx = 108
 % for pt_ndx = 101
 % for pt_ndx = 113
+
+    %Assign the relevant policy to this pt_ndx firm type
     theta_ind = mm.pt_type(pt_ndx,2);
     policy = policy_cell{theta_ind};
 

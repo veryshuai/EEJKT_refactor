@@ -11,6 +11,9 @@ try
     % choose the firm type to use for spot checking
     mm.check_type = 99;
     
+    % create a different set of policies for each theta type
+    % (This is slightly inefficient because we solve for identical
+    % home policy functions every time)
     policy_cell = cell(mm.dim2,1);
     for th_ind = 1:mm.dim2
         mm.th_ind_temp = th_ind;

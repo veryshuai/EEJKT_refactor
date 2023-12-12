@@ -28,9 +28,10 @@ all_exporters = sortrows(all_exporters,3); %sort based on sales
 
 median_prod = [10,floor(prctile(all_exporters(:,4),10));50,floor(prctile(all_exporters(:,4),50));90,floor(prctile(all_exporters(:,4),90))]
 median_succ = [10,floor(prctile(all_exporters(:,5),10));50,floor(prctile(all_exporters(:,5),50));90,floor(prctile(all_exporters(:,5),90))]
-%DJ NOTE: median_succ does not seem right -- should not be 1.
+
+%productivity is all the highest type -- reset here so we have soemthing to
+%graph
 median_prod = [10,15;50,16;90,17];
-median_succ = [10,6;50,6;90,6];
 
 deflator = 260.227 / 115.6;
 

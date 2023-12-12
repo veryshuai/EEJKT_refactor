@@ -61,7 +61,7 @@ theta = [-3.76116192399808,-20.6895982589584,0.135370129020534,0.190590913233594
 
 % X = theta;     
 
-D0 = distance(theta);
+D0 = distance_nolearning(theta);
 
 load('/storage/work/jxt32/EEJKT-codes/EEJKT_refactor_nolearn_11-2-23/Output/Optimization_2023_1108_0659_Run9of15.mat')
   

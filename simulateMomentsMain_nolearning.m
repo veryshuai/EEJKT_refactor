@@ -1,21 +1,23 @@
-function simMoms = simulateMomentsMain(policy,mm)
+function simMoms = simulateMomentsMain_nolearning(policy_cell,mm)
 
 % rng(80085,'twister');
 
-[macro_state_f, macro_state_h] = simulateMacroTrajectories(mm, policy);
+[macro_state_f, macro_state_h] = simulateMacroTrajectories(mm, policy_cell{1});
 
 sim_out = cell(mm.N_pt,1);
 
 seeds = randi(1e6,size(mm.Phi,1),2);
 
 mm.start_time = tic;
-parfor pt_ndx = 1:mm.N_pt
-% for pt_ndx = 1:1:mm.N_pt 
+%parfor pt_ndx = 1:mm.N_pt
+for pt_ndx = 1:1:mm.N_pt 
 %for pt_ndx = 90
 % for pt_ndx = 106
 % for pt_ndx = 108
 % for pt_ndx = 101
 % for pt_ndx = 113
+    theta_ind = mm.pt_type(pt_ndx,2);
+    policy = policy_cell{theta_ind};
 
    if toc(mm.start_time) > mm.abort_time
      display(toc(mm.start_time));

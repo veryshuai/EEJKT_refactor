@@ -5,6 +5,8 @@ load results/policy_baseline_no_shk
 %load results/val_dat
 %load lambdas_temp
 
+deflator = 260.227 / 115.6; %1992 dollars (Jan from BLS commodity PPI) to 2023 dollars
+
 files = {'results/exch_shock_plots/baseline_no_shk', ...
     'results/exch_shock_plots/baseline_up_shk', ...
     'results/exch_shock_plots/baseline_up_shk'};
@@ -90,14 +92,14 @@ for pol_k = 1:3
         if t>25 && pol_k == 3
             haircut = 4/5;
         end
-        total_sales(t,pol_k) = sum(haircut * match_recs_one_year(:,4),1);
-        total_new_sales(t,pol_k) = sum(haircut * match_recs_one_year(only_new_firms,4),1);
-        total_old_firm_new_sales(t,pol_k) = sum(haircut * match_recs_one_year(~only_new_firms & only_new_matches,4),1);
-        total_old_firm_old_sales(t,pol_k) = sum(haircut * match_recs_one_year(~only_new_firms & ~only_new_matches,4),1);
-        total_first_yr_match_sales(t,pol_k) = sum(haircut * match_recs_one_year(only_first_yr_matches,4),1);
-        total_non_first_yr_match_sales(t,pol_k) = sum(haircut * match_recs_one_year(~only_first_yr_matches,4),1);
-        total_first_yr_firm_sales(t,pol_k) = sum(haircut * match_recs_one_year(only_first_yr_firms,4),1);
-        total_non_first_yr_firm_sales(t,pol_k) = sum(haircut * match_recs_one_year(~only_first_yr_firms,4),1);
+        total_sales(t,pol_k) = deflator * sum(haircut * match_recs_one_year(:,4),1);
+        total_new_sales(t,pol_k) = deflator * sum(haircut * match_recs_one_year(only_new_firms,4),1);
+        total_old_firm_new_sales(t,pol_k) = deflator *  sum(haircut * match_recs_one_year(~only_new_firms & only_new_matches,4),1);
+        total_old_firm_old_sales(t,pol_k) = deflator *  sum(haircut * match_recs_one_year(~only_new_firms & ~only_new_matches,4),1);
+        total_first_yr_match_sales(t,pol_k) = deflator *  sum(haircut * match_recs_one_year(only_first_yr_matches,4),1);
+        total_non_first_yr_match_sales(t,pol_k) = deflator *  sum(haircut * match_recs_one_year(~only_first_yr_matches,4),1);
+        total_first_yr_firm_sales(t,pol_k) = deflator *  sum(haircut * match_recs_one_year(only_first_yr_firms,4),1);
+        total_non_first_yr_firm_sales(t,pol_k) = deflator *  sum(haircut * match_recs_one_year(~only_first_yr_firms,4),1);
 
         %Value calculations (up to current year, looking forward of course)
         
@@ -140,15 +142,15 @@ for pol_k = 1:3
             if val_imp(j,13) > 20
                 val_imp(j,13) = floor(val_imp(j,13)/ trials(j) * 20);
             end
-            value_firm(j) = policy.value_f(val_imp(j,13)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),val_imp(j,10));
-            value_firm_no_match(j) = policy.value_f(1,1,1,1,mm.pt_type(val_imp(j,2)),val_imp(j,10));
+            value_firm(j) = deflator *  policy.value_f(val_imp(j,13)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),val_imp(j,10));
+            value_firm_no_match(j) = deflator *  policy.value_f(1,1,1,1,mm.pt_type(val_imp(j,2)),val_imp(j,10));
             policy_firm(j) = policy.lambda_f(val_imp(j,13)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),val_imp(j,10));
             policy_firm_no_match(j) = policy.lambda_f(1,1,1,1,mm.pt_type(val_imp(j,2)),val_imp(j,10));
             net_continuation_value_clients(j) = 0;
             for dem_shk=1:mm.z_size*2+1
                 net_continuation_value_clients(j) = ...
                     net_continuation_value_clients(j)...
-                    + curr_match_cnts_by_id_and_dem_shk(j,dem_shk) ...
+                    +  deflator * curr_match_cnts_by_id_and_dem_shk(j,dem_shk) ...
                     * policy.c_val_f(dem_shk,mm.pt_type(val_imp(j,2)),val_imp(j,10));
             end
         end

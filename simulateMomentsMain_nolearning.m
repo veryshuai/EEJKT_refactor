@@ -9,8 +9,8 @@ sim_out = cell(mm.N_pt,1);
 seeds = randi(1e6,size(mm.Phi,1),2);
 
 mm.start_time = tic;
-%parfor pt_ndx = 1:mm.N_pt
-for pt_ndx = 1:1:mm.N_pt 
+parfor pt_ndx = 1:mm.N_pt
+%for pt_ndx = 1:1:mm.N_pt 
 %for pt_ndx = 90
 % for pt_ndx = 106
 % for pt_ndx = 108

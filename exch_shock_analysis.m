@@ -1,7 +1,7 @@
 %clear;
 rng(80085);
 
-load results/policy_baseline_no_shk
+load results/policy_baseline_up_shk
 %load results/val_dat
 %load lambdas_temp
 
@@ -11,7 +11,8 @@ files = {'results/exch_shock_plots/baseline_no_shk', ...
     'results/exch_shock_plots/baseline_up_shk', ...
     'results/exch_shock_plots/baseline_up_shk'};
 %'results/exch_shock_plots/baseline_down_shk'};
-    
+
+elasticities_by_sim = zeros(2000,3); %sales,matches,exporters
 for pol_k = 1:3
     match_recs_appended = [];
     dud_matches_appended = [];
@@ -38,6 +39,9 @@ for pol_k = 1:3
         match_recs_appended = [match_recs_appended;match_recs];
         succ_matches_appended = [succ_matches_appended;succ_matches];
         dud_matches_appended = [dud_matches_appended;dud_matches];
+        if pol_k == 2 %only run for up shock
+            elasticities_by_sim(m,:) = exch_rate_analysis_calc_elas(deflator,match_recs,mm);
+        end
     end
 
     match_recs = match_recs_appended;
@@ -86,8 +90,14 @@ for pol_k = 1:3
 
         %total_matches_old_firms = size(all_matches_one_year(
         haircut = 1;
+        value_in_foreign = policy.value_f;
+        lambda_in_foreign = policy.lambda_f;
+        c_val_in_foreign = policy.c_val_f;
         if t>25 && pol_k == 2
             haircut = 6/5;
+            value_in_foreign = policy.value_f_exch_rate_shk;
+            lambda_in_foreign = policy.lambda_f_exch_rate_shk;
+            c_val_in_foreign = policy.c_val_f_exch_rate_shk;
         end
         if t>25 && pol_k == 3
             haircut = 4/5;
@@ -142,16 +152,16 @@ for pol_k = 1:3
             if val_imp(j,13) > 20
                 val_imp(j,13) = floor(val_imp(j,13)/ trials(j) * 20);
             end
-            value_firm(j) = deflator *  policy.value_f(val_imp(j,13)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),val_imp(j,10));
-            value_firm_no_match(j) = deflator *  policy.value_f(1,1,1,1,mm.pt_type(val_imp(j,2)),val_imp(j,10));
-            policy_firm(j) = policy.lambda_f(val_imp(j,13)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),val_imp(j,10));
-            policy_firm_no_match(j) = policy.lambda_f(1,1,1,1,mm.pt_type(val_imp(j,2)),val_imp(j,10));
+            value_firm(j) = deflator *  value_in_foreign(val_imp(j,13)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),val_imp(j,10));
+            value_firm_no_match(j) = deflator *  value_in_foreign(1,1,1,1,mm.pt_type(val_imp(j,2)),val_imp(j,10));
+            policy_firm(j) = lambda_in_foreign(val_imp(j,13)+1,min(trials(j),20)+1,1,net_effects(j),mm.pt_type(val_imp(j,2)),val_imp(j,10));
+            policy_firm_no_match(j) = lambda_in_foreign(1,1,1,1,mm.pt_type(val_imp(j,2)),val_imp(j,10));
             net_continuation_value_clients(j) = 0;
             for dem_shk=1:mm.z_size*2+1
                 net_continuation_value_clients(j) = ...
                     net_continuation_value_clients(j)...
                     +  deflator * curr_match_cnts_by_id_and_dem_shk(j,dem_shk) ...
-                    * policy.c_val_f(dem_shk,mm.pt_type(val_imp(j,2)),val_imp(j,10));
+                    * c_val_in_foreign(dem_shk,mm.pt_type(val_imp(j,2)),val_imp(j,10));
             end
         end
         total_value(t,pol_k) = sum(nonzeros(value_firm));
@@ -163,6 +173,9 @@ for pol_k = 1:3
         value_per_firm_va_med(t,pol_k) = median(nonzeros(value_firm - value_firm_no_match));
         value_per_firm_pct(t,pol_k) = mean(nonzeros((value_firm - value_firm_no_match) ./ value_firm));
         current_clients_cont_value_mean(t,pol_k) = mm.F_f + mean(nonzeros(net_continuation_value_clients)); %add the fixed cost because cont value in code is net of it
+
+        %Elasticity calculations
+
     end
     sales_per_firm(:,pol_k)   = total_sales(:,pol_k) ./ total_firms(:,pol_k);
     sales_per_match(:,pol_k)  = total_sales(:,pol_k) ./ total_matches(:,pol_k);
@@ -175,6 +188,12 @@ display("The average value per exporter of foreign market access is: " + avg_exp
 display("The average value per exporter of current relationships is: " + mean(current_clients_cont_value_mean(end-10:end,1)));
 display("The average value of exporters, but if they had no export experience is: " + mean(value_per_firm_no_match(end-10:end,1)));
 
+%Numbers in exchange rate shock writeup
+avg_exporter_value_b4_shk = mean(value_per_firm(25,2)) + current_clients_cont_value_mean(25,2);
+avg_exporter_value_after_shk = mean(value_per_firm(26,2) + current_clients_cont_value_mean(26,2));
+display("The average value per exporter just before shock is: " + avg_exporter_value_b4_shk);
+display("The average value per exporter just after shock is: " + avg_exporter_value_after_shk);
+display("Ratio of average continuation value after to before is: " + avg_exporter_value_after_shk/avg_exporter_value_b4_shk);
 
 % %Value increase after shock (now reported in paper).  In order to be
 % %consistent with other results, we need to add the discounted expected
@@ -243,7 +262,7 @@ plot(mean(squeeze(total_new_matches(11:40,1)),2),'LineWidth',2)
 plot(mean(squeeze(total_old_firm_new_matches(11:40,1)),2) + mean(squeeze(total_new_matches(11:40,1)),2),'LineWidth',2)
 plot(mean(squeeze(total_old_firm_old_matches(11:40,1)),2) + mean(squeeze(total_old_firm_new_matches(11:40,1)),2) + mean(squeeze(total_new_matches(11:40,1)),2),'LineWidth',2)
 set(gca,'FontSize',18)
-legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
+%legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
 title("Total Matches");
 xlim([1,30])
 xticks([5 10 15 20 25 30])
@@ -260,7 +279,7 @@ plot(mean(squeeze(total_old_firm_new_matches(11:40,1)),2) + mean(squeeze(total_n
 plot(mean(squeeze(total_old_firm_old_matches(11:40,1)),2) + mean(squeeze(total_old_firm_new_matches(11:40,1)),2) + mean(squeeze(total_new_matches(11:40,1)),2),'LineWidth',2)
 %ylim([0 120])
 set(gca,'FontSize',18)
-legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
+%legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
 title("Total Matches");
 xlim([1,30])
 xticks([5 10 15 20 25 30])
@@ -276,7 +295,7 @@ total_sum = mean(squeeze(total_old_firm_old_matches(11:40,1)),2) + mean(squeeze(
 plot(mean(squeeze(total_new_matches(11:40,1)),2)./total_sum,'LineWidth',2)
 plot((mean(squeeze(total_old_firm_new_matches(11:40,1)),2) + mean(squeeze(total_new_matches(11:40,1)),2))./total_sum,'LineWidth',2)
 set(gca,'FontSize',18)
-legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
+%legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
 title("Total Matches");
 ylim([0.0 1.0])
 xlim([1,30])
@@ -297,7 +316,7 @@ total_sum = mean(squeeze(total_old_firm_old_matches(11:40,1)),2) + mean(squeeze(
 plot(mean(squeeze(total_new_matches(11:40,1)),2)./total_sum,'LineWidth',2)
 plot((mean(squeeze(total_old_firm_new_matches(11:40,1)),2) + mean(squeeze(total_new_matches(11:40,1)),2))./total_sum,'LineWidth',2)
 set(gca,'FontSize',18)
-legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
+%legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
 title("Total Matches");
 ylim([0.0 1.0])
 xlim([1,30])
@@ -314,13 +333,33 @@ plot(mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
 plot(mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
 plot(mean(squeeze(total_old_firm_old_sales(11:40,1)),2) + mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
 set(gca,'FontSize',18)
-legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
+%legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
 title("Total sales");
 xlim([1,30])
 xticks([5 10 15 20 25 30])
 xticklabels({'-10','-5','0','5','10','15'})
 hold off
 saveas(gcf,'results/exch_shock_plots/decomp_plots/total_sales.png')
+
+%Calculations in Exchange rate shock section of paper
+
+fraction_new_firms_in_total_sales = mean(squeeze(total_new_sales(11:40,1)),2) ./ (mean(squeeze(total_old_firm_old_sales(11:40,1)),2) + mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new_sales(11:40,1)),2));
+display('Fraction total sales by exporters born post-shock:'); 
+fraction_new_firms_in_total_sales
+
+fraction_incumbent_matches_in_total_sales = mean(squeeze(total_old_firm_old_sales(11:40,2)),2) ./ (mean(squeeze(total_old_firm_old_sales(11:40,2)),2) + mean(squeeze(total_old_firm_new_sales(11:40,2)),2) + mean(squeeze(total_new_sales(11:40,2)),2));
+display('Fraction total sales incumbent matches post-shock:'); 
+fraction_incumbent_matches_in_total_sales
+
+total_mean_sales = (mean(squeeze(total_old_firm_old_sales(:,2)),2) + mean(squeeze(total_old_firm_new_sales(:,2)),2) + mean(squeeze(total_new_sales(:,2)),2));
+total_sales_post_shock_diff_1yr = total_mean_sales(26) / total_mean_sales(25);
+total_sales_post_shock_diff_5yr = total_mean_sales(30) / total_mean_sales(25);
+total_sales_post_shock_diff_10yr = total_mean_sales(35) / total_mean_sales(25);
+display(['total sales in the first post-shock year relative to the last pre-shock year:',num2str(total_sales_post_shock_diff_1yr)]); 
+display(['total sales in the fifth post-shock year relative to the last pre-shock year:',num2str(total_sales_post_shock_diff_5yr)]); 
+display(['total sales in the tenth post-shock year relative to the last pre-shock year:',num2str(total_sales_post_shock_diff_10yr)]); 
+display(['percent additional year ten growth after post-shock year one:',num2str((total_sales_post_shock_diff_10yr-total_sales_post_shock_diff_1yr)/(total_sales_post_shock_diff_1yr-1))]); 
+
 
 hold off
 area([mean(squeeze(total_new_sales(11:40,3)),2),mean(squeeze(total_old_firm_new_sales(11:40,3)),2),mean(squeeze(total_old_firm_old_sales(11:40,3)),2)])
@@ -330,7 +369,7 @@ plot(mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new
 plot(mean(squeeze(total_old_firm_old_sales(11:40,1)),2) + mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
 %ylim([0.0 2e7])
 set(gca,'FontSize',18)
-legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
+%legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
 title("Total sales");
 xlim([1,30])
 xticks([5 10 15 20 25 30])
@@ -345,7 +384,7 @@ total_sum = mean(squeeze(total_old_firm_old_sales(11:40,1)),2) + mean(squeeze(to
 plot(mean(squeeze(total_new_sales(11:40,1)),2)./total_sum,'LineWidth',2)
 plot((mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new_sales(11:40,1)),2))./total_sum,'LineWidth',2)
 set(gca,'FontSize',18)
-legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
+%legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
 title("Total sales");
 ylim([0.0 1.0])
 xlim([1,30])
@@ -366,7 +405,7 @@ total_sum = mean(squeeze(total_old_firm_old_sales(11:40,1)),2) + mean(squeeze(to
 plot(mean(squeeze(total_new_sales(11:40,1)),2)./total_sum,'LineWidth',2)
 plot((mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new_sales(11:40,1)),2))./total_sum,'LineWidth',2)
 set(gca,'FontSize',18)
-legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
+%legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
 title("Total sales");
 ylim([0.0 1.0])
 xlim([1,30])
@@ -397,7 +436,7 @@ plot(mean(squeeze(total_new_firms(11:40,1)),2),'LineWidth',2)
 plot(mean(squeeze(total_firms(11:40,1)),2),'LineWidth',2)
 %ylim([0 45])
 set(gca,'FontSize',18)
-legend({'New exporter','Incumbent exporter'},'location','SouthWest','FontSize',20)
+%legend({'New exporter','Incumbent exporter'},'location','SouthWest','FontSize',20)
 title("Total exporters");
 xlim([1,30])
 xticks([5 10 15 20 25 30])
@@ -411,7 +450,7 @@ hold on
 total_sum = mean(squeeze(total_firms(11:40,1)),2);
 plot(mean(squeeze(total_new_firms(11:40,1)),2)./total_sum,'LineWidth',2)
 set(gca,'FontSize',18)
-legend({'New exporter','Incumbent exporter'},'location','SouthWest','FontSize',20)
+%legend({'New exporter','Incumbent exporter'},'location','SouthWest','FontSize',20)
 title("Total exporters");
 ylim([0.0 1.0])
 xlim([1,30])
@@ -430,7 +469,7 @@ hold on
 total_sum = mean(squeeze(total_firms(11:40,1)),2);
 plot(mean(squeeze(total_new_firms(11:40,1)),2)./total_sum,'LineWidth',2)
 set(gca,'FontSize',18)
-legend({'New exporter','Incumbent exporter'},'location','SouthWest','FontSize',20)
+%legend({'New exporter','Incumbent exporter'},'location','SouthWest','FontSize',20)
 title("Total exporters");
 ylim([0.0 1.0])
 xlim([1,30])
@@ -444,35 +483,35 @@ elas_var = @(new,base,cov_mat,log_arg) [1 / (log(log_arg)); -1 / (log(log_arg))]
 %elasticities (favorable)
 display('Favorable elasticities (Std Err)')
 display('SALES');
-display([(log(total_sales(26,2)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
-    (log(total_sales(30,2)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
-    (log(total_sales(49,2)) - log(total_sales(24,1)))/(log(1.2) - log(1))]);
+display([(log(total_sales(26,2)) - log(total_sales(25,1)))/(log(1.2) - log(1)),...
+    (log(total_sales(28,2)) - log(total_sales(25,1)))/(log(1.2) - log(1)),...
+    (log(total_sales(35,2)) - log(total_sales(25,1)))/(log(1.2) - log(1))]);
 
 display('MATCHES');
-display([(log(total_matches(26,2)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
-    (log(total_matches(30,2)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
-    (log(total_matches(49,2)) - log(total_matches(24,1)))/(log(1.2) - log(1))]);
+display([(log(total_matches(26,2)) - log(total_matches(25,1)))/(log(1.2) - log(1)),...
+    (log(total_matches(28,2)) - log(total_matches(25,1)))/(log(1.2) - log(1)),...
+    (log(total_matches(35,2)) - log(total_matches(25,1)))/(log(1.2) - log(1))]);
 
 display('FIRMS');
-display([(log(total_firms(26,2)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
-    (log(total_firms(30,2)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
-    (log(total_firms(49,2)) - log(total_firms(24,1)))/(log(1.2) - log(1))]);
+display([(log(total_firms(26,2)) - log(total_firms(25,1)))/(log(1.2) - log(1)),...
+    (log(total_firms(28,2)) - log(total_firms(25,1)))/(log(1.2) - log(1)),...
+    (log(total_firms(35,2)) - log(total_firms(25,1)))/(log(1.2) - log(1))]);
 
-display('Unfavorable elasticities')
-display('SALES')
-display([(log(total_sales(26,3)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
-    (log(total_sales(30,3)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
-    (log(total_sales(49,3)) - log(total_sales(24,1)))/(log(1.2) - log(1))]);
-
-display('MATCHES');
-display([(log(total_matches(26,3)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
-    (log(total_matches(30,3)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
-    (log(total_matches(49,3)) - log(total_matches(24,1)))/(log(1.2) - log(1))]);
-
-display('FIRMS');
-display([(log(total_firms(26,3)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
-    (log(total_firms(30,3)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
-    (log(total_firms(49,3)) - log(total_firms(24,1)))/(log(1.2) - log(1))]);
+% display('Unfavorable elasticities')
+% display('SALES')
+% display([(log(total_sales(26,3)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
+%     (log(total_sales(30,3)) - log(total_sales(24,1)))/(log(1.2) - log(1)),...
+%     (log(total_sales(49,3)) - log(total_sales(24,1)))/(log(1.2) - log(1))]);
+% 
+% display('MATCHES');
+% display([(log(total_matches(26,3)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
+%     (log(total_matches(30,3)) - log(total_matches(24,1)))/(log(1.2) - log(1)),...
+%     (log(total_matches(49,3)) - log(total_matches(24,1)))/(log(1.2) - log(1))]);
+% 
+% display('FIRMS');
+% display([(log(total_firms(26,3)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
+%     (log(total_firms(30,3)) - log(total_firms(24,1)))/(log(1.2) - log(1)),...
+%     (log(total_firms(49,3)) - log(total_firms(24,1)))/(log(1.2) - log(1))]);
 
 % display('No shock growth (50-75)?')
 % display('SALES');

@@ -9,7 +9,8 @@ pmat_cum  = cell(size(policy.firm_type_macro_succ_prod,1),1);
 
 for typ_indx = 1:size(policy.firm_type_macro_succ_prod,1)
     ms             = policy.firm_type_macro_succ_prod(typ_indx,2);
-    succ_prob      = mm.theta2(policy.firm_type_macro_succ_prod(typ_indx,3));
+    succ_idx      = policy.firm_type_macro_succ_prod(typ_indx,3);
+    succ_prob      = mm.theta2(succ_idx);
     prod_lvl       = policy.firm_type_macro_succ_prod(typ_indx,4);
 
     counter = 0;
@@ -19,7 +20,7 @@ for typ_indx = 1:size(policy.firm_type_macro_succ_prod,1)
         pos_i = sum(1:i-1); %advance to the correct number of meetings
         for ss=1:i % number of successes, plus 1
             r_ind = pos_i+ss;
-            search_inten = policy.lambda_f(ss,i,1,ss,prod_lvl,ms);
+            search_inten = policy.lambda_f(ss,i,succ_idx,ss,prod_lvl,ms);
             if i ~= mm.n_size + 1 && i ~= 1 % deal separately with first and last nn1.  It is impossible to learn more from last trial
                 counter = counter + 1;
 %                q_index_list(counter,:) = [r_ind,r_ind,-(search_inten + mm.firm_death_haz)]; %diag

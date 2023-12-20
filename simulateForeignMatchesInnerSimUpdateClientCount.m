@@ -13,7 +13,7 @@ function [iter_in, drop_Zcut] = simulateForeignMatchesInnerSimUpdateClientCount(
 %    [stay, iter_in] = simulateForeignMatchesInnerSimLearners(learn, iter_in, policy, stay);
 %    [stay, iter_in] = simulateForeignMatchesInnerSimNoLearners(no_learn, stay, mm, iter_in, policy);
     [iter_in] = simulateForeignMatchesInnerSimLearners(learn, iter_in, policy, stay);
-    [iter_in] = simulateForeignMatchesInnerSimNoLearners(no_learn, stay, mm, iter_in, policy);
+    [iter_in] = simulateForeignMatchesInnerSimNoLearners_nolearning(no_learn, stay, mm, iter_in, policy);
     
     iter_in.add_cli_cnt(:,iter_in.t) = max(iter_in.cum_succ(:,iter_in.t) - iter_in.cum_succ(:,iter_in.t-1),0); 
     %max() resets count to 0 for neg. differences to deal with new exporter

@@ -7,7 +7,7 @@ policy.firm_type_macro_succ_prod = [(1:1:size(mm.Phi,1)*size(mm.theta2,2)*size(m
 
 %% construct intensity matrix for given firm type k
 
-policy = intensityToProbabilityForeign(mm,policy);
+policy = intensityToProbabilityForeign_nolearning(mm,policy);
 
 policy = intensityToProbabilityHome(mm,policy);
 

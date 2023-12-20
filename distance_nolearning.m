@@ -1,4 +1,4 @@
-function D = distance(X)
+function D = distance_nolearning(X)
 
 try
 
@@ -14,12 +14,8 @@ try
     % create a different set of policies for each theta type
     % (This is slightly inefficient because we solve for identical
     % home policy functions every time)
-    policy_cell = cell(mm.dim2,1);
-    for th_ind = 1:mm.dim2
-        mm.th_ind_temp = th_ind;
-        policy_cell{th_ind} = generatePolicyAndValueFunctions(mm);
-    end
-    simMoms = simulateMomentsMain_nolearning(policy_cell,mm);
+    policy = generatePolicyAndValueFunctions(mm);
+    simMoms = simulateMomentsMain_nolearning(policy,mm);
     [D,~] = calculateDistanceAndPrint(simMoms,mm,X);
 
 catch

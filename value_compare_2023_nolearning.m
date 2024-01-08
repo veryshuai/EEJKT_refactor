@@ -57,9 +57,7 @@ theta_sd = sqrt(theta_var)
 %          0.527541658446327,12.1673847502223,0.0462420845261331,5.13239605341601,...
 %          2.38418049835969,15.1614775287665]; % fit PC 11.6912  unix: 11.6935
 
-X = [-3.76116192399808,-20.6895982589584,0.135370129020534,0.190590913233594,...
-         0.579716151164831,11.3358135590897,0.0549090370215977,3.69546573177355,...
-         2.38182383061842,14.5364287106547]; %BEST FIT NO LEARNING
+X = [-7.00428657247973 -23.0915400600166 0.129855165074604 0.147073857937515 0.637554188362434 12.5050138543584 0.0607676627106075 4.33149453421485 2.94198673283020 18.0202455396844]; %BEST FIT NO LEARNING
 
 % %USE FOREIGN PARAMETERS FOR HOME
 % %This way we can use value functions to learn about the importance of learning vs network
@@ -224,7 +222,7 @@ for first_succ_yr = 1:3
         theta_guess = (mm.af + succs - 1) / (mm.af + mm.bf + trials - 1);
         theta_evolution(match_no+1,1,first_succ_yr) = cum_years;
         theta_evolution(match_no+1,2,first_succ_yr) = theta_guess;
-        cum_years = cum_years_lag + 1 /(mm.pd_per_yr * policy.lambda_f(succs,trials,1,succs,median_prod(3,2),7));
+        cum_years = cum_years_lag + 1 /(mm.pd_per_yr * policy.lambda_f(succs,trials,5,succs,median_prod(3,2),7));
         trials = trials + 1;
         succs = succs + succ_seq(match_no+1);
     end
@@ -235,6 +233,7 @@ end
 bar(cum_year_mat);
 xlabel('Year of first success');
 ylabel('Years to five trials');
+ylim([0 40]);
 title('three consecutive success in five trials');
 saveas(gcf,"results/value_plots/success_order_no_learning.png");
 
@@ -247,8 +246,3 @@ title('Effect of Early Discouragement');
 legend({'Success last','Success first'},'Location','northeast')
 hold off
 saveas(gcf,"results/value_plots/success_beliefs_no_learning.png");
-
-
-
-
-

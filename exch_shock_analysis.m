@@ -17,6 +17,7 @@ for pol_k = 1:3
     match_recs_appended = [];
     dud_matches_appended = [];
     succ_matches_appended = [];
+    sim_source_appended = [];
     for m = 1:2000
         filename = sprintf('%d.mat', m);
         load([files{pol_k},filename]);
@@ -28,6 +29,7 @@ for pol_k = 1:3
         match_recs(:,3) = match_recs(:,3) + 10000 * m; %make firm ids unique across files
         succ_matches(:,3) = succ_matches(:,3) + 10000 * m; %make firm ids unique across files
         dud_matches(:,3) = dud_matches(:,3) + 10000 * m; %make firm ids unique across files
+        sim_source = ones(size(match_recs,1),1)* m ;
         
         %Add macro states (needs to be updated once simulations with
         %simMoms containing macrostates finishes running
@@ -39,14 +41,14 @@ for pol_k = 1:3
         match_recs_appended = [match_recs_appended;match_recs];
         succ_matches_appended = [succ_matches_appended;succ_matches];
         dud_matches_appended = [dud_matches_appended;dud_matches];
-        if pol_k == 2 %only run for up shock
-            elasticities_by_sim(m,:) = exch_rate_analysis_calc_elas(deflator,match_recs,mm);
-        end
+        sim_source_appended = [sim_source_appended;sim_source];
+        
     end
 
     match_recs = match_recs_appended;
     succ_matches = succ_matches_appended;
     dud_matches = dud_matches_appended;
+    sim_source = sim_source_appended;
     match_recs(:,11) = match_recs(:,1)/mm.pd_per_yr; %years rather than months
     succ_matches(:,11) = succ_matches(:,1)/mm.pd_per_yr; %years rather than months
     dud_matches(:,11) = dud_matches(:,1)/mm.pd_per_yr; %years rather than months
@@ -61,6 +63,10 @@ for pol_k = 1:3
     succ_matches = exch_shock_analysis_alt_age_calc(succ_matches);
     dud_matches = exch_shock_analysis_alt_age_calc(dud_matches);
     
+    if pol_k == 2 %only run for up shock
+        [elasticities_by_sim,standard_error_by_sim] = exch_rate_analysis_calc_elas(deflator,match_recs,sim_source,mm);
+    end
+
     for t=11:max(match_recs(:,11)-1)
         
         match_recs_one_year = match_recs(match_recs(:,11) == t,:);
@@ -478,24 +484,15 @@ xticklabels({'-10','-5','0','5','10','15'})
 hold off
 saveas(gcf,'results/exch_shock_plots/decomp_plots/total_firms_pct_unf.png')
 
-elas_var = @(new,base,cov_mat,log_arg) [1 / (log(log_arg)); -1 / (log(log_arg))]' * cov_mat * [1 / (log(log_arg)); -1 / (log(log_arg))];
-
 %elasticities (favorable)
-display('Favorable elasticities (Std Err)')
-display('SALES');
-display([(log(total_sales(26,2)) - log(total_sales(25,1)))/(log(1.2) - log(1)),...
-    (log(total_sales(28,2)) - log(total_sales(25,1)))/(log(1.2) - log(1)),...
-    (log(total_sales(35,2)) - log(total_sales(25,1)))/(log(1.2) - log(1))]);
+display('Favorable elasticities, 1,3,10 years in columns, sales, matches, firms in rows')
 
-display('MATCHES');
-display([(log(total_matches(26,2)) - log(total_matches(25,1)))/(log(1.2) - log(1)),...
-    (log(total_matches(28,2)) - log(total_matches(25,1)))/(log(1.2) - log(1)),...
-    (log(total_matches(35,2)) - log(total_matches(25,1)))/(log(1.2) - log(1))]);
+display(elasticities_by_sim)
 
-display('FIRMS');
-display([(log(total_firms(26,2)) - log(total_firms(25,1)))/(log(1.2) - log(1)),...
-    (log(total_firms(28,2)) - log(total_firms(25,1)))/(log(1.2) - log(1)),...
-    (log(total_firms(35,2)) - log(total_firms(25,1)))/(log(1.2) - log(1))]);
+display('And bootstrapped standard errors')
+
+display(standard_error_by_sim)
+
 
 % display('Unfavorable elasticities')
 % display('SALES')

@@ -11,6 +11,8 @@ function diagnostic_policy_chart(policy,lab)
     initial_search_labels = ["base", "baseFail", "baseSucc", "nol1", "nol2", "nol3", "nol4", "nol5","nol6", "nol7", "nol8", "nol9", "nol10"];
     bar(initial_search);
     xticklabels(initial_search_labels);
+    ylim([0,0.25])
     saveas(gcf, append('results/diagnostic_policy_plot_', lab, '.png'));
+
 
 end

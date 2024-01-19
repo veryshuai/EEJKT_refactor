@@ -8,8 +8,7 @@ function policy = generatePolicyAndValueFunctions(mm)
         
     policy = makeExporterTransitionProbabilities(mm,policy);
 
-    diagnostic_policy_chart(policy,'baseline_params');
-    
+    %diagnostic_policy_chart(policy,'converged');
 
     toc
 end

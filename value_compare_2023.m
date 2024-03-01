@@ -142,6 +142,20 @@ ax = gca();
 ax.YTickLabel = compose('%0.2g', exp(ax.YTick)');
 saveas(gcf,"results/value_plots/val_f_three_types.png");
 
+%Plots
+plot(log(val_succ_f(:,3)));
+hold on
+plot(log(val_alt_f(:,3)));
+hold on
+plot(log(val_fail_f(:,3)));
+xlabel('Matches')
+ylabel('2023 USD (log scale)')
+title({'Value in foreign market','Excludes profit flow from current relationships'})
+hold off
+ax = gca();
+ax.YTickLabel = compose('%0.2g', exp(ax.YTick)');
+saveas(gcf,"results/value_plots/val_f_one_type.png");
+
 %Perceived values quoted in paper:
 format long
 val_succ_f(1,3)

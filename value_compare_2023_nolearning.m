@@ -65,6 +65,7 @@ X = [-7.00428657247973 -23.0915400600166 0.129855165074604 0.147073857937515 0.6
 %     
 mm = setModelParameters(X);
 mm.th_ind_temp = 5;
+mm.v_tolerance   = 1e-6; %Need tighter tolerance to get nice looking value plots
 policy = generatePolicyAndValueFunctions(mm);
 
 % Key to value functions
@@ -142,15 +143,19 @@ title({'Log value in foreign market','Excludes profit flow from current relation
 hold off
 saveas(gcf,"results/value_plots/val_f_three_types_no_learning.png");
 
-plot(val_succ_f(:,2));
+%Plots
+x_vals = 0:size(val_succ_f,1)-1;
+plot(x_vals,log(val_succ_f(:,3)));
 hold on
-plot(val_alt_f(:,2));
+plot(x_vals,log(val_alt_f(:,3)));
 hold on
-plot(val_fail_f(:,2));
+plot(x_vals,log(val_fail_f(:,3)));
 xlabel('Matches')
-ylabel('1992 USD')
+ylabel('2023 USD (log scale)')
 title({'Value in foreign market','Excludes profit flow from current relationships'})
 hold off
+ax = gca();
+ax.YTickLabel = compose('%0.2g', exp(ax.YTick)');
 saveas(gcf,"results/value_plots/val_f_no_learning.png");
 
 plot(marg_val_succ_f(:,2));

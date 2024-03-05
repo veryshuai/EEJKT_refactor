@@ -262,17 +262,21 @@ display("Ratio of average continuation value after to before is: " + avg_exporte
 
 %Matches
 hold off
-area([mean(squeeze(total_new_matches(11:40,2)),2),mean(squeeze(total_old_firm_new_matches(11:40,2)),2),mean(squeeze(total_old_firm_old_matches(11:40,2)),2)])
+nrm = total_old_firm_old_matches(25,2);
+area([mean(squeeze(total_new_matches(21:40,2)),2),mean(squeeze(total_old_firm_new_matches(21:40,2)),2),mean(squeeze(total_old_firm_old_matches(21:40,2)),2)]/nrm)
 hold on
-plot(mean(squeeze(total_new_matches(11:40,1)),2),'LineWidth',2)
-plot(mean(squeeze(total_old_firm_new_matches(11:40,1)),2) + mean(squeeze(total_new_matches(11:40,1)),2),'LineWidth',2)
-plot(mean(squeeze(total_old_firm_old_matches(11:40,1)),2) + mean(squeeze(total_old_firm_new_matches(11:40,1)),2) + mean(squeeze(total_new_matches(11:40,1)),2),'LineWidth',2)
-set(gca,'FontSize',18)
+plot(mean(squeeze(total_new_matches(21:40,1)),2)/nrm,'LineWidth',2)
+plot((mean(squeeze(total_old_firm_new_matches(21:40,1)),2) + mean(squeeze(total_new_matches(21:40,1)),2))/nrm,'LineWidth',2)
+plot((mean(squeeze(total_old_firm_old_matches(21:40,1)),2) + mean(squeeze(total_old_firm_new_matches(21:40,1)),2) + mean(squeeze(total_new_matches(21:40,1)),2))/nrm,'LineWidth',2)
+set(gca,'FontSize',30)
 %legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
-title("Total Matches");
-xlim([1,30])
-xticks([5 10 15 20 25 30])
-xticklabels({'-10','-5','0','5','10','15'})
+title("Total matches");
+ylim([0,1.5])
+xlim([1,20])
+xticks([5 10 15 20])
+xticklabels({'0','5','10','15'})
+line([1,20], [1, 1], 'Color', 'black', 'LineStyle', '--', 'LineWidth', 1.5); % Red dashed line
+line([1,20], [1.2, 1.2], 'Color', 'black', 'LineStyle', '--', 'LineWidth', 1.5); % Red dashed line
 hold off
 saveas(gcf,'results/exch_shock_plots/decomp_plots/total_matches.png')
 
@@ -333,17 +337,20 @@ saveas(gcf,'results/exch_shock_plots/decomp_plots/total_matches_pct_unf.png')
 
 %Sales
 hold off
-area([mean(squeeze(total_new_sales(11:40,2)),2),mean(squeeze(total_old_firm_new_sales(11:40,2)),2),mean(squeeze(total_old_firm_old_sales(11:40,2)),2)])
+nrm = total_old_firm_old_sales(25,2);
+area([mean(squeeze(total_new_sales(21:40,2)),2),mean(squeeze(total_old_firm_new_sales(21:40,2)),2),mean(squeeze(total_old_firm_old_sales(21:40,2)),2)]/nrm)
 hold on
-plot(mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
-plot(mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
-plot(mean(squeeze(total_old_firm_old_sales(11:40,1)),2) + mean(squeeze(total_old_firm_new_sales(11:40,1)),2) + mean(squeeze(total_new_sales(11:40,1)),2),'LineWidth',2)
-set(gca,'FontSize',18)
+plot(mean(squeeze(total_new_sales(21:40,1)),2)/nrm,'LineWidth',2)
+plot((mean(squeeze(total_old_firm_new_sales(21:40,1)),2) + mean(squeeze(total_new_sales(21:40,1)),2))/nrm,'LineWidth',2)
+plot((mean(squeeze(total_old_firm_old_sales(21:40,1)),2) + mean(squeeze(total_old_firm_new_sales(21:40,1)),2) + mean(squeeze(total_new_sales(21:40,1)),2))/nrm,'LineWidth',2)
+set(gca,'FontSize',30)
 %legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
 title("Total sales");
-xlim([1,30])
-xticks([5 10 15 20 25 30])
-xticklabels({'-10','-5','0','5','10','15'})
+xlim([1,20])
+xticks([5 10 15 20])
+xticklabels({'0','5','10','15'})
+line([1,20], [1, 1], 'Color', 'black', 'LineStyle', '--', 'LineWidth', 1.5); % Red dashed line
+line([1,20], [1.2, 1.2], 'Color', 'black', 'LineStyle', '--', 'LineWidth', 1.5); % Red dashed line
 hold off
 saveas(gcf,'results/exch_shock_plots/decomp_plots/total_sales.png')
 
@@ -422,16 +429,20 @@ saveas(gcf,'results/exch_shock_plots/decomp_plots/total_sales_pct_unf.png')
 
 %Number of firms
 hold off
-area([mean(squeeze(total_new_firms(11:40,2)),2),mean(squeeze(total_firms(11:40,2) - total_new_firms(11:40,2)),2)])
+nrm = total_firms(25,2);
+area([mean(squeeze(total_new_firms(21:40,2)),2),mean(squeeze(total_firms(21:40,2) - total_new_firms(21:40,2)),2)]/nrm)
 hold on
-plot(mean(squeeze(total_new_firms(11:40,1)),2),'LineWidth',2)
-plot(mean(squeeze(total_firms(11:40,1)),2),'LineWidth',2)
-set(gca,'FontSize',18)
+plot((mean(squeeze(total_new_firms(21:40,1)),2))/nrm,'LineWidth',2)
+plot((mean(squeeze(total_firms(21:40,1)),2))/nrm,'LineWidth',2)
+set(gca,'FontSize',30)
 %legend({'New exporter','Incumbent exporter'},'location','SouthWest','FontSize',20)
-%title("Total exporters");
-xlim([1,30])
-xticks([5 10 15 20 25 30])
-xticklabels({'-10','-5','0','5','10','15'})
+title("Total exporters");
+ylim([0,1.5])
+xlim([1,20])
+xticks([5 10 15 20])
+xticklabels({'0','5','10','15'})
+line([1,20], [1, 1], 'Color', 'black', 'LineStyle', '--', 'LineWidth', 1.5); % Red dashed line
+line([1,20], [1.2, 1.2], 'Color', 'black', 'LineStyle', '--', 'LineWidth', 1.5); % Red dashed line
 hold off
 saveas(gcf,'results/exch_shock_plots/decomp_plots/total_firms.png')
 

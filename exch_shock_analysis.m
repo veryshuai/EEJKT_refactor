@@ -189,8 +189,13 @@ for pol_k = 1:3
 end
 
 %Amnesia experiment numbers
-avg_exporter_value = mean(value_per_firm(end-10:end,1)) + mean(current_clients_cont_value_mean(end-10:end,1));
+
+avg_exporter_value = mean(value_per_firm(end-10:end,1)) ...
+    + mean(current_clients_cont_value_mean(end-10:end,1));
+avg_foreign_market_exp_val = avg_exporter_value ...
+    - mean(value_per_firm_no_match(end-10:end,1));
 display("The average value per exporter of foreign market access is: " + avg_exporter_value);
+display("The average value per exporter of foreign market access is: " + avg_foreign_market_exp_val);
 display("The average value per exporter of current relationships is: " + mean(current_clients_cont_value_mean(end-10:end,1)));
 display("The average value of exporters, but if they had no export experience is: " + mean(value_per_firm_no_match(end-10:end,1)));
 

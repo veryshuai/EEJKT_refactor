@@ -1,18 +1,18 @@
 function mm = bootstrap_setModelParametersNoHead(X,mm)
 
-%mm = struct();
-
 %% technology parameters
 
 mm.pd_per_yr = 12;        % number of periods per year
 mm.r         = 0.13/mm.pd_per_yr;   % Rate of time preference per period
 mm.firm_death_haz = 0.08/mm.pd_per_yr;   % Component of time preference due to exogenous death
 mm.delta     = 0.326/mm.pd_per_yr;  % Exogenous match separation rate 
+% mm.delta     = 2/mm.pd_per_yr;  % Exogenous match separation rate 
 mm.eta       = 5;          % Demand elasticity 
 
 %% Estimated parameters
 
 mm.param_vec = X;      % carry along parameter vector for diagnostic checks
+
 
 %% Discretization of state-space
 
@@ -52,16 +52,16 @@ mm.tot_yrs       = 50;   % years to simulate, including burn-in (mm.burn)
 mm.periods       = round(mm.tot_yrs*mm.pd_per_yr); % number of periods to simulate
 
 
-mm.S         = 150000;   % number of potential exporting firms to simulate (SET BIG)
-mm.burn      = 10;       % number of burn-in years
+mm.S         = 50000;   % number of potential exporting firms to simulate 
+mm.burn      = 10;       %number of burn-in years
 mm.max_match = 50;       % upper bound on number of matches to be counted for foreign market
 mm.max_match_h = 70;     % Number of possible matches for domestic market
-mm.MaxMatchMonth = 1.5e+6; % Max number of match-months in any year for a given firm type
+mm.MaxMatchMonth = 1e+7; % Max number of match-months in any year for a given firm type
 mm.max_home_clients = 500; %maximum number of active clients we allow firms to have at home
-mm.abort_time = 1500;    % number of seconds allowed before evaluation is aborted 
+mm.abort_time = 5000;    % number of seconds allowed before evaluation is aborted 
 %% Cost function
 
-mm.kappa1 = 2; %quadratic search costs 
+mm.kappa1 = 2;  
 
 mm.cost_h = @(x,net) (mm.cs_h * ((1+x).^mm.kappa1-(1+mm.kappa1*x))) /(mm.kappa1*(1 + log(net))^mm.gam);
 mm.cost_f = @(x,net) (mm.cs_f * ((1+x).^mm.kappa1-(1+mm.kappa1*x))) /(mm.kappa1*(1 + log(net))^mm.gam);
@@ -73,10 +73,10 @@ mm.l_opt_func_f = @(a,net,pi,V_succ,V_fail,V_orig)...
 
 %% Exogenous Jump Process Parameters
       
-gam_h = 1 - 0.8412593; %DJ: calculations from COL_AR1.do, reversion coef, use Euler-Maruyama discretization of OU  
-sig_h = 0.04688; % DJ: calculations from COL_AR1.do, root MSE, Euler-Maruyama discretization of OU 
-gam_f = 1 - 0.948018; %DJ: from Jim's email 2023/1/11, AR1 reversion coef, Euler-Maruyama discretization of OU
-sig_f = 0.11338; %DJ: from Jim's email 2023/1/11, AR1 root MSE, Euler-Maruyama discretization of OU
+gam_h = 1 - 0.875; %DJ: reversion coef, use Euler-Maruyama discretization of OU  JT: updated 7-8-23
+sig_h = 0.0469; % DJ: AR1 root MSE, Euler-Maruyama discretization of OU  JT: updated 7-8-23
+gam_f = 1 - 0.639; %DJ: Euler-Maruyama discretization of OU  JT: updated 7-8-23
+sig_f = 0.1101; %DJ: AR1 root MSE, Euler-Maruyama discretization of OU  JT: updated 7-8-23
 
 L_h = gam_h * mm.x_size; %lambda, arrival rate of shock
 D_h = sig_h*L_h^(-.5); %delta, size of jump states
@@ -144,4 +144,3 @@ mm.erg_pz       = erg_pz;   %ergodic distribution of demand shocks
 mm.N_pt          = size(mm.Phi,1)*size(mm.theta2,2);
 mm.pt_type = [kron((1:size(mm.Phi,1))',ones(size(mm.theta2,2),1)),kron(ones(size(mm.Phi,1),1),(1:size(mm.theta2,2))')];
 mm.sim_firm_num_by_prod_succ_type = round(mm.erg_pp(mm.pt_type(:,1)).*mm.th2_pdf(mm.pt_type(:,2))'*mm.S);
-

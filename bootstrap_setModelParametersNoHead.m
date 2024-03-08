@@ -6,7 +6,6 @@ mm.pd_per_yr = 12;        % number of periods per year
 mm.r         = 0.13/mm.pd_per_yr;   % Rate of time preference per period
 mm.firm_death_haz = 0.08/mm.pd_per_yr;   % Component of time preference due to exogenous death
 mm.delta     = 0.326/mm.pd_per_yr;  % Exogenous match separation rate 
-% mm.delta     = 2/mm.pd_per_yr;  % Exogenous match separation rate 
 mm.eta       = 5;          % Demand elasticity 
 
 %% Estimated parameters

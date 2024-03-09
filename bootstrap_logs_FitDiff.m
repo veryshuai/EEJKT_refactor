@@ -145,13 +145,12 @@ for iter =1:pv_siz + 1
     
 %   set constrained parameters equal to their perturbed counterpart values    
     mm.F_f = mm.F_h;
-    mm.scale_f =  mm.scale_h;
+    mm.scale_f =  mm.scale_h + 1;
     mm.optimism = 0;
  
     rng(80085,'twister');% set the seed and the rng (default parallel rand generator)
     seed_crand(80085);
     mm = bootstrap_setModelParametersNoHead(X,mm);
-    mm.check_type = 108;
     testVec1 = [mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f]';
     policy1 = generatePolicyAndValueFunctions(mm);
     simMoms = simulateMomentsMain(policy1,mm);
@@ -159,18 +158,19 @@ for iter =1:pv_siz + 1
     
 % check first parameter vector results replicates benchmark results:
     if iter == 1
+      save('results/mm_check1','mm')  
       Model = real_moms_and_sim_moms(MomsUsed,2);
       error = (Data - Model);
       D3 = log((error'/W)*error);
       test0 = sum(abs(testVec0 - testVec1));
       test1 = sum(sum(policy.c_val_f(:,:,1) - policy1.c_val_f(:,:,1)));
-      try
+        try
         assert(D3-D==0);
-        assert(test0==0)
-        assert(test1==0)
-      catch
+        assert(test0==0);
+        assert(test1==0);
+        catch
         fprintf('Warning: Benchmark fit not replicated \n')
-      end
+        end
     end
     
 

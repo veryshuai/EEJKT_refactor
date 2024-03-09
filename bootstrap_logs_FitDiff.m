@@ -13,6 +13,7 @@ rng(80085,'twister');% set the seed and the rng (default parallel rand generator
 seed_crand(80085);
 
 runs = 20; %20 %set number of runs to use in bootstrap
+SE_calc = 0; % set to 1 to get std. errors; to 0 for Andrews et. al calcs.
  
 X = [-3.87377400411704,-19.6350579745564,0.141131266607483,0.224048944147957,...
     0.527541658446327,12.1673847502223,0.0462420845261331,5.13239605341601,...
@@ -95,9 +96,13 @@ end
 
 fin_diff_size = (1 + 0.05); %percentage of parameter value 
 
-% NOTE: expressing fixed cost and cost function scalars in logs before generating differences
-% param_vec = [log(mm.F_h), mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, log(mm.cs_h), mm.sig_p, log(mm.cs_f)]';
+if SE_calc == 1
+% Some parameters are reported in logs. To get their std. errors,
+% express fixed cost and cost function scalars in logs before generating differences
+param_vec = [log(mm.F_h), mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, log(mm.cs_h), mm.sig_p, log(mm.cs_f)]';
+else
 param_vec = [mm.F_h, mm.scale_h, mm.ah, mm.bh, mm.D_z, mm.L_bF, mm.gam, mm.cs_h, mm.sig_p, mm.cs_f]';
+end
 
 pv_siz    = size(param_vec,1);
 
@@ -109,10 +114,12 @@ fin_diff_param_mat(1:size(fin_diff_param_mat,1)+1:end) =...
 % concatenate "baseline" parameter vector with set of differenced vectors         
 fin_diff_param_mat = [param_vec,fin_diff_param_mat]; 
 
-% NOTE: restoring fixed cost and cost function scalars to levels
-% fin_diff_param_mat(1,:)  = exp(fin_diff_param_mat(1,:)); 
-% fin_diff_param_mat(8,:)  = exp(fin_diff_param_mat(8,:)); 
-% fin_diff_param_mat(10,:) = exp(fin_diff_param_mat(10,:)); 
+if SE_calc == 1
+% Restoring fixed cost and cost function scalars to levels
+fin_diff_param_mat(1,:)  = exp(fin_diff_param_mat(1,:)); 
+fin_diff_param_mat(8,:)  = exp(fin_diff_param_mat(8,:)); 
+fin_diff_param_mat(10,:) = exp(fin_diff_param_mat(10,:)); 
+end
 
 % %generate a cell for each moment
 match_death_coefs_fd = cell(pv_siz + 1,1);% [match_exit_rate;beta_match_exit(2:5)]; % [match exit rate, 1st yr. dummy, lnXf(ijt), ln(match age), ln(exporter age),mse]
@@ -196,14 +203,14 @@ cell_for_assignment = num2cell(fin_diff_param_mat(:,1)); %need cell to unpack in
 
 % (Probably don't need this block since we're not constructing std. errors for these parameters)
  mm.F_f = mm.F_h;
- mm.scale_f= mm.scale_h;
+ mm.scale_f= mm.scale_h +1;
  mm.optimism = 0;
 
 % (3) Construct moment covariance matrix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Form moment vector, need to have vector to construct full covarience matrix
-moments_boot_mat = zeros(size(Data,2),runs);
+moments_boot_mat = zeros(size(Data,1),runs);
 for iter = 1:runs
     moments_boot_mat(:,iter) = [... 
     match_death_coefs_boot_holder{iter};...
@@ -224,7 +231,7 @@ Mcov = cov(moments_boot_mat'); %this is the estimated covariance matrix of the m
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Finite differences of moments
-fin_diff_mat = zeros(size(Data,2),pv_siz + 1);
+fin_diff_mat = zeros(size(Data,1),pv_siz + 1);
 for iter = 1:pv_siz + 1
     fin_diff_mat(:,iter) = [...
         match_death_coefs_fd{iter}(:);...
@@ -241,7 +248,7 @@ for iter = 1:pv_siz + 1
 end
 
 
-dMdP = zeros(size(Data,2),pv_siz);
+dMdP = zeros(size(Data,1),pv_siz);
 for iter = 1:pv_siz
     dMdP(:,iter) = (fin_diff_mat(:,iter+1) - fin_diff_mat(:,1)) / ((fin_diff_size - 1) * param_vec(iter)); %this is our derivative approximation
 end
@@ -264,7 +271,7 @@ AGS_elas = AGS_sens .* repmat((W * fin_diff_mat(:,1))',size(AGS_sens,1),1) ./ re
 AGS_param_names = {'F', 'log(Pi)', 'ah', 'bh', 'D_z', 'L_bF', 'gam', 'log(cs_h)', 'sig_p', 'log(cs_f)'};
 
 varnames = {'match_death_coefs1','match_death_coefs2','match_death_coefs3','match_death_coefs4','match_death_coefs5','match_ar1_coefs1','match_ar1_coefs2','match_ar1_coefs3','match_ar1_coefs4','match_ar1_coefs5','mavship','exp_dom_coefs1','dom_ar1_coefs2','match_lag_coefs1','match_lag_coefs2','succ_rate_coefs1','succ_rate_coefs2','sr_var_coefs1','sr_var_coefs2','for_sales_shr','exp_frac'};
-AGS_cell = mat2cell(AGS_elas,ones(pv_siz,1),ones(size(Data,2),1));
+AGS_cell = mat2cell(AGS_elas,ones(pv_siz,1),ones(size(Data,1),1));
 AGS_table = cell2table(AGS_cell);
 AGS_table.Properties.VariableNames = varnames;
 AGS_table = [AGS_param_names',AGS_table];

@@ -282,7 +282,7 @@ end
   AvgDdiffcell = mat2cell(AvgDdiff,ones(pv_siz,1),1);
   AvgDiff_table = cell2table(AvgDdiffcell);
   AvgDiff_table = [AGS_param_names',AvgDiff_table];
-  writetable(AGS_table,'results/AvgDiff_table.csv');
+  writetable(AvgDiff_table,'results/AvgDiff_table.csv');
 
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 % (6) Construct covariance matrix for estimated parameters 

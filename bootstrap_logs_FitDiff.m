@@ -7,11 +7,10 @@
 % (5) Construct Andrews et al. sensitivity matrix 
 % (6) Contruct covariance matrix for parameter estimates 
 
-
 clear all;
 
 runs = 20; %20 %set number of runs to use in bootstrap
-SE_calc = 1; % set to 1 to get std. errors; to 0 for Andrews et. al calcs.
+SE_calc = 0; % set to 1 to get std. errors; to 0 for Andrews et. al calcs.
  
 X = [-3.87377400411704,-19.6350579745564,0.141131266607483,0.224048944147957,...
     0.527541658446327,12.1673847502223,0.0462420845261331,5.13239605341601,...
@@ -135,8 +134,8 @@ fin_diff_param_mat1 = repmat(param_vec,1,pv_siz);
 fin_diff_param_mat1(1:size(fin_diff_param_mat1,1)+1:end) =...
             (fin_diff_param_mat1(1:size(fin_diff_param_mat1,1)+1:end)) * fin_diff_size1;        
 
- fin_diff_size2 = (1 - 0.05); % decrease parameter value 
- fin_diff_param_mat2 = repmat(param_vec,1,pv_siz);
+fin_diff_size2 = (1 - 0.05); % decrease parameter value 
+fin_diff_param_mat2 = repmat(param_vec,1,pv_siz);
 fin_diff_param_mat2(1:size(fin_diff_param_mat2,1)+1:end) =...
             (fin_diff_param_mat2(1:size(fin_diff_param_mat2,1)+1:end)) * fin_diff_size2;        
      
@@ -252,18 +251,19 @@ end
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 % (5) Construct Andrews sensitivity matrix
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
-% construct moment derivatives using finite differences
+% approximate moment derivatives using finite differences
   dMdP_up = zeros(size(Data,1),pv_siz);
   dMdP_down = zeros(size(Data,1),pv_siz);
   for iter = 1:pv_siz
-    dMdP_up(:,iter) = (fin_diff_mat(:,iter+1) - fin_diff_mat(:,1)) / ((fin_diff_size1 - 1) * param_vec(iter)); %this is our derivative approximation
-    dMdP_down(:,iter) = (fin_diff_mat(:,pv_siz+iter+1) - fin_diff_mat(:,1)) / ((fin_diff_size2 - 1) * param_vec(iter)); %this is our derivative approximation end
+    dMdP_up(:,iter) =...
+    (fin_diff_mat(:,iter+1) - fin_diff_mat(:,1)) / ((fin_diff_size1 - 1) * param_vec(iter)); 
+    dMdP_down(:,iter) =...
+    (fin_diff_mat(:,pv_siz+iter+1) - fin_diff_mat(:,1)) / ((fin_diff_size2 - 1) * param_vec(iter)); 
   end
 
 % average derivatives based on upshocks and downshocks
   dMdP = (dMdP_up + dMdP_down)./2 ;
-
-  G = -dMdP; %just change the notation to fit Joris' note 
+  G = -dMdP; % change the notation to fit Joris' note 
 
 % Construct Andrews et al. sensitivity matrix
   AGS_sens = -inv(G' * W * G) * G' * W;
@@ -289,21 +289,15 @@ end
 %^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 % use delta method to get covariance matrix
-V = inv(G' * W * G) * G' * W * Mcov * W * G * inv(G' * W * G);
-Psd = diag(V).^0.5;
-std_error = Psd;
-parameter = param_vec;
-z_ratio = parameter./std_error;
-format short
-param_est = table(parameter,std_error,z_ratio,'Rownames',AGS_param_names)
+  V = inv(G' * W * G) * G' * W * Mcov * W * G * inv(G' * W * G);
+  Psd = diag(V).^0.5;
+  std_error = Psd;
+  parameter = param_vec;
+  z_ratio = parameter./std_error;
+  format short
+  param_est = table(parameter,std_error,z_ratio,'Rownames',AGS_param_names)
 
-% V_alt = inv(G' * inv(W) * G);
-% Psd = diag(V_alt).^0.5;
-% std_error = Psd;
-% parameter = param_vec;
-% z_ratio = parameter./std_error;
-% format short
-% param_est_alt = table(parameter,std_error,z_ratio,'Rownames',AGS_param_names)
-
-save results/bootstrap_results
+  
+  
+  save results/bootstrap_results
 

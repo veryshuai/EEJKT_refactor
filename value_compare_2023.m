@@ -152,6 +152,7 @@ plot(x_vals,log(val_fail_f(:,3)));
 xlabel('Matches')
 ylabel('2023 USD (log scale)')
 title({'Baseline','Value in foreign market'})
+legend({'Successes','Alternating','Failures'},'Location','east')
 hold off
 ax = gca();
 ax.YTickLabel = compose('%0.2g', exp(ax.YTick)');

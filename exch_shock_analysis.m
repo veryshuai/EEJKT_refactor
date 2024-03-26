@@ -275,11 +275,13 @@ plot((mean(squeeze(total_old_firm_new_matches(21:40,1)),2) + mean(squeeze(total_
 plot((mean(squeeze(total_old_firm_old_matches(21:40,1)),2) + mean(squeeze(total_old_firm_new_matches(21:40,1)),2) + mean(squeeze(total_new_matches(21:40,1)),2))/nrm,'LineWidth',2)
 set(gca,'FontSize',30)
 %legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
-title("Total matches");
+%title("Total matches");
 ylim([0,1.5])
 xlim([1,20])
 xticks([5 10 15 20])
 xticklabels({'0','5','10','15'})
+xlabel('year relative to shock')
+ylabel('level relative to year before shock')
 line([1,20], [1, 1], 'Color', 'black', 'LineStyle', '--', 'LineWidth', 1.5); % Red dashed line
 line([1,20], [1.2, 1.2], 'Color', 'black', 'LineStyle', '--', 'LineWidth', 1.5); % Red dashed line
 hold off
@@ -350,10 +352,12 @@ plot((mean(squeeze(total_old_firm_new_sales(21:40,1)),2) + mean(squeeze(total_ne
 plot((mean(squeeze(total_old_firm_old_sales(21:40,1)),2) + mean(squeeze(total_old_firm_new_sales(21:40,1)),2) + mean(squeeze(total_new_sales(21:40,1)),2))/nrm,'LineWidth',2)
 set(gca,'FontSize',30)
 %legend({'New exporter','Incumbent exporter, new importer','Incumbent exporter and importer'},'location','SouthWest','FontSize',20)
-title("Total sales");
+%title("Total sales");
 xlim([1,20])
 xticks([5 10 15 20])
 xticklabels({'0','5','10','15'})
+xlabel('year relative to shock')
+ylabel('level relative to year before shock')
 line([1,20], [1, 1], 'Color', 'black', 'LineStyle', '--', 'LineWidth', 1.5); % Red dashed line
 line([1,20], [1.2, 1.2], 'Color', 'black', 'LineStyle', '--', 'LineWidth', 1.5); % Red dashed line
 hold off
@@ -441,11 +445,13 @@ plot((mean(squeeze(total_new_firms(21:40,1)),2))/nrm,'LineWidth',2)
 plot((mean(squeeze(total_firms(21:40,1)),2))/nrm,'LineWidth',2)
 set(gca,'FontSize',30)
 %legend({'New exporter','Incumbent exporter'},'location','SouthWest','FontSize',20)
-title("Total exporters");
+%title("Total exporters");
 ylim([0,1.5])
 xlim([1,20])
 xticks([5 10 15 20])
 xticklabels({'0','5','10','15'})
+xlabel('year relative to shock')
+ylabel('level relative to year before shock')
 line([1,20], [1, 1], 'Color', 'black', 'LineStyle', '--', 'LineWidth', 1.5); % Red dashed line
 line([1,20], [1.2, 1.2], 'Color', 'black', 'LineStyle', '--', 'LineWidth', 1.5); % Red dashed line
 hold off

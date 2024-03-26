@@ -37,8 +37,8 @@ deflator = 260.227 / 115.6;
 
 %Generate some figures used in the text
 %average sales per shipment
-avg_shipment_sales = deflator * mean(match_recs(match_recs(:,5)~=0,4)./match_recs(match_recs(:,5)~=0,5))
-sd_shipment_sales = deflator * (var(match_recs(match_recs(:,5)~=0,4)./match_recs(match_recs(:,5)~=0,5)))^0.5
+%avg_shipment_sales = deflator * mean(match_recs(match_recs(:,5)~=0,4)./match_recs(match_recs(:,5)~=0,5))
+%sd_shipment_sales = deflator * (var(match_recs(match_recs(:,5)~=0,4)./match_recs(match_recs(:,5)~=0,5)))^0.5
 
 %Cost function calculations in the paper
 cost_one_match_per_yr_no_exp = deflator *  mm.cost_f(1/12,1)

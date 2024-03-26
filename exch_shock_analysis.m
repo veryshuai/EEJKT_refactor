@@ -188,6 +188,13 @@ for pol_k = 1:3
     matches_per_firm(:,pol_k) = total_matches(:,pol_k) ./ total_firms(:,pol_k);
 end
 
+%Average shipment value in last ten years
+match_recs_last_ten = match_recs(match_recs(:,11) >= 40,:);
+sales_last_ten = deflator * sum(match_recs_last_ten(:,4));
+shipments_last_ten = sum(match_recs_last_ten(:,5));
+avg_shipment_value_last_ten = sales_last_ten / shipments_last_ten;
+display("The average shipment value in the last ten years is: " + avg_shipment_value_last_ten);
+
 %Amnesia experiment numbers
 
 avg_exporter_value = mean(value_per_firm(end-10:end,1)) ...

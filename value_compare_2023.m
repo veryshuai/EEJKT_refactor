@@ -271,7 +271,25 @@ legend({'Success last','Success first'},'Location','northeast')
 hold off
 saveas(gcf,"results/value_plots/success_beliefs.png");
 
+% Create figure comparing data moments to simulated moments
+clear 
+load results/baseline_moments;
 
+% Extract relevant data for each panel
+panel1_data = real_moms_and_sim_moms([23 24 25 26 21 22], :); % First three columns of Table 4
+panel2_data = real_moms_and_sim_moms([1 2 3 4 5], :);        % Fourth column of Table 4
+panel3_data = real_moms_and_sim_moms([6 7 8 9 10], :);       % First column of Table 5
+panel4_data = real_moms_and_sim_moms([14 16 19 27 28], :);   % All other moments
 
+% Set up figure with 2x2 panels
+figure;
 
+% Plot each panel using the external function
+plot_panel(1, panel1_data, 'Panel 1: Search and learning moments');
+plot_panel(2, panel2_data, 'Panel 2: Match exit moments');
+plot_panel(3, panel3_data, 'Panel 3: Match sales moments');
+plot_panel(4, panel4_data, 'Panel 4: All Other Moments');
+
+% Adjust layout
+sgtitle('Comparison of Data and Simulated Moments');
 

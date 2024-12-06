@@ -13,7 +13,9 @@ try
     
     policy = generatePolicyAndValueFunctions(mm);
     simMoms = simulateMomentsMain(policy,mm);
-    [D,~] = calculateDistanceAndPrint(simMoms,mm,X);
+    [D,real_moms_and_sim_moms] = calculateDistanceAndPrint(simMoms,mm,X);
+
+    save results/baseline_moments
 
 catch
 

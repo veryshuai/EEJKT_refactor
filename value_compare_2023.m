@@ -274,22 +274,31 @@ saveas(gcf,"results/value_plots/success_beliefs.png");
 % Create figure comparing data moments to simulated moments
 clear 
 load results/baseline_moments;
+baseline_data = real_moms_and_sim_moms;
+
+load results/no_learning_moments;
+no_learning_data = real_moms_and_sim_moms;
 
 % Extract relevant data for each panel
-panel1_data = real_moms_and_sim_moms([23 24 25 26 21 22], :); % First three columns of Table 4
-panel2_data = real_moms_and_sim_moms([1 2 3 4 5], :);        % Fourth column of Table 4
-panel3_data = real_moms_and_sim_moms([6 7 8 9 10], :);       % First column of Table 5
-panel4_data = real_moms_and_sim_moms([14 16 19 27 28], :);   % All other moments
+panel1_data_baseline = baseline_data([23 24 25 26 21 22], :); % First three columns of Table 4
+panel2_data_baseline = baseline_data([1 2 3 4 5], :);        % Fourth column of Table 4
+panel3_data_baseline = baseline_data([6 7 8 9 10], :);       % First column of Table 5
+panel4_data_baseline = baseline_data([14 16 19 27 28], :);   % All other moments
+
+panel1_data_no_learning = no_learning_data([23 24 25 26 21 22], :);
+panel2_data_no_learning = no_learning_data([1 2 3 4 5], :);
+panel3_data_no_learning = no_learning_data([6 7 8 9 10], :);
+panel4_data_no_learning = no_learning_data([14 16 19 27 28], :);
 
 % Set up figure with 2x2 panels
-figure;
+figure('Units', 'centimeters', 'Position', [5, 5, 15, 15]); % Small square figure
 
-% Plot each panel using the external function
-plot_panel(1, panel1_data, 'Panel 1: Search and learning moments');
-plot_panel(2, panel2_data, 'Panel 2: Match exit moments');
-plot_panel(3, panel3_data, 'Panel 3: Match sales moments');
-plot_panel(4, panel4_data, 'Panel 4: All Other Moments');
+% Plot each panel using the modified function
+plot_panel(1, panel1_data_baseline, panel1_data_no_learning, 'Panel 1: Search and learning moments');
+plot_panel(2, panel2_data_baseline, panel2_data_no_learning, 'Panel 2: Match exit moments');
+plot_panel(3, panel3_data_baseline, panel3_data_no_learning, 'Panel 3: Match sales moments');
+plot_panel(4, panel4_data_baseline, panel4_data_no_learning, 'Panel 4: All other moments');
 
-% Adjust layout
-sgtitle('Comparison of Data and Simulated Moments');
-
+% Save the figure as a PNG file
+set(gcf, 'PaperPositionMode', 'auto'); % Ensure output respects on-screen layout
+print('results/paper_plots/comparison_plot', '-dpng', '-r300'); % Save as high-resolution PNG

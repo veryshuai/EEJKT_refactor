@@ -1,13 +1,19 @@
-function plot_panel(subplot_idx, data, title_text)
+function plot_panel(subplot_idx, data1, data2, title_text)
     subplot(2, 2, subplot_idx); % Create a subplot
-    scatter(data(:, 2), data(:, 1), 'filled'); % Scatter plot
+
+    % Plot first dataset
+    scatter(data1(:, 2), data1(:, 1), 'filled', 'MarkerFaceColor', 'b'); % Blue filled circles
     hold on;
 
+    % Plot second dataset
+    scatter(data2(:, 2), data2(:, 1), 'd', 'MarkerEdgeColor', 'r', 'MarkerFaceColor', 'none'); % Red diamonds
+
     % Calculate the combined range of x and y data
-    x_min = min(data(:, 2));
-    x_max = max(data(:, 2));
-    y_min = min(data(:, 1));
-    y_max = max(data(:, 1));
+    all_data = [data1; data2];
+    x_min = min(all_data(:, 2));
+    x_max = max(all_data(:, 2));
+    y_min = min(all_data(:, 1));
+    y_max = max(all_data(:, 1));
     overall_min = min(x_min, y_min);
     overall_max = max(x_max, y_max);
 

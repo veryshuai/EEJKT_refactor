@@ -39,7 +39,7 @@ mm.optimism  = 0;          %parameter on prior distribution
 %mm.grid_length   = 2.5;   % number of standard deviations from mean used for discretization
 mm.n_size        = 20;    % Maximum number of informative signals per firm 
 mm.net_size      = 40;    % maximum number of network effects
-mm.z_size        = 7;     % Number of discretized demand shock states (2*n+1) 
+mm.z_size        = 6;     % Number of discretized demand shock states (2*n+1) (changed for OU process demonstration from 7 to 6)
 mm.phi_size      = 8;     % number of different discretized profit shocks (2*n+1)
 mm.x_size        = 7;     % Number of different discretized macro shocks; same for home and foreign (2*n+1)
 mm.theta_size    = 20;    % Number of possible market potential values (WAS 51)
@@ -119,7 +119,8 @@ mm.poisCDF_shipmentsF   = poisscdf(1:1:mm.max_shipsF,mm.L_bF);
 mm.max_shipsH = 3*round(mm.L_bH); % maximum within-period shipments is triple expected number
 mm.poisCDF_shipmentsH   = poisscdf(1:1:mm.max_shipsH,mm.L_bH);
 
-L_z = 4/mm.pd_per_yr; % four demand shock jumps per year (where is this from?)
+L_z = 3.46666666666667/mm.pd_per_yr; %Lowered from four to 3.4666 shocks per year on average to show equivalence of OU process
+ 
 [Q_z,Z] = makeq(L_z,D_z,mm.z_size);
 erg_pz = make_erg(L_z,D_z,Z); 
 

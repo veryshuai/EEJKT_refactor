@@ -53,9 +53,10 @@ fclose(fileID2);
 %OU constant, but discretization different
 theta = [-3.87377400411704,-19.6350579745564,0.141131266607483,0.224048944147957,...
          0.566670642433268,12.1673847502223,0.0840029181538518,5.13239605341601,...
-         2.38418049835969,15.1614775287665]; % fit unix: 11.9928 
-         with scaling factor 15/13, set to deliver same mean reversion and
-         shock std dev as original.  See excel file
+         2.38418049835969,15.1614775287665]; % fit unix: 11.993031851193429
+         %with scaling factor 15/13, set to deliver same mean reversion and
+         %shock std dev as original.  See excel file
+         % (11.993-11.6935)/11.6935 = 2.6% worse
 
 % X = theta;     
 

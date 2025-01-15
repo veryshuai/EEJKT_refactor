@@ -5,6 +5,8 @@ load results/policy_baseline_up_shk
 %load results/val_dat
 %load lambdas_temp
 
+eta = 5; %read in from setModelParameters.m in branch TryAlt_refactor
+
 deflator = 260.227 / 115.6; %1992 dollars (Jan from BLS commodity PPI) to 2023 dollars
 
 files = {'results/exch_shock_plots/baseline_no_shk', ...
@@ -64,7 +66,7 @@ for pol_k = 1:3
     dud_matches = exch_shock_analysis_alt_age_calc(dud_matches);
     
     if pol_k == 2 %only run for up shock
-       % [elasticities_by_sim,standard_error_by_sim] = exch_rate_analysis_calc_elas(deflator,match_recs,sim_source,mm);
+       [elasticities_by_sim,standard_error_by_sim] = exch_rate_analysis_calc_elas(deflator,match_recs,sim_source,mm);
     end
 
     for t=11:max(match_recs(:,11)-1)

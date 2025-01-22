@@ -17,7 +17,7 @@ option_firms_per_sim = 1;
 
 bootstrapped_elasticities = zeros(1000,3,3); %bootstrap round,elasticity length,elasticity type (sales,matches,firms)
 option_firms_per_sim = 0;
-for k=1:1000
+parfor k=1:1000
     display("bootstrap_iteration " + k)
     match_recs_boot = [];
     boot_firms = 0;

@@ -3,8 +3,6 @@ rng(80085);
 
 load results/policy_baseline_up_shk
 
-eta = mm.eta; %demand elasticity from setModelParameters.m
-
 deflator = 260.227 / 115.6; %1992 dollars (Jan from BLS commodity PPI) to 2023 dollars
 
 files = {'results/exch_shock_plots/baseline_no_shk', ...
